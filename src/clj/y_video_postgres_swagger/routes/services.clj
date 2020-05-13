@@ -54,6 +54,23 @@
     {:get (constantly (ok {:message "pong"}))}]
 
 
+    ["/echo"
+     {:swagger {:tags ["echo"]}}
+
+     [""
+      {:get {:summary "echo parameter get"
+             :parameters {:query {:echo string?}}
+             :responses {200 {:body {:echo string?}}}
+             :handler (fn [{{{:keys [echo]} :query} :parameters}]
+                        {:status 200
+                         :body {:echo echo}})}
+       :post {:summary "echo parameter post"
+              :parameters {:body {:echo string?}}
+              :responses {200 {:body {:echo string?}}}
+              :handler (fn [{{{:keys [echo]} :body} :parameters}]
+                         {:status 200
+                          :body {:echo echo}})}}]]
+
    ["/collections"
     {:swagger {:tags ["collections"]}}
 

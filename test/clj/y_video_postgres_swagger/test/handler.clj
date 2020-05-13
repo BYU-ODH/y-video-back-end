@@ -25,6 +25,12 @@
   (testing "not-found route"
     (let [response ((app) (request :get "/invalid"))]
       (is (= 404 (:status response)))))
+
+  (testing "not-found route 2"
+    (let [response ((app) (request :get "/invalid"))]
+      (is (= 404 (:status response)))))
+
+
   (testing "services"
 
     (testing "success"
@@ -33,12 +39,28 @@
         (is (= 200 (:status response)))
         (is (= {:total 16} (m/decode-response-body response)))))
 
-    (testing "parameter coercion error"
+    (testing "echo"
+      (let [test_string "hello there!"]
+      (let [response ((app) (-> (request :post "/api/echo")
+                                (json-body {:echo test_string})))]
+        (is (= 200 (:status response)))
+        (is (= {:echo test_string} (m/decode-response-body response))))))
+
+    (testing "collections"
+      (let [id "8675309" name "jenny" published false archived false]
+      (let [response ((app) (-> (request :post "/api/collections")
+                                (json-body {:id id, :name name, :published published, :archived published})))]
+        (is (= 200 (:status response)))
+        (is (= {:message "1 collection added"} (m/decode-response-body response))))))
+
+
+
+    (comment (testing "parameter coercion error"
       (let [response ((app) (-> (request :post "/api/math/plus")
                                 (json-body {:x 10, :y "invalid"})))]
-        (is (= 400 (:status response)))))
+        (is (= 400 (:status response))))))
 
-    (testing "response coercion error"
+    (comment (testing "response coercion error"
       (let [response ((app) (-> (request :post "/api/math/plus")
                                 (json-body {:x -10, :y 6})))]
         (is (= 500 (:status response)))))
@@ -49,4 +71,4 @@
                                 (content-type "application/edn")
                                 (header "accept" "application/transit+json")))]
         (is (= 200 (:status response)))
-        (is (= {:total 16} (m/decode-response-body response)))))))
+        (is (= {:total 16} (m/decode-response-body response))))))))
