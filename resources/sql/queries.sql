@@ -3,6 +3,13 @@
 SELECT * FROM collections
 WHERE id = :id
 
+-- :name add-collection! :! :n
+-- :doc creates a new collection record
+INSERT INTO collections
+(id, name, published, archived)
+VALUES (:id, :name, :published, :archived)
+
+
 
 -- :name create-user! :! :n
 -- :doc creates a new user record

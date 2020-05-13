@@ -69,7 +69,13 @@
                            :body {:message "requested collection not found"}}
                           {:status 200
                            :body (db-access/get_collection collection_id)}
-                          )))}}]]
+                          )))}
+       :post {:summary "add collection"
+              :parameters {:body {:id string? :name string? :published boolean? :archived boolean?}}
+              :responses {200 {:body {:message string?}}}
+              :handler (fn [{{{:keys [id name published archived]} :body} :parameters}]
+                         {:status 200
+                          :body (db-access/add_collection id name published archived)})}}]]
 
    ["/math"
     {:swagger {:tags ["math"]}}
