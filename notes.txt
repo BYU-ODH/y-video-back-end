@@ -1,0 +1,3 @@
+credentials for dev postgresql database:
+  username: y-video
+  password: 12345
