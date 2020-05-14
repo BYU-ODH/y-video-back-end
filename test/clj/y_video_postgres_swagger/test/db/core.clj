@@ -59,21 +59,18 @@
 
 (deftest test-collection
  (jdbc/with-transaction [t-conn *db* {:rollback-only true}]
-   (let [account_id nil tword "a word!" src_lang "ru" dest_lang "en"]
-   (let [res (db/add-tword!
+   (let [name "collection name!" published false archived false]
+   (let [res (db/add-collection!
              t-conn
              {
-               :account_id account_id
-               :tword tword
-               :src_lang src_lang
-               :dest_lang dest_lang
+               :name name
+               :published published
+               :archived archived
                })]
-               (print res)
               (is (= 1 (count res)))
               (is (= {
-                :tword_id (:tword_id (get res 0))
-                :account_id account_id
-                :tword tword
-                :src_lang src_lang
-                :dest_lang dest_lang
-                } (db/get-tword t-conn {:tword_id (:tword_id (get res 0))})))))))
+                :collection_id (:collection_id (get res 0))
+                :name name
+                :published published
+                :archived archived
+                } (db/get-collection t-conn {:collection_id (:collection_id (get res 0))})))))))
