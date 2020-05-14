@@ -16,7 +16,7 @@ RETURNING tword_id
 
 -- :name add-collection! :<! :raw
 -- :doc creates a new collection, returns collection_id
-NSERT INTO Collection
+INSERT INTO Collection
 (name, published, archived)
 VALUES (:name, :published, :archived)
 RETURNING collection_id

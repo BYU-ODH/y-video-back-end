@@ -56,3 +56,24 @@
                 :src_lang src_lang
                 :dest_lang dest_lang
                 } (db/get-tword t-conn {:tword_id (:tword_id (get res 0))})))))))
+
+(deftest test-collection
+ (jdbc/with-transaction [t-conn *db* {:rollback-only true}]
+   (let [account_id nil tword "a word!" src_lang "ru" dest_lang "en"]
+   (let [res (db/add-tword!
+             t-conn
+             {
+               :account_id account_id
+               :tword tword
+               :src_lang src_lang
+               :dest_lang dest_lang
+               })]
+               (print res)
+              (is (= 1 (count res)))
+              (is (= {
+                :tword_id (:tword_id (get res 0))
+                :account_id account_id
+                :tword tword
+                :src_lang src_lang
+                :dest_lang dest_lang
+                } (db/get-tword t-conn {:tword_id (:tword_id (get res 0))})))))))
