@@ -1,3 +1,30 @@
 credentials for dev postgresql database:
   username: y-video
   password: 12345
+credentials for test postgresql database:
+  username: y-video-test
+  password: 12345
+
+Next steps:
+  Define complete database in SQL (at least, complete based on OpenAPI spec)
+  Define all query, update, etc. functions  in SQL
+  Get all dummy routes in place
+
+Reference:
+  To launch postresql as user:
+    sudo -u y-video psql
+  In postgres:
+    \d or \dt - show tables
+    SQL statements must end in ;
+
+Questions for Front-End:
+  Does content only belong to 1 collection? (probably yes)
+  What are files, and are we storing those in the DB, disk, or remotely?
+  How are you accessing react?
+  Which files are you storing/serving/accessing locally?
+  Difference between '/collections/{col_id}/content/{con_id}' and '/content/{id}'?
+  How are we handling authentication?
+
+Other Thoughts:
+  For DB, instead of lists, do many-to-many table with extra columns
+  User is now Account, Word is now TWord (keywords in postgres)
