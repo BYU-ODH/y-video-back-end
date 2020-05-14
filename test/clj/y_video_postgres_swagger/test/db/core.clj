@@ -68,3 +68,12 @@
              args)]
               (is (= 1 (count res)))
               (is (= (into args {:content_id (:content_id (get res 0))}) (db/get-content t-conn {:content_id (:content_id (get res 0))})))))))
+
+(deftest test-file
+ (jdbc/with-transaction [t-conn *db* {:rollback-only true}]
+   (let [args {:filepath "/usr/then/other/stuff" :mime "what even is this?" :metadata "so meta"}]
+   (let [res (db/add-file!
+             t-conn
+             args)]
+              (is (= 1 (count res)))
+              (is (= (into args {:file_id (:file_id (get res 0))}) (db/get-file t-conn {:file_id (:file_id (get res 0))})))))))
