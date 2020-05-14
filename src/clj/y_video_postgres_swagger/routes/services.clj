@@ -94,7 +94,7 @@
                          {:status 200
                           :body (db-access/add_collection id name published archived)})}}]]
 
-   ["/math"
+   (comment ["/math"
     {:swagger {:tags ["math"]}}
 
     ["/plus"
@@ -109,9 +109,9 @@
              :responses {200 {:body {:total pos-int?}}}
              :handler (fn [{{{:keys [x y]} :body} :parameters}]
                         {:status 200
-                         :body {:total (+ x y)}})}}]]
+                         :body {:total (+ x y)}})}}]])
 
-   ["/files"
+   (comment ["/files"
     {:swagger {:tags ["files"]}}
 
     ["/upload"
@@ -131,4 +131,4 @@
                         :headers {"Content-Type" "image/png"}
                         :body (-> "public/img/warning_clojure.png"
                                   (io/resource)
-                                  (io/input-stream))})}}]]])
+                                  (io/input-stream))})}}]])])
