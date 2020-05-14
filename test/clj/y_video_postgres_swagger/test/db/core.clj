@@ -74,3 +74,21 @@
                 :published published
                 :archived archived
                 } (db/get-collection t-conn {:collection_id (:collection_id (get res 0))})))))))
+
+(deftest test-course
+ (jdbc/with-transaction [t-conn *db* {:rollback-only true}]
+   (let [department "Russian" catalog_number "421" section_number "001"]
+   (let [res (db/add-course!
+             t-conn
+             {
+               :department department
+               :catalog_number catalog_number
+               :section_number section_number
+               })]
+              (is (= 1 (count res)))
+              (is (= {
+                :course_id (:course_id (get res 0))
+                :department department
+                :catalog_number catalog_number
+                :section_number section_number
+                } (db/get-course t-conn {:course_id (:course_id (get res 0))})))))))
