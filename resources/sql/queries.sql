@@ -1,4 +1,4 @@
-/* INSERT STATEMENTS */
+/* INSERT INTO BASE TABLES STATEMENTS */
 
 -- :name add-account! :<! :raw
 -- :doc creates a new account, returns account_id
@@ -42,7 +42,13 @@ INSERT INTO File
 VALUES (:filepath, :mime, :metadata)
 RETURNING file_id
 
+/* INSERT INTO MANY-TO-MANY TABLES STATEMENTS */
 
+-- :name add-account-collection! :! :n
+-- :doc connects account and collection, given account_id and collection_id
+INSERT INTO Account_Collection
+(account_id, collection_id, role)
+VALUES (:account_id, :collection_id, :role)
 
 /* SELECT BY ID STATEMENTS */
 
@@ -77,8 +83,17 @@ SELECT * FROM File
 WHERE file_id = :file_id
 
 
+/* SELECT FROM MANY-TO-MANY TABLES STATEMENTS */
 
-
+-- :name get-collections-by-account :? :*
+-- :doc retrieves all collections connected to given account
+SELECT c.*
+FROM Account as a
+INNER JOIN Account_Collection as ac
+  ON a.account_id = ac.account_id
+INNER JOIN Collection as c
+  ON ac.collection_id = c.collection_id
+WHERE a.account_id = :account_id
 
 /*-- :name create-user! :! :n
 -- :doc creates a new user record

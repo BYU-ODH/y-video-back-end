@@ -17,6 +17,8 @@
     (migrations/migrate ["migrate"] (select-keys env [:database-url]))
     (f)))
 
+; - - - - - - - - BASIC INSERT AND SELECT BY ID TESTS - - - - - - - - - - - -
+
 (deftest test-account
  (jdbc/with-transaction [t-conn *db* {:rollback-only true}]
    (let [args {:email "me@gmail.com" :lastlogin "sometime" :name "will" :role 0 :username "conquerer01"}]
@@ -77,3 +79,23 @@
              args)]
               (is (= 1 (count res)))
               (is (= (into args {:file_id (:file_id (get res 0))}) (db/get-file t-conn {:file_id (:file_id (get res 0))})))))))
+
+; - - - - - - - - - MANY-TO-MANY TABLE TESTS - - - - - - - - - - - - -
+
+(deftest test-account-collection
+ (jdbc/with-transaction [t-conn *db* {:rollback-only true}]
+   (let [account_args {:email "me@gmail.com" :lastlogin "sometime" :name "will" :role 0 :username "conquerer01"}
+         collection_args {:name "collection name!" :published false :archived false}
+         role 0]
+   (let [account_res (db/add-account! t-conn account_args)
+         collection_res (db/add-collection! t-conn collection_args)]
+              (is (= 1 (count account_res)))
+              (is (= 1 (count collection_res)))
+              (is (= (into account_args {:account_id (:account_id (get account_res 0))}) (db/get-account t-conn {:account_id (:account_id (get account_res 0))})))
+              (is (= (into collection_args {:collection_id (:collection_id (get collection_res 0))}) (db/get-collection t-conn {:collection_id (:collection_id (get collection_res 0))})))
+              (is (= 1 (db/add-account-collection! t-conn {:account_id (:account_id (get account_res 0))
+                                                           :collection_id (:collection_id (get collection_res 0))
+                                                           :role role})))
+              (is (= [(into collection_args {:collection_id (:collection_id (get collection_res 0))})]
+                     (db/get-collections-by-account t-conn {:account_id (:account_id (get account_res 0))})))
+              ))))
