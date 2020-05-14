@@ -92,3 +92,16 @@
                 :catalog_number catalog_number
                 :section_number section_number
                 } (db/get-course t-conn {:course_id (:course_id (get res 0))})))))))
+
+(deftest test-content
+ (jdbc/with-transaction [t-conn *db* {:rollback-only true}]
+   (let [args {:collection_id nil
+               :name "content name!" :type "text and stuff" :requester_email "notme@gmail.com"
+               :thumbnail "all thumbs" :copyrighted false :physical_copy_exists false
+               :full_video false :published false :date_validated "don't remember"
+               :metadata "so meta"}]
+   (let [res (db/add-content!
+             t-conn
+             args)]
+              (is (= 1 (count res)))
+              (is (= (into args {:content_id (:content_id (get res 0))}) (db/get-content t-conn {:content_id (:content_id (get res 0))})))))))
