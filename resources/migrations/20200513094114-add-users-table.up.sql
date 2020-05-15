@@ -32,7 +32,7 @@ CREATE TABLE Course (
 );
 --;;
 CREATE TABLE Content (
-  content_id TEXT PRIMARY KEY DEFAULT uuid_generate_v4 (),
+content_id TEXT PRIMARY KEY DEFAULT uuid_generate_v4 (),
   collection_id TEXT,
   name TEXT,
   type TEXT,

@@ -38,7 +38,7 @@
   (mount/stop #'y-video-postgres-swagger.db.core/*db*)
   (mount/start #'y-video-postgres-swagger.db.core/*db*)
   (binding [*ns* 'y-video-postgres-swagger.db.core]
-    (conman/bind-connection y-video-postgres-swagger.db.core/*db* "sql/selects.sql" "sql/inserts.sql" "sql/deletes.sql")))
+    (conman/bind-connection y-video-postgres-swagger.db.core/*db* "sql/selects.sql" "sql/inserts.sql" "sql/deletes.sql" "sql/updates.sql")))
 
 (defn reset-db
   "Resets database."

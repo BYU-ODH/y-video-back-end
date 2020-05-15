@@ -17,7 +17,7 @@
     (migrations/migrate ["migrate"] (select-keys env [:database-url]))
     (f)))
 
-; - - - - - - - - BASIC INSERT, SELECT BY ID, DELETE TESTS - - - - - - - - - - - -
+; - - - - - - - - BASIC INSERT, SELECT BY ID, DELETE TESTS - - - - - - -
 
 (deftest test-account
   (jdbc/with-transaction [t-conn *db* {:rollback-only true}]
@@ -106,7 +106,6 @@
       (is (= 1 (db/delete-file t-conn {:file_id (:file_id (get res 0))})))
       ; Check that file is deleted
       (is (= nil (db/get-file t-conn {:file_id (:file_id (get res 0))})))))))
-
 
 ; - - - - - - - - - MANY-TO-MANY TABLE TESTS - - - - - - - - - - - - -
 
@@ -250,6 +249,112 @@
             (is (= []
                    (db/get-files-by-content t-conn {:content_id (:content_id (get content_res 0))})))
             ))))
+
+; - - - - - - - - - - - UPDATE TESTS - - - - - - - - - - - - - - - - -
+
+(deftest test-account-update
+  (jdbc/with-transaction [t-conn *db* {:rollback-only true}]
+    (let [args_1 {:email "me@gmail.com" :lastlogin "sometime" :name "will" :role 0 :username "conquerer01"}
+          args_2 {:email "you@outlook.com" :lastlogin "just now" :name "matthew" :role 1 :username "daddy-o"}]
+    (let [res
+      ; Add account
+      (db/add-account! t-conn args_1)]
+      ; Check successful add and select
+      (is (= 1 (count res)))
+      (is (= (into args_1 {:account_id (:account_id (get res 0))}) (db/get-account t-conn {:account_id (:account_id (get res 0))})))
+      ; Update account
+      (is (= 1 (db/update-account t-conn (into args_2 {:account_id (:account_id (get res 0))}))))
+      ; Check successful update
+      (is (= (into args_2 {:account_id (:account_id (get res 0))}) (db/get-account t-conn {:account_id (:account_id (get res 0))})))
+      ))))
+
+(deftest test-tword-update
+  (jdbc/with-transaction [t-conn *db* {:rollback-only true}]
+    (let [args_1 {:account_id nil :tword "a word!" :src_lang "ru" :dest_lang "en"}
+          args_2 {:account_id nil :tword "another word!" :src_lang "es" :dest_lang "po"}]
+    (let [res
+      ; Add tword
+      (db/add-tword! t-conn args_1)]
+      ; Check successful add and select
+      (is (= 1 (count res)))
+      (is (= (into args_1 {:tword_id (:tword_id (get res 0))}) (db/get-tword t-conn {:tword_id (:tword_id (get res 0))})))
+      ; Update tword
+      (is (= 1 (db/update-tword t-conn (into args_2 {:tword_id (:tword_id (get res 0))}))))
+      ; Check successful update
+      (is (= (into args_2 {:tword_id (:tword_id (get res 0))}) (db/get-tword t-conn {:tword_id (:tword_id (get res 0))})))
+      ))))
+
+(deftest test-collection-update
+  (jdbc/with-transaction [t-conn *db* {:rollback-only true}]
+    (let [args_1 {:name "collection name!" :published false :archived false}
+          args_2 {:name "different name!" :published true :archived true}]
+    (let [res
+      ; Add collection
+      (db/add-collection! t-conn args_1)]
+      ; Check successful add and select
+      (is (= 1 (count res)))
+      (is (= (into args_1 {:collection_id (:collection_id (get res 0))}) (db/get-collection t-conn {:collection_id (:collection_id (get res 0))})))
+      ; Update collection
+      (is (= 1 (db/update-collection t-conn (into args_2 {:collection_id (:collection_id (get res 0))}))))
+      ; Check successful update
+      (is (= (into args_2 {:collection_id (:collection_id (get res 0))}) (db/get-collection t-conn {:collection_id (:collection_id (get res 0))})))
+      ))))
+
+(deftest test-course-update
+  (jdbc/with-transaction [t-conn *db* {:rollback-only true}]
+    (let [args_1 {:department "Russian" :catalog_number "421" :section_number "001"}
+          args_2 {:department "Computer Science" :catalog_number "260" :section_number "003"}]
+    (let [res
+      ; Add course
+      (db/add-course! t-conn args_1)]
+      ; Check successful add and select
+      (is (= 1 (count res)))
+      (is (= (into args_1 {:course_id (:course_id (get res 0))}) (db/get-course t-conn {:course_id (:course_id (get res 0))})))
+      ; Update course
+      (is (= 1 (db/update-course t-conn (into args_2 {:course_id (:course_id (get res 0))}))))
+      ; Check successful update
+      (is (= (into args_2 {:course_id (:course_id (get res 0))}) (db/get-course t-conn {:course_id (:course_id (get res 0))})))
+      ))))
+
+(deftest test-content-update
+  (jdbc/with-transaction [t-conn *db* {:rollback-only true}]
+    (let [args_1 {:collection_id nil
+                  :name "content name!" :type "text and stuff" :requester_email "notme@gmail.com"
+                  :thumbnail "all thumbs" :copyrighted false :physical_copy_exists false
+                  :full_video false :published false :date_validated "don't remember"
+                  :metadata "so meta"}
+          args_2 {:collection_id nil
+                  :name "different name!" :type "stringy things" :requester_email "notyou@yahoo.com"
+                  :thumbnail "just two thumbs" :copyrighted true :physical_copy_exists true
+                  :full_video true :published true :date_validated "not long ago"
+                  :metadata "like, really really meta"}]
+    (let [res
+      ; Add content
+      (db/add-content! t-conn args_1)]
+      ; Check successful add and select
+      (is (= 1 (count res)))
+      (is (= (into args_1 {:content_id (:content_id (get res 0))}) (db/get-content t-conn {:content_id (:content_id (get res 0))})))
+      ; Update content
+      (is (= 1 (db/update-content t-conn (into args_2 {:content_id (:content_id (get res 0))}))))
+      ; Check successful update
+      (is (= (into args_2 {:content_id (:content_id (get res 0))}) (db/get-content t-conn {:content_id (:content_id (get res 0))})))
+      ))))
+
+(deftest test-file-update
+  (jdbc/with-transaction [t-conn *db* {:rollback-only true}]
+    (let [args_1 {:filepath "/usr/then/other/stuff" :mime "what even is this?" :metadata "so meta"}
+          args_2 {:filepath "/usr/then/DETOUR!/other/stuff" :mime "still don't know what mime means" :metadata "even more and more meta"}]
+    (let [res
+      ; Add file
+      (db/add-file! t-conn args_1)]
+      ; Check successful add and select
+      (is (= 1 (count res)))
+      (is (= (into args_1 {:file_id (:file_id (get res 0))}) (db/get-file t-conn {:file_id (:file_id (get res 0))})))
+      ; Update file
+      (is (= 1 (db/update-file t-conn (into args_2 {:file_id (:file_id (get res 0))}))))
+      ; Check successful update
+      (is (= (into args_2 {:file_id (:file_id (get res 0))}) (db/get-file t-conn {:file_id (:file_id (get res 0))})))
+      ))))
 
 
 ; - - - - - - - - - - DELETE TESTS - - - - - - - - - - - - - - - - -
