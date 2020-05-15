@@ -78,7 +78,7 @@
       {:get {:summary "Retrieves collection info for all collections available to the current user_id"
              :description "Allowed Roles: admin, manager, professor, student"
              :parameters {:query {:user_id string?}}
-             :responses {200 {:body [{:collection_id string? :name string? :published boolean? :archived boolean?}]}
+             :responses {200 {:body {:collection_id string? :name string? :published boolean? :archived boolean?}}
                         404 {:body {:message string?}}}
              :handler (fn [{{{:keys [user_id]} :query} :parameters}]
                        (let [collection_result (db-access/get_collections user_id)]

@@ -1,0 +1,14 @@
+May 15, 2020
+
+Questions for Front-End:
+      Does content only belong to 1 collection? (probably yes)
+      What are files, and are we storing those in the DB, disk, or remotely?
+  How are you accessing react?
+  Which files are you storing/serving/accessing locally?
+  Difference between '/collections/{col_id}/content/{con_id}' and '/content/{id}'?
+  How are we handling authentication?
+  Does updating collections and content imply deleting relations not listed in request body?
+  How are we going to update collections, content, etc?
+
+Routes to add:
+ - admin?

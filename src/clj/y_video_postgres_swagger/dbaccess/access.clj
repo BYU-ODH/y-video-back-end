@@ -7,14 +7,14 @@
   "Retrieve all collections available to given user_id"
   [user_id]
   ;; {:collection_id "id" :name "name" :published false :archived false}
-  (db/get-collections-by-account {:account_id user_id}))
+  (db/get-collection {:collection_id user_id}))
 
 (defn add_collection
   "Add collection with given values"
   [id name published archived]
   (try
-    (def num_added (db/add-collection! {:id id :name name :published published :archived archived}))
-    {:message (str num_added " collection added")}
+    (def res (db/add-collection! {:id id :name name :published published :archived archived}))
+    {:message (str (count res) " collection added with id " (:collection_id (get res 0)))}
   (catch Exception e
     {:message (.getCause e)}
     )))
