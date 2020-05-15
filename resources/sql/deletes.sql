@@ -30,9 +30,7 @@ WHERE content_id = :content_id
 DELETE FROM File
 WHERE file_id = :file_id
 
-
-
-/* DELTE MANY-TO-MANY TABLE STATEMENTS */
+/* DELETE MANY-TO-MANY TABLE STATEMENTS */
 
 -- :name delete-account-collection :? :n
 -- :doc deletes connection between account and collection
