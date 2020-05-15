@@ -59,8 +59,8 @@ VALUES (:collection_id, :course_id)
 -- :name add-collection-content! :! :n
 -- :doc connects collection and content
 INSERT INTO Collection_Content
-(collection_id, content_id, allow_definitions, alllow_notes, allow_captions)
-VALUES (:collection_id, :content_id, :allow_definitions, :alllow_notes, :allow_captions)
+(collection_id, content_id, allow_definitions, allow_notes, allow_captions)
+VALUES (:collection_id, :content_id, :allow_definitions, :allow_notes, :allow_captions)
 
 -- :name add-content-file! :! :n
 -- :doc connects content and file
@@ -167,20 +167,20 @@ WHERE cll.collection_id = :collection_id
 -- :doc retreives all contents connected to given file
 SELECT cnt.*
 FROM Content as cnt
-INNER JOIN File_Content as fcnt
-  ON cnt.content_id = fcnt.content_id
+INNER JOIN Content_File as cntf
+  ON cnt.content_id = cntf.content_id
 INNER JOIN File as f
-  ON fcnt.file_id = f.file_id
+  ON cntf.file_id = f.file_id
 WHERE f.file_id = :file_id
 
 -- :name get-files-by-content :? :*
 -- :doc retreives all files connected to given content
 SELECT f.*
 FROM Content as cnt
-INNER JOIN File_Content as fcnt
-  ON cnt.content_id = fcnt.content_id
+INNER JOIN Content_File as cntf
+  ON cnt.content_id = cntf.content_id
 INNER JOIN File as f
-  ON fcnt.file_id = f.file_id
+  ON cntf.file_id = f.file_id
 WHERE cnt.content_id = :content_id
 
 /* UPDATE STATEMENTS */
@@ -207,6 +207,19 @@ AND collection_id = :collection_id
 DELETE FROM Collection_Course
 WHERE collection_id = :collection_id
 AND course_id = :course_id
+
+-- :name delete-collection-content :? :n
+-- :doc deletes connection between collection and content
+DELETE FROM Collection_Content
+WHERE collection_id = :collection_id
+AND content_id = :content_id
+
+-- :name delete-content-file :? :n
+-- :doc deletes connection between content and file
+DELETE FROM Content_File
+WHERE content_id = :content_id
+AND file_id = :file_id
+
 
 /*-- :name create-user! :! :n
 -- :doc creates a new user record

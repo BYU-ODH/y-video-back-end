@@ -116,6 +116,114 @@
                    (db/get-accounts-by-collection t-conn {:collection_id (:collection_id (get collection_res 0))})))
             ))))
 
+(deftest test-collection-course
+  ; Create a collection and course, connect them, test connection, delete connection, test connection again
+ (jdbc/with-transaction [t-conn *db* {:rollback-only true}]
+   (let [course_args {:department "Russian" :catalog_number "421" :section_number "001"}
+         collection_args {:name "collection name!" :published false :archived false}]
+   (let
+        ; Add course and collection
+        [course_res (db/add-course! t-conn course_args)
+         collection_res (db/add-collection! t-conn collection_args)]
+            ; Check successful adds
+            (is (= 1 (count course_res)))
+            (is (= 1 (count collection_res)))
+            (is (= (into course_args {:course_id (:course_id (get course_res 0))}) (db/get-course t-conn {:course_id (:course_id (get course_res 0))})))
+            (is (= (into collection_args {:collection_id (:collection_id (get collection_res 0))}) (db/get-collection t-conn {:collection_id (:collection_id (get collection_res 0))})))
+            ; Connect course and collection
+            (is (= 1 (db/add-collection-course! t-conn {:course_id (:course_id (get course_res 0))
+                                                         :collection_id (:collection_id (get collection_res 0))})))
+            ; Check both directions of connectedness
+            (is (= [(into collection_args {:collection_id (:collection_id (get collection_res 0))})]
+                   (db/get-collections-by-course t-conn {:course_id (:course_id (get course_res 0))})))
+            (is (= [(into course_args {:course_id (:course_id (get course_res 0))})]
+                   (db/get-courses-by-collection t-conn {:collection_id (:collection_id (get collection_res 0))})))
+            ; Delete connection between course and collection
+            (is (= 1 (db/delete-collection-course t-conn {:course_id (:course_id (get course_res 0))
+                                                         :collection_id (:collection_id (get collection_res 0))})))
+            ; Check connection was deleted from both directions
+            (is (= []
+                   (db/get-collections-by-course t-conn {:course_id (:course_id (get course_res 0))})))
+            (is (= []
+                   (db/get-courses-by-collection t-conn {:collection_id (:collection_id (get collection_res 0))})))
+            ))))
+
+(deftest test-collection-content
+  ; Create a collection and course, connect them, test connection, delete connection, test connection again
+ (jdbc/with-transaction [t-conn *db* {:rollback-only true}]
+   (let [content_args {:collection_id nil
+               :name "content name!" :type "text and stuff" :requester_email "notme@gmail.com"
+               :thumbnail "all thumbs" :copyrighted false :physical_copy_exists false
+               :full_video false :published false :date_validated "don't remember"
+               :metadata "so meta"}
+         collection_args {:name "collection name!" :published false :archived false}
+         extra_content_args {:allow_definitions false :allow_notes false :allow_captions false}]
+   (let
+        ; Add content and collection
+        [content_res (db/add-content! t-conn content_args)
+         collection_res (db/add-collection! t-conn collection_args)]
+            ; Check successful adds
+            (is (= 1 (count content_res)))
+            (is (= 1 (count collection_res)))
+            (is (= (into content_args {:content_id (:content_id (get content_res 0))}) (db/get-content t-conn {:content_id (:content_id (get content_res 0))})))
+            (is (= (into collection_args {:collection_id (:collection_id (get collection_res 0))}) (db/get-collection t-conn {:collection_id (:collection_id (get collection_res 0))})))
+            ; Connect content and collection
+            (is (= 1 (db/add-collection-content! t-conn (into {:content_id (:content_id (get content_res 0))
+                                                         :collection_id (:collection_id (get collection_res 0))}
+                                                         extra_content_args)
+                                                         )))
+            ; Check both directions of connectedness
+            (is (= [(into collection_args {:collection_id (:collection_id (get collection_res 0))})]
+                   (db/get-collections-by-content t-conn {:content_id (:content_id (get content_res 0))})))
+            (is (= [(into content_args {:content_id (:content_id (get content_res 0))})]
+                   (db/get-contents-by-collection t-conn {:collection_id (:collection_id (get collection_res 0))})))
+            ; Delete connection between content and collection
+            (is (= 1 (db/delete-collection-content t-conn {:content_id (:content_id (get content_res 0))
+                                                         :collection_id (:collection_id (get collection_res 0))})))
+            ; Check connection was deleted from both directions
+            (is (= []
+                   (db/get-collections-by-content t-conn {:content_id (:content_id (get content_res 0))})))
+            (is (= []
+                   (db/get-contents-by-collection t-conn {:collection_id (:collection_id (get collection_res 0))})))
+            ))))
+
+(deftest test-content-file
+  ; Create a content and file, connect them, test connection, delete connection, test connection again
+ (jdbc/with-transaction [t-conn *db* {:rollback-only true}]
+   (let [file_args {:filepath "/usr/then/other/stuff" :mime "what even is this?" :metadata "so meta"}
+         content_args {:collection_id nil
+                     :name "content name!" :type "text and stuff" :requester_email "notme@gmail.com"
+                     :thumbnail "all thumbs" :copyrighted false :physical_copy_exists false
+                     :full_video false :published false :date_validated "don't remember"
+                     :metadata "so meta"}]
+   (let
+        ; Add file and content
+        [file_res (db/add-file! t-conn file_args)
+         content_res (db/add-content! t-conn content_args)]
+            ; Check successful adds
+            (is (= 1 (count file_res)))
+            (is (= 1 (count content_res)))
+            (is (= (into file_args {:file_id (:file_id (get file_res 0))}) (db/get-file t-conn {:file_id (:file_id (get file_res 0))})))
+            (is (= (into content_args {:content_id (:content_id (get content_res 0))}) (db/get-content t-conn {:content_id (:content_id (get content_res 0))})))
+            ; Connect file and content
+            (is (= 1 (db/add-content-file! t-conn {:file_id (:file_id (get file_res 0))
+                                                         :content_id (:content_id (get content_res 0))})))
+            ; Check both directions of connectedness
+            (is (= [(into content_args {:content_id (:content_id (get content_res 0))})]
+                   (db/get-contents-by-file t-conn {:file_id (:file_id (get file_res 0))})))
+            (is (= [(into file_args {:file_id (:file_id (get file_res 0))})]
+                   (db/get-files-by-content t-conn {:content_id (:content_id (get content_res 0))})))
+            ; Delete connection between file and content
+            (is (= 1 (db/delete-content-file t-conn {:file_id (:file_id (get file_res 0))
+                                                         :content_id (:content_id (get content_res 0))})))
+            ; Check connection was deleted from both directions
+            (is (= []
+                   (db/get-contents-by-file t-conn {:file_id (:file_id (get file_res 0))})))
+            (is (= []
+                   (db/get-files-by-content t-conn {:content_id (:content_id (get content_res 0))})))
+            ))))
+
+
 ; - - - - - - - - - - DELETE TESTS - - - - - - - - - - - - - - - - -
 
 (deftest test-delete-collection
