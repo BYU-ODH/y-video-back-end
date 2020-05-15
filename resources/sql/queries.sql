@@ -45,17 +45,28 @@ RETURNING file_id
 /* INSERT INTO MANY-TO-MANY TABLES STATEMENTS */
 
 -- :name add-account-collection! :! :n
--- :doc connects account and collection, given account_id and collection_id
+-- :doc connects account and collection
 INSERT INTO Account_Collection
 (account_id, collection_id, role)
 VALUES (:account_id, :collection_id, :role)
 
 -- :name add-collection-course! :! :n
--- :doc connects collection and course, given collection_id and course_id
+-- :doc connects collection and course
 INSERT INTO Collection_Course
 (collection_id, course_id)
 VALUES (:collection_id, :course_id)
 
+-- :name add-collection-content! :! :n
+-- :doc connects collection and content
+INSERT INTO Collection_Content
+(collection_id, content_id, allow_definitions, alllow_notes, allow_captions)
+VALUES (:collection_id, :content_id, :allow_definitions, :alllow_notes, :allow_captions)
+
+-- :name add-content-file! :! :n
+-- :doc connects content and file
+INSERT INTO Content_File
+(content_id, file_id)
+VALUES (:content_id, :file_id)
 
 /* SELECT BY ID STATEMENTS */
 
@@ -132,6 +143,45 @@ INNER JOIN Collection as cll
   ON cllcrs.collection_id = cll.collection_id
 WHERE cll.collection_id = :collection_id
 
+-- :name get-collections-by-content :? :*
+-- :doc retreives all collections connected to given content
+SELECT cll.*
+FROM Content as cnt
+INNER JOIN Collection_Content as cllcnt
+  ON cnt.content_id = cllcnt.content_id
+INNER JOIN Collection as cll
+  ON cllcnt.collection_id = cll.collection_id
+WHERE cnt.content_id = :content_id
+
+-- :name get-contents-by-collection :? :*
+-- :doc retreives all contents connected to given collection
+SELECT cnt.*
+FROM Content as cnt
+INNER JOIN Collection_Content as cllcnt
+  ON cnt.content_id = cllcnt.content_id
+INNER JOIN Collection as cll
+  ON cllcnt.collection_id = cll.collection_id
+WHERE cll.collection_id = :collection_id
+
+-- :name get-contents-by-file :? :*
+-- :doc retreives all contents connected to given file
+SELECT cnt.*
+FROM Content as cnt
+INNER JOIN File_Content as fcnt
+  ON cnt.content_id = fcnt.content_id
+INNER JOIN File as f
+  ON fcnt.file_id = f.file_id
+WHERE f.file_id = :file_id
+
+-- :name get-files-by-content :? :*
+-- :doc retreives all files connected to given content
+SELECT f.*
+FROM Content as cnt
+INNER JOIN File_Content as fcnt
+  ON cnt.content_id = fcnt.content_id
+INNER JOIN File as f
+  ON fcnt.file_id = f.file_id
+WHERE cnt.content_id = :content_id
 
 /* UPDATE STATEMENTS */
 
