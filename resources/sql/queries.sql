@@ -95,6 +95,20 @@ INNER JOIN Collection as c
   ON ac.collection_id = c.collection_id
 WHERE a.account_id = :account_id
 
+
+
+/* UPDATE STATEMENTS */
+
+
+
+/* DELETE STATEMENTS */
+
+-- :name delete-collection :? :n
+-- :doc deletes collection with given collection_id
+DELETE FROM Collection
+WHERE collection_id = :collection_id
+
+
 /*-- :name create-user! :! :n
 -- :doc creates a new user record
 INSERT INTO users

@@ -99,3 +99,18 @@
               (is (= [(into collection_args {:collection_id (:collection_id (get collection_res 0))})]
                      (db/get-collections-by-account t-conn {:account_id (:account_id (get account_res 0))})))
               ))))
+
+; - - - - - - - - - - DELETE TESTS - - - - - - - - - - - - - - - - -
+
+(deftest test-delete-collection
+  (jdbc/with-transaction [t-conn *db* {:rollback-only true}]
+    (let [args {:name "collection name!" :published false :archived false}]
+    (let [res (db/add-collection!
+              t-conn
+              args)]
+               (is (= 1 (count res)))
+               (is (=
+                 (into args {:collection_id (:collection_id (get res 0))}) (db/get-collection t-conn {:collection_id (:collection_id (get res 0))})))
+               (is (= 1
+                 (db/delete-collection t-conn {:collection_id (:collection_id (get res 0))})))
+               (is (= nil (db/get-collection t-conn {:collection_id (:collection_id (get res 0))})))))))

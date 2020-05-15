@@ -3,11 +3,11 @@
 
 
 
-(defn get_collection
-  "Retrieve collection by given id"
-  [collection_id]
+(defn get_collections
+  "Retrieve all collections available to given user_id"
+  [user_id]
   ;; {:collection_id "id" :name "name" :published false :archived false}
-  (db/get-collection {:id collection_id}))
+  (db/get-collections-by-account {:account_id user_id}))
 
 (defn add_collection
   "Add collection with given values"

@@ -30,17 +30,19 @@
                  [ring-webjars "0.2.0"]
                  [ring/ring-core "1.8.0"]
                  [ring/ring-defaults "0.3.2"]
-                 [selmer "1.12.23"]]
+                 [selmer "1.12.23"]
+                 [clj-commons/clj-yaml "0.7.1"]
+                 [metosin/ring-swagger "0.26.2"]]
 
   :min-lein-version "2.0.0"
-  
+
   :source-paths ["src/clj"]
   :test-paths ["test/clj"]
   :resource-paths ["resources"]
   :target-path "target/%s/"
   :main ^:skip-aot y-video-postgres-swagger.core
 
-  :plugins [] 
+  :plugins []
 
   :profiles
   {:uberjar {:omit-source true
@@ -58,8 +60,8 @@
                                  [ring/ring-devel "1.8.0"]
                                  [ring/ring-mock "0.4.0"]]
                   :plugins      [[com.jakemccrary/lein-test-refresh "0.24.1"]
-                                 [jonase/eastwood "0.3.5"]] 
-                  
+                                 [jonase/eastwood "0.3.5"]]
+
                   :source-paths ["env/dev/clj" ]
                   :resource-paths ["env/dev/resources"]
                   :repl-options {:init-ns user

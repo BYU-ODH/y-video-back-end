@@ -24,6 +24,7 @@ Questions for Front-End:
   Which files are you storing/serving/accessing locally?
   Difference between '/collections/{col_id}/content/{con_id}' and '/content/{id}'?
   How are we handling authentication?
+  Does updating collections and content imply deleting relations not listed in request body?
 
 Other Thoughts:
   For DB, instead of lists, do many-to-many table with extra columns

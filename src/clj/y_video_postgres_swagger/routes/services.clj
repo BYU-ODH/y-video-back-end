@@ -75,17 +75,18 @@
     {:swagger {:tags ["collections"]}}
 
     [""
-      {:get {:summary "get collection by id"
-            :parameters {:query {:collection_id string?}}
-            :responses {200 {:body {:id string? :name string? :published boolean? :archived boolean?}}
+      {:get {:summary "Retrieves collection info for all collections available to the current user_id"
+             :description "Allowed Roles: admin, manager, professor, student"
+             :parameters {:query {:user_id string?}}
+             :responses {200 {:body [{:collection_id string? :name string? :published boolean? :archived boolean?}]}
                         404 {:body {:message string?}}}
-            :handler (fn [{{{:keys [collection_id]} :query} :parameters}]
-                       (let [collection_result (db-access/get_collection collection_id)]
+             :handler (fn [{{{:keys [user_id]} :query} :parameters}]
+                       (let [collection_result (db-access/get_collections user_id)]
                         (if (nil? collection_result)
                           {:status 404
                            :body {:message "requested collection not found"}}
                           {:status 200
-                           :body (db-access/get_collection collection_id)}
+                           :body collection_result}
                           )))}
        :post {:summary "add collection"
               :parameters {:body {:id string? :name string? :published boolean? :archived boolean?}}
