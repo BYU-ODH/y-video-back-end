@@ -105,12 +105,39 @@
 (deftest test-delete-collection
   (jdbc/with-transaction [t-conn *db* {:rollback-only true}]
     (let [args {:name "collection name!" :published false :archived false}]
-    (let [res (db/add-collection!
+    (let [res
+              ; Add collection to db
+              (db/add-collection!
               t-conn
               args)]
+              ; Check successful add
                (is (= 1 (count res)))
                (is (=
                  (into args {:collection_id (:collection_id (get res 0))}) (db/get-collection t-conn {:collection_id (:collection_id (get res 0))})))
+               ; Delete collection from db
                (is (= 1
                  (db/delete-collection t-conn {:collection_id (:collection_id (get res 0))})))
+               ; Check successful delete
                (is (= nil (db/get-collection t-conn {:collection_id (:collection_id (get res 0))})))))))
+
+(deftest test-delete-collection-with-course
+  (jdbc/with-transaction [t-conn *db* {:rollback-only true}]
+    (let [course_args {:department "Russian" :catalog_number "421" :section_number "001"}
+          collection_args {:name "collection name!" :published false :archived false}]
+    (let [course_res (db/add-course! t-conn course_args)
+          collection_res (db/add-collection! t-conn collection_args)]
+             ; Check successful course add
+             (is (= 1 (count course_res)))
+             (is (= 1 (count collection_res)))
+             ; Add collection-course connection
+             (is (= 1 (db/add-collection-course! t-conn {:collection_id (:collection_id (get collection_res 0))
+                                                         :course_id (:course_id (get course_res 0))})))
+             ; Delete collection
+             (is (= 1 (db/delete-collection t-conn {:collection_id (:collection_id (get collection_res 0))})))
+             ; Check that course is still there
+             (is (=
+                (into course_args {:course_id (:course_id (get course_res 0))})
+                (db/get-course t-conn {:course_id (:course_id (get course_res 0))})))
+             ; Check that collection no longer in course assoc_collections
+             (is (= 0 (count (db/get-collections-by-course t-conn {:course_id (:course_id (get course_res 0))}))))
+             ))))

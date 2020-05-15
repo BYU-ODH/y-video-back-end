@@ -50,6 +50,13 @@ INSERT INTO Account_Collection
 (account_id, collection_id, role)
 VALUES (:account_id, :collection_id, :role)
 
+-- :name add-collection-course! :! :n
+-- :doc connects collection and course, given collection_id and course_id
+INSERT INTO Collection_Course
+(collection_id, course_id)
+VALUES (:collection_id, :course_id)
+
+
 /* SELECT BY ID STATEMENTS */
 
 -- :name get-account :? :1
@@ -95,7 +102,15 @@ INNER JOIN Collection as c
   ON ac.collection_id = c.collection_id
 WHERE a.account_id = :account_id
 
-
+-- :name get-collections-by-course :? :*
+-- :doc retreives all collections connected to given course
+SELECT cll.*
+FROM Course as crs
+INNER JOIN Collection_Course as cllcrs
+  ON crs.course_id = cllcrs.course_id
+INNER JOIN Collection as cll
+  ON cllcrs.collection_id = cll.collection_id
+WHERE crs.course_id = :course_id
 
 /* UPDATE STATEMENTS */
 

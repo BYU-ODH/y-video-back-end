@@ -61,8 +61,8 @@ CREATE TABLE Account_Collection (
 );
 --;;
 CREATE TABLE Collection_Course (
-  collection_id TEXT REFERENCES Collection(collection_id),
-  course_id TEXT REFERENCES Course(course_id),
+  collection_id TEXT REFERENCES Collection(collection_id) ON DELETE CASCADE,
+  course_id TEXT REFERENCES Course(course_id) ON DELETE CASCADE,
   PRIMARY KEY (collection_id, course_id)
 );
 --;;
