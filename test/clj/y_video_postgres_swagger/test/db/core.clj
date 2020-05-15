@@ -83,22 +83,38 @@
 ; - - - - - - - - - MANY-TO-MANY TABLE TESTS - - - - - - - - - - - - -
 
 (deftest test-account-collection
+  ; Create an account and collection, connect them, test connection, delete connection, test connection again
  (jdbc/with-transaction [t-conn *db* {:rollback-only true}]
    (let [account_args {:email "me@gmail.com" :lastlogin "sometime" :name "will" :role 0 :username "conquerer01"}
          collection_args {:name "collection name!" :published false :archived false}
          role 0]
-   (let [account_res (db/add-account! t-conn account_args)
+   (let
+        ; Add account and collection
+        [account_res (db/add-account! t-conn account_args)
          collection_res (db/add-collection! t-conn collection_args)]
-              (is (= 1 (count account_res)))
-              (is (= 1 (count collection_res)))
-              (is (= (into account_args {:account_id (:account_id (get account_res 0))}) (db/get-account t-conn {:account_id (:account_id (get account_res 0))})))
-              (is (= (into collection_args {:collection_id (:collection_id (get collection_res 0))}) (db/get-collection t-conn {:collection_id (:collection_id (get collection_res 0))})))
-              (is (= 1 (db/add-account-collection! t-conn {:account_id (:account_id (get account_res 0))
-                                                           :collection_id (:collection_id (get collection_res 0))
-                                                           :role role})))
-              (is (= [(into collection_args {:collection_id (:collection_id (get collection_res 0))})]
-                     (db/get-collections-by-account t-conn {:account_id (:account_id (get account_res 0))})))
-              ))))
+            ; Check successful adds
+            (is (= 1 (count account_res)))
+            (is (= 1 (count collection_res)))
+            (is (= (into account_args {:account_id (:account_id (get account_res 0))}) (db/get-account t-conn {:account_id (:account_id (get account_res 0))})))
+            (is (= (into collection_args {:collection_id (:collection_id (get collection_res 0))}) (db/get-collection t-conn {:collection_id (:collection_id (get collection_res 0))})))
+            ; Connect account and collection
+            (is (= 1 (db/add-account-collection! t-conn {:account_id (:account_id (get account_res 0))
+                                                         :collection_id (:collection_id (get collection_res 0))
+                                                         :role role})))
+            ; Check both directions of connectedness
+            (is (= [(into collection_args {:collection_id (:collection_id (get collection_res 0))})]
+                   (db/get-collections-by-account t-conn {:account_id (:account_id (get account_res 0))})))
+            (is (= [(into account_args {:account_id (:account_id (get account_res 0))})]
+                   (db/get-accounts-by-collection t-conn {:collection_id (:collection_id (get collection_res 0))})))
+            ; Delete connection between account and collection
+            (is (= 1 (db/delete-account-collection t-conn {:account_id (:account_id (get account_res 0))
+                                                         :collection_id (:collection_id (get collection_res 0))})))
+            ; Check connection was deleted from both directions
+            (is (= []
+                   (db/get-collections-by-account t-conn {:account_id (:account_id (get account_res 0))})))
+            (is (= []
+                   (db/get-accounts-by-collection t-conn {:collection_id (:collection_id (get collection_res 0))})))
+            ))))
 
 ; - - - - - - - - - - DELETE TESTS - - - - - - - - - - - - - - - - -
 

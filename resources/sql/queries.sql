@@ -102,6 +102,16 @@ INNER JOIN Collection as c
   ON ac.collection_id = c.collection_id
 WHERE a.account_id = :account_id
 
+-- :name get-accounts-by-collection :? :*
+-- :doc retrieves all accounts connected to given collection
+SELECT a.*
+FROM Account as a
+INNER JOIN Account_Collection as ac
+  ON a.account_id = ac.account_id
+INNER JOIN Collection as c
+  ON ac.collection_id = c.collection_id
+WHERE c.collection_id = :collection_id
+
 -- :name get-collections-by-course :? :*
 -- :doc retreives all collections connected to given course
 SELECT cll.*
@@ -112,17 +122,41 @@ INNER JOIN Collection as cll
   ON cllcrs.collection_id = cll.collection_id
 WHERE crs.course_id = :course_id
 
+-- :name get-courses-by-collection :? :*
+-- :doc retreives all courses connected to given collection
+SELECT crs.*
+FROM Course as crs
+INNER JOIN Collection_Course as cllcrs
+  ON crs.course_id = cllcrs.course_id
+INNER JOIN Collection as cll
+  ON cllcrs.collection_id = cll.collection_id
+WHERE cll.collection_id = :collection_id
+
+
 /* UPDATE STATEMENTS */
 
 
 
-/* DELETE STATEMENTS */
+/* DELETE BASE TABLE STATEMENTS */
 
 -- :name delete-collection :? :n
 -- :doc deletes collection with given collection_id
 DELETE FROM Collection
 WHERE collection_id = :collection_id
 
+/* DELTE MANY-TO-MANY TABLE STATEMENTS */
+
+-- :name delete-account-collection :? :n
+-- :doc deletes connection between account and collection
+DELETE FROM Account_Collection
+WHERE account_id = :account_id
+AND collection_id = :collection_id
+
+-- :name delete-collection-course :? :n
+-- :doc deletes connection between collection and course
+DELETE FROM Collection_Course
+WHERE collection_id = :collection_id
+AND course_id = :course_id
 
 /*-- :name create-user! :! :n
 -- :doc creates a new user record
