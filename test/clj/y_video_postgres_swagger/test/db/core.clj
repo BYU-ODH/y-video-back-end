@@ -17,68 +17,96 @@
     (migrations/migrate ["migrate"] (select-keys env [:database-url]))
     (f)))
 
-; - - - - - - - - BASIC INSERT AND SELECT BY ID TESTS - - - - - - - - - - - -
+; - - - - - - - - BASIC INSERT, SELECT BY ID, DELETE TESTS - - - - - - - - - - - -
 
 (deftest test-account
- (jdbc/with-transaction [t-conn *db* {:rollback-only true}]
-   (let [args {:email "me@gmail.com" :lastlogin "sometime" :name "will" :role 0 :username "conquerer01"}]
-   (let [res (db/add-account!
-             t-conn
-             args)]
-              (is (= 1 (count res)))
-              (is (= (into args {:account_id (:account_id (get res 0))}) (db/get-account t-conn {:account_id (:account_id (get res 0))})))))))
+  (jdbc/with-transaction [t-conn *db* {:rollback-only true}]
+    (let [args {:email "me@gmail.com" :lastlogin "sometime" :name "will" :role 0 :username "conquerer01"}]
+    (let [res
+      ; Add account
+      (db/add-account! t-conn args)]
+      ; Check successful add and select
+      (is (= 1 (count res)))
+      (is (= (into args {:account_id (:account_id (get res 0))}) (db/get-account t-conn {:account_id (:account_id (get res 0))})))
+      ; Delete account
+      (is (= 1 (db/delete-account t-conn {:account_id (:account_id (get res 0))})))
+      ; Check that account is deleted
+      (is (= nil (db/get-account t-conn {:account_id (:account_id (get res 0))})))))))
 
 (deftest test-tword
- (jdbc/with-transaction [t-conn *db* {:rollback-only true}]
-   (let [args {:account_id nil :tword "a word!" :src_lang "ru" :dest_lang "en"}]
-   (let [res (db/add-tword!
-             t-conn
-             args)]
-              (is (= 1 (count res)))
-              (is (= (into args {:tword_id (:tword_id (get res 0))}) (db/get-tword t-conn {:tword_id (:tword_id (get res 0))})))))))
+  (jdbc/with-transaction [t-conn *db* {:rollback-only true}]
+    (let [args {:account_id nil :tword "a word!" :src_lang "ru" :dest_lang "en"}]
+    (let [res
+      ; Add tword
+      (db/add-tword! t-conn args)]
+      ; Check successful add and select
+      (is (= 1 (count res)))
+      (is (= (into args {:tword_id (:tword_id (get res 0))}) (db/get-tword t-conn {:tword_id (:tword_id (get res 0))})))
+      ; Delete tword
+      (is (= 1 (db/delete-tword t-conn {:tword_id (:tword_id (get res 0))})))
+      ; Check that tword is deleted
+      (is (= nil (db/get-tword t-conn {:tword_id (:tword_id (get res 0))})))))))
 
 (deftest test-collection
- (jdbc/with-transaction [t-conn *db* {:rollback-only true}]
-   (let [args {:name "collection name!" :published false :archived false}]
-   (let [res (db/add-collection!
-             t-conn
-             args)]
-              (is (= 1 (count res)))
-              (is (=
-                (into args {:collection_id (:collection_id (get res 0))}) (db/get-collection t-conn {:collection_id (:collection_id (get res 0))})))))))
+  (jdbc/with-transaction [t-conn *db* {:rollback-only true}]
+    (let [args {:name "collection name!" :published false :archived false}]
+    (let [res
+      ; Add collection
+      (db/add-collection! t-conn args)]
+      ; Check successful add and select
+      (is (= 1 (count res)))
+      (is (= (into args {:collection_id (:collection_id (get res 0))}) (db/get-collection t-conn {:collection_id (:collection_id (get res 0))})))
+      ; Delete collection
+      (is (= 1 (db/delete-collection t-conn {:collection_id (:collection_id (get res 0))})))
+      ; Check that collection is deleted
+      (is (= nil (db/get-collection t-conn {:collection_id (:collection_id (get res 0))})))))))
 
 (deftest test-course
- (jdbc/with-transaction [t-conn *db* {:rollback-only true}]
-   (let [args {:department "Russian" :catalog_number "421" :section_number "001"}]
-   (let [res (db/add-course!
-             t-conn
-             args)]
-              (is (= 1 (count res)))
-              (is (=
-                (into args {:course_id (:course_id (get res 0))})
-                (db/get-course t-conn {:course_id (:course_id (get res 0))})))))))
+  (jdbc/with-transaction [t-conn *db* {:rollback-only true}]
+    (let [args {:department "Russian" :catalog_number "421" :section_number "001"}]
+    (let [res
+      ; Add course
+      (db/add-course! t-conn args)]
+      ; Check successful add and select
+      (is (= 1 (count res)))
+      (is (= (into args {:course_id (:course_id (get res 0))}) (db/get-course t-conn {:course_id (:course_id (get res 0))})))
+      ; Delete course
+      (is (= 1 (db/delete-course t-conn {:course_id (:course_id (get res 0))})))
+      ; Check that course is deleted
+      (is (= nil (db/get-course t-conn {:course_id (:course_id (get res 0))})))))))
 
 (deftest test-content
- (jdbc/with-transaction [t-conn *db* {:rollback-only true}]
-   (let [args {:collection_id nil
-               :name "content name!" :type "text and stuff" :requester_email "notme@gmail.com"
-               :thumbnail "all thumbs" :copyrighted false :physical_copy_exists false
-               :full_video false :published false :date_validated "don't remember"
-               :metadata "so meta"}]
-   (let [res (db/add-content!
-             t-conn
-             args)]
-              (is (= 1 (count res)))
-              (is (= (into args {:content_id (:content_id (get res 0))}) (db/get-content t-conn {:content_id (:content_id (get res 0))})))))))
+  (jdbc/with-transaction [t-conn *db* {:rollback-only true}]
+    (let [args {:collection_id nil
+                :name "content name!" :type "text and stuff" :requester_email "notme@gmail.com"
+                :thumbnail "all thumbs" :copyrighted false :physical_copy_exists false
+                :full_video false :published false :date_validated "don't remember"
+                :metadata "so meta"}]
+    (let [res
+      ; Add content
+      (db/add-content! t-conn args)]
+      ; Check successful add and select
+      (is (= 1 (count res)))
+      (is (= (into args {:content_id (:content_id (get res 0))}) (db/get-content t-conn {:content_id (:content_id (get res 0))})))
+      ; Delete content
+      (is (= 1 (db/delete-content t-conn {:content_id (:content_id (get res 0))})))
+      ; Check that content is deleted
+      (is (= nil (db/get-content t-conn {:content_id (:content_id (get res 0))})))))))
 
 (deftest test-file
- (jdbc/with-transaction [t-conn *db* {:rollback-only true}]
-   (let [args {:filepath "/usr/then/other/stuff" :mime "what even is this?" :metadata "so meta"}]
-   (let [res (db/add-file!
-             t-conn
-             args)]
-              (is (= 1 (count res)))
-              (is (= (into args {:file_id (:file_id (get res 0))}) (db/get-file t-conn {:file_id (:file_id (get res 0))})))))))
+  (jdbc/with-transaction [t-conn *db* {:rollback-only true}]
+    (let [args {:filepath "/usr/then/other/stuff" :mime "what even is this?" :metadata "so meta"}]
+    (let [res
+      ; Add file
+      (db/add-file! t-conn args)]
+      ; Check successful add and select
+      (is (= 1 (count res)))
+      (is (= (into args {:file_id (:file_id (get res 0))}) (db/get-file t-conn {:file_id (:file_id (get res 0))})))
+      ; Delete file
+      (is (= 1 (db/delete-file t-conn {:file_id (:file_id (get res 0))})))
+      ; Check that file is deleted
+      (is (= nil (db/get-file t-conn {:file_id (:file_id (get res 0))})))))))
+
 
 ; - - - - - - - - - MANY-TO-MANY TABLE TESTS - - - - - - - - - - - - -
 
