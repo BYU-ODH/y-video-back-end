@@ -23,3 +23,9 @@
     {:message (str (count res) " collection added with id " (:collection_id (get res 0)))}
    (catch Exception e
      {:message (.getCause e)})))
+
+(defn get_user
+  "Retrieve collection with given id"
+  [user_id]
+  ;; {:collection_id "id" :name "name" :published false :archived false}
+  (db/get-account {:user_id user_id}))

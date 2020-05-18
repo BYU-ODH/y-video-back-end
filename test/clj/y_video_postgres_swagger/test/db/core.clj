@@ -27,25 +27,25 @@
            (db/add-account! t-conn args)]
        ; Check successful add and select
        (is (= 1 (count res)))
-       (is (= (into args {:account_id (:account_id (get res 0))}) (db/get-account t-conn {:account_id (:account_id (get res 0))})))
+       (is (= (into args {:user_id (:user_id (get res 0))}) (db/get-account t-conn {:user_id (:user_id (get res 0))})))
        ; Delete account
-       (is (= 1 (db/delete-account t-conn {:account_id (:account_id (get res 0))})))
+       (is (= 1 (db/delete-account t-conn {:user_id (:user_id (get res 0))})))
        ; Check that account is deleted
-       (is (= nil (db/get-account t-conn {:account_id (:account_id (get res 0))})))))))
+       (is (= nil (db/get-account t-conn {:user_id (:user_id (get res 0))})))))))
 
 (deftest test-tword
   (jdbc/with-transaction [t-conn *db* {:rollback-only true}]
-    (let [args {:account_id nil :tword "a word!" :src_lang "ru" :dest_lang "en"}]
+    (let [args {:user_id nil :tword "a word!" :src_lang "ru" :dest_lang "en"}]
      (let [res
        ; Add tword
            (db/add-tword! t-conn args)]
        ; Check successful add and select
        (is (= 1 (count res)))
-       (is (= (into args {:tword_id (:tword_id (get res 0))}) (db/get-tword t-conn {:tword_id (:tword_id (get res 0))})))
+       (is (= (into args {:word_id (:word_id (get res 0))}) (db/get-tword t-conn {:word_id (:word_id (get res 0))})))
        ; Delete tword
-       (is (= 1 (db/delete-tword t-conn {:tword_id (:tword_id (get res 0))})))
+       (is (= 1 (db/delete-tword t-conn {:word_id (:word_id (get res 0))})))
        ; Check that tword is deleted
-       (is (= nil (db/get-tword t-conn {:tword_id (:tword_id (get res 0))})))))))
+       (is (= nil (db/get-tword t-conn {:word_id (:word_id (get res 0))})))))))
 
 (deftest test-collection
   (jdbc/with-transaction [t-conn *db* {:rollback-only true}]
@@ -119,26 +119,26 @@
          ; Add account and collection
          [account_res (db/add-account! t-conn account_args)
           collection_res (db/add-collection! t-conn collection_args)]
-             ; Check successful adds
+          ; Check successful adds
          (is (= 1 (count account_res)))
          (is (= 1 (count collection_res)))
-         (is (= (into account_args {:account_id (:account_id (get account_res 0))}) (db/get-account t-conn {:account_id (:account_id (get account_res 0))})))
+         (is (= (into account_args {:user_id (:user_id (get account_res 0))}) (db/get-account t-conn {:user_id (:user_id (get account_res 0))})))
          (is (= (into collection_args {:collection_id (:collection_id (get collection_res 0))}) (db/get-collection t-conn {:collection_id (:collection_id (get collection_res 0))})))
             ; Connect account and collection
-         (is (= 1 (db/add-account-collection! t-conn {:account_id (:account_id (get account_res 0))
+         (is (= 1 (db/add-account-collection! t-conn {:user_id (:user_id (get account_res 0))
                                                       :collection_id (:collection_id (get collection_res 0))
                                                       :role role})))
             ; Check both directions of connectedness
          (is (= [(into collection_args {:collection_id (:collection_id (get collection_res 0))})]
-                (db/get-collections-by-account t-conn {:account_id (:account_id (get account_res 0))})))
-         (is (= [(into account_args {:account_id (:account_id (get account_res 0))})]
+                (db/get-collections-by-account t-conn {:user_id (:user_id (get account_res 0))})))
+         (is (= [(into account_args {:user_id (:user_id (get account_res 0))})]
                 (db/get-accounts-by-collection t-conn {:collection_id (:collection_id (get collection_res 0))})))
             ; Delete connection between account and collection
-         (is (= 1 (db/delete-account-collection t-conn {:account_id (:account_id (get account_res 0))
+         (is (= 1 (db/delete-account-collection t-conn {:user_id (:user_id (get account_res 0))
                                                         :collection_id (:collection_id (get collection_res 0))})))
             ; Check connection was deleted from both directions
          (is (= []
-                (db/get-collections-by-account t-conn {:account_id (:account_id (get account_res 0))})))
+                (db/get-collections-by-account t-conn {:user_id (:user_id (get account_res 0))})))
          (is (= []
                 (db/get-accounts-by-collection t-conn {:collection_id (:collection_id (get collection_res 0))})))))))
 
@@ -261,27 +261,27 @@
            (db/add-account! t-conn args_1)]
        ; Check successful add and select
        (is (= 1 (count res)))
-       (is (= (into args_1 {:account_id (:account_id (get res 0))}) (db/get-account t-conn {:account_id (:account_id (get res 0))})))
+       (is (= (into args_1 {:user_id (:user_id (get res 0))}) (db/get-account t-conn {:user_id (:user_id (get res 0))})))
        ; Update account
-       (is (= 1 (db/update-account t-conn (into args_2 {:account_id (:account_id (get res 0))}))))
+       (is (= 1 (db/update-account t-conn (into args_2 {:user_id (:user_id (get res 0))}))))
        ; Check successful update
-       (is (= (into args_2 {:account_id (:account_id (get res 0))}) (db/get-account t-conn {:account_id (:account_id (get res 0))})))))))
+       (is (= (into args_2 {:user_id (:user_id (get res 0))}) (db/get-account t-conn {:user_id (:user_id (get res 0))})))))))
 
 
 (deftest test-tword-update
   (jdbc/with-transaction [t-conn *db* {:rollback-only true}]
-    (let [args_1 {:account_id nil :tword "a word!" :src_lang "ru" :dest_lang "en"}
-          args_2 {:account_id nil :tword "another word!" :src_lang "es" :dest_lang "po"}]
+    (let [args_1 {:user_id nil :tword "a word!" :src_lang "ru" :dest_lang "en"}
+          args_2 {:user_id nil :tword "another word!" :src_lang "es" :dest_lang "po"}]
      (let [res
        ; Add tword
            (db/add-tword! t-conn args_1)]
        ; Check successful add and select
        (is (= 1 (count res)))
-       (is (= (into args_1 {:tword_id (:tword_id (get res 0))}) (db/get-tword t-conn {:tword_id (:tword_id (get res 0))})))
+       (is (= (into args_1 {:word_id (:word_id (get res 0))}) (db/get-tword t-conn {:word_id (:word_id (get res 0))})))
        ; Update tword
-       (is (= 1 (db/update-tword t-conn (into args_2 {:tword_id (:tword_id (get res 0))}))))
+       (is (= 1 (db/update-tword t-conn (into args_2 {:word_id (:word_id (get res 0))}))))
        ; Check successful update
-       (is (= (into args_2 {:tword_id (:tword_id (get res 0))}) (db/get-tword t-conn {:tword_id (:tword_id (get res 0))})))))))
+       (is (= (into args_2 {:word_id (:word_id (get res 0))}) (db/get-tword t-conn {:word_id (:word_id (get res 0))})))))))
 
 
 (deftest test-collection-update

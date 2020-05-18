@@ -99,7 +99,7 @@
                                      :body (db-access/add_collection id name published archived)})}}]]
    ["/collection"
     {:swagger {:tags ["collection"]}}
-    [""
+    ["/id"
      {:get {:summary "Retrieves the specified collection"
             :parameters {:query {:collection_id string?}}
             :responses {200 {:body {:collection_id string? :name string? :published boolean? :archived boolean?}}
@@ -121,7 +121,80 @@
                          :responses {200 {:body {:message string?}}}
                          :handler (fn [{{{:keys [id name published archived]} :body} :parameters}]
                                    {:status 200
+                                    :body (db-access/add_collection id name published archived)})}}]
+    ["/id/content"
+     {:get {:summary "Retrieves all the content for the specified collection"
+            :parameters {:query {:collection_id string?}}
+            :responses {200 {:body {:collection_id string? :name string? :published boolean? :archived boolean?}}
+                        404 {:body {:message string?}}}
+            :handler (fn [{{{:keys [collection_id]} :query} :parameters}]
+                      (let [collection_result (db-access/get_collections collection_id)]
+                       (if (nil? collection_result)
+                         {:status 404
+                          :body {:message "requested collection not found"}}
+                         {:status 200
+                          :body collection_result})))}
+
+      :post {:summary "Add a new content to the specified collection"
+             :parameters {:body {:id string? :name string? :published boolean? :archived boolean?
+                                 :assoc_courses [{:id string? :department string? :catalog_number string? :section_number string?}]
+                                 :assoc_user [{:id string? :role string?}]
+                                 :assoc_content [{:id string? :name string? :thumbnail string? :published boolean?
+                                                  :allow_definitions boolean? :allow_notes boolean? :allow_captions string?}]}}
+                         :responses {200 {:body {:message string?}}}
+                         :handler (fn [{{{:keys [id name published archived]} :body} :parameters}]
+                                   {:status 200
+                                    :body (db-access/add_collection id name published archived)})}}]
+    ["/id/content/id"
+     {:get {:summary "Retrieves the specified content"
+            :parameters {:query {:collection_id string?}}
+            :responses {200 {:body {:collection_id string? :name string? :published boolean? :archived boolean?}}
+                        404 {:body {:message string?}}}
+            :handler (fn [{{{:keys [collection_id]} :query} :parameters}]
+                      (let [collection_result (db-access/get_collections collection_id)]
+                       (if (nil? collection_result)
+                         {:status 404
+                          :body {:message "requested collection not found"}}
+                         {:status 200
+                          :body collection_result})))}
+
+      :post {:summary "Edits the specified content"
+             :parameters {:body {:id string? :name string? :published boolean? :archived boolean?
+                                 :assoc_courses [{:id string? :department string? :catalog_number string? :section_number string?}]
+                                 :assoc_user [{:id string? :role string?}]
+                                 :assoc_content [{:id string? :name string? :thumbnail string? :published boolean?
+                                                  :allow_definitions boolean? :allow_notes boolean? :allow_captions string?}]}}
+                         :responses {200 {:body {:message string?}}}
+                         :handler (fn [{{{:keys [id name published archived]} :body} :parameters}]
+                                   {:status 200
                                     :body (db-access/add_collection id name published archived)})}}]]
+
+   ["user"
+    {:swagger {:tags ["user"]}}
+    [""
+     {:get {:summary "Retrieves the current logged-in user"
+            :parameters {:query {:user_id string?}}
+            :responses {200 {:body {:user_id string? :email string? :lastlogin string? :name string? :role integer? :username string?}}
+                        404 {:body {:message string?}}}
+            :handler (fn [{{{:keys [user_id]} :query} :parameters}]
+                      (let [user_result (db-access/get_user user_id)]
+                       (if (nil? user_result)
+                         {:status 404
+                          :body {:message "requested user not found"}}
+                         {:status 200
+                          :body user_result})))}
+
+      :post {:summary "TEMPORARY - adds a new user"
+             :parameters {:body {:id string? :name string? :published boolean? :archived boolean?
+                                 :assoc_courses [{:id string? :department string? :catalog_number string? :section_number string?}]
+                                 :assoc_user [{:id string? :role string?}]
+                                 :assoc_content [{:id string? :name string? :thumbnail string? :published boolean?
+                                                  :allow_definitions boolean? :allow_notes boolean? :allow_captions string?}]}}
+                         :responses {200 {:body {:message string?}}}
+                         :handler (fn [{{{:keys [id name published archived]} :body} :parameters}]
+                                   {:status 200
+                                    :body (db-access/add_collection id name published archived)})}}]]
+
 
 
 

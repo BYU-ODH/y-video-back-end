@@ -1,18 +1,18 @@
 /* INSERT INTO BASE TABLES STATEMENTS */
 
 -- :name add-account! :<! :raw
--- :doc creates a new account, returns account_id
+-- :doc creates a new account, returns user_id
 INSERT INTO Account
 (email, lastlogin, name, role, username)
 VALUES (:email, :lastlogin, :name, :role, :username)
-RETURNING account_id
+RETURNING user_id
 
 -- :name add-tword! :<! :raw
--- :doc creates a new tword, returns tword_id
+-- :doc creates a new tword, returns word_id
 INSERT INTO TWord
-(account_id, tword, src_lang, dest_lang)
-VALUES (:account_id, :tword, :src_lang, :dest_lang)
-RETURNING tword_id
+(user_id, tword, src_lang, dest_lang)
+VALUES (:user_id, :tword, :src_lang, :dest_lang)
+RETURNING word_id
 
 -- :name add-collection! :<! :raw
 -- :doc creates a new collection, returns collection_id
@@ -31,8 +31,13 @@ RETURNING course_id
 -- :name add-content! :<! :raw
 -- :doc creates a new content, returns content_id
 INSERT INTO Content
-(collection_id, name, type, requester_email, thumbnail, copyrighted, physical_copy_exists, full_video, published, allow_definitions, allow_notes, allow_captions, date_validated, metadata)
-VALUES (:collection_id, :name, :type, :requester_email, :thumbnail, :copyrighted, :physical_copy_exists, :full_video, :published, :allow_definitions, :allow_notes, :allow_captions, :date_validated, :metadata)
+(collection_id, name, type, requester_email, thumbnail, copyrighted,
+  physical_copy_exists, full_video, published, allow_definitions,
+  allow_notes, allow_captions, date_validated, metadata)
+VALUES (:collection_id, :name, :type, :requester_email, :thumbnail,
+  :copyrighted, :physical_copy_exists, :full_video, :published,
+  :allow_definitions, :allow_notes, :allow_captions,
+  :date_validated, :metadata)
 RETURNING content_id
 
 -- :name add-file! :<! :raw
@@ -47,8 +52,8 @@ RETURNING file_id
 -- :name add-account-collection! :! :n
 -- :doc connects account and collection
 INSERT INTO Account_Collection
-(account_id, collection_id, role)
-VALUES (:account_id, :collection_id, :role)
+(user_id, collection_id, role)
+VALUES (:user_id, :collection_id, :role)
 
 -- :name add-collection-course! :! :n
 -- :doc connects collection and course

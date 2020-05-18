@@ -1,14 +1,14 @@
 /* SELECT BY ID STATEMENTS */
 
 -- :name get-account :? :1
--- :doc retrieves account with given account_id
+-- :doc retrieves account with given user_id
 SELECT * FROM Account
-WHERE account_id = :account_id
+WHERE user_id = :user_id
 
 -- :name get-tword :? :1
--- :doc retreives tword with given tword_id
+-- :doc retreives tword with given word_id
 SELECT * FROM TWord
-WHERE tword_id = :tword_id
+WHERE word_id = :word_id
 
 -- :name get-collection :? :1
 -- :doc retreives collection with given collection_id
@@ -38,17 +38,17 @@ WHERE file_id = :file_id
 SELECT c.*
 FROM Account as a
 INNER JOIN Account_Collection as ac
-  ON a.account_id = ac.account_id
+  ON a.user_id = ac.user_id
 INNER JOIN Collection as c
   ON ac.collection_id = c.collection_id
-WHERE a.account_id = :account_id
+WHERE a.user_id = :user_id
 
 -- :name get-accounts-by-collection :? :*
 -- :doc retrieves all accounts connected to given collection
 SELECT a.*
 FROM Account as a
 INNER JOIN Account_Collection as ac
-  ON a.account_id = ac.account_id
+  ON a.user_id = ac.user_id
 INNER JOIN Collection as c
   ON ac.collection_id = c.collection_id
 WHERE c.collection_id = :collection_id

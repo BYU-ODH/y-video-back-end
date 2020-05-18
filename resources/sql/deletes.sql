@@ -1,14 +1,14 @@
 /* DELETE BASE TABLE STATEMENTS */
 
 -- :name delete-account :? :n
--- :doc deletes account with given account_id
+-- :doc deletes account with given user_id
 DELETE FROM Account
-WHERE account_id = :account_id
+WHERE user_id = :user_id
 
 -- :name delete-tword :? :n
--- :doc deletes tword with given tword_id
+-- :doc deletes tword with given word_id
 DELETE FROM TWord
-WHERE tword_id = :tword_id
+WHERE word_id = :word_id
 
 -- :name delete-collection :? :n
 -- :doc deletes collection with given collection_id
@@ -35,7 +35,7 @@ WHERE file_id = :file_id
 -- :name delete-account-collection :? :n
 -- :doc deletes connection between account and collection
 DELETE FROM Account_Collection
-WHERE account_id = :account_id
+WHERE user_id = :user_id
 AND collection_id = :collection_id
 
 -- :name delete-collection-course :? :n

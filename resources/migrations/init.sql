@@ -12,7 +12,7 @@ DROP TABLE IF EXISTS File;
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 --;;
 CREATE TABLE Account (
-  account_id TEXT PRIMARY KEY DEFAULT uuid_generate_v4 (),
+  user_id TEXT PRIMARY KEY DEFAULT uuid_generate_v4 (),
   email TEXT UNIQUE,
   lastlogin TEXT,
   name TEXT,
@@ -21,8 +21,8 @@ CREATE TABLE Account (
 );
 --;;
 CREATE TABLE TWord (
-  tword_id TEXT PRIMARY KEY DEFAULT uuid_generate_v4 (),
-  account_id TEXT REFERENCES Account(account_id),
+  word_id TEXT PRIMARY KEY DEFAULT uuid_generate_v4 (),
+  user_id TEXT REFERENCES Account(user_id),
   tword TEXT,
   src_lang TEXT,
   dest_lang TEXT
@@ -68,10 +68,10 @@ CREATE TABLE File (
 );
 --;;
 CREATE TABLE Account_Collection (
-  account_id TEXT REFERENCES Account(account_id),
+  user_id TEXT REFERENCES Account(user_id),
   collection_id TEXT REFERENCES Collection(collection_id),
   role TEXT,
-  PRIMARY KEY (account_id, collection_id)
+  PRIMARY KEY (user_id, collection_id)
 );
 --;;
 CREATE TABLE Collection_Course (
