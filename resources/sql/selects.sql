@@ -73,25 +73,11 @@ INNER JOIN Collection as cll
   ON cllcrs.collection_id = cll.collection_id
 WHERE cll.collection_id = :collection_id
 
--- :name get-collections-by-content :? :*
--- :doc retreives all collections connected to given content
-SELECT cll.*
-FROM Content as cnt
-INNER JOIN Collection_Content as cllcnt
-  ON cnt.content_id = cllcnt.content_id
-INNER JOIN Collection as cll
-  ON cllcnt.collection_id = cll.collection_id
-WHERE cnt.content_id = :content_id
-
 -- :name get-contents-by-collection :? :*
--- :doc retreives all contents connected to given collection
-SELECT cnt.*
-FROM Content as cnt
-INNER JOIN Collection_Content as cllcnt
-  ON cnt.content_id = cllcnt.content_id
-INNER JOIN Collection as cll
-  ON cllcnt.collection_id = cll.collection_id
-WHERE cll.collection_id = :collection_id
+-- :doc retrieves all contents connected to given collection
+SELECT * FROM Content
+WHERE collection_id = :collection_id
+
 
 -- :name get-contents-by-file :? :*
 -- :doc retreives all contents connected to given file
