@@ -27,7 +27,13 @@ WHERE course_id = :course_id
 -- :name update-content :! :n
 -- :doc updates content
 UPDATE Content
-SET collection_id = :collection_id, name = :name, type = :type, requester_email = :requester_email, thumbnail = :thumbnail, copyrighted = :copyrighted, physical_copy_exists = :physical_copy_exists, full_video = :full_video, published = :published, date_validated = :date_validated, metadata = :metadata
+SET collection_id = :collection_id, name = :name, type = :type,
+requester_email = :requester_email, thumbnail = :thumbnail,
+copyrighted = :copyrighted, physical_copy_exists = :physical_copy_exists,
+full_video = :full_video, published = :published,
+allow_definitions = :allow_definitions, allow_notes = :allow_notes,
+allow_captions = :allow_captions, date_validated = :date_validated,
+metadata = :metadata
 WHERE content_id = :content_id
 
 -- :name update-file :! :n

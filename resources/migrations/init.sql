@@ -53,6 +53,9 @@ CREATE TABLE Content (
   physical_copy_exists BOOLEAN,
   full_video BOOLEAN,
   published BOOLEAN,
+  allow_definitions BOOLEAN,
+  allow_notes BOOLEAN,
+  allow_captions BOOLEAN,
   date_validated TEXT,
   metadata TEXT
 );
@@ -75,15 +78,6 @@ CREATE TABLE Collection_Course (
   collection_id TEXT REFERENCES Collection(collection_id),
   course_id TEXT REFERENCES Course(course_id),
   PRIMARY KEY (collection_id, course_id)
-);
---;;
-CREATE TABLE Collection_Content (
-  collection_id TEXT REFERENCES Collection(collection_id),
-  content_id TEXT REFERENCES Content(content_id),
-  allow_definitions BOOLEAN,
-  allow_notes BOOLEAN,
-  allow_captions BOOLEAN,
-  PRIMARY KEY (collection_id, content_id)
 );
 --;;
 CREATE TABLE Content_File (

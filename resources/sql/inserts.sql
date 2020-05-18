@@ -31,8 +31,8 @@ RETURNING course_id
 -- :name add-content! :<! :raw
 -- :doc creates a new content, returns content_id
 INSERT INTO Content
-(collection_id, name, type, requester_email, thumbnail, copyrighted, physical_copy_exists, full_video, published, date_validated, metadata)
-VALUES (:collection_id, :name, :type, :requester_email, :thumbnail, :copyrighted, :physical_copy_exists, :full_video, :published, :date_validated, :metadata)
+(collection_id, name, type, requester_email, thumbnail, copyrighted, physical_copy_exists, full_video, published, allow_definitions, allow_notes, allow_captions, date_validated, metadata)
+VALUES (:collection_id, :name, :type, :requester_email, :thumbnail, :copyrighted, :physical_copy_exists, :full_video, :published, :allow_definitions, :allow_notes, :allow_captions, :date_validated, :metadata)
 RETURNING content_id
 
 -- :name add-file! :<! :raw

@@ -1,3 +1,23 @@
+DROP TABLE IF EXISTS TWord;
+--;;
+DROP TABLE IF EXISTS Account_Collection;
+--;;
+DROP TABLE IF EXISTS Collection_Course;
+--;;
+DROP TABLE IF EXISTS Content_File;
+--;;
+DROP TABLE IF EXISTS Collection_Content;
+--;;
+DROP TABLE IF EXISTS Account;
+--;;
+DROP TABLE IF EXISTS Collection;
+--;;
+DROP TABLE IF EXISTS Course;
+--;;
+DROP TABLE IF EXISTS Content;
+--;;
+DROP TABLE IF EXISTS File;
+--;;
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 --;;
 CREATE TABLE Account (
@@ -32,7 +52,7 @@ CREATE TABLE Course (
 );
 --;;
 CREATE TABLE Content (
-content_id TEXT PRIMARY KEY DEFAULT uuid_generate_v4 (),
+  content_id TEXT PRIMARY KEY DEFAULT uuid_generate_v4 (),
   collection_id TEXT,
   name TEXT,
   type TEXT,
@@ -42,6 +62,9 @@ content_id TEXT PRIMARY KEY DEFAULT uuid_generate_v4 (),
   physical_copy_exists BOOLEAN,
   full_video BOOLEAN,
   published BOOLEAN,
+  allow_definitions BOOLEAN,
+  allow_notes BOOLEAN,
+  allow_captions BOOLEAN,
   date_validated TEXT,
   metadata TEXT
 );
@@ -61,18 +84,9 @@ CREATE TABLE Account_Collection (
 );
 --;;
 CREATE TABLE Collection_Course (
-  collection_id TEXT REFERENCES Collection(collection_id) ON DELETE CASCADE,
-  course_id TEXT REFERENCES Course(course_id) ON DELETE CASCADE,
-  PRIMARY KEY (collection_id, course_id)
-);
---;;
-CREATE TABLE Collection_Content (
   collection_id TEXT REFERENCES Collection(collection_id),
-  content_id TEXT REFERENCES Content(content_id),
-  allow_definitions BOOLEAN,
-  allow_notes BOOLEAN,
-  allow_captions BOOLEAN,
-  PRIMARY KEY (collection_id, content_id)
+  course_id TEXT REFERENCES Course(course_id),
+  PRIMARY KEY (collection_id, course_id)
 );
 --;;
 CREATE TABLE Content_File (

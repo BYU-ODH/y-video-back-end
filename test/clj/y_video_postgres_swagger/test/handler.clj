@@ -34,41 +34,41 @@
   (testing "services"
 
     (comment (testing "success"
-      (let [response ((app) (-> (request :post "/api/math/plus")
-                                (json-body {:x 10, :y 6})))]
-        (is (= 200 (:status response)))
-        (is (= {:total 16} (m/decode-response-body response))))))
+              (let [response ((app) (-> (request :post "/api/math/plus")
+                                        (json-body {:x 10, :y 6})))]
+                (is (= 200 (:status response)))
+                (is (= {:total 16} (m/decode-response-body response))))))
 
     (testing "echo"
       (let [test_string "hello there!"]
-      (let [response ((app) (-> (request :post "/api/echo")
-                                (json-body {:echo test_string})))]
-        (is (= 200 (:status response)))
-        (is (= {:echo test_string} (m/decode-response-body response))))))
+       (let [response ((app) (-> (request :post "/api/echo")
+                                 (json-body {:echo test_string})))]
+         (is (= 200 (:status response)))
+         (is (= {:echo test_string} (m/decode-response-body response))))))
 
     (comment (testing "collections"
-      (let [id "8675309" name "jenny" published false archived false]
-      (let [response ((app) (-> (request :post "/api/collections")
-                                (json-body {:id id, :name name, :published published, :archived published})))]
-        (is (= 200 (:status response)))
-        (is (= {:message "1 collection added"} (m/decode-response-body response)))))))
+              (let [id "8675309" name "jenny" published false archived false]
+               (let [response ((app) (-> (request :post "/api/collections")
+                                         (json-body {:id id, :name name, :published published, :archived published})))]
+                 (is (= 200 (:status response)))
+                 (is (= {:message "1 collection added"} (m/decode-response-body response)))))))
 
 
 
     (comment (testing "parameter coercion error"
-      (let [response ((app) (-> (request :post "/api/math/plus")
-                                (json-body {:x 10, :y "invalid"})))]
-        (is (= 400 (:status response))))))
+              (let [response ((app) (-> (request :post "/api/math/plus")
+                                        (json-body {:x 10, :y "invalid"})))]
+                (is (= 400 (:status response))))))
 
     (comment (testing "response coercion error"
-      (let [response ((app) (-> (request :post "/api/math/plus")
-                                (json-body {:x -10, :y 6})))]
-        (is (= 500 (:status response)))))
+              (let [response ((app) (-> (request :post "/api/math/plus")
+                                        (json-body {:x -10, :y 6})))]
+                (is (= 500 (:status response)))))
 
-    (testing "content negotiation"
-      (let [response ((app) (-> (request :post "/api/math/plus")
-                                (body (pr-str {:x 10, :y 6}))
-                                (content-type "application/edn")
-                                (header "accept" "application/transit+json")))]
-        (is (= 200 (:status response)))
-        (is (= {:total 16} (m/decode-response-body response))))))))
+     (testing "content negotiation"
+       (let [response ((app) (-> (request :post "/api/math/plus")
+                                 (body (pr-str {:x 10, :y 6}))
+                                 (content-type "application/edn")
+                                 (header "accept" "application/transit+json")))]
+         (is (= 200 (:status response)))
+         (is (= {:total 16} (m/decode-response-body response))))))))
