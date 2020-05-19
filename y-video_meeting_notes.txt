@@ -12,3 +12,11 @@ Questions for Front-End:
 
 Routes to add:
  - admin?
+
+
+New Questions:
+  How will you use the collections post? i.e. is that where you create courses,
+    users, content, or are they created prior via another route?
+
+Do you ever need to access a course by itself? (i.e. not in relation to a collection)
+  create, retrieve, update, and delete
