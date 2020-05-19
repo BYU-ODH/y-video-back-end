@@ -76,10 +76,20 @@
     [""
      {:post service-handlers/user-create}]
     ["/{id}"
-       {:get service-handlers/user-get-by-id
+     {:get service-handlers/user-get-by-id
+      :patch service-handlers/user-update
+      :delete service-handlers/user-delete}]
+    ["/{id}/collections"
+     {:get service-handlers/user-get-all-collections}]
+    ["/{id}/word"
+     {:post service-handlers/user-word-create}]
+    ["/{id}/word/{id}"
+     {:get service-handlers/user-word-get-by-id
+      :patch service-handlers/user-word-update
+      :delete service-handlers/user-word-delete}]
+    ["/{id}/words"
+     {:get service-handlers/user-get-all-words}]]
 
-        :patch service-handlers/user-update
-        :delete service-handlers/user-delete}]]
 
    ["/collections"
     {:swagger {:tags ["collections"]}}
@@ -93,13 +103,16 @@
      {:post service-handlers/collection-create}]
     ["/{id}"
      {:get service-handlers/collection-get-by-id
-
-
       :patch service-handlers/collection-update
       :delete service-handlers/collection-delete}]
-
+    ["/{id}/add-user"
+     {:post service-handlers/collection-add-user}]
     ["/{id}/content"
-     {:get service-handlers/collection-get-all-contents}]]
+     {:get service-handlers/collection-get-all-contents}]
+    ["/{id}/courses"
+     {:get service-handlers/collection-get-all-courses}]
+    ["/{id}/users"
+     {:get service-handlers/collection-get-all-users}]]
    [ "/course"
     {:swagger {:tags ["course"]}}
     [""
@@ -108,7 +121,9 @@
      {:get service-handlers/course-get-by-id
 
       :patch service-handlers/course-update
-      :delete service-handlers/course-delete}]]
+      :delete service-handlers/course-delete}]
+    ["/{id}/collections"
+     {:get service-handlers/course-get-all-collections}]]
 
    ["/content"
     {:swagger {:tags ["content"]}}
@@ -116,7 +131,31 @@
      {:post service-handlers/content-create}]
 
     ["/{id}"
-      {:get service-handlers/content-get-by-id
+     {:get service-handlers/content-get-by-id
+      :patch service-handlers/content-update
+      :delete service-handlers/content-delete}]
+    ["/{id}/connect-file"
+     {:post service-handlers/content-connect-file}]
+    ["/{id}/files"
+     {:post service-handlers/content-get-all-files}]]
 
-       :patch service-handlers/content-update
-       :delete service-handlers/content-delete}]]])
+   ["/file"
+    {:swagger {:tags ["file"]}}
+    [""
+     {:post service-handlers/file-create}]
+
+    ["/{id}"
+     {:get service-handlers/file-get-by-id
+      :patch service-handlers/file-update
+      :delete service-handlers/file-delete}]
+    ["/{id}/contents"
+     {:get service-handlers/file-get-all-contents}]]
+
+   ["/connect-collection-and-course"
+    {:swagger {:tags ["connect"]}}
+    [""
+     {:post service-handlers/connect-collection-and-course}]]
+   ["/search"
+    {:swagger {:tags ["search"]}}
+    [""
+     {:get service-handlers/search-by-term}]]])

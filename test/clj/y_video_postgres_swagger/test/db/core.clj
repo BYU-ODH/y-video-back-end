@@ -109,7 +109,7 @@
 
 ; - - - - - - - - - MANY-TO-MANY TABLE TESTS - - - - - - - - - - - - -
 
-(deftest test-account-collection
+(deftest test-account-collection-deleting-connection
   ; Create an account and collection, connect them, test connection, delete connection, test connection again
  (jdbc/with-transaction [t-conn *db* {:rollback-only true}]
    (let [account_args {:email "me@gmail.com" :lastlogin "sometime" :name "will" :role 0 :username "conquerer01"}
@@ -142,6 +142,53 @@
          (is (= []
                 (db/get-accounts-by-collection t-conn {:collection_id (:collection_id (get collection_res 0))})))))))
 
+(deftest test-account-collection-deleting-each
+  ; Create an account and collection, connect them, test connection, delete connection, test connection again
+ (jdbc/with-transaction [t-conn *db* {:rollback-only true}]
+   (let [account_args_one {:email "me@gmail.com" :lastlogin "sometime" :name "will" :role 0 :username "conquerer01"}
+         account_args_two {:email "you@gmail.com" :lastlogin "never" :name "matthew" :role 1 :username "trouble"}
+         collection_args {:name "collection name!" :published false :archived false}
+         role 0]
+    (let
+         ; Add account and collection
+         [account_res_one (db/add-account! t-conn account_args_one)
+          account_res_two (db/add-account! t-conn account_args_two)
+          collection_res (db/add-collection! t-conn collection_args)]
+          ; Check successful adds
+         (is (= 1 (count account_res_one)))
+         (is (= 1 (count account_res_two)))
+         (is (= 1 (count collection_res)))
+         (is (= (into account_args_one {:user_id (:user_id (get account_res_one 0))}) (db/get-account t-conn {:user_id (:user_id (get account_res_one 0))})))
+         (is (= (into account_args_two {:user_id (:user_id (get account_res_two 0))}) (db/get-account t-conn {:user_id (:user_id (get account_res_two 0))})))
+         (is (= (into collection_args {:collection_id (:collection_id (get collection_res 0))}) (db/get-collection t-conn {:collection_id (:collection_id (get collection_res 0))})))
+            ; Connect account and collection
+         (is (= 1 (db/add-account-collection! t-conn {:user_id (:user_id (get account_res_one 0))
+                                                      :collection_id (:collection_id (get collection_res 0))
+                                                      :role role})))
+            ; Check both directions of connectedness
+         (is (= [(into collection_args {:collection_id (:collection_id (get collection_res 0))})]
+                (db/get-collections-by-account t-conn {:user_id (:user_id (get account_res_one 0))})))
+         (is (= [(into account_args_one {:user_id (:user_id (get account_res_one 0))})]
+                (db/get-accounts-by-collection t-conn {:collection_id (:collection_id (get collection_res 0))})))
+            ; Delete account
+         (is (= 1 (db/delete-account t-conn {:user_id (:user_id (get account_res_one 0))})))
+            ; Check account and connection were deleted
+         (is (= nil
+                (db/get-account t-conn {:user_id (:user_id (get account_res_one 0))})))
+         (is (= []
+                (db/get-accounts-by-collection t-conn {:collection_id (:collection_id (get collection_res 0))})))
+            ; Check collection is still there
+         (is (= (into collection_args {:collection_id (:collection_id (get collection_res 0))}) (db/get-collection t-conn {:collection_id (:collection_id (get collection_res 0))})))
+            ; Connect collection to other account
+         (is (= 1 (db/add-account-collection! t-conn {:user_id (:user_id (get account_res_two 0))
+                                                      :collection_id (:collection_id (get collection_res 0))
+                                                      :role role})))
+         (is (= [(into collection_args {:collection_id (:collection_id (get collection_res 0))})]
+                (db/get-collections-by-account t-conn {:user_id (:user_id (get account_res_two 0))})))
+         (is (= [(into account_args_two {:user_id (:user_id (get account_res_two 0))})]
+                (db/get-accounts-by-collection t-conn {:collection_id (:collection_id (get collection_res 0))})))
+           ; Delete collection
+         (is (= 1 (db/delete-collection t-conn {:collection_id (:collection_id (get collection_res 0))})))))))
 
 (deftest test-collection-course
   ; Create a collection and course, connect them, test connection, delete connection, test connection again

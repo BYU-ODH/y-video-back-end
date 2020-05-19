@@ -77,8 +77,8 @@ CREATE TABLE File (
 );
 --;;
 CREATE TABLE Account_Collection (
-  user_id TEXT REFERENCES Account(user_id),
-  collection_id TEXT REFERENCES Collection(collection_id),
+  user_id TEXT REFERENCES Account(user_id) ON DELETE CASCADE,
+  collection_id TEXT REFERENCES Collection(collection_id) ON DELETE CASCADE,
   role TEXT,
   PRIMARY KEY (user_id, collection_id)
 );
