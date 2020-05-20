@@ -1,34 +1,34 @@
 /* SELECT BY ID STATEMENTS */
 
 -- :name get-account :? :1
--- :doc retrieves account with given user_id
+-- :doc retrieves account with given id
 SELECT * FROM Account
-WHERE user_id = :user_id
+WHERE id = :id
 
 -- :name get-tword :? :1
--- :doc retreives tword with given word_id
+-- :doc retreives tword with given id
 SELECT * FROM TWord
-WHERE word_id = :word_id
+WHERE id = :id
 
 -- :name get-collection :? :1
--- :doc retreives collection with given collection_id
+-- :doc retreives collection with given id
 SELECT * FROM Collection
-WHERE collection_id = :collection_id
+WHERE id = :id
 
 -- :name get-course :? :1
--- :doc retreives course with given course_id
+-- :doc retreives course with given id
 SELECT * FROM Course
-WHERE course_id = :course_id
+WHERE id = :id
 
 -- :name get-content :? :1
--- :doc retreives content with given content_id
+-- :doc retreives content with given id
 SELECT * FROM Content
-WHERE content_id = :content_id
+WHERE id = :id
 
 -- :name get-file :? :1
--- :doc retreives file with given file_id
+-- :doc retreives file with given id
 SELECT * FROM File
-WHERE file_id = :file_id
+WHERE id = :id
 
 
 /* SELECT FROM MANY-TO-MANY TABLES STATEMENTS */
@@ -38,45 +38,45 @@ WHERE file_id = :file_id
 SELECT c.*
 FROM Account as a
 INNER JOIN Account_Collection as ac
-  ON a.user_id = ac.user_id
+  ON a.id = ac.id
 INNER JOIN Collection as c
-  ON ac.collection_id = c.collection_id
-WHERE a.user_id = :user_id
+  ON ac.id = c.id
+WHERE a.id = :id
 
 -- :name get-accounts-by-collection :? :*
 -- :doc retrieves all accounts connected to given collection
 SELECT a.*
 FROM Account as a
 INNER JOIN Account_Collection as ac
-  ON a.user_id = ac.user_id
+  ON a.id = ac.id
 INNER JOIN Collection as c
-  ON ac.collection_id = c.collection_id
-WHERE c.collection_id = :collection_id
+  ON ac.id = c.id
+WHERE c.id = :id
 
 -- :name get-collections-by-course :? :*
 -- :doc retreives all collections connected to given course
 SELECT cll.*
 FROM Course as crs
 INNER JOIN Collection_Course as cllcrs
-  ON crs.course_id = cllcrs.course_id
+  ON crs.id = cllcrs.id
 INNER JOIN Collection as cll
-  ON cllcrs.collection_id = cll.collection_id
-WHERE crs.course_id = :course_id
+  ON cllcrs.id = cll.id
+WHERE crs.id = :id
 
 -- :name get-courses-by-collection :? :*
 -- :doc retreives all courses connected to given collection
 SELECT crs.*
 FROM Course as crs
 INNER JOIN Collection_Course as cllcrs
-  ON crs.course_id = cllcrs.course_id
+  ON crs.id = cllcrs.id
 INNER JOIN Collection as cll
-  ON cllcrs.collection_id = cll.collection_id
-WHERE cll.collection_id = :collection_id
+  ON cllcrs.id = cll.id
+WHERE cll.id = :id
 
 -- :name get-contents-by-collection :? :*
 -- :doc retrieves all contents connected to given collection
 SELECT * FROM Content
-WHERE collection_id = :collection_id
+WHERE id = :id
 
 
 -- :name get-contents-by-file :? :*
@@ -84,17 +84,17 @@ WHERE collection_id = :collection_id
 SELECT cnt.*
 FROM Content as cnt
 INNER JOIN Content_File as cntf
-  ON cnt.content_id = cntf.content_id
+  ON cnt.id = cntf.id
 INNER JOIN File as f
-  ON cntf.file_id = f.file_id
-WHERE f.file_id = :file_id
+  ON cntf.id = f.id
+WHERE f.id = :id
 
 -- :name get-files-by-content :? :*
 -- :doc retreives all files connected to given content
 SELECT f.*
 FROM Content as cnt
 INNER JOIN Content_File as cntf
-  ON cnt.content_id = cntf.content_id
+  ON cnt.id = cntf.id
 INNER JOIN File as f
-  ON cntf.file_id = f.file_id
-WHERE cnt.content_id = :content_id
+  ON cntf.id = f.id
+WHERE cnt.id = :id
