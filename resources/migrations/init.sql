@@ -57,6 +57,7 @@ CREATE TABLE Content (
   allow_notes BOOLEAN,
   allow_captions BOOLEAN,
   date_validated TEXT,
+  views INTEGER,
   metadata TEXT
 );
 --;;
