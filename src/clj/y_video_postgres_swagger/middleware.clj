@@ -10,8 +10,8 @@
     [muuntaja.middleware :refer [wrap-format wrap-params]]
     [y-video-postgres-swagger.config :refer [env]]
     [ring-ttl-session.core :refer [ttl-memory-store]]
-    [ring.middleware.defaults :refer [site-defaults wrap-defaults]])
-  )
+    [ring.middleware.defaults :refer [site-defaults wrap-defaults]]))
+
 
 (defn wrap-internal-error [handler]
   (fn [req]

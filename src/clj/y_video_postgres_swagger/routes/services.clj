@@ -91,7 +91,8 @@
    ["/user"
     {:swagger {:tags ["user"]}}
     [""
-     {:post service-handlers/user-create}]
+     {:post service-handlers/user-create
+      :get service-handlers/user-get-loggged-in}]
     ["/{id}"
      {:get service-handlers/user-get-by-id
       :patch service-handlers/user-update

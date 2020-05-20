@@ -44,11 +44,15 @@
 
 (defn get_user
   "Retrieve collection with given id"
-  [user_id]
-  (db/get-user {:user_id user_id}))
+  [id]
+  (db/get-user {:id id}))
 
 (defn associate_user_with_collection
   "Adds collection to user's assoc_collections"
   [user_id collection_id account_role]
   (db/add-user-collection! {:user_id user_id :collection_id collection_id
                                :account_role account_role}))
+(defn add_user
+  "Adds new user to database"
+  [user_without_id]
+  (str (:id (get (db/add-user! user_without_id) 0))))
