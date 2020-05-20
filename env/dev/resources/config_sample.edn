@@ -1,0 +1,21 @@
+;; env/dev/resources/config.edn
+{:dev true
+ :port 3030
+ :nrepl-port 7000
+ :y-video-back {:site-url "http://localhost:3030"
+           :db {:database-name "y-video-back"
+                :adapter "postgresql"
+                :auto-commit true
+                :register-mbeans false
+                :password "y-video-back"
+                :port-number 5432
+                :username "y-video-back"
+                :max-lifetime 1800000
+                :minimum-idle 10
+                :connection-timeout 30000
+                :server-name "localhost"
+                :read-only false
+                :maximum-pool-size 10
+                :idle-timeout 600000
+                :validation-timeout 5000
+                :pool-name "local-db-pool"}}}

@@ -1,0 +1,37 @@
+html, body {
+  background: #fff;
+}
+
+html .box, body .box {
+  border-style: solid;
+  border-width: 1px;
+  border-color: #000;
+}
+
+html .box h2, body .box h2 {
+  font-weight: 600;
+  font-size: 1.2em;
+}
+
+html #app, body #app {
+  color: #234343;
+}
+
+html #app .title, body #app .title {
+  color: #234343;
+}
+
+#nav .navbar-item.active {
+  font-weight: 600;
+  border-style: solid;
+  border-width: 2px;
+  pointer-events: none;
+}
+
+#modal {
+
+}
+
+#footer {
+
+}
