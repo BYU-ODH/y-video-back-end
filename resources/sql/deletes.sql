@@ -1,51 +1,51 @@
 /* DELETE BASE TABLE STATEMENTS */
 
--- :name delete-account :? :n
--- :doc deletes account with given id
-DELETE FROM Account
+-- :name delete-user :? :n
+-- :doc deletes user with given id
+DELETE FROM users
 WHERE id = :id
 
--- :name delete-tword :? :n
--- :doc deletes tword with given id
-DELETE FROM TWord
+-- :name delete-word :? :n
+-- :doc deletes word with given id
+DELETE FROM words
 WHERE id = :id
 
 -- :name delete-collection :? :n
 -- :doc deletes collection with given id
-DELETE FROM Collection
+DELETE FROM collections
 WHERE id = :id
 
 -- :name delete-course :? :n
 -- :doc deletes course with given id
-DELETE FROM Course
+DELETE FROM courses
 WHERE id = :id
 
 -- :name delete-content :? :n
 -- :doc deletes content with given id
-DELETE FROM Content
+DELETE FROM contents
 WHERE id = :id
 
 -- :name delete-file :? :n
 -- :doc deletes file with given id
-DELETE FROM File
+DELETE FROM files
 WHERE id = :id
 
 /* DELETE MANY-TO-MANY TABLE STATEMENTS */
 
--- :name delete-account-collection :? :n
--- :doc deletes connection between account and collection
-DELETE FROM Account_Collection
-WHERE account_id = :account_id
+-- :name delete-user-collection :? :n
+-- :doc deletes connection between user and collection
+DELETE FROM user_collections
+WHERE user_id = :user_id
 AND collection_id = :collection_id
 
 -- :name delete-collection-course :? :n
 -- :doc deletes connection between collection and course
-DELETE FROM Collection_Course
+DELETE FROM collection_courses
 WHERE collection_id = :collection_id
 AND course_id = :course_id
 
 -- :name delete-content-file :? :n
 -- :doc deletes connection between content and file
-DELETE FROM Content_File
+DELETE FROM content_files
 WHERE content_id = :content_id
 AND file_id = :file_id

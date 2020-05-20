@@ -1,35 +1,35 @@
 /* UPDATE STATEMENTS */
 
--- :name update-account :! :n
--- :doc updates account
-UPDATE Account
-SET email = :email, lastlogin = :lastlogin, name = :name, role = :role,
+-- :name update-user :! :n
+-- :doc updates user
+UPDATE users
+SET email = :email, last_login = :last_login, account_name = :account_name, account_role = :account_role,
 username = :username
 WHERE id = :id
 
--- :name update-tword :! :n
--- :doc updates tword
-UPDATE TWord
-SET tword = :tword, src_lang = :src_lang, dest_lang = :dest_lang
+-- :name update-word :! :n
+-- :doc updates word
+UPDATE words
+SET word = :word, src_lang = :src_lang, dest_lang = :dest_lang
 WHERE id = :id
 
 -- :name update-collection :! :n
 -- :doc updates collection
-UPDATE Collection
-SET name = :name, published = :published, archived = :archived
+UPDATE collections
+SET collection_name = :collection_name, published = :published, archived = :archived
 WHERE id = :id
 
 -- :name update-course :! :n
 -- :doc updates course
-UPDATE Course
+UPDATE courses
 SET department = :department, catalog_number = :catalog_number,
 section_number = :section_number
 WHERE id = :id
 
 -- :name update-content :! :n
 -- :doc updates content
-UPDATE Content
-SET id = :id, name = :name, type = :type,
+UPDATE contents
+SET id = :id, content_name = :content_name, content_type = :content_type,
   requester_email = :requester_email, thumbnail = :thumbnail,
   copyrighted = :copyrighted, physical_copy_exists = :physical_copy_exists,
   full_video = :full_video, published = :published,
@@ -40,6 +40,6 @@ WHERE id = :id
 
 -- :name update-file :! :n
 -- :doc updates file
-UPDATE File
+UPDATE files
 SET filepath = :filepath, mime = :mime, metadata = :metadata
 WHERE id = :id

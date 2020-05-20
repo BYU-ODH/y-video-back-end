@@ -19,41 +19,41 @@
 
 ; - - - - - - - - BASIC INSERT, SELECT BY ID, DELETE TESTS - - - - - - -
 
-(deftest test-account
+(deftest test-user
   (jdbc/with-transaction [t-conn *db* {:rollback-only true}]
-    (let [args {:email "me@gmail.com" :lastlogin "sometime" :name "will" :role 0 :username "conquerer01"}]
+    (let [args {:email "me@gmail.com" :last_login "sometime" :account_name "will" :account_role 0 :username "conquerer01"}]
      (let [res
-       ; Add account
-           (db/add-account! t-conn args)]
+       ; Add user
+           (db/add-user! t-conn args)]
        ; Check successful add and select
        (is (= 1 (count res)))
-       (is (= (into args {:id (:id (get res 0))}) (db/get-account t-conn {:id (:id (get res 0))})))
-       ; Delete account
-       (is (= 1 (db/delete-account t-conn {:id (:id (get res 0))})))
-       ; Check that account is deleted
-       (is (= nil (db/get-account t-conn {:id (:id (get res 0))})))))))
+       (is (= (into args {:id (:id (get res 0))}) (db/get-user t-conn {:id (:id (get res 0))})))
+       ; Delete user
+       (is (= 1 (db/delete-user t-conn {:id (:id (get res 0))})))
+       ; Check that user is deleted
+       (is (= nil (db/get-user t-conn {:id (:id (get res 0))})))))))
 
-(deftest test-tword
+(deftest test-word
   (jdbc/with-transaction [t-conn *db* {:rollback-only true}]
-    (let [account_args {:email "me@gmail.com" :lastlogin "sometime" :name "will" :role 0 :username "conquerer01"}
-          tword_args {:tword "a word!" :src_lang "ru" :dest_lang "en"}]
+    (let [user_args {:email "me@gmail.com" :last_login "sometime" :account_name "will" :account_role 0 :username "conquerer01"}
+          word_args {:word "a word!" :src_lang "ru" :dest_lang "en"}]
      (let [
-       ; Add tword and account
-           account_res (db/add-account! t-conn account_args)
-           tword_res (db/add-tword! t-conn (into tword_args {:account_id (:id (get account_res 0))}))]
+       ; Add word and user
+           user_res (db/add-user! t-conn user_args)
+           word_res (db/add-word! t-conn (into word_args {:user_id (:id (get user_res 0))}))]
        ; Check successful add and select
-       (is (= 1 (count tword_res)))
-       (is (= (into tword_args {:id (:id (get tword_res 0))
-                                :account_id (:id (get account_res 0))})
-              (db/get-tword t-conn {:id (:id (get tword_res 0))})))
-       ; Delete tword
-       (is (= 1 (db/delete-tword t-conn {:id (:id (get tword_res 0))})))
-       ; Check that tword is deleted
-       (is (= nil (db/get-tword t-conn {:id (:id (get tword_res 0))})))))))
+       (is (= 1 (count word_res)))
+       (is (= (into word_args {:id (:id (get word_res 0))
+                                :user_id (:id (get user_res 0))})
+              (db/get-word t-conn {:id (:id (get word_res 0))})))
+       ; Delete word
+       (is (= 1 (db/delete-word t-conn {:id (:id (get word_res 0))})))
+       ; Check that word is deleted
+       (is (= nil (db/get-word t-conn {:id (:id (get word_res 0))})))))))
 
 (deftest test-collection
   (jdbc/with-transaction [t-conn *db* {:rollback-only true}]
-    (let [args {:name "collection name!" :published false :archived false}]
+    (let [args {:collection_name "collection name!" :published false :archived false}]
      (let [res
        ; Add collection
            (db/add-collection! t-conn args)]
@@ -82,7 +82,7 @@
 (deftest test-content
   (jdbc/with-transaction [t-conn *db* {:rollback-only true}]
     (let [args {:collection_id nil
-                :name "content name!" :type "text and stuff" :requester_email "notme@gmail.com"
+                :content_name "content name!" :content_type "text and stuff" :requester_email "notme@gmail.com"
                 :thumbnail "all thumbs" :copyrighted false :physical_copy_exists false
                 :full_video false :published false :allow_definitions false :allow_notes false
                 :allow_captions false :date_validated "don't remember"
@@ -114,95 +114,95 @@
 
 ; - - - - - - - - - MANY-TO-MANY TABLE TESTS - - - - - - - - - - - - -
 
-(deftest test-account-collection-deleting-connection
-  ; Create an account and collection, connect them, test connection, delete connection, test connection again
+(deftest test-user-collection-deleting-connection
+  ; Create an user and collection, connect them, test connection, delete connection, test connection again
  (jdbc/with-transaction [t-conn *db* {:rollback-only true}]
-   (let [account_args {:email "me@gmail.com" :lastlogin "sometime" :name "will" :role 0 :username "conquerer01"}
-         collection_args {:name "collection name!" :published false :archived false}
-         role 0]
+   (let [user_args {:email "me@gmail.com" :last_login "sometime" :account_name "will" :account_role 0 :username "conquerer01"}
+         collection_args {:collection_name "collection name!" :published false :archived false}
+         account_role 0]
     (let
-         ; Add account and collection
-         [account_res (db/add-account! t-conn account_args)
+         ; Add user and collection
+         [user_res (db/add-user! t-conn user_args)
           collection_res (db/add-collection! t-conn collection_args)]
           ; Check successful adds
-         (is (= 1 (count account_res)))
+         (is (= 1 (count user_res)))
          (is (= 1 (count collection_res)))
-         (is (= (into account_args {:id (:id (get account_res 0))}) (db/get-account t-conn {:id (:id (get account_res 0))})))
+         (is (= (into user_args {:id (:id (get user_res 0))}) (db/get-user t-conn {:id (:id (get user_res 0))})))
          (is (= (into collection_args {:id (:id (get collection_res 0))}) (db/get-collection t-conn {:id (:id (get collection_res 0))})))
-            ; Connect account and collection
-         (is (= 1 (db/add-account-collection! t-conn {:account_id (:id (get account_res 0))
+            ; Connect user and collection
+         (is (= 1 (db/add-user-collection! t-conn {:user_id (:id (get user_res 0))
                                                       :collection_id (:id (get collection_res 0))
-                                                      :role role})))
+                                                      :account_role account_role})))
             ; Check both directions of connectedness
          (is (= [(into collection_args {:id (:id (get collection_res 0))})]
-                (db/get-collections-by-account t-conn {:id (:id (get account_res 0))})))
-         (is (= [(into account_args {:id (:id (get account_res 0))})]
-                (db/get-accounts-by-collection t-conn {:id (:id (get collection_res 0))})))
-            ; Delete connection between account and collection
-         (is (= 1 (db/delete-account-collection t-conn {:account_id (:id (get account_res 0))
+                (db/get-collections-by-user t-conn {:id (:id (get user_res 0))})))
+         (is (= [(into user_args {:id (:id (get user_res 0))})]
+                (db/get-users-by-collection t-conn {:id (:id (get collection_res 0))})))
+            ; Delete connection between user and collection
+         (is (= 1 (db/delete-user-collection t-conn {:user_id (:id (get user_res 0))
                                                         :collection_id (:id (get collection_res 0))})))
             ; Check connection was deleted from both directions
          (is (= []
-                (db/get-collections-by-account t-conn {:id (:id (get account_res 0))})))
+                (db/get-collections-by-user t-conn {:id (:id (get user_res 0))})))
          (is (= []
-                (db/get-accounts-by-collection t-conn {:id (:id (get collection_res 0))})))))))
+                (db/get-users-by-collection t-conn {:id (:id (get collection_res 0))})))))))
 
-(deftest test-account-collection-deleting-each
-  ; Create an account and collection, connect them, test connection, delete connection, test connection again
+(deftest test-user-collection-deleting-each
+  ; Create an user and collection, connect them, test connection, delete connection, test connection again
  (jdbc/with-transaction [t-conn *db* {:rollback-only true}]
-   (let [account_args_one {:email "me@gmail.com" :lastlogin "sometime" :name "will" :role 0 :username "conquerer01"}
-         account_args_two {:email "you@gmail.com" :lastlogin "never" :name "matthew" :role 1 :username "trouble"}
-         collection_args {:name "collection name!" :published false :archived false}
-         role 0]
+   (let [user_args_one {:email "me@gmail.com" :last_login "sometime" :account_name "will" :account_role 0 :username "conquerer01"}
+         user_args_two {:email "you@gmail.com" :last_login "never" :account_name "matthew" :account_role 1 :username "trouble"}
+         collection_args {:collection_name "collection name!" :published false :archived false}
+         account_role 0]
     (let
-         ; Add account and collection
-         [account_res_one (db/add-account! t-conn account_args_one)
-          account_res_two (db/add-account! t-conn account_args_two)
+         ; Add user and collection
+         [user_res_one (db/add-user! t-conn user_args_one)
+          user_res_two (db/add-user! t-conn user_args_two)
           collection_res (db/add-collection! t-conn collection_args)]
           ; Check successful adds
-         (is (= 1 (count account_res_one)))
-         (is (= 1 (count account_res_two)))
+         (is (= 1 (count user_res_one)))
+         (is (= 1 (count user_res_two)))
          (is (= 1 (count collection_res)))
-         (is (= (into account_args_one {:id (:id (get account_res_one 0))}) (db/get-account t-conn {:id (:id (get account_res_one 0))})))
-         (is (= (into account_args_two {:id (:id (get account_res_two 0))}) (db/get-account t-conn {:id (:id (get account_res_two 0))})))
+         (is (= (into user_args_one {:id (:id (get user_res_one 0))}) (db/get-user t-conn {:id (:id (get user_res_one 0))})))
+         (is (= (into user_args_two {:id (:id (get user_res_two 0))}) (db/get-user t-conn {:id (:id (get user_res_two 0))})))
          (is (= (into collection_args {:id (:id (get collection_res 0))}) (db/get-collection t-conn {:id (:id (get collection_res 0))})))
-            ; Connect account and collection
-         (is (= 1 (db/add-account-collection! t-conn {:account_id (:id (get account_res_one 0))
+            ; Connect user and collection
+         (is (= 1 (db/add-user-collection! t-conn {:user_id (:id (get user_res_one 0))
                                                       :collection_id (:id (get collection_res 0))
-                                                      :role role})))
+                                                      :account_role account_role})))
             ; Check both directions of connectedness
          (is (= [(into collection_args {:id (:id (get collection_res 0))})]
-                (db/get-collections-by-account t-conn {:id (:id (get account_res_one 0))})))
-         (is (= [(into account_args_one {:id (:id (get account_res_one 0))})]
-                (db/get-accounts-by-collection t-conn {:id (:id (get collection_res 0))})))
-            ; Delete account
-         (is (= 1 (db/delete-account t-conn {:id (:id (get account_res_one 0))})))
-            ; Check account and connection were deleted
+                (db/get-collections-by-user t-conn {:id (:id (get user_res_one 0))})))
+         (is (= [(into user_args_one {:id (:id (get user_res_one 0))})]
+                (db/get-users-by-collection t-conn {:id (:id (get collection_res 0))})))
+            ; Delete user
+         (is (= 1 (db/delete-user t-conn {:id (:id (get user_res_one 0))})))
+            ; Check user and connection were deleted
          (is (= nil
-                (db/get-account t-conn {:id (:id (get account_res_one 0))})))
+                (db/get-user t-conn {:id (:id (get user_res_one 0))})))
          (is (= []
-                (db/get-accounts-by-collection t-conn {:id (:id (get collection_res 0))})))
+                (db/get-users-by-collection t-conn {:id (:id (get collection_res 0))})))
             ; Check collection is still there
          (is (= (into collection_args {:id (:id (get collection_res 0))}) (db/get-collection t-conn {:id (:id (get collection_res 0))})))
-            ; Connect collection to other account
-         (is (= 1 (db/add-account-collection! t-conn {:account_id (:id (get account_res_two 0))
+            ; Connect collection to other user
+         (is (= 1 (db/add-user-collection! t-conn {:user_id (:id (get user_res_two 0))
                                                       :collection_id (:id (get collection_res 0))
-                                                      :role role})))
+                                                      :account_role account_role})))
          (is (= [(into collection_args {:id (:id (get collection_res 0))})]
-                (db/get-collections-by-account t-conn {:id (:id (get account_res_two 0))})))
-         (is (= [(into account_args_two {:id (:id (get account_res_two 0))})]
-                (db/get-accounts-by-collection t-conn {:id (:id (get collection_res 0))})))
+                (db/get-collections-by-user t-conn {:id (:id (get user_res_two 0))})))
+         (is (= [(into user_args_two {:id (:id (get user_res_two 0))})]
+                (db/get-users-by-collection t-conn {:id (:id (get collection_res 0))})))
            ; Delete collection
          (is (= 1 (db/delete-collection t-conn {:id (:id (get collection_res 0))})))
-           ; Check account is still there
-         (is (= (into account_args_two {:id (:id (get account_res_two 0))}) (db/get-account t-conn {:id (:id (get account_res_two 0))})))
-         (is (= [] (db/get-collections-by-account t-conn {:id (:id (get account_res_two 0))})))))))
+           ; Check user is still there
+         (is (= (into user_args_two {:id (:id (get user_res_two 0))}) (db/get-user t-conn {:id (:id (get user_res_two 0))})))
+         (is (= [] (db/get-collections-by-user t-conn {:id (:id (get user_res_two 0))})))))))
 
 (deftest test-collection-course
   ; Create a collection and course, connect them, test connection, delete connection, test connection again
  (jdbc/with-transaction [t-conn *db* {:rollback-only true}]
    (let [course_args {:department "Russian" :catalog_number "421" :section_number "001"}
-         collection_args {:name "collection name!" :published false :archived false}]
+         collection_args {:collection_name "collection name!" :published false :archived false}]
     (let
          ; Add course and collection
          [course_res (db/add-course! t-conn course_args)
@@ -234,11 +234,11 @@
   ; Create a collection and course, connect them, test connection, delete connection, test connection again
  (jdbc/with-transaction [t-conn *db* {:rollback-only true}]
    (let [content_args {:id nil
-                       :name "content name!" :type "text and stuff" :requester_email "notme@gmail.com"
+                       :content_name "content name!" :content_type "text and stuff" :requester_email "notme@gmail.com"
                        :thumbnail "all thumbs" :copyrighted false :physical_copy_exists false
                        :full_video false :published false :date_validated "don't remember"
                        :metadata "so meta"}
-         collection_args {:name "collection name!" :published false :archived false}
+         collection_args {:collection_name "collection name!" :published false :archived false}
          extra_content_args {:allow_definitions false :allow_notes false :allow_captions false}]
     (let
          ; Add content and collection
@@ -274,7 +274,7 @@
  (jdbc/with-transaction [t-conn *db* {:rollback-only true}]
    (let [file_args {:filepath "/usr/then/other/stuff" :mime "what even is this?" :metadata "so meta"}
          content_args {:collection_id nil
-                       :name "content name!" :type "text and stuff" :requester_email "notme@gmail.com"
+                       :content_name "content name!" :content_type "text and stuff" :requester_email "notme@gmail.com"
                        :thumbnail "all thumbs" :copyrighted false :physical_copy_exists false
                        :full_video false :published false :allow_definitions false :allow_notes false :allow_captions false :date_validated "don't remember"
                        :views 0 :metadata "so meta"}]
@@ -307,42 +307,42 @@
 
 ; - - - - - - - - - - - UPDATE TESTS - - - - - - - - - - - - - - - - -
 
-(deftest test-account-update
+(deftest test-user-update
   (jdbc/with-transaction [t-conn *db* {:rollback-only true}]
-    (let [args_1 {:email "me@gmail.com" :lastlogin "sometime" :name "will" :role 0 :username "conquerer01"}
-          args_2 {:email "you@outlook.com" :lastlogin "just now" :name "matthew" :role 1 :username "daddy-o"}]
+    (let [args_1 {:email "me@gmail.com" :last_login "sometime" :account_name "will" :account_role 0 :username "conquerer01"}
+          args_2 {:email "you@outlook.com" :last_login "just now" :account_name "matthew" :account_role 1 :username "daddy-o"}]
      (let [res
-       ; Add account
-           (db/add-account! t-conn args_1)]
+       ; Add user
+           (db/add-user! t-conn args_1)]
        ; Check successful add and select
        (is (= 1 (count res)))
-       (is (= (into args_1 {:id (:id (get res 0))}) (db/get-account t-conn {:id (:id (get res 0))})))
-       ; Update account
-       (is (= 1 (db/update-account t-conn (into args_2 {:id (:id (get res 0))}))))
+       (is (= (into args_1 {:id (:id (get res 0))}) (db/get-user t-conn {:id (:id (get res 0))})))
+       ; Update user
+       (is (= 1 (db/update-user t-conn (into args_2 {:id (:id (get res 0))}))))
        ; Check successful update
-       (is (= (into args_2 {:id (:id (get res 0))}) (db/get-account t-conn {:id (:id (get res 0))})))))))
+       (is (= (into args_2 {:id (:id (get res 0))}) (db/get-user t-conn {:id (:id (get res 0))})))))))
 
 
-(deftest test-tword-update
+(deftest test-word-update
   (jdbc/with-transaction [t-conn *db* {:rollback-only true}]
-    (let [args_1 {:account_id nil :tword "a word!" :src_lang "ru" :dest_lang "en"}
-          args_2 {:account_id nil :tword "another word!" :src_lang "es" :dest_lang "po"}]
+    (let [args_1 {:user_id nil :word "a word!" :src_lang "ru" :dest_lang "en"}
+          args_2 {:user_id nil :word "another word!" :src_lang "es" :dest_lang "po"}]
      (let [res
-       ; Add tword
-           (db/add-tword! t-conn args_1)]
+       ; Add word
+           (db/add-word! t-conn args_1)]
        ; Check successful add and select
        (is (= 1 (count res)))
-       (is (= (into args_1 {:id (:id (get res 0))}) (db/get-tword t-conn {:id (:id (get res 0))})))
-       ; Update tword
-       (is (= 1 (db/update-tword t-conn (into args_2 {:id (:id (get res 0))}))))
+       (is (= (into args_1 {:id (:id (get res 0))}) (db/get-word t-conn {:id (:id (get res 0))})))
+       ; Update word
+       (is (= 1 (db/update-word t-conn (into args_2 {:id (:id (get res 0))}))))
        ; Check successful update
-       (is (= (into args_2 {:id (:id (get res 0))}) (db/get-tword t-conn {:id (:id (get res 0))})))))))
+       (is (= (into args_2 {:id (:id (get res 0))}) (db/get-word t-conn {:id (:id (get res 0))})))))))
 
 
 (deftest test-collection-update
   (jdbc/with-transaction [t-conn *db* {:rollback-only true}]
-    (let [args_1 {:name "collection name!" :published false :archived false}
-          args_2 {:name "different name!" :published true :archived true}]
+    (let [args_1 {:collection_name "collection name!" :published false :archived false}
+          args_2 {:collection_name "different name!" :published true :archived true}]
      (let [res
        ; Add collection
            (db/add-collection! t-conn args_1)]
@@ -374,12 +374,12 @@
 (deftest test-content-update
   (jdbc/with-transaction [t-conn *db* {:rollback-only true}]
     (let [args_1 {:collection_id nil
-                  :name "content name!" :type "text and stuff" :requester_email "notme@gmail.com"
+                  :content_name "content name!" :content_type "text and stuff" :requester_email "notme@gmail.com"
                   :thumbnail "all thumbs" :copyrighted false :physical_copy_exists false
                   :full_video false :published false :allow_definitions false :allow_notes false :allow_captions false :date_validated "don't remember"
                   :views 0 :metadata "so meta"}
           args_2 {:collection_id nil
-                  :name "different name!" :type "stringy things" :requester_email "notyou@yahoo.com"
+                  :content_name "different name!" :content_type "stringy things" :requester_email "notyou@yahoo.com"
                   :thumbnail "just two thumbs" :copyrighted true :physical_copy_exists true
                   :full_video true :published true :allow_definitions true :allow_notes true :allow_captions true :date_validated "not long ago"
                   :views 1 :metadata "like, really really meta"}]
@@ -416,7 +416,7 @@
 
 (deftest test-delete-collection
   (jdbc/with-transaction [t-conn *db* {:rollback-only true}]
-    (let [args {:name "collection name!" :published false :archived false}]
+    (let [args {:collection_name "collection name!" :published false :archived false}]
      (let [res
                ; Add collection to db
                (db/add-collection!
@@ -435,7 +435,7 @@
 (comment (deftest test-delete-collection-with-course)
   (jdbc/with-transaction [t-conn *db* {:rollback-only true}]
     (let [course_args {:department "Russian" :catalog_number "421" :section_number "001"}
-          collection_args {:name "collection name!" :published false :archived false}]
+          collection_args {:collection_name "collection name!" :published false :archived false}]
      (let [course_res (db/add-course! t-conn course_args)
            collection_res (db/add-collection! t-conn collection_args)]
               ; Check successful course add
