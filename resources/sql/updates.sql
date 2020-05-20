@@ -35,7 +35,7 @@ SET id = :id, name = :name, type = :type,
   full_video = :full_video, published = :published,
   allow_definitions = :allow_definitions, allow_notes = :allow_notes,
   allow_captions = :allow_captions, date_validated = :date_validated,
-  metadata = :metadata
+  views = :views, metadata = :metadata
 WHERE id = :id
 
 -- :name update-file :! :n

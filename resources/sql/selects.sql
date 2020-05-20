@@ -38,9 +38,9 @@ WHERE id = :id
 SELECT c.*
 FROM Account as a
 INNER JOIN Account_Collection as ac
-  ON a.id = ac.id
+  ON a.id = ac.account_id
 INNER JOIN Collection as c
-  ON ac.id = c.id
+  ON ac.collection_id = c.id
 WHERE a.id = :id
 
 -- :name get-accounts-by-collection :? :*
@@ -48,9 +48,9 @@ WHERE a.id = :id
 SELECT a.*
 FROM Account as a
 INNER JOIN Account_Collection as ac
-  ON a.id = ac.id
+  ON a.id = ac.account_id
 INNER JOIN Collection as c
-  ON ac.id = c.id
+  ON ac.collection_id = c.id
 WHERE c.id = :id
 
 -- :name get-collections-by-course :? :*
@@ -58,9 +58,9 @@ WHERE c.id = :id
 SELECT cll.*
 FROM Course as crs
 INNER JOIN Collection_Course as cllcrs
-  ON crs.id = cllcrs.id
+  ON crs.id = cllcrs.course_id
 INNER JOIN Collection as cll
-  ON cllcrs.id = cll.id
+  ON cllcrs.collection_id = cll.id
 WHERE crs.id = :id
 
 -- :name get-courses-by-collection :? :*
@@ -68,9 +68,9 @@ WHERE crs.id = :id
 SELECT crs.*
 FROM Course as crs
 INNER JOIN Collection_Course as cllcrs
-  ON crs.id = cllcrs.id
+  ON crs.id = cllcrs.course_id
 INNER JOIN Collection as cll
-  ON cllcrs.id = cll.id
+  ON cllcrs.collection_id = cll.id
 WHERE cll.id = :id
 
 -- :name get-contents-by-collection :? :*
@@ -84,9 +84,9 @@ WHERE id = :id
 SELECT cnt.*
 FROM Content as cnt
 INNER JOIN Content_File as cntf
-  ON cnt.id = cntf.id
+  ON cnt.id = cntf.content_id
 INNER JOIN File as f
-  ON cntf.id = f.id
+  ON cntf.file_id = f.id
 WHERE f.id = :id
 
 -- :name get-files-by-content :? :*
@@ -94,7 +94,7 @@ WHERE f.id = :id
 SELECT f.*
 FROM Content as cnt
 INNER JOIN Content_File as cntf
-  ON cnt.id = cntf.id
+  ON cnt.id = cntf.content_id
 INNER JOIN File as f
-  ON cntf.id = f.id
+  ON cntf.file_id = f.id
 WHERE cnt.id = :id

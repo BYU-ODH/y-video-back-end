@@ -27,25 +27,29 @@
            (db/add-account! t-conn args)]
        ; Check successful add and select
        (is (= 1 (count res)))
-       (is (= (into args {:user_id (:user_id (get res 0))}) (db/get-account t-conn {:user_id (:user_id (get res 0))})))
+       (is (= (into args {:id (:id (get res 0))}) (db/get-account t-conn {:id (:id (get res 0))})))
        ; Delete account
-       (is (= 1 (db/delete-account t-conn {:user_id (:user_id (get res 0))})))
+       (is (= 1 (db/delete-account t-conn {:id (:id (get res 0))})))
        ; Check that account is deleted
-       (is (= nil (db/get-account t-conn {:user_id (:user_id (get res 0))})))))))
+       (is (= nil (db/get-account t-conn {:id (:id (get res 0))})))))))
 
 (deftest test-tword
   (jdbc/with-transaction [t-conn *db* {:rollback-only true}]
-    (let [args {:user_id nil :tword "a word!" :src_lang "ru" :dest_lang "en"}]
-     (let [res
-       ; Add tword
-           (db/add-tword! t-conn args)]
+    (let [account_args {:email "me@gmail.com" :lastlogin "sometime" :name "will" :role 0 :username "conquerer01"}
+          tword_args {:tword "a word!" :src_lang "ru" :dest_lang "en"}]
+     (let [
+       ; Add tword and account
+           account_res (db/add-account! t-conn account_args)
+           tword_res (db/add-tword! t-conn (into tword_args {:account_id (:id (get account_res 0))}))]
        ; Check successful add and select
-       (is (= 1 (count res)))
-       (is (= (into args {:word_id (:word_id (get res 0))}) (db/get-tword t-conn {:word_id (:word_id (get res 0))})))
+       (is (= 1 (count tword_res)))
+       (is (= (into tword_args {:id (:id (get tword_res 0))
+                                :account_id (:id (get account_res 0))})
+              (db/get-tword t-conn {:id (:id (get tword_res 0))})))
        ; Delete tword
-       (is (= 1 (db/delete-tword t-conn {:word_id (:word_id (get res 0))})))
+       (is (= 1 (db/delete-tword t-conn {:id (:id (get tword_res 0))})))
        ; Check that tword is deleted
-       (is (= nil (db/get-tword t-conn {:word_id (:word_id (get res 0))})))))))
+       (is (= nil (db/get-tword t-conn {:id (:id (get tword_res 0))})))))))
 
 (deftest test-collection
   (jdbc/with-transaction [t-conn *db* {:rollback-only true}]
@@ -55,11 +59,11 @@
            (db/add-collection! t-conn args)]
        ; Check successful add and select
        (is (= 1 (count res)))
-       (is (= (into args {:collection_id (:collection_id (get res 0))}) (db/get-collection t-conn {:collection_id (:collection_id (get res 0))})))
+       (is (= (into args {:id (:id (get res 0))}) (db/get-collection t-conn {:id (:id (get res 0))})))
        ; Delete collection
-       (is (= 1 (db/delete-collection t-conn {:collection_id (:collection_id (get res 0))})))
+       (is (= 1 (db/delete-collection t-conn {:id (:id (get res 0))})))
        ; Check that collection is deleted
-       (is (= nil (db/get-collection t-conn {:collection_id (:collection_id (get res 0))})))))))
+       (is (= nil (db/get-collection t-conn {:id (:id (get res 0))})))))))
 
 (deftest test-course
   (jdbc/with-transaction [t-conn *db* {:rollback-only true}]
@@ -69,11 +73,11 @@
            (db/add-course! t-conn args)]
        ; Check successful add and select
        (is (= 1 (count res)))
-       (is (= (into args {:course_id (:course_id (get res 0))}) (db/get-course t-conn {:course_id (:course_id (get res 0))})))
+       (is (= (into args {:id (:id (get res 0))}) (db/get-course t-conn {:id (:id (get res 0))})))
        ; Delete course
-       (is (= 1 (db/delete-course t-conn {:course_id (:course_id (get res 0))})))
+       (is (= 1 (db/delete-course t-conn {:id (:id (get res 0))})))
        ; Check that course is deleted
-       (is (= nil (db/get-course t-conn {:course_id (:course_id (get res 0))})))))))
+       (is (= nil (db/get-course t-conn {:id (:id (get res 0))})))))))
 
 (deftest test-content
   (jdbc/with-transaction [t-conn *db* {:rollback-only true}]
@@ -81,17 +85,18 @@
                 :name "content name!" :type "text and stuff" :requester_email "notme@gmail.com"
                 :thumbnail "all thumbs" :copyrighted false :physical_copy_exists false
                 :full_video false :published false :allow_definitions false :allow_notes false
-                :allow_captions false :date_validated "don't remember" :metadata "so meta"}]
+                :allow_captions false :date_validated "don't remember"
+                :views 0 :metadata "so meta"}]
      (let [res
        ; Add content
            (db/add-content! t-conn args)]
        ; Check successful add and select
        (is (= 1 (count res)))
-       (is (= (into args {:content_id (:content_id (get res 0))}) (db/get-content t-conn {:content_id (:content_id (get res 0))})))
+       (is (= (into args {:id (:id (get res 0))}) (db/get-content t-conn {:id (:id (get res 0))})))
        ; Delete content
-       (is (= 1 (db/delete-content t-conn {:content_id (:content_id (get res 0))})))
+       (is (= 1 (db/delete-content t-conn {:id (:id (get res 0))})))
        ; Check that content is deleted
-       (is (= nil (db/get-content t-conn {:content_id (:content_id (get res 0))})))))))
+       (is (= nil (db/get-content t-conn {:id (:id (get res 0))})))))))
 
 (deftest test-file
   (jdbc/with-transaction [t-conn *db* {:rollback-only true}]
@@ -101,11 +106,11 @@
            (db/add-file! t-conn args)]
        ; Check successful add and select
        (is (= 1 (count res)))
-       (is (= (into args {:file_id (:file_id (get res 0))}) (db/get-file t-conn {:file_id (:file_id (get res 0))})))
+       (is (= (into args {:id (:id (get res 0))}) (db/get-file t-conn {:id (:id (get res 0))})))
        ; Delete file
-       (is (= 1 (db/delete-file t-conn {:file_id (:file_id (get res 0))})))
+       (is (= 1 (db/delete-file t-conn {:id (:id (get res 0))})))
        ; Check that file is deleted
-       (is (= nil (db/get-file t-conn {:file_id (:file_id (get res 0))})))))))
+       (is (= nil (db/get-file t-conn {:id (:id (get res 0))})))))))
 
 ; - - - - - - - - - MANY-TO-MANY TABLE TESTS - - - - - - - - - - - - -
 
@@ -122,25 +127,25 @@
           ; Check successful adds
          (is (= 1 (count account_res)))
          (is (= 1 (count collection_res)))
-         (is (= (into account_args {:user_id (:user_id (get account_res 0))}) (db/get-account t-conn {:user_id (:user_id (get account_res 0))})))
-         (is (= (into collection_args {:collection_id (:collection_id (get collection_res 0))}) (db/get-collection t-conn {:collection_id (:collection_id (get collection_res 0))})))
+         (is (= (into account_args {:id (:id (get account_res 0))}) (db/get-account t-conn {:id (:id (get account_res 0))})))
+         (is (= (into collection_args {:id (:id (get collection_res 0))}) (db/get-collection t-conn {:id (:id (get collection_res 0))})))
             ; Connect account and collection
-         (is (= 1 (db/add-account-collection! t-conn {:user_id (:user_id (get account_res 0))
-                                                      :collection_id (:collection_id (get collection_res 0))
+         (is (= 1 (db/add-account-collection! t-conn {:account_id (:id (get account_res 0))
+                                                      :collection_id (:id (get collection_res 0))
                                                       :role role})))
             ; Check both directions of connectedness
-         (is (= [(into collection_args {:collection_id (:collection_id (get collection_res 0))})]
-                (db/get-collections-by-account t-conn {:user_id (:user_id (get account_res 0))})))
-         (is (= [(into account_args {:user_id (:user_id (get account_res 0))})]
-                (db/get-accounts-by-collection t-conn {:collection_id (:collection_id (get collection_res 0))})))
+         (is (= [(into collection_args {:id (:id (get collection_res 0))})]
+                (db/get-collections-by-account t-conn {:id (:id (get account_res 0))})))
+         (is (= [(into account_args {:id (:id (get account_res 0))})]
+                (db/get-accounts-by-collection t-conn {:id (:id (get collection_res 0))})))
             ; Delete connection between account and collection
-         (is (= 1 (db/delete-account-collection t-conn {:user_id (:user_id (get account_res 0))
-                                                        :collection_id (:collection_id (get collection_res 0))})))
+         (is (= 1 (db/delete-account-collection t-conn {:account_id (:id (get account_res 0))
+                                                        :collection_id (:id (get collection_res 0))})))
             ; Check connection was deleted from both directions
          (is (= []
-                (db/get-collections-by-account t-conn {:user_id (:user_id (get account_res 0))})))
+                (db/get-collections-by-account t-conn {:id (:id (get account_res 0))})))
          (is (= []
-                (db/get-accounts-by-collection t-conn {:collection_id (:collection_id (get collection_res 0))})))))))
+                (db/get-accounts-by-collection t-conn {:id (:id (get collection_res 0))})))))))
 
 (deftest test-account-collection-deleting-each
   ; Create an account and collection, connect them, test connection, delete connection, test connection again
@@ -158,40 +163,40 @@
          (is (= 1 (count account_res_one)))
          (is (= 1 (count account_res_two)))
          (is (= 1 (count collection_res)))
-         (is (= (into account_args_one {:user_id (:user_id (get account_res_one 0))}) (db/get-account t-conn {:user_id (:user_id (get account_res_one 0))})))
-         (is (= (into account_args_two {:user_id (:user_id (get account_res_two 0))}) (db/get-account t-conn {:user_id (:user_id (get account_res_two 0))})))
-         (is (= (into collection_args {:collection_id (:collection_id (get collection_res 0))}) (db/get-collection t-conn {:collection_id (:collection_id (get collection_res 0))})))
+         (is (= (into account_args_one {:id (:id (get account_res_one 0))}) (db/get-account t-conn {:id (:id (get account_res_one 0))})))
+         (is (= (into account_args_two {:id (:id (get account_res_two 0))}) (db/get-account t-conn {:id (:id (get account_res_two 0))})))
+         (is (= (into collection_args {:id (:id (get collection_res 0))}) (db/get-collection t-conn {:id (:id (get collection_res 0))})))
             ; Connect account and collection
-         (is (= 1 (db/add-account-collection! t-conn {:user_id (:user_id (get account_res_one 0))
-                                                      :collection_id (:collection_id (get collection_res 0))
+         (is (= 1 (db/add-account-collection! t-conn {:account_id (:id (get account_res_one 0))
+                                                      :collection_id (:id (get collection_res 0))
                                                       :role role})))
             ; Check both directions of connectedness
-         (is (= [(into collection_args {:collection_id (:collection_id (get collection_res 0))})]
-                (db/get-collections-by-account t-conn {:user_id (:user_id (get account_res_one 0))})))
-         (is (= [(into account_args_one {:user_id (:user_id (get account_res_one 0))})]
-                (db/get-accounts-by-collection t-conn {:collection_id (:collection_id (get collection_res 0))})))
+         (is (= [(into collection_args {:id (:id (get collection_res 0))})]
+                (db/get-collections-by-account t-conn {:id (:id (get account_res_one 0))})))
+         (is (= [(into account_args_one {:id (:id (get account_res_one 0))})]
+                (db/get-accounts-by-collection t-conn {:id (:id (get collection_res 0))})))
             ; Delete account
-         (is (= 1 (db/delete-account t-conn {:user_id (:user_id (get account_res_one 0))})))
+         (is (= 1 (db/delete-account t-conn {:id (:id (get account_res_one 0))})))
             ; Check account and connection were deleted
          (is (= nil
-                (db/get-account t-conn {:user_id (:user_id (get account_res_one 0))})))
+                (db/get-account t-conn {:id (:id (get account_res_one 0))})))
          (is (= []
-                (db/get-accounts-by-collection t-conn {:collection_id (:collection_id (get collection_res 0))})))
+                (db/get-accounts-by-collection t-conn {:id (:id (get collection_res 0))})))
             ; Check collection is still there
-         (is (= (into collection_args {:collection_id (:collection_id (get collection_res 0))}) (db/get-collection t-conn {:collection_id (:collection_id (get collection_res 0))})))
+         (is (= (into collection_args {:id (:id (get collection_res 0))}) (db/get-collection t-conn {:id (:id (get collection_res 0))})))
             ; Connect collection to other account
-         (is (= 1 (db/add-account-collection! t-conn {:user_id (:user_id (get account_res_two 0))
-                                                      :collection_id (:collection_id (get collection_res 0))
+         (is (= 1 (db/add-account-collection! t-conn {:account_id (:id (get account_res_two 0))
+                                                      :collection_id (:id (get collection_res 0))
                                                       :role role})))
-         (is (= [(into collection_args {:collection_id (:collection_id (get collection_res 0))})]
-                (db/get-collections-by-account t-conn {:user_id (:user_id (get account_res_two 0))})))
-         (is (= [(into account_args_two {:user_id (:user_id (get account_res_two 0))})]
-                (db/get-accounts-by-collection t-conn {:collection_id (:collection_id (get collection_res 0))})))
+         (is (= [(into collection_args {:id (:id (get collection_res 0))})]
+                (db/get-collections-by-account t-conn {:id (:id (get account_res_two 0))})))
+         (is (= [(into account_args_two {:id (:id (get account_res_two 0))})]
+                (db/get-accounts-by-collection t-conn {:id (:id (get collection_res 0))})))
            ; Delete collection
-         (is (= 1 (db/delete-collection t-conn {:collection_id (:collection_id (get collection_res 0))})))
+         (is (= 1 (db/delete-collection t-conn {:id (:id (get collection_res 0))})))
            ; Check account is still there
-         (is (= (into account_args_two {:user_id (:user_id (get account_res_two 0))}) (db/get-account t-conn {:user_id (:user_id (get account_res_two 0))})))
-         (is (= [] (db/get-collections-by-account t-conn {:user_id (:user_id (get account_res_two 0))})))))))
+         (is (= (into account_args_two {:id (:id (get account_res_two 0))}) (db/get-account t-conn {:id (:id (get account_res_two 0))})))
+         (is (= [] (db/get-collections-by-account t-conn {:id (:id (get account_res_two 0))})))))))
 
 (deftest test-collection-course
   ; Create a collection and course, connect them, test connection, delete connection, test connection again
@@ -205,30 +210,30 @@
              ; Check successful adds
          (is (= 1 (count course_res)))
          (is (= 1 (count collection_res)))
-         (is (= (into course_args {:course_id (:course_id (get course_res 0))}) (db/get-course t-conn {:course_id (:course_id (get course_res 0))})))
-         (is (= (into collection_args {:collection_id (:collection_id (get collection_res 0))}) (db/get-collection t-conn {:collection_id (:collection_id (get collection_res 0))})))
+         (is (= (into course_args {:id (:id (get course_res 0))}) (db/get-course t-conn {:id (:id (get course_res 0))})))
+         (is (= (into collection_args {:id (:id (get collection_res 0))}) (db/get-collection t-conn {:id (:id (get collection_res 0))})))
             ; Connect course and collection
-         (is (= 1 (db/add-collection-course! t-conn {:course_id (:course_id (get course_res 0))
-                                                      :collection_id (:collection_id (get collection_res 0))})))
+         (is (= 1 (db/add-collection-course! t-conn {:course_id (:id (get course_res 0))
+                                                     :collection_id (:id (get collection_res 0))})))
             ; Check both directions of connectedness
-         (is (= [(into collection_args {:collection_id (:collection_id (get collection_res 0))})]
-                (db/get-collections-by-course t-conn {:course_id (:course_id (get course_res 0))})))
-         (is (= [(into course_args {:course_id (:course_id (get course_res 0))})]
-                (db/get-courses-by-collection t-conn {:collection_id (:collection_id (get collection_res 0))})))
+         (is (= [(into collection_args {:id (:id (get collection_res 0))})]
+                (db/get-collections-by-course t-conn {:id (:id (get course_res 0))})))
+         (is (= [(into course_args {:id (:id (get course_res 0))})]
+                (db/get-courses-by-collection t-conn {:id (:id (get collection_res 0))})))
             ; Delete connection between course and collection
-         (is (= 1 (db/delete-collection-course t-conn {:course_id (:course_id (get course_res 0))
-                                                       :collection_id (:collection_id (get collection_res 0))})))
+         (is (= 1 (db/delete-collection-course t-conn {:course_id (:id (get course_res 0))
+                                                       :collection_id (:id (get collection_res 0))})))
             ; Check connection was deleted from both directions
          (is (= []
-                (db/get-collections-by-course t-conn {:course_id (:course_id (get course_res 0))})))
+                (db/get-collections-by-course t-conn {:id (:id (get course_res 0))})))
          (is (= []
-                (db/get-courses-by-collection t-conn {:collection_id (:collection_id (get collection_res 0))})))))))
+                (db/get-courses-by-collection t-conn {:id (:id (get collection_res 0))})))))))
 
 
 (comment (deftest test-collection-content)
   ; Create a collection and course, connect them, test connection, delete connection, test connection again
  (jdbc/with-transaction [t-conn *db* {:rollback-only true}]
-   (let [content_args {:collection_id nil
+   (let [content_args {:id nil
                        :name "content name!" :type "text and stuff" :requester_email "notme@gmail.com"
                        :thumbnail "all thumbs" :copyrighted false :physical_copy_exists false
                        :full_video false :published false :date_validated "don't remember"
@@ -242,26 +247,26 @@
              ; Check successful adds
          (is (= 1 (count content_res)))
          (is (= 1 (count collection_res)))
-         (is (= (into content_args {:content_id (:content_id (get content_res 0))}) (db/get-content t-conn {:content_id (:content_id (get content_res 0))})))
-         (is (= (into collection_args {:collection_id (:collection_id (get collection_res 0))}) (db/get-collection t-conn {:collection_id (:collection_id (get collection_res 0))})))
+         (is (= (into content_args {:id (:id (get content_res 0))}) (db/get-content t-conn {:id (:id (get content_res 0))})))
+         (is (= (into collection_args {:id (:id (get collection_res 0))}) (db/get-collection t-conn {:id (:id (get collection_res 0))})))
             ; Connect content and collection
-         (is (= 1 (db/add-collection-content! t-conn (into {:content_id (:content_id (get content_res 0))
-                                                            :collection_id (:collection_id (get collection_res 0))}
+         (is (= 1 (db/add-collection-content! t-conn (into {:content_id (:id (get content_res 0))
+                                                            :collection_id (:id (get collection_res 0))}
                                                       extra_content_args))))
 
             ; Check both directions of connectedness
-         (is (= [(into collection_args {:collection_id (:collection_id (get collection_res 0))})]
-                (db/get-collections-by-content t-conn {:content_id (:content_id (get content_res 0))})))
-         (is (= [(into content_args {:content_id (:content_id (get content_res 0))})]
-                (db/get-contents-by-collection t-conn {:collection_id (:collection_id (get collection_res 0))})))
+         (is (= [(into collection_args {:id (:id (get collection_res 0))})]
+                (db/get-collections-by-content t-conn {:id (:id (get content_res 0))})))
+         (is (= [(into content_args {:id (:id (get content_res 0))})]
+                (db/get-contents-by-collection t-conn {:id (:id (get collection_res 0))})))
             ; Delete connection between content and collection
-         (is (= 1 (db/delete-collection-content t-conn {:content_id (:content_id (get content_res 0))
-                                                        :collection_id (:collection_id (get collection_res 0))})))
+         (is (= 1 (db/delete-collection-content t-conn {:content_id (:id (get content_res 0))
+                                                        :collection_id (:id (get collection_res 0))})))
             ; Check connection was deleted from both directions
          (is (= []
-                (db/get-collections-by-content t-conn {:content_id (:content_id (get content_res 0))})))
+                (db/get-collections-by-content t-conn {:id (:id (get content_res 0))})))
          (is (= []
-                (db/get-contents-by-collection t-conn {:collection_id (:collection_id (get collection_res 0))})))))))
+                (db/get-contents-by-collection t-conn {:id (:id (get collection_res 0))})))))))
 
 
 (deftest test-content-file
@@ -272,7 +277,7 @@
                        :name "content name!" :type "text and stuff" :requester_email "notme@gmail.com"
                        :thumbnail "all thumbs" :copyrighted false :physical_copy_exists false
                        :full_video false :published false :allow_definitions false :allow_notes false :allow_captions false :date_validated "don't remember"
-                       :metadata "so meta"}]
+                       :views 0 :metadata "so meta"}]
     (let
          ; Add file and content
          [file_res (db/add-file! t-conn file_args)
@@ -280,24 +285,24 @@
              ; Check successful adds
          (is (= 1 (count file_res)))
          (is (= 1 (count content_res)))
-         (is (= (into file_args {:file_id (:file_id (get file_res 0))}) (db/get-file t-conn {:file_id (:file_id (get file_res 0))})))
-         (is (= (into content_args {:content_id (:content_id (get content_res 0))}) (db/get-content t-conn {:content_id (:content_id (get content_res 0))})))
+         (is (= (into file_args {:id (:id (get file_res 0))}) (db/get-file t-conn {:id (:id (get file_res 0))})))
+         (is (= (into content_args {:id (:id (get content_res 0))}) (db/get-content t-conn {:id (:id (get content_res 0))})))
             ; Connect file and content
-         (is (= 1 (db/add-content-file! t-conn {:file_id (:file_id (get file_res 0))
-                                                      :content_id (:content_id (get content_res 0))})))
+         (is (= 1 (db/add-content-file! t-conn {:file_id (:id (get file_res 0))
+                                                :content_id (:id (get content_res 0))})))
             ; Check both directions of connectedness
-         (is (= [(into content_args {:content_id (:content_id (get content_res 0))})]
-                (db/get-contents-by-file t-conn {:file_id (:file_id (get file_res 0))})))
-         (is (= [(into file_args {:file_id (:file_id (get file_res 0))})]
-                (db/get-files-by-content t-conn {:content_id (:content_id (get content_res 0))})))
+         (is (= [(into content_args {:id (:id (get content_res 0))})]
+                (db/get-contents-by-file t-conn {:id (:id (get file_res 0))})))
+         (is (= [(into file_args {:id (:id (get file_res 0))})]
+                (db/get-files-by-content t-conn {:id (:id (get content_res 0))})))
             ; Delete connection between file and content
-         (is (= 1 (db/delete-content-file t-conn {:file_id (:file_id (get file_res 0))
-                                                      :content_id (:content_id (get content_res 0))})))
+         (is (= 1 (db/delete-content-file t-conn {:file_id (:id (get file_res 0))
+                                                  :content_id (:id (get content_res 0))})))
             ; Check connection was deleted from both directions
          (is (= []
-                (db/get-contents-by-file t-conn {:file_id (:file_id (get file_res 0))})))
+                (db/get-contents-by-file t-conn {:id (:id (get file_res 0))})))
          (is (= []
-                (db/get-files-by-content t-conn {:content_id (:content_id (get content_res 0))})))))))
+                (db/get-files-by-content t-conn {:id (:id (get content_res 0))})))))))
 
 
 ; - - - - - - - - - - - UPDATE TESTS - - - - - - - - - - - - - - - - -
@@ -311,27 +316,27 @@
            (db/add-account! t-conn args_1)]
        ; Check successful add and select
        (is (= 1 (count res)))
-       (is (= (into args_1 {:user_id (:user_id (get res 0))}) (db/get-account t-conn {:user_id (:user_id (get res 0))})))
+       (is (= (into args_1 {:id (:id (get res 0))}) (db/get-account t-conn {:id (:id (get res 0))})))
        ; Update account
-       (is (= 1 (db/update-account t-conn (into args_2 {:user_id (:user_id (get res 0))}))))
+       (is (= 1 (db/update-account t-conn (into args_2 {:id (:id (get res 0))}))))
        ; Check successful update
-       (is (= (into args_2 {:user_id (:user_id (get res 0))}) (db/get-account t-conn {:user_id (:user_id (get res 0))})))))))
+       (is (= (into args_2 {:id (:id (get res 0))}) (db/get-account t-conn {:id (:id (get res 0))})))))))
 
 
 (deftest test-tword-update
   (jdbc/with-transaction [t-conn *db* {:rollback-only true}]
-    (let [args_1 {:user_id nil :tword "a word!" :src_lang "ru" :dest_lang "en"}
-          args_2 {:user_id nil :tword "another word!" :src_lang "es" :dest_lang "po"}]
+    (let [args_1 {:account_id nil :tword "a word!" :src_lang "ru" :dest_lang "en"}
+          args_2 {:account_id nil :tword "another word!" :src_lang "es" :dest_lang "po"}]
      (let [res
        ; Add tword
            (db/add-tword! t-conn args_1)]
        ; Check successful add and select
        (is (= 1 (count res)))
-       (is (= (into args_1 {:word_id (:word_id (get res 0))}) (db/get-tword t-conn {:word_id (:word_id (get res 0))})))
+       (is (= (into args_1 {:id (:id (get res 0))}) (db/get-tword t-conn {:id (:id (get res 0))})))
        ; Update tword
-       (is (= 1 (db/update-tword t-conn (into args_2 {:word_id (:word_id (get res 0))}))))
+       (is (= 1 (db/update-tword t-conn (into args_2 {:id (:id (get res 0))}))))
        ; Check successful update
-       (is (= (into args_2 {:word_id (:word_id (get res 0))}) (db/get-tword t-conn {:word_id (:word_id (get res 0))})))))))
+       (is (= (into args_2 {:id (:id (get res 0))}) (db/get-tword t-conn {:id (:id (get res 0))})))))))
 
 
 (deftest test-collection-update
@@ -343,11 +348,11 @@
            (db/add-collection! t-conn args_1)]
        ; Check successful add and select
        (is (= 1 (count res)))
-       (is (= (into args_1 {:collection_id (:collection_id (get res 0))}) (db/get-collection t-conn {:collection_id (:collection_id (get res 0))})))
+       (is (= (into args_1 {:id (:id (get res 0))}) (db/get-collection t-conn {:id (:id (get res 0))})))
        ; Update collection
-       (is (= 1 (db/update-collection t-conn (into args_2 {:collection_id (:collection_id (get res 0))}))))
+       (is (= 1 (db/update-collection t-conn (into args_2 {:id (:id (get res 0))}))))
        ; Check successful update
-       (is (= (into args_2 {:collection_id (:collection_id (get res 0))}) (db/get-collection t-conn {:collection_id (:collection_id (get res 0))})))))))
+       (is (= (into args_2 {:id (:id (get res 0))}) (db/get-collection t-conn {:id (:id (get res 0))})))))))
 
 
 (deftest test-course-update
@@ -359,11 +364,11 @@
            (db/add-course! t-conn args_1)]
        ; Check successful add and select
        (is (= 1 (count res)))
-       (is (= (into args_1 {:course_id (:course_id (get res 0))}) (db/get-course t-conn {:course_id (:course_id (get res 0))})))
+       (is (= (into args_1 {:id (:id (get res 0))}) (db/get-course t-conn {:id (:id (get res 0))})))
        ; Update course
-       (is (= 1 (db/update-course t-conn (into args_2 {:course_id (:course_id (get res 0))}))))
+       (is (= 1 (db/update-course t-conn (into args_2 {:id (:id (get res 0))}))))
        ; Check successful update
-       (is (= (into args_2 {:course_id (:course_id (get res 0))}) (db/get-course t-conn {:course_id (:course_id (get res 0))})))))))
+       (is (= (into args_2 {:id (:id (get res 0))}) (db/get-course t-conn {:id (:id (get res 0))})))))))
 
 
 (deftest test-content-update
@@ -372,22 +377,22 @@
                   :name "content name!" :type "text and stuff" :requester_email "notme@gmail.com"
                   :thumbnail "all thumbs" :copyrighted false :physical_copy_exists false
                   :full_video false :published false :allow_definitions false :allow_notes false :allow_captions false :date_validated "don't remember"
-                  :metadata "so meta"}
+                  :views 0 :metadata "so meta"}
           args_2 {:collection_id nil
                   :name "different name!" :type "stringy things" :requester_email "notyou@yahoo.com"
                   :thumbnail "just two thumbs" :copyrighted true :physical_copy_exists true
                   :full_video true :published true :allow_definitions true :allow_notes true :allow_captions true :date_validated "not long ago"
-                  :metadata "like, really really meta"}]
+                  :views 1 :metadata "like, really really meta"}]
      (let [res
        ; Add content
            (db/add-content! t-conn args_1)]
        ; Check successful add and select
        (is (= 1 (count res)))
-       (is (= (into args_1 {:content_id (:content_id (get res 0))}) (db/get-content t-conn {:content_id (:content_id (get res 0))})))
+       (is (= (into args_1 {:id (:id (get res 0))}) (db/get-content t-conn {:id (:id (get res 0))})))
        ; Update content
-       (is (= 1 (db/update-content t-conn (into args_2 {:content_id (:content_id (get res 0))}))))
+       (is (= 1 (db/update-content t-conn (into args_2 {:id (:id (get res 0))}))))
        ; Check successful update
-       (is (= (into args_2 {:content_id (:content_id (get res 0))}) (db/get-content t-conn {:content_id (:content_id (get res 0))})))))))
+       (is (= (into args_2 {:id (:id (get res 0))}) (db/get-content t-conn {:id (:id (get res 0))})))))))
 
 
 (deftest test-file-update
@@ -399,11 +404,11 @@
            (db/add-file! t-conn args_1)]
        ; Check successful add and select
        (is (= 1 (count res)))
-       (is (= (into args_1 {:file_id (:file_id (get res 0))}) (db/get-file t-conn {:file_id (:file_id (get res 0))})))
+       (is (= (into args_1 {:id (:id (get res 0))}) (db/get-file t-conn {:id (:id (get res 0))})))
        ; Update file
-       (is (= 1 (db/update-file t-conn (into args_2 {:file_id (:file_id (get res 0))}))))
+       (is (= 1 (db/update-file t-conn (into args_2 {:id (:id (get res 0))}))))
        ; Check successful update
-       (is (= (into args_2 {:file_id (:file_id (get res 0))}) (db/get-file t-conn {:file_id (:file_id (get res 0))})))))))
+       (is (= (into args_2 {:id (:id (get res 0))}) (db/get-file t-conn {:id (:id (get res 0))})))))))
 
 
 
@@ -420,12 +425,12 @@
                ; Check successful add
           (is (= 1 (count res)))
           (is (=
-               (into args {:collection_id (:collection_id (get res 0))}) (db/get-collection t-conn {:collection_id (:collection_id (get res 0))})))
+               (into args {:id (:id (get res 0))}) (db/get-collection t-conn {:id (:id (get res 0))})))
                ; Delete collection from db
           (is (= 1
-               (db/delete-collection t-conn {:collection_id (:collection_id (get res 0))})))
+               (db/delete-collection t-conn {:id (:id (get res 0))})))
                ; Check successful delete
-          (is (= nil (db/get-collection t-conn {:collection_id (:collection_id (get res 0))})))))))
+          (is (= nil (db/get-collection t-conn {:id (:id (get res 0))})))))))
 
 (comment (deftest test-delete-collection-with-course)
   (jdbc/with-transaction [t-conn *db* {:rollback-only true}]
@@ -437,13 +442,13 @@
           (is (= 1 (count course_res)))
           (is (= 1 (count collection_res)))
              ; Add collection-course connection
-          (is (= 1 (db/add-collection-course! t-conn {:collection_id (:collection_id (get collection_res 0))
-                                                      :course_id (:course_id (get course_res 0))})))
+          (is (= 1 (db/add-collection-course! t-conn {:collection_id (:id (get collection_res 0))
+                                                      :course_id (:id (get course_res 0))})))
              ; Delete collection
-          (is (= 1 (db/delete-collection t-conn {:collection_id (:collection_id (get collection_res 0))})))
+          (is (= 1 (db/delete-collection t-conn {:id (:id (get collection_res 0))})))
              ; Check that course is still there
           (is (=
-               (into course_args {:course_id (:course_id (get course_res 0))})
-               (db/get-course t-conn {:course_id (:course_id (get course_res 0))})))
+               (into course_args {:id (:id (get course_res 0))})
+               (db/get-course t-conn {:id (:id (get course_res 0))})))
              ; Check that collection no longer in course assoc_collections
-          (is (= 0 (count (db/get-collections-by-course t-conn {:course_id (:course_id (get course_res 0))}))))))))
+          (is (= 0 (count (db/get-collections-by-course t-conn {:id (:id (get course_res 0))}))))))))

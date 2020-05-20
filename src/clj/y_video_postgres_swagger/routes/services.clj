@@ -65,8 +65,7 @@
                        {:status 200
                         :body {:echo echo}})}
       :post {:summary "echo parameter post"
-             :parameters {:body {:echo string?
-                                 :second string?}}
+             :parameters {:body {:echo string?}}
              :responses {200 {:body {:echo string?}}}
              :handler (fn [{{{:keys [echo]} :body} :parameters}]
                         {:status 200
