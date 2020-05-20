@@ -1,39 +1,5 @@
-#+TITLE: Quick CLJ Setup
-A fast CLJS setup for BYU ODH applications. 
-
-* The Stack
-With this setup, the features/stack are as follows:
-
-- Tests set up for TDD
-  - Stories for use elaboration
-  - Unit tests for coverage
-- A setup expecting deployment on a shared server
-
-- [[https://github.com/Day8/re-frame][re-frame]] as a SPA state-management framework upon react.js
-- [[https://github.com/metosin/reitit][reitit]] for front-end and back-end routing
-- [[https://github.com/tolitius/cprop/blob/master/README.md][cprop]] for inclusion of local and environmental variables
-- [[https://github.com/tolitius/mount][mount]] for a component/reloaded workflow
-- Configured for Postgresql database specified in your config.edn (see below)
-- [[https://github.com/tomekw/hikari-cp][hikari-cp]] for JDBC database connection pooling 
-- [[https://github.com/weavejester/hiccup][hiccup]] for SSR (server-rendered) base-page
-- CSS with [[https://github.com/noprompt/garden][garden]] and [[https://github.com/Otann/garden-gnome][garden-gnome]] for hot-reloading as you define your styles as unadorned clojure
-- [[https://github.com/yogthos/migratus][migratus]] for database initialization and migrations
-- [[https://github.com/bhauman/lein-figwheel][figwheel]] for state-preserving hot-reloading of the browser as soon as you save a change in a cljs file
-
-Other configuration based on [[http://www.luminusweb.net/][luminus]] 
-
-* Getting Started
-The =rename.sh= script expects you to be using a system with =grep=, =sed=, =find= and =rename= commands installed.
-
-1. acquire this repo
-2. =cd REPO-DIR=
-3. =chmod +x rename.sh=
-4. execute =./rename.sh <MY-DESIRED-PROJECT-NAME>= to reconfigure all the paths the way you want
-5. =cp env/dev/resources/config_sample.edn env/dev/resources/config.edn=  and edit config.edn to specify database credentials, startup port, and any other environmental state your app will refer utilize. 
-
-At this point you are welcome to use =lein run= to start the server; you will now be able to view the application by pointing a browser to =http://localhost:3030=. 
-
-=lein figwheel start= will then start the front-end hotloading as you edit cljs files. 
+#+TITLE: Y-Video back-end
+Swagger API for DB manipulations for Y-Video
 
 * License
 Copyright © 2020 Brigham Young University

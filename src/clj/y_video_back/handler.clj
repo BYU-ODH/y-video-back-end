@@ -2,8 +2,8 @@
   (:require
             [y-video-back.layout :refer [error-page]]
             [y-video-back.routes.home :refer [home-routes]]
+            
             [reitit.ring :as ring]
-            [ring.middleware.content-type :refer [wrap-content-type]]
             [ring.middleware.webjars :refer [wrap-webjars]]
             [y-video-back.env :refer [defaults]]
             [mount.core :as mount]))

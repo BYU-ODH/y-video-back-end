@@ -9,11 +9,12 @@
                  [clj-http "3.10.0"]
                  [com.mchange/c3p0 "0.9.5.5"]
                  [cprop "0.1.16"]
-                 [garden "1.3.9"]
                  [hiccup "1.0.5"]
                  [hikari-cp "2.11.0"]
                  [honeysql "0.9.10"]
                  [luminus-immutant "0.2.5"]
+                 [luminus-transit "0.1.2"]
+                 [luminus/ring-ttl-session "0.3.3"]
                  [luminus-migrations "0.6.7"]
                  [metosin/compojure-api "1.1.13"]
                  [metosin/ring-http-response "0.9.1"]
@@ -42,13 +43,7 @@
   :main y-video-back.core
   :plugins [[lein-cprop "1.0.3"]
             [migratus-lein "0.7.2"]
-            [lein-immutant "2.1.0"]
-            [lein-garden "0.3.0"]]
-  :garden {:builds [{:id "y-video-back-viz"
-                     :source-path "src/clj/y-video-back/styles"
-                     :stylesheet y-video-back.styles.style/y-video-back
-                     :compiler {:output-to "resources/public/css/style.css"
-                                :pretty-print? true}}]}
+            [lein-immutant "2.1.0"]]
   :clean-targets ^{:protect false}
   [:target-path [:builds :app :compiler :output-dir] [:builds :app :compiler :output-to]]
 
@@ -68,8 +63,7 @@
    :test          [:project/dev :project/test :profiles/test]
 
 
-   :project/dev  {:dependencies [ ;[garden-gnome "0.1.0"]
-                                 [pjstadig/humane-test-output "0.10.0"]
+   :project/dev  {:dependencies [[pjstadig/humane-test-output "0.10.0"]
                                  [prone "2020-01-17"]
                                  [ring/ring-devel "1.8.0"]
                                  [ring/ring-mock "0.4.0"]]
