@@ -188,7 +188,10 @@
          (is (= [(into account_args_two {:user_id (:user_id (get account_res_two 0))})]
                 (db/get-accounts-by-collection t-conn {:collection_id (:collection_id (get collection_res 0))})))
            ; Delete collection
-         (is (= 1 (db/delete-collection t-conn {:collection_id (:collection_id (get collection_res 0))})))))))
+         (is (= 1 (db/delete-collection t-conn {:collection_id (:collection_id (get collection_res 0))})))
+           ; Check account is still there
+         (is (= (into account_args_two {:user_id (:user_id (get account_res_two 0))}) (db/get-account t-conn {:user_id (:user_id (get account_res_two 0))})))
+         (is (= [] (db/get-collections-by-account t-conn {:user_id (:user_id (get account_res_two 0))})))))))
 
 (deftest test-collection-course
   ; Create a collection and course, connect them, test connection, delete connection, test connection again
