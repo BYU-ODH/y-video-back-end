@@ -65,11 +65,29 @@
                        {:status 200
                         :body {:echo echo}})}
       :post {:summary "echo parameter post"
-             :parameters {:body {:echo string?}}
+             :parameters {:body {:echo string?
+                                 :second string?}}
              :responses {200 {:body {:echo string?}}}
              :handler (fn [{{{:keys [echo]} :body} :parameters}]
                         {:status 200
-                         :body {:echo echo}})}}]]
+                         :body {:echo echo}})}
+      :patch {:summary "echo parameter post"
+              :parameters {:body {:echo string?
+                                  :secret string?}}
+              :responses {200 {:body {:echo string?}}}
+              :handler (fn [{{{:keys [echo]} :body} :parameters}]
+                         {:status 200
+                          :body {:echo echo}})}}]
+    ["/:word"
+     {:get {:summary "echo parameter get"
+            :parameters {:path {:word string?}
+                         :query {:second string?}}
+            :responses {200 {:body {:echo string?
+                                    :second string?}}}
+            :handler (fn [{{{:keys [word]} :path {:keys [second]} :query} :parameters}]
+                       {:status 200
+                        :body {:echo word
+                               :second second}})}}]]
 
    ["/user"
     {:swagger {:tags ["user"]}}
