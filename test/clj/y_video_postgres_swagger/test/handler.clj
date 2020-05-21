@@ -68,13 +68,36 @@
               (is (= (into test_user_one {:id (:id res_body_one)}) (m/decode-response-body res_one)))
               (is (= 200 (:status res_two)))
               (is (= (into test_user_two {:id (:id res_body_two)}) (m/decode-response-body res_two))))))))
+    (testing "collection"
+      (let [test_user (model-generator/get_random_user_without_id)
+            test_collection (model-generator/get_random_collection_without_id)]
+        ; Add user
+        (let [add_user_res ((app) (-> (request :post "/api/user")
+                                      (json-body test_user)))]
+          ; Check success
+          (is (= 200 (:status add_user_res)))
+          (let [user_id (:id (m/decode-response-body add_user_res))]
+           ; Add collection
+           (let [add_collection_res ((app) (-> (request :post "/api/collection")
+                                               (json-body {:name (:collection_name test_collection) :user_id user_id})))]
+             ; Check add collection success
+             (is (= 200 (:status add_collection_res)))
+             (let [collection_res_body (m/decode-response-body add_collection_res)]
+               (is (= "1 collection created" (:message collection_res_body)))
+               ; Get collection
+               (let [get_collection_res ((app) (-> (request :get (str "/api/collection/" (:id collection_res_body)))))]
+                 ; Check successful get collection
+                 (is (= 200 (:status get_collection_res)))
+                 (is (= {:id (:id collection_res_body) :collection_name (:collection_name test_collection)
+                         :published false :archived false}
+                        (m/decode-response-body get_collection_res))))))))))
 
-    (comment (testing "collections"
-              (let [id "8675309" name "jenny" published false archived false]
-               (let [response ((app) (-> (request :post "/api/collections")
-                                         (json-body {:id id, :name name, :published published, :archived published})))]
-                 (is (= 200 (:status response)))
-                 (is (= {:message "1 collection added"} (m/decode-response-body response)))))))
+    (comment (testing "collections")
+       (let [id "8675309" name "jenny" published false archived false]
+        (let [response ((app) (-> (request :post "/api/collections")
+                                  (json-body {:id id, :name name, :published published, :archived published})))]
+          (is (= 200 (:status response)))
+          (is (= {:message "1 collection added"} (m/decode-response-body response))))))
 
 
 
