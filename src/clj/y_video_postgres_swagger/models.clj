@@ -41,3 +41,9 @@
 
 (def content
   (into content_without_id {:id string?}))
+
+(def file_without_id
+  {:filepath string? :mime string? :metadata string?})
+
+(def file
+  (into file_without_id {:id string?}))

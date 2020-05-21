@@ -47,3 +47,7 @@
 (defn get_random_content_without_id_or_collection_id
   []
   (get_random_model models/content_without_id_or_collection_id))
+
+(defn get_random_file_without_id
+  []
+  (get_random_model models/file_without_id))

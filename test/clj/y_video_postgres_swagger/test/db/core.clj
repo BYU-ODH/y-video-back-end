@@ -101,7 +101,7 @@
 
 (deftest test-file
   (jdbc/with-transaction [t-conn *db* {:rollback-only true}]
-    (let [args {:filepath "/usr/then/other/stuff" :mime "what even is this?" :metadata "so meta"}]
+    (let [args (model-generator/get_random_file_without_id)]
      (let [res
        ; Add file
            (db/add-file! t-conn args)]
