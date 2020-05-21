@@ -35,10 +35,10 @@
 
 (def user-get-by-id ;; Not tested
   {:summary "Retrieves specified user"
-   :parameters {:query {:id uuid?}}
+   :parameters {:path {:id uuid?}}
    :responses {200 {:body models/user}
                404 {:body {:message string?}}}
-   :handler (fn [{{{:keys [id]} :query} :parameters}]
+   :handler (fn [{{{:keys [id]} :path} :parameters}]
              (let [user_result (db-access/get_user id)]
               (if (= "" (:id user_result))
                 {:status 404

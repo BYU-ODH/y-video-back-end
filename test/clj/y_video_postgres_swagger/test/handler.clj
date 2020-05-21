@@ -4,6 +4,7 @@
     [ring.mock.request :refer :all]
     [y-video-postgres-swagger.handler :refer :all]
     [y-video-postgres-swagger.middleware.formats :as formats]
+    [y-video-postgres-swagger.test.test_model_generator :as model-generator]
     [muuntaja.core :as m]
     [mount.core :as mount]))
 
@@ -46,7 +47,27 @@
          (is (= 200 (:status response)))
          (is (= {:echo test_string} (m/decode-response-body response))))))
 
-
+    (testing "user"
+      (let [test_user_one (model-generator/get_random_user_without_id)
+            test_user_two (model-generator/get_random_user_without_id)]
+        ; Create two users
+        (let [res_one ((app) (-> (request :post "/api/user")
+                                 (json-body test_user_one)))
+              res_two ((app) (-> (request :post "/api/user")
+                                 (json-body test_user_two)))]
+          ; Check successful creates
+          (is (= 200 (:status res_one)))
+          (is (= 200 (:status res_two)))
+          (let [res_body_one (m/decode-response-body res_one)
+                res_body_two (m/decode-response-body res_two)]
+            (is (= "1 user created" (:message res_body_one)))
+            (is (= "1 user created" (:message res_body_two)))
+            (let [res_one ((app) (-> (request :get (str "/api/user/" (:id res_body_one)))))
+                  res_two ((app) (-> (request :get (str "/api/user/" (:id res_body_two)))))]
+              (is (= 200 (:status res_one)))
+              (is (= (into test_user_one {:id (:id res_body_one)}) (m/decode-response-body res_one)))
+              (is (= 200 (:status res_two)))
+              (is (= (into test_user_two {:id (:id res_body_two)}) (m/decode-response-body res_two))))))))
 
     (comment (testing "collections"
               (let [id "8675309" name "jenny" published false archived false]
