@@ -6,6 +6,7 @@
    [clojure.test :refer :all]
    [next.jdbc :as jdbc]
    [y-video-postgres-swagger.config :refer [env]]
+   [y-video-postgres-swagger.test.test_model_generator :as model-generator]
    [mount.core :as mount]))
 
 (use-fixtures
@@ -17,21 +18,26 @@
     (migrations/migrate ["migrate"] (select-keys env [:database-url]))
     (f)))
 
+(defn get-id
+  "Retrieves ID from first result in res"
+  [res]
+  (:id (get res 0)))
+
 ; - - - - - - - - BASIC INSERT, SELECT BY ID, DELETE TESTS - - - - - - -
 
 (deftest test-user
   (jdbc/with-transaction [t-conn *db* {:rollback-only true}]
-    (let [args {:email "me@gmail.com" :last_login "sometime" :account_name "will" :account_role 0 :username "conquerer01"}]
+    (let [args (model-generator/get_random_user_without_id)]
      (let [res
        ; Add user
            (db/add-user! t-conn args)]
        ; Check successful add and select
        (is (= 1 (count res)))
-       (is (= (into args {:id (:id (get res 0))}) (db/get-user t-conn {:id (:id (get res 0))})))
+       (is (= (into args {:id (get-id res)}) (db/get-user t-conn {:id (get-id res)})))
        ; Delete user
-       (is (= 1 (db/delete-user t-conn {:id (:id (get res 0))})))
+       (is (= 1 (db/delete-user t-conn {:id (get-id res)})))
        ; Check that user is deleted
-       (is (= nil (db/get-user t-conn {:id (:id (get res 0))})))))))
+       (is (= nil (db/get-user t-conn {:id (get-id res)})))))))
 
 (deftest test-word
   (jdbc/with-transaction [t-conn *db* {:rollback-only true}]
