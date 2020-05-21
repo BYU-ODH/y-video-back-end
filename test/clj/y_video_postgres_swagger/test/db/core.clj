@@ -73,7 +73,7 @@
 
 (deftest test-course
   (jdbc/with-transaction [t-conn *db* {:rollback-only true}]
-    (let [args {:department "Russian" :catalog_number "421" :section_number "001"}]
+    (let [args (model-generator/get_random_course_without_id)]
      (let [res
        ; Add course
            (db/add-course! t-conn args)]

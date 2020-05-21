@@ -19,3 +19,9 @@
 
 (def collection
   (into collection_without_id {:id string?}))
+
+(def course_without_id
+  {:department string? :catalog_number string? :section_number string?})
+
+(def course
+  (into course_without_id {:id string?}))

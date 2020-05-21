@@ -39,3 +39,7 @@
 (defn get_random_collection_without_id
   []
   (get_random_model models/collection_without_id))
+
+(defn get_random_course_without_id
+  []
+  (get_random_model models/course_without_id))
