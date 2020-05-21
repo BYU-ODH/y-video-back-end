@@ -87,12 +87,7 @@
 
 (deftest test-content
   (jdbc/with-transaction [t-conn *db* {:rollback-only true}]
-    (let [args {:collection_id nil
-                :content_name "content name!" :content_type "text and stuff" :requester_email "notme@gmail.com"
-                :thumbnail "all thumbs" :copyrighted false :physical_copy_exists false
-                :full_video false :published false :allow_definitions false :allow_notes false
-                :allow_captions false :date_validated "don't remember"
-                :views 0 :metadata "so meta"}]
+    (let [args (into (model-generator/get_random_content_without_id_or_collection_id) {:collection_id nil})]
      (let [res
        ; Add content
            (db/add-content! t-conn args)]
