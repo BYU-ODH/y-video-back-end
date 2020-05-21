@@ -59,7 +59,7 @@
 
 (deftest test-collection
   (jdbc/with-transaction [t-conn *db* {:rollback-only true}]
-    (let [args {:collection_name "collection name!" :published false :archived false}]
+    (let [args (model-generator/get_random_collection_without_id)]
      (let [res
        ; Add collection
            (db/add-collection! t-conn args)]

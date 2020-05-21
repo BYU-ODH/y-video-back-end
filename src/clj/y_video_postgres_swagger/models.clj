@@ -12,4 +12,10 @@
   {:word string? :src_lang string? :dest_lang string?})
 
 (def word
-  {:id string? :user_id string? :word string? :src_lang string? :dest_lang string?})
+  (into word_without_id_or_user_id {:id string? :user_id string?}))
+
+(def collection_without_id
+  {:collection_name string? :published boolean? :archived boolean?})
+
+(def collection
+  (into collection_without_id {:id string?}))

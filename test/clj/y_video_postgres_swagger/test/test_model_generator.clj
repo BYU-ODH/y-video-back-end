@@ -35,3 +35,7 @@
 (defn get_random_word_without_id_or_user_id
   []
   (get_random_model models/word_without_id_or_user_id))
+
+(defn get_random_collection_without_id
+  []
+  (get_random_model models/collection_without_id))
