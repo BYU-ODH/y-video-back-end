@@ -48,8 +48,7 @@
 (defn get_user
   "Retrieve collection with given id"
   [id]
-  (let [res (db/get-user {:id id})]
-    (update res :id str)))
+  (update (db/get-user {:id id}) :id str))
 
 (defn associate_user_with_collection
   "Adds collection to user's assoc_collections"
