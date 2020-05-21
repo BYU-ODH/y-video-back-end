@@ -2,7 +2,6 @@ DROP EXTENSION IF EXISTS pgcrypto CASCADE;
 --;;
 CREATE EXTENSION pgcrypto;
 --;;
-
 DROP TABLE IF EXISTS users CASCADE;
 --;;
 CREATE TABLE users (

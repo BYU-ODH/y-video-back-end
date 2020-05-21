@@ -46,6 +46,8 @@
          (is (= 200 (:status response)))
          (is (= {:echo test_string} (m/decode-response-body response))))))
 
+
+
     (comment (testing "collections"
               (let [id "8675309" name "jenny" published false archived false]
                (let [response ((app) (-> (request :post "/api/collections")

@@ -2,8 +2,8 @@
 
 -- :name get-user :? :1
 -- :doc retrieves user with given id
-SELECT id::text FROM users
-WHERE id::text = :id
+SELECT * FROM users
+WHERE id = :id
 
 -- :name get-word :? :1
 -- :doc retreives word with given id

@@ -1,41 +1,46 @@
 (ns y-video-postgres-swagger.routes.service_handlers
   (:require
-    [y-video-postgres-swagger.dbaccess.access :as db-access]))
-
-(def user_without_id
-           {:email string? :last_login string? :account_name string?
-            :account_role int? :username string?})
+    [y-video-postgres-swagger.dbaccess.access :as db-access]
+    [y-video-postgres-swagger.models :as models]))
 
 
-(def user-create ;; Non-functional
+
+(def user-create ;; Not tested
   {:summary "Creates a new user - FOR DEVELOPMENT ONLY"
-   :parameters {:body user_without_id}
-   :responses {200 {:body {:message string?}}}
+   :parameters {:body models/user_without_id}
+   :responses {200 {:body {:message string?
+                           :id string?}}
+               409 {:body {:message string?}}}
    :handler (fn [{{:keys [body]} :parameters}]
-             {:status 200
-              :body {:message (db-access/add_user body)}})})
+             (try {:status 200
+                   :body {:message "1 user created"
+                          :id (db-access/add_user body)}}
+               (catch Exception e
+                 {:status 409
+                  :body {:message "unable to create user, email likely taken"}})))})
 
-(def user-get-loggged-in
+
+(def user-get-loggged-in ;; Non-functional
   {:summary "Retrieves the current logged-in user"
    :parameters {:query {:user_id string?}}
    :responses {200 {:body {:user_id string? :email string? :lastlogin string? :name string? :role int? :username string?}}
                404 {:body {:message string?}}}
-   :handler (fn [{{{:keys [user_id]} :query} :parameters}]
-             (let [user_result (db-access/get_user user_id)]
+   :handler (fn [{{{:keys [id]} :query} :parameters}]
+             (let [user_result (db-access/get_user id)]
               (if (nil? user_result)
                 {:status 404
                  :body {:message "requested user not found"}}
                 {:status 200
                  :body {:message user_result}})))})
 
-(def user-get-by-id ;; Non-functional
+(def user-get-by-id ;; Not tested
   {:summary "Retrieves specified user"
-   :parameters {:query {:id string?}}
-   :responses {200 {:body {:id string? :email string? :last_login string? :account_name string? :account_role int? :username string?}}
+   :parameters {:query {:id uuid?}}
+   :responses {200 {:body models/user}
                404 {:body {:message string?}}}
    :handler (fn [{{{:keys [id]} :query} :parameters}]
              (let [user_result (db-access/get_user id)]
-              (if (nil? user_result)
+              (if (= "" (:id user_result))
                 {:status 404
                  :body {:message "requested user not found"}}
                 {:status 200

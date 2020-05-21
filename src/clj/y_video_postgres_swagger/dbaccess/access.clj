@@ -3,6 +3,9 @@
 
 (declare associate_user_with_collection)
 
+(defn to_uuid
+  [text_in]
+  (str "#uuid " text_in))
 
 
 (defn get_collection
@@ -45,7 +48,8 @@
 (defn get_user
   "Retrieve collection with given id"
   [id]
-  (db/get-user {:id id}))
+  (let [res (db/get-user {:id id})]
+    (update res :id str)))
 
 (defn associate_user_with_collection
   "Adds collection to user's assoc_collections"
