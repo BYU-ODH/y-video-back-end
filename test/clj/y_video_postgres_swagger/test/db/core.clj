@@ -41,8 +41,8 @@
 
 (deftest test-word
   (jdbc/with-transaction [t-conn *db* {:rollback-only true}]
-    (let [user_args {:email "me@gmail.com" :last_login "sometime" :account_name "will" :account_role 0 :username "conquerer01"}
-          word_args {:word "a word!" :src_lang "ru" :dest_lang "en"}]
+    (let [user_args (model-generator/get_random_user_without_id)
+          word_args (model-generator/get_random_word_without_id_or_user_id)]
      (let [
        ; Add word and user
            user_res (db/add-user! t-conn user_args)
