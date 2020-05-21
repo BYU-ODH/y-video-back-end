@@ -116,26 +116,31 @@
                  :body collection_result})))})
 
 (def collection-create ;; Non-functional
-  {:summary "Creates a new collection with the current user as an owner"
-   :parameters {:body {:name string?}}
+  {:summary "Creates a new collection with the given (temp) user as an owner"
+   :parameters {:body {:name string? :user_id string?}}
    :responses {200 {:body {:message string?
-                           :success boolean?}}}
-   :handler (fn [{{{:keys [current_user_id name published archived]} :body} :parameters}]
-             {:status 200
-              :body (db-access/add_collection current_user_id name published archived)})})
+                           :id string?}}
+               409 {:body {:message string?}}}
+   :handler (fn [{{:keys [body]} :parameters}]
+             (try {:status 200
+                   :body {:message "1 collection created"
+                          :id (db-access/add_collection body)}}
+               (catch Exception e
+                 {:status 409
+                  :body {:message (e)}})))})
 
-(def collection-get-by-id ;; Non-functional
-  {:summary "Retrieves the specified collection"
-   :parameters {:body {:collection_id string?}}
-   :responses {200 {:body {:collection_id string? :name string? :published boolean? :archived boolean?}}
+(def collection-get-by-id ;; Not tested
+  {:summary "Retrieves specified collection"
+   :parameters {:path {:id uuid?}}
+   :responses {200 {:body models/collection}
                404 {:body {:message string?}}}
-   :handler (fn [{{{:keys [collection_id]} :query} :parameters}]
-             (let [collection_result (db-access/get_collection collection_id)]
-              (if (nil? collection_result)
+   :handler (fn [{{{:keys [id]} :path} :parameters}]
+             (let [res (db-access/get_collection id)]
+              (if (= "" (:id res))
                 {:status 404
-                 :body {:message "requested collection not found"}}
+                 :body {:message "requested user not found"}}
                 {:status 200
-                 :body collection_result})))})
+                 :body res})))})
 
 (def collection-update ;; Non-functional
   {:summary "Updates the specified collection"

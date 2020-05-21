@@ -5,18 +5,20 @@
 
 (defn to_uuid
   [text_in]
-  (str "#uuid " text_in))
+  (java.util.UUID/fromString text_in))
 
 
 (defn get_collection
   "Retrieve collection with given id"
-  [collection_id]
+  [id]
   ; get collection info
-  (def base-collection (db/get-collection {:collection_id collection_id}))
+  ; (def base-collection (db/get-collection {:collection_id collection_id})))
   ; add in assoc_users, assoc_courses, and assoc_content
-  (into base-collection [{:assoc_users (db/get-users-by-collection {:collection_id collection_id})
-                          :assoc_courses (db/get-courses-by-collection {:collection_id collection_id})
-                          :assoc_content (db/get-contents-by-collection {:collection_id collection_id})}]))
+  ; (into base-collection [{:assoc_users (db/get-users-by-collection {:collection_id collection_id})
+  ;                         :assoc_courses (db/get-courses-by-collection {:collection_id collection_id})
+  ;                         :assoc_content (db/get-contents-by-collection {:collection_id collection_id}))))
+  (update (db/get-collection {:id id}) :id str))
+
 
 (defn get_collections
   "Retrieve all collections available to given user_id"
@@ -25,14 +27,14 @@
 
 (defn add_collection
   "Add collection with current user as owner"
-  [current_user_id name published archived]
-  (try
-    (let [collection_id (:collection_id (get (db/add-collection! {:collection_name name :published published :archived archived}) 0))]
-      (associate_user_with_collection current_user_id collection_id 0)
-      {:message (str "1 collection added with ID: " collection_id)})
-   (catch Exception e
-     {:message (.getCause e)})))
-
+  [body]
+  (let [collection_id (:id (get (db/add-collection! {:collection_name (:name body) :published false :archived false}) 0))]
+    (try
+      (db/add-user-collection! {:user_id (to_uuid (:user_id body)) :collection_id collection_id
+                                :account_role 0})
+      (catch Exception e
+        (.getCause e)))
+    (str collection_id)))
 
 (defn add_collection_old
   "Add collection with given values, adds associated users, contents, courses"
