@@ -164,18 +164,17 @@
                         :body {:message "placeholder"}})})
 
 (def collection-get-all-contents ;; Non-functional
-  {:summary "Retrieves all the content for the specified collection"
-   :parameters {:query {:collection_id string?}}
-   :responses {200 {:body {:collection_id string? :name string? :published boolean? :archived boolean?}}
+  {:summary "Retrieves all the contents for the specified collection"
+   :parameters {:path {:id uuid?}}
+   :responses {200 {:body [models/content]}
                404 {:body {:message string?}}}
-   :handler (fn [{{{:keys [collection_id]} :query} :parameters}]
-             (let [collection_result (db-access/get_collections collection_id)]
-              (if (nil? collection_result)
-                {:status 404
-                 :body {:message "requested collection not found"}}
-                {:status 200
-                 :body collection_result})))})
-
+   :handler (fn [{{{:keys [id]} :path} :parameters}]
+             (if (db-access/check_collection_id id)
+               (let [result (db-access/get_contents_by_collection id)]
+                 {:status 200
+                  :body result})
+               {:status 404
+                :body {:message "collection not found"}}))})
 (def collection-get-all-courses
   {:summary "Retrieves all courses for the specified collection"
    :parameters {}
@@ -251,7 +250,7 @@
                   :body {:message "unable to create content, likely bad collection id"
                          :error e}})))})
 
-(def content-get-by-id ;; Non-functional
+(def content-get-by-id
   {:summary "Retrieves specified content"
    :parameters {:path {:id uuid?}}
    :responses {200 {:body models/content}

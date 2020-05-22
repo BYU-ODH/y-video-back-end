@@ -125,7 +125,7 @@
       :delete service-handlers/collection-delete}]
     ["/{id}/add-user"
      {:post service-handlers/collection-add-user}]
-    ["/{id}/content"
+    ["/{id}/contents"
      {:get service-handlers/collection-get-all-contents}]
     ["/{id}/courses"
      {:get service-handlers/collection-get-all-courses}]

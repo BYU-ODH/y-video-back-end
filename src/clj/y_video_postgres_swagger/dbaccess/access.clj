@@ -8,6 +8,12 @@
   (java.util.UUID/fromString text_in))
 
 
+(defn check_collection_id
+  "Checks if collection exists in database"
+  [id]
+  (let [result (db/get-collection {:id id})]
+    (not (nil? result))))
+
 (defn get_collection
   "Retrieve collection with given id"
   [id]
@@ -71,6 +77,11 @@
   "Retrieve content with given id"
   [id]
   (update (update (db/get-content {:id id}) :id str) :collection_id str))
+
+(defn get_contents_by_collection
+  [id]
+  (let [all_contents (db/get-contents-by-collection {:collection_id id})]
+    (map #(update (update % :id str) :collection_id str) all_contents)))
 
 (defn clear_database
   "Clears entire database, requires correct password"

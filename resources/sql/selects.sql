@@ -76,7 +76,7 @@ WHERE cll.id = :id
 -- :name get-contents-by-collection :? :*
 -- :doc retrieves all contents connected to given collection
 SELECT * FROM contents
-WHERE id = :id
+WHERE collection_id = :collection_id
 
 
 -- :name get-contents-by-file :? :*
