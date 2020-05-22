@@ -119,8 +119,11 @@
                                                 (json-body (into test_content {:collection_id (str (:id collection_res_body))}))))]
                  (is (= 200 (:status add_content_res)))
                  (let [content_res_body (m/decode-response-body add_content_res)]
-                   (is (= "1 content created" (:message content_res_body)))))))))))
-    
+                   (is (= "1 content created" (:message content_res_body)))
+                   (let [get_content_res ((app) (-> (request :get (str "/api/content/" (:id content_res_body)))))]
+                     (is (= (into test_content {:collection_id (str (:id collection_res_body)) :id (:id content_res_body)})
+                            (m/decode-response-body get_content_res))))))))))))
+
     (comment (testing "collections")
        (let [id "8675309" name "jenny" published false archived false]
         (let [response ((app) (-> (request :post "/api/collections")
