@@ -48,7 +48,7 @@
 
 
 (defn get_user
-  "Retrieve collection with given id"
+  "Retrieve user with given id"
   [id]
   (update (db/get-user {:id id}) :id str))
 
@@ -66,3 +66,15 @@
   "Adds new content to database"
   [content_without_id]
   (str (:id (get (db/add-content! (update content_without_id :collection_id to_uuid)) 0))))
+
+(defn get_content
+  "Retrieve content with given id"
+  [id]
+  (update (update (db/get-content {:id id}) :id str) :collection_id str))
+
+(defn clear_database
+  "Clears entire database, requires correct password"
+  [password]
+  (if (= password "17e6b095-c7a7-471f-8f89-58e0a57f89f3")
+    ; clear database
+    (db/delete-all)))

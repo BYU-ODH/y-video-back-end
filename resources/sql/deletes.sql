@@ -1,5 +1,18 @@
 /* DELETE BASE TABLE STATEMENTS */
 
+-- :name delete-all :? :n
+-- :doc deletes contents from all tables
+DELETE FROM user_collections;
+DELETE FROM collection_courses;
+DELETE FROM content_files;
+DELETE FROM files;
+DELETE FROM words;
+DELETE FROM contents;
+DELETE FROM courses;
+DELETE FROM collections;
+DELETE FROM users;
+
+
 -- :name delete-user :? :n
 -- :doc deletes user with given id
 DELETE FROM users

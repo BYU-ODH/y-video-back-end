@@ -252,17 +252,18 @@
                          :error e}})))})
 
 (def content-get-by-id ;; Non-functional
-  {:summary "Retrieves the specified content"
-   :parameters {:query {:collection_id string?}}
-   :responses {200 {:body {:collection_id string? :name string? :published boolean? :archived boolean?}}
+  {:summary "Retrieves specified content"
+   :parameters {:path {:id uuid?}}
+   :responses {200 {:body models/content}
                404 {:body {:message string?}}}
-   :handler (fn [{{{:keys [collection_id]} :query} :parameters}]
-             (let [collection_result (db-access/get_collections collection_id)]
-              (if (nil? collection_result)
+   :handler (fn [{{{:keys [id]} :path} :parameters}]
+             (let [content_result (db-access/get_content
+                                                          id)]
+              (if (= "" (:id content_result))
                 {:status 404
-                 :body {:message "requested collection not found"}}
+                 :body {:message "requested content not found"}}
                 {:status 200
-                 :body collection_result})))})
+                 :body content_result})))})
 
 (def content-update ;; Non-functional
   {:summary "Updates the specified content"

@@ -5,7 +5,7 @@
 ; - - - - - - - - - LOCAL UTIL FUNCTIONS - - - - - - - - ;
 
 (defn rand-str [len]
-  (apply str (take (int (rand len)) (repeatedly #(char (+ (rand 26) 65))))))
+  (apply str (take (+ (int (rand (- len 7))) 7) (repeatedly #(char (+ (rand 26) 65))))))
 
 (defn rand-bool []
   (if (< 0 (rand-int 2))

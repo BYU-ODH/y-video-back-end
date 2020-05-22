@@ -5,6 +5,7 @@
     [y-video-postgres-swagger.handler :refer :all]
     [y-video-postgres-swagger.middleware.formats :as formats]
     [y-video-postgres-swagger.test.test_model_generator :as model-generator]
+    [y-video-postgres-swagger.dbaccess.access :as db-access]
     [muuntaja.core :as m]
     [mount.core :as mount]))
 
@@ -17,6 +18,7 @@
     (mount/start #'y-video-postgres-swagger.config/env
                  #'y-video-postgres-swagger.handler/app-routes)
     (f)))
+(def delete_password "17e6b095-c7a7-471f-8f89-58e0a57f89f3")
 
 (deftest test-app
   (testing "main route"
@@ -48,6 +50,7 @@
          (is (= {:echo test_string} (m/decode-response-body response))))))
 
     (testing "user"
+      (db-access/clear_database delete_password)
       (let [test_user_one (model-generator/get_random_user_without_id)
             test_user_two (model-generator/get_random_user_without_id)]
         ; Create two users
@@ -69,6 +72,7 @@
               (is (= 200 (:status res_two)))
               (is (= (into test_user_two {:id (:id res_body_two)}) (m/decode-response-body res_two))))))))
     (testing "collection"
+      (db-access/clear_database delete_password)
       (let [test_user (model-generator/get_random_user_without_id)
             test_collection (model-generator/get_random_collection_without_id)]
         ; Add user
@@ -92,6 +96,31 @@
                          :published false :archived false}
                         (m/decode-response-body get_collection_res))))))))))
 
+    (testing "content"
+      (db-access/clear_database delete_password)
+      (let [test_user (model-generator/get_random_user_without_id)
+            test_collection (model-generator/get_random_collection_without_id)
+            test_content (model-generator/get_random_content_without_id_or_collection_id)]
+        ; Add user
+        (let [add_user_res ((app) (-> (request :post "/api/user")
+                                      (json-body test_user)))]
+          ; Check success
+          (is (= 200 (:status add_user_res)))
+          (let [user_id (:id (m/decode-response-body add_user_res))]
+           ; Add collection
+           (let [add_collection_res ((app) (-> (request :post "/api/collection")
+                                               (json-body {:name (:collection_name test_collection) :user_id user_id})))]
+             ; Check add collection success
+             (is (= 200 (:status add_collection_res)))
+             (let [collection_res_body (m/decode-response-body add_collection_res)]
+               (is (= "1 collection created" (:message collection_res_body)))
+               ; Add content
+               (let [add_content_res ((app) (-> (request :post "/api/content")
+                                                (json-body (into test_content {:collection_id (str (:id collection_res_body))}))))]
+                 (is (= 200 (:status add_content_res)))
+                 (let [content_res_body (m/decode-response-body add_content_res)]
+                   (is (= "1 content created" (:message content_res_body)))))))))))
+    
     (comment (testing "collections")
        (let [id "8675309" name "jenny" published false archived false]
         (let [response ((app) (-> (request :post "/api/collections")
