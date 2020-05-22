@@ -1,7 +1,9 @@
--- CREATE EXTENSION IF NOT EXISTS "pgcrypto";
--- needs to be executed once by db admin on this individual db
+DROP EXTENSION IF EXISTS pgcrypto CASCADE;
+--;;
+CREATE EXTENSION pgcrypto;
 --;;
 DROP TABLE IF EXISTS users CASCADE;
+--;;
 CREATE TABLE users (
    id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY
    ,email TEXT UNIQUE
@@ -10,27 +12,41 @@ CREATE TABLE users (
    ,account_role INTEGER
    ,username TEXT
 );
+
+--;;
 COMMENT ON TABLE users IS 'User-accounts matching netid';
 
+--;;
 DROP TABLE IF EXISTS words CASCADE;
+--;;
 CREATE TABLE words (
    id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY
-   ,user_id TEXT REFERENCES users(id)
+   ,user_id UUID REFERENCES users(id)
    ,word TEXT
    ,src_lang TEXT
    ,dest_lang TEXT
 );
-COMMENT ON TABLE translation_word IS 'Is this what tword stood for? It needs to be more clear';
 
+--;;
+COMMENT ON TABLE words IS 'Vocab words with source and destination language codes';
+
+
+--;;
 DROP TABLE IF EXISTS collections CASCADE;
+--;;
 CREATE TABLE collections (
    id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY
-   ,collection_name TEXT -- Because "name" is a reserved word
+   ,collection_name TEXT -- Because name is a reserved word
    ,published BOOLEAN
    ,archived BOOLEAN
 );
 
+--;;
+COMMENT ON TABLE collections IS 'Collections of content/resources';
+
+--;;
 DROP TABLE IF EXISTS courses CASCADE;
+--;;
 CREATE TABLE courses (
    id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY
    ,department TEXT -- should this be a foreign key?
@@ -38,10 +54,15 @@ CREATE TABLE courses (
    ,section_number TEXT
 );
 
-DROP TABLE IF EXISTS content CASCADE;
+--;;
+COMMENT ON TABLE courses IS 'Courses (or classes) at BYU';
+
+--;;
+DROP TABLE IF EXISTS contents CASCADE;
+--;;
 CREATE TABLE contents (
    id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY
-   ,collection_id TEXT
+   ,collection_id UUID REFERENCES collections(id)
    ,content_name TEXT
    ,content_type TEXT -- type is a reserved word
    ,requester_email TEXT
@@ -58,7 +79,12 @@ CREATE TABLE contents (
    ,metadata TEXT
 );
 
+--;;
+COMMENT ON TABLE contents IS 'Contained within collections, hold media in files table';
+
+--;;
 DROP TABLE IF EXISTS files CASCADE;
+--;;
 CREATE TABLE files (
    id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY
    ,filepath TEXT
@@ -66,29 +92,47 @@ CREATE TABLE files (
    ,metadata TEXT
 );
 
-DROP TABLE IF EXISTS account_collections CASCADE;
-CREATE TABLE account_collections (
-   user_id UUID REFERENCES users(id) ON DELETE CASCADE
-   ,collection_id TEXT REFERENCES collections(id) ON DELETE CASCADE
+--;;
+COMMENT ON TABLE files IS 'Files represent media (i.e. videos) with path to file and metadata';
+
+--;;
+DROP TABLE IF EXISTS user_collections CASCADE;
+--;;
+CREATE TABLE user_collections (
+    id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY
+   ,user_id UUID REFERENCES users(id) ON DELETE CASCADE
+   ,collection_id UUID REFERENCES collections(id) ON DELETE CASCADE
    ,account_role TEXT -- role is a reserved word
    ,PRIMARY KEY (user_id, collection_id)
 );
 
+--;;
+COMMENT ON TABLE user_collections IS 'Many-to-many table connecting users and collections, incl. user roles in collections';
+
+--;;
 DROP TABLE IF EXISTS collection_courses CASCADE;
+--;;
 CREATE TABLE collection_courses (
-   collection TEXT REFERENCES collections(id)
-   ,course_id TEXT REFERENCES courses(id)
+    id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY
+   ,collection_id UUID REFERENCES collections(id)
+   ,course_id UUID REFERENCES courses(id)
    ,PRIMARY KEY (collection_id, course_id)
 );
 
+--;;
+COMMENT ON TABLE collection_courses IS 'Many-to-many table connecting collections and courses';
+
+--;;
 DROP TABLE IF EXISTS content_files CASCADE;
+--;;
 CREATE TABLE content_files (
-   contents TEXT REFERENCES contents(id)
-   ,file_id TEXT REFERENCES files(id)
+   content_id UUID REFERENCES contents(id)
+   ,file_id UUID REFERENCES files(id)
    ,PRIMARY KEY (content_id, file_id)
 );
 
-
+--;;
+COMMENT ON TABLE content_files IS 'Many-to-many table connecting contents and files';
 
 -------------------------------
 -- Auto-update updated --
@@ -151,24 +195,4 @@ $$ LANGUAGE plpgsql;
 -- DEPENDENT VIEWS --
 ---------------------
 
--- TODO Need to include source name
--- Problem: is returning multiples
-
-DROP VIEW IF EXISTS unannotated_material CASCADE;
-CREATE VIEW unannotated_material AS
-SELECT m.* 
-FROM material m
-  INNER JOIN sources s ON s.source_id = m.source_id
-  LEFT JOIN products_undeleted pu ON pu.material_id = m.id
-WHERE pu.material_id IS NULL
-ORDER BY retrieved DESC;
-
-   -- SELECT m.*, s.source_name
-   --    FROM material_undeleted m
-   --    LEFT JOIN sources_undeleted s
-   --       ON m.source_id = s.id
-   --    WHERE m.id NOT IN (SELECT p.material_id FROM products_undeleted p)
-   --    ORDER BY retrieved DESC;
--- WIP: produces duplicates
-
-COMMENT ON VIEW unannotated_material IS 'Undeleted material which is unannotated'; 
+-- These will be views which depend upon other views
