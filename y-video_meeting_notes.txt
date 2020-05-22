@@ -1,2 +1,4 @@
 When you request a collection, do you need info about all its users, courses, and/or content?
     Or just the collection data, i.e. name, published, archived?
+
+test
