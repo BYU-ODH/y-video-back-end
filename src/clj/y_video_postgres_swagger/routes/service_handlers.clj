@@ -239,10 +239,17 @@
 
 (def content-create ;; Non-functional
   {:summary "Creates new content"
-   :parameters {}
-   :responses {200 {:body {:message string?}}}
-   :handler (fn [args] {:status 200
-                        :body {:message "placeholder"}})})
+   :parameters {:body models/content_without_id}
+   :responses {200 {:body {:message string?
+                           :id string?}}}
+   :handler (fn [{{:keys [body]} :parameters}]
+             (try {:status 200
+                   :body {:message "1 content created"
+                          :id (db-access/add_content body)}}
+               (catch Exception e
+                 {:status 409
+                  :body {:message "unable to create content, likely bad collection id"
+                         :error e}})))})
 
 (def content-get-by-id ;; Non-functional
   {:summary "Retrieves the specified content"

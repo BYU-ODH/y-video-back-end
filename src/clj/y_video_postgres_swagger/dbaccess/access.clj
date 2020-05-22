@@ -61,3 +61,8 @@
   "Adds new user to database"
   [user_without_id]
   (str (:id (get (db/add-user! user_without_id) 0))))
+
+(defn add_content
+  "Adds new content to database"
+  [content_without_id]
+  (str (:id (get (db/add-content! (update content_without_id :collection_id to_uuid)) 0))))
