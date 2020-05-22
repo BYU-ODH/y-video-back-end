@@ -6,6 +6,7 @@
     [y-video-postgres-swagger.middleware.formats :as formats]
     [y-video-postgres-swagger.test.test_model_generator :as model-generator]
     [y-video-postgres-swagger.dbaccess.access :as db-access]
+    [y-video-postgres-swagger.test.utils :as utils]
     [muuntaja.core :as m]
     [mount.core :as mount]))
 
@@ -94,8 +95,27 @@
                  (is (= 200 (:status get_collection_res)))
                  (is (= {:id (:id collection_res_body) :collection_name (:collection_name test_collection)
                          :published false :archived false}
-                        (m/decode-response-body get_collection_res))))))))))
+                        (m/decode-response-body get_collection_res)))))))))
+      (let [test_user (model-generator/get_random_user_without_id)
+            test_collection (model-generator/get_random_collection_without_id)
+            test_content_one (model-generator/get_random_content_without_id_or_collection_id)
+            test_content_two (model-generator/get_random_content_without_id_or_collection_id)
+            test_content_thr (model-generator/get_random_content_without_id_or_collection_id)]
+        ; Set up database
+        (def user_id (utils/insert_user test_user))
+        (def collection_id (utils/insert_collection test_collection user_id))
+        (def content_id_one (utils/insert_content test_content_one collection_id))
+        (def content_id_two (utils/insert_content test_content_two collection_id))
+        (def content_id_thr (utils/insert_content test_content_thr collection_id))
 
+        (let [get_contents_res ((app) (-> (request :get (str "/api/collection/" (str collection_id) "/contents"))))]
+          (is (= 200 (:status get_contents_res)))
+          (let [get_contents_body (m/decode-response-body get_contents_res)]
+            (is (= (frequencies get_contents_body)
+                   (frequencies [
+                                 (into test_content_one {:id content_id_one :collection_id collection_id})
+                                 (into test_content_two {:id content_id_two :collection_id collection_id})
+                                 (into test_content_thr {:id content_id_thr :collection_id collection_id})])))))))
     (testing "content"
       (db-access/clear_database delete_password)
       (let [test_user (model-generator/get_random_user_without_id)
