@@ -53,7 +53,6 @@
    ["/ping"
     {:get (constantly (ok {:message "pong"}))}]
 
-
    ["/echo"
     {:swagger {:tags ["echo"]}}
 
@@ -70,13 +69,7 @@
              :handler (fn [{{{:keys [echo]} :body} :parameters}]
                         {:status 200
                          :body {:echo echo}})}
-      :patch {:summary "echo parameter post"
-              :parameters {:body {:echo string?
-                                  :secret string?}}
-              :responses {200 {:body {:echo string?}}}
-              :handler (fn [{{{:keys [echo]} :body} :parameters}]
-                         {:status 200
-                          :body {:echo echo}})}}]
+      :patch service-handlers/echo-patch}]
     ["/:word"
      {:get {:summary "echo parameter get"
             :parameters {:path {:word string?}
@@ -108,7 +101,6 @@
     ["/{id}/words"
      {:get service-handlers/user-get-all-words}]]
 
-
    ["/collections"
     {:swagger {:tags ["collections"]}}
 
@@ -131,6 +123,7 @@
      {:get service-handlers/collection-get-all-courses}]
     ["/{id}/users"
      {:get service-handlers/collection-get-all-users}]]
+
    [ "/course"
     {:swagger {:tags ["course"]}}
     [""
@@ -155,7 +148,9 @@
     ["/{id}/connect-file"
      {:post service-handlers/content-connect-file}]
     ["/{id}/files"
-     {:post service-handlers/content-get-all-files}]]
+     {:post service-handlers/content-get-all-files}]
+    ["/{id}/add-view"
+     {:post service-handlers/content-add-view}]]
 
    ["/file"
     {:swagger {:tags ["file"]}}
@@ -173,6 +168,7 @@
     {:swagger {:tags ["connect"]}}
     [""
      {:post service-handlers/connect-collection-and-course}]]
+
    ["/search"
     {:swagger {:tags ["search"]}}
     [""

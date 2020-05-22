@@ -89,3 +89,10 @@
   (if (= password "17e6b095-c7a7-471f-8f89-58e0a57f89f3")
     ; clear database
     (db/delete-all)))
+
+(defn add_view_to_content
+  "Adds a view to specified content"
+  [id]
+  (if (= 1 (db/add-view-to-content {:id id}))
+    true
+    false))

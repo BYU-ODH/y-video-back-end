@@ -43,3 +43,9 @@ WHERE id = :id
 UPDATE files
 SET filepath = :filepath, mime = :mime, metadata = :metadata
 WHERE id = :id
+
+-- :name add-view-to-content :! :n
+-- :doc adds view to content
+UPDATE contents
+SET views = views + 1
+WHERE id = :id

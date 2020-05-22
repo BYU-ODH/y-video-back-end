@@ -1,22 +1,2 @@
-May 15, 2020
-
-Questions for Front-End:
-      Does content only belong to 1 collection? (probably yes)
-      What are files, and are we storing those in the DB, disk, or remotely?
-  How are you accessing react?
-  Which files are you storing/serving/accessing locally?
-  Difference between '/collections/{col_id}/content/{con_id}' and '/content/{id}'?
-  How are we handling authentication?
-  Does updating collections and content imply deleting relations not listed in request body?
-  How are we going to update collections, content, etc?
-
-Routes to add:
- - admin?
-
-
-New Questions:
-  How will you use the collections post? i.e. is that where you create courses,
-    users, content, or are they created prior via another route?
-
-Do you ever need to access a course by itself? (i.e. not in relation to a collection)
-  create, retrieve, update, and delete
+When you request a collection, do you need info about all its users, courses, and/or content?
+    Or just the collection data, i.e. name, published, archived?

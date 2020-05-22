@@ -3,7 +3,11 @@
     [y-video-postgres-swagger.dbaccess.access :as db-access]
     [y-video-postgres-swagger.models :as models]))
 
-
+(def echo-patch
+  {:summary "echo parameter post"
+   :parameters {:body models/echo_patch}
+   :responses {200 {:body {:message string?}}}
+   :handler (fn [ignore-me] {:status 200 :body {:message "this route does nothing!"}})})
 
 (def user-create ;; Not tested
   {:summary "Creates a new user - FOR DEVELOPMENT ONLY"
@@ -294,6 +298,19 @@
    :responses {200 {:body {:message string?}}}
    :handler (fn [args] {:status 200
                         :body {:message "placeholder"}})})
+
+(def content-add-view ;; Non-functional
+  {:summary "Adds 1 view to specified content"
+   :parameters {:path {:id uuid?}}
+   :responses {200 {:body {:message string?}}}
+   :handler (fn [{{{:keys [id]} :path} :parameters}]
+             (let [result (db-access/add_view_to_content id)]
+              (if result
+                {:status 200
+                 :body {:message "view successfully added"}}
+                {:status 404
+                 :body {:message "requested content not found"}})))})
+
 
 
 (def file-create ;; Non-functional

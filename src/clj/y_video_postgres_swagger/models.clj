@@ -1,7 +1,12 @@
-(ns y-video-postgres-swagger.models)
+(ns y-video-postgres-swagger.models
+  (:require [schema.core :as sch]
+            [spec-tools.core :as st]
+            [clojure.spec.alpha :as s]))
 
+(def echo_patch
+  {:echo string?})
 
-(def user_without_id
+(sch/defschema user_without_id
   {:email string? :last_login string? :account_name string?
    :account_role int? :username string?})
 
