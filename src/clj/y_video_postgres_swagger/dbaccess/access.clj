@@ -68,6 +68,17 @@
   [user_without_id]
   (str (:id (get (db/add-user! user_without_id) 0))))
 
+(defn add_course
+  "Adds new course to database"
+  [course_without_id]
+  (str (:id (get (db/add-course! course_without_id) 0))))
+
+(defn get_course
+  "Retrieve course with given id"
+  [id]
+  (update (db/get-course {:id id}) :id str))
+
+
 (defn add_content
   "Adds new content to database"
   [content_without_id]

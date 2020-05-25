@@ -130,7 +130,6 @@
      {:post service-handlers/course-create}]
     ["/{id}"
      {:get service-handlers/course-get-by-id
-
       :patch service-handlers/course-update
       :delete service-handlers/course-delete}]
     ["/{id}/collections"

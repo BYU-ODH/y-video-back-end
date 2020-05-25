@@ -194,24 +194,31 @@
                         :body {:message "placeholder"}})})
 
 (def course-create ;; Non-functional
-  {:summary "Creates new course"
-   :parameters {}
-   :responses {200 {:body {:message string?}}}
-   :handler (fn [args] {:status 200
-                        :body {:message "placeholder"}})})
+  {:summary "Creates a new course"
+   :parameters {:body models/course_without_id}
+   :responses {200 {:body {:message string?
+                           :id string?}}
+               409 {:body {:message string?}}}
+   :handler (fn [{{:keys [body]} :parameters}]
+             (try {:status 200
+                   :body {:message "1 course created"
+                          :id (db-access/add_course body)}}
+               (catch Exception e
+                 {:status 409
+                  :body {:message (e)}})))})
 
 (def course-get-by-id ;; Non-functional
-  {:summary "Retrieves the specified course"
-   :parameters {:query {:collection_id string?}}
-   :responses {200 {:body {:collection_id string? :name string? :published boolean? :archived boolean?}}
+  {:summary "Retrieves specified course"
+   :parameters {:path {:id uuid?}}
+   :responses {200 {:body models/course}
                404 {:body {:message string?}}}
-   :handler (fn [{{{:keys [collection_id]} :query} :parameters}]
-             (let [collection_result (db-access/get_collections collection_id)]
-              (if (nil? collection_result)
+   :handler (fn [{{{:keys [id]} :path} :parameters}]
+             (let [res (db-access/get_course id)]
+              (if (= "" (:id res))
                 {:status 404
-                 :body {:message "requested collection not found"}}
+                 :body {:message "requested course not found"}}
                 {:status 200
-                 :body collection_result})))})
+                 :body res})))})
 
 (def course-update ;; Non-functional
   {:summary "Updates the specified course"
