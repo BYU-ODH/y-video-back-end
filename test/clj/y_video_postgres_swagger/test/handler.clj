@@ -80,6 +80,29 @@
   ((app) (-> (request :delete (str "/api/content/" id)))))
 
 
+(defn course-post
+  "Create a course via app's post request"
+  [course_without_id]
+  ((app) (-> (request :post "/api/course")
+             (json-body course_without_id))))
+
+(defn course-id-get
+  "Retrieves course via app's get (id) request"
+  [id]
+  ((app) (-> (request :get (str "/api/course/" id)))))
+
+(defn course-id-patch
+  "Updates course via app's patch (id) request"
+  [id new_course]
+  ((app) (-> (request :patch (str "/api/course/" id))
+             (json-body new_course))))
+
+(defn course-id-delete
+  "Deletes course via app's delete (id) request"
+  [id]
+  ((app) (-> (request :delete (str "/api/course/" id)))))
+
+
 
 (use-fixtures
   :once
@@ -292,4 +315,31 @@
                 ; Verify
                 (is (= 200 (:status result)))
                 (let [result (content-id-get content_one_id)]
-                  (is (= 404 (:status result))))))))))))
+                  (is (= 404 (:status result)))))))))))
+
+  (testing "course"
+    (let [test_course_one (model-generator/get_random_course_without_id)]
+      ; Add course
+      (let [result (course-post test_course_one)]
+      ; Verify
+        (is (= 200 (:status result)))
+        (let [course_one_id (:id (m/decode-response-body result))]
+          ; Retrieve course
+          (let [result (course-id-get course_one_id)]
+            ; Verify
+            (is (= 200 (:status result)))
+            (is (= (into test_course_one {:id course_one_id}) (m/decode-response-body result))))
+          ; Update course
+          (let [new_course_one (model-generator/get_random_course_without_id)]
+            (let [result (course-id-patch course_one_id new_course_one)]
+              ; Verify
+              (is (= 200 (:status result)))
+              (let [result (course-id-get course_one_id)]
+                (is (= 200 (:status result)))
+                (is (= (into new_course_one {:id course_one_id}) (m/decode-response-body result))))))
+          ; Delete course
+          (let [result (course-id-delete course_one_id)]
+            ; Verify
+            (is (= 200 (:status result)))
+            (let [result (course-id-get course_one_id)]
+              (is (= 404 (:status result))))))))))

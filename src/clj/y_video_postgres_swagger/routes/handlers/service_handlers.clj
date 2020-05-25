@@ -329,31 +329,36 @@
    :responses {200 {:body models/course}
                404 {:body {:message string?}}}
    :handler (fn [{{{:keys [id]} :path} :parameters}]
-             (let [res (db-access/get_course id)]
-              (if (= "" (:id res))
+             (let [result (db-access/get_course id)]
+              (if (= "" (:id result))
                 {:status 404
                  :body {:message "requested course not found"}}
                 {:status 200
-                 :body res})))})
+                 :body result})))})
 
 (def course-update ;; Non-functional
   {:summary "Updates the specified course"
-   :parameters {:body {:id string? :name string? :published boolean? :archived boolean?
-                       :assoc_courses [{:id string? :department string? :catalog_number string? :section_number string?}]
-                       :assoc_users [{:id string? :role int?}]
-                       :assoc_content [{:id string? :name string? :thumbnail string? :published boolean?
-                                        :allow_definitions boolean? :allow_notes boolean? :allow_captions string?}]}}
+   :parameters {:path {:id uuid?} :body models/course_without_id}
    :responses {200 {:body {:message string?}}}
-   :handler (fn [{{{:keys [id name published archived]} :body} :parameters}]
-             {:status 200
-              :body (db-access/add_collection id name published archived)})})
+   :handler (fn [{{{:keys [id]} :path :keys [body]} :parameters}]
+             (let [result (db-access/update_course id body)]
+              (if (= 0 result)
+                {:status 404
+                 :body {:message "requested course not found"}}
+                {:status 200
+                 :body {:message (str result " courses updated")}})))})
 
 (def course-delete ;; Non-functional
   {:summary "Deletes the specified course"
-   :parameters {}
+   :parameters {:path {:id uuid?}}
    :responses {200 {:body {:message string?}}}
-   :handler (fn [args] {:status 200
-                        :body {:message "placeholder"}})})
+   :handler (fn [{{{:keys [id]} :path} :parameters}]
+             (let [result (db-access/delete_course id)]
+              (if (= 0 result)
+                {:status 404
+                 :body {:message "requested course not found"}}
+                {:status 200
+                 :body {:message (str result " courses deleted")}})))})
 
 (def course-get-all-collections ;; Non-functional
   {:summary "Retrieves all collections connected to specified course"

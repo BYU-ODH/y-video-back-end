@@ -107,6 +107,32 @@
   [id]
   (db/delete-content {:id id}))
 
+;; Create
+(defn add_course
+  "Adds new course to database"
+  [course_without_id]
+  (str (:id (get (db/add-course! course_without_id) 0))))
+
+
+;; Retrieve
+(defn get_course
+  "Retrieves course with given id"
+  [id]
+  (update (db/get-course {:id id}) :id str))
+
+
+;; Update
+(defn update_course
+  "Updates course with given information"
+  [id new_course]
+  (db/update-course (into new_course {:id id})))
+
+;; Delete
+(defn delete_course
+  "Deletes course with given id"
+  [id]
+  (db/delete-course {:id id}))
+
 
 (defn get_collections
   "Retrieve all collections available to given user_id"
