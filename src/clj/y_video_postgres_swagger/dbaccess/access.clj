@@ -81,6 +81,33 @@
 
 
 
+;; Create
+(defn add_content
+  "Adds new content to database"
+  [content_without_id]
+  (str (:id (get (db/add-content! (update content_without_id :collection_id to_uuid)) 0))))
+
+
+;; Retrieve
+(defn get_content
+  "Retrieves content with given id"
+  [id]
+  (update (update (db/get-content {:id id}) :id str) :collection_id str))
+
+
+;; Update
+(defn update_content
+  "Updates content with given information"
+  [id new_content]
+  (db/update-content (into new_content {:id id})))
+
+;; Delete
+(defn delete_content
+  "Deletes content with given id"
+  [id]
+  (db/delete-content {:id id}))
+
+
 (defn get_collections
   "Retrieve all collections available to given user_id"
   [user_id]
@@ -118,7 +145,8 @@
   [id]
   (let [all_contents (db/get-contents-by-collection {:collection_id id})]
     (map #(update (update % :id str) :collection_id str) all_contents)))
-(defn add_content
+
+(defn OLD_add_content
   "Adds new content to database"
   [content_without_id]
   (str (:id (get (db/add-content! (update content_without_id :collection_id to_uuid)) 0))))

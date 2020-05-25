@@ -57,6 +57,28 @@
   [id]
   ((app) (-> (request :delete (str "/api/collection/" id)))))
 
+(defn content-post
+  "Create a content via app's post request"
+  [content_without_id]
+  ((app) (-> (request :post "/api/content")
+             (json-body content_without_id))))
+
+(defn content-id-get
+  "Retrieves content via app's get (id) request"
+  [id]
+  ((app) (-> (request :get (str "/api/content/" id)))))
+
+(defn content-id-patch
+  "Updates content via app's patch (id) request"
+  [id new_content]
+  ((app) (-> (request :patch (str "/api/content/" id))
+             (json-body new_content))))
+
+(defn content-id-delete
+  "Deletes content via app's delete (id) request"
+  [id]
+  ((app) (-> (request :delete (str "/api/content/" id)))))
+
 
 
 (use-fixtures
@@ -238,4 +260,36 @@
                ; Verify
                (is (= 200 (:status result)))
                (let [result (collection-id-get collection_one_id)]
-                 (is (= 404 (:status result)))))))))))
+                 (is (= 404 (:status result))))))))))
+
+  (testing "content"
+    (let [test_content_one (model-generator/get_random_content_without_id_or_collection_id)
+          test_collection_one (model-generator/get_random_collection_without_id)
+          test_collection_two (model-generator/get_random_collection_without_id)
+          test_user_one (model-generator/get_random_user_without_id)]
+      (let [user_id (:id (m/decode-response-body (user-post test_user_one)))]
+        (let [collection_one_id (:id (m/decode-response-body (collection-post (:collection_name test_collection_one) user_id)))]
+          ; Add content
+          (let [result (content-post (into test_content_one {:collection_id collection_one_id}))]
+            ; Verify
+            (is (= 200 (:status result)))
+            (let [content_one_id (:id (m/decode-response-body result))]
+              ; Retrieve content
+              (let [result (content-id-get content_one_id)]
+                ; Verify
+                (is (= 200 (:status result)))
+                (is (= (into test_content_one {:id content_one_id :collection_id collection_one_id}) (m/decode-response-body result))))
+              ; Update content
+              (let [new_content_one (model-generator/get_random_content_without_id_or_collection_id)]
+                (let [result (content-id-patch content_one_id (into new_content_one {:collection_id collection_one_id}))]
+                  ; Verify
+                  (is (= 200 (:status result)))
+                  (let [result (content-id-get content_one_id)]
+                    (is (= 200 (:status result)))
+                    (is (= (into new_content_one {:id content_one_id :collection_id collection_one_id}) (m/decode-response-body result))))))
+              ; Delete content
+              (let [result (content-id-delete content_one_id)]
+                ; Verify
+                (is (= 200 (:status result)))
+                (let [result (content-id-get content_one_id)]
+                  (is (= 404 (:status result))))))))))))

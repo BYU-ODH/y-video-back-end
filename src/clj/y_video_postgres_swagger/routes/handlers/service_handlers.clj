@@ -252,8 +252,7 @@
    :responses {200 {:body models/content}
                404 {:body {:message string?}}}
    :handler (fn [{{{:keys [id]} :path} :parameters}]
-             (let [content_result (db-access/get_content
-                                                          id)]
+             (let [content_result (db-access/get_content id)]
               (if (= "" (:id content_result))
                 {:status 404
                  :body {:message "requested content not found"}}
@@ -262,22 +261,28 @@
 
 (def content-update ;; Non-functional
   {:summary "Updates the specified content"
-   :parameters {:body {:id string? :name string? :published boolean? :archived boolean?
-                       :assoc_courses [{:id string? :department string? :catalog_number string? :section_number string?}]
-                       :assoc_users [{:id string? :role int?}]
-                       :assoc_content [{:id string? :name string? :thumbnail string? :published boolean?
-                                        :allow_definitions boolean? :allow_notes boolean? :allow_captions string?}]}}
+   :parameters {:path {:id uuid?} :body models/content_without_id}
    :responses {200 {:body {:message string?}}}
-   :handler (fn [{{{:keys [id name published archived]} :body} :parameters}]
-             {:status 200
-              :body (db-access/add_collection id name published archived)})})
+   :handler (fn [{{{:keys [id]} :path :keys [body]} :parameters}]
+             (let [result (db-access/update_content id body)]
+              (if (= 0 result)
+                {:status 404
+                 :body {:message "requested content not found"}}
+                {:status 200
+                 :body {:message (str result " contents updated")}})))})
 
 (def content-delete ;; Non-functional
   {:summary "Deletes the specified content"
-   :parameters {}
+   :parameters {:path {:id uuid?}}
    :responses {200 {:body {:message string?}}}
-   :handler (fn [args] {:status 200
-                        :body {:message "placeholder"}})})
+   :handler (fn [{{{:keys [id]} :path} :parameters}]
+             (let [result (db-access/delete_content id)]
+              (if (= 0 result)
+                {:status 404
+                 :body {:message "requested content not found"}}
+                {:status 200
+                 :body {:message (str result " contents deleted")}})))})
+
 (def content-connect-file ;; Non-functional
   {:summary "Connects specified file and content (bidirectional)"
    :parameters {}

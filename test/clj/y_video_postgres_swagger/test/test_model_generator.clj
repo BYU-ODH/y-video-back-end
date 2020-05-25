@@ -38,7 +38,7 @@
 
 (defn get_random_collection_without_id
   []
-  (get_random_model models/collection_without_id))
+  (update (update (get_random_model models/collection_without_id) :archived #(and false %)) :published #(and false %)))
 
 (defn get_random_course_without_id
   []
