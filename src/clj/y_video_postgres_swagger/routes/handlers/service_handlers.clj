@@ -170,23 +170,33 @@
              (let [res (db-access/get_collection id)]
               (if (= "" (:id res))
                 {:status 404
-                 :body {:message "requested user not found"}}
+                 :body {:message "requested collection not found"}}
                 {:status 200
                  :body res})))})
 
 (def collection-update ;; Non-functional
   {:summary "Updates the specified collection"
-   :parameters {:body {:name string? :published boolean? :archived boolean?}}
+   :parameters {:path {:id uuid?} :body models/collection_without_id}
    :responses {200 {:body {:message string?}}}
-   :handler (fn [args] {:status 200
-                        :body {:message "placeholder"}})})
+   :handler (fn [{{{:keys [id]} :path :keys [body]} :parameters}]
+             (let [result (db-access/update_collection id body)]
+              (if (= 0 result)
+                {:status 404
+                 :body {:message "requested collection not found"}}
+                {:status 200
+                 :body {:message (str result " collections updated")}})))})
 
 (def collection-delete ;; Non-functional
   {:summary "Deletes the specified collection"
-   :parameters {}
+   :parameters {:path {:id uuid?}}
    :responses {200 {:body {:message string?}}}
-   :handler (fn [args] {:status 200
-                        :body {:message "placeholder"}})})
+   :handler (fn [{{{:keys [id]} :path} :parameters}]
+             (let [result (db-access/delete_collection id)]
+              (if (= 0 result)
+                {:status 404
+                 :body {:message "requested collection not found"}}
+                {:status 200
+                 :body {:message (str result " collections deleted")}})))})
 
 (def collection-add-user
   {:summary "Adds user to specified collection"

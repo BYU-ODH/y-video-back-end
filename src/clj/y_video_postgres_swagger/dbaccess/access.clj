@@ -29,7 +29,7 @@
 
 ;; Retrieve
 (defn get_user
-  "Retrieve user with given id"
+  "Retrieves user with given id"
   [id]
   (update (db/get-user {:id id}) :id str))
 
@@ -47,16 +47,38 @@
   (db/delete-user {:id id}))
 
 
+;; Create
+(defn add_collection
+  "Adds collection with current user as owner"
+  [body]
+  (let [collection_id (:id (get (db/add-collection! {:collection_name (:name body) :published false :archived false}) 0))]
+    (try
+      (db/add-user-collection! {:user_id (to_uuid (:user_id body)) :collection_id collection_id
+                                :account_role 0})
+      (catch Exception e
+        (.getCause e)))
+    (str collection_id)))
+
+
+;; Retrieve
 (defn get_collection
-  "Retrieve collection with given id"
+  "Retrieves collection with given id"
   [id]
-  ; get collection info
-  ; (def base-collection (db/get-collection {:collection_id collection_id})))
-  ; add in assoc_users, assoc_courses, and assoc_content
-  ; (into base-collection [{:assoc_users (db/get-users-by-collection {:collection_id collection_id})
-  ;                         :assoc_courses (db/get-courses-by-collection {:collection_id collection_id})
-  ;                         :assoc_content (db/get-contents-by-collection {:collection_id collection_id}))))
   (update (db/get-collection {:id id}) :id str))
+
+
+;; Update
+(defn update_collection
+  "Updates collection with given information"
+  [id new_collection]
+  (db/update-collection (into new_collection {:id id})))
+
+;; Delete
+(defn delete_collection
+  "Deletes collection with given id"
+  [id]
+  (db/delete-collection {:id id}))
+
 
 
 (defn get_collections
@@ -64,7 +86,7 @@
   [user_id]
   (map #(get_collection (get % :collection_id)) (db/get-collections-by-user {:user_id user_id})))
 
-(defn add_collection
+(defn OLD_add_collection
   "Add collection with current user as owner"
   [body]
   (let [collection_id (:id (get (db/add-collection! {:collection_name (:name body) :published false :archived false}) 0))]

@@ -35,6 +35,29 @@
   [id]
   ((app) (-> (request :delete (str "/api/user/" id)))))
 
+(defn collection-post
+  "Create a collection via app's post request"
+  [name user_id]
+  ((app) (-> (request :post "/api/collection")
+             (json-body {:name name :user_id user_id}))))
+
+(defn collection-id-get
+  "Retrieves collection via app's get (id) request"
+  [id]
+  ((app) (-> (request :get (str "/api/collection/" id)))))
+
+(defn collection-id-patch
+  "Updates collection via app's patch (id) request"
+  [id new_collection]
+  ((app) (-> (request :patch (str "/api/collection/" id))
+             (json-body new_collection))))
+
+(defn collection-id-delete
+  "Deletes collection via app's delete (id) request"
+  [id]
+  ((app) (-> (request :delete (str "/api/collection/" id)))))
+
+
 
 (use-fixtures
   :once
@@ -187,4 +210,32 @@
             ; Verify
             (is (= 200 (:status result)))
             (let [result (user-id-get user_one_id)]
-              (is (= 404 (:status result))))))))))
+              (is (= 404 (:status result)))))))))
+  (testing "collection"
+    (let [test_collection_one (model-generator/get_random_collection_without_id)
+          test_user_one (model-generator/get_random_user_without_id)]
+      (let [user_id (:id (m/decode-response-body (user-post test_user_one)))]
+      ; Add collection
+         (let [result (collection-post (:collection_name test_collection_one) user_id)]
+         ; Verify
+           (is (= 200 (:status result)))
+           (let [collection_one_id (:id (m/decode-response-body result))]
+             ; Retrieve collection
+             (let [result (collection-id-get collection_one_id)]
+               ; Verify
+               (is (= 200 (:status result)))
+               (is (= (into test_collection_one {:id collection_one_id}) (m/decode-response-body result))))
+             ; Update collection
+             (let [new_collection_one (model-generator/get_random_collection_without_id)]
+               (let [result (collection-id-patch collection_one_id new_collection_one)]
+                 ; Verify
+                 (is (= 200 (:status result)))
+                 (let [result (collection-id-get collection_one_id)]
+                   (is (= 200 (:status result)))
+                   (is (= (into new_collection_one {:id collection_one_id}) (m/decode-response-body result))))))
+             ; Delete collection
+             (let [result (collection-id-delete collection_one_id)]
+               ; Verify
+               (is (= 200 (:status result)))
+               (let [result (collection-id-get collection_one_id)]
+                 (is (= 404 (:status result)))))))))))
