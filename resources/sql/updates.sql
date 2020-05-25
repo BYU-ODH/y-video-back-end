@@ -30,7 +30,7 @@ WHERE id = :id
 -- :doc updates content
 UPDATE contents
 SET id = :id, content_name = :content_name, content_type = :content_type,
-  requester_email = :requester_email, thumbnail = :thumbnail,
+  requester_email = :requester_email, thumbnail = :thumbnail, filters = :filters,
   copyrighted = :copyrighted, physical_copy_exists = :physical_copy_exists,
   full_video = :full_video, published = :published,
   allow_definitions = :allow_definitions, allow_notes = :allow_notes,

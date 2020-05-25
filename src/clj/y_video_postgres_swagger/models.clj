@@ -36,7 +36,7 @@
 
 (def content_without_id_or_collection_id
   {:content_name string? :content_type string? :requester_email string?
-   :thumbnail string? :copyrighted boolean? :physical_copy_exists boolean?
+   :thumbnail string? :filters string? :copyrighted boolean? :physical_copy_exists boolean?
    :full_video boolean? :published boolean? :allow_definitions boolean?
    :allow_notes boolean? :allow_captions boolean? :date_validated string?
    :views int? :metadata string?})

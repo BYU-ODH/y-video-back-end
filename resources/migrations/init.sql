@@ -67,6 +67,7 @@ CREATE TABLE contents (
    ,content_type TEXT -- type is a reserved word
    ,requester_email TEXT
    ,thumbnail TEXT
+   ,filters TEXT
    ,copyrighted BOOLEAN
    ,physical_copy_exists BOOLEAN
    ,full_video BOOLEAN
