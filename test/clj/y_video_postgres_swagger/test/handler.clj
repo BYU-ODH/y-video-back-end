@@ -8,100 +8,11 @@
     [y-video-postgres-swagger.dbaccess.access :as db-access]
     [y-video-postgres-swagger.test.utils :as utils]
     [muuntaja.core :as m]
-    [mount.core :as mount]))
+    [mount.core :as mount]
+    [y-video-postgres-swagger.test.routes_proxy :as rp]))
 
 (defn parse-json [body]
   (m/decode formats/instance "application/json" body))
-
-(defn user-post
-  "Create a user via app's post request"
-  [user_without_id]
-  ((app) (-> (request :post "/api/user")
-             (json-body user_without_id))))
-
-(defn user-id-get
-  "Retrieves user via app's get (id) request"
-  [id]
-  ((app) (-> (request :get (str "/api/user/" id)))))
-
-(defn user-id-patch
-  "Updates user via app's patch (id) request"
-  [id new_user]
-  ((app) (-> (request :patch (str "/api/user/" id))
-             (json-body new_user))))
-
-(defn user-id-delete
-  "Deletes user via app's delete (id) request"
-  [id]
-  ((app) (-> (request :delete (str "/api/user/" id)))))
-
-(defn collection-post
-  "Create a collection via app's post request"
-  [name user_id]
-  ((app) (-> (request :post "/api/collection")
-             (json-body {:name name :user_id user_id}))))
-
-(defn collection-id-get
-  "Retrieves collection via app's get (id) request"
-  [id]
-  ((app) (-> (request :get (str "/api/collection/" id)))))
-
-(defn collection-id-patch
-  "Updates collection via app's patch (id) request"
-  [id new_collection]
-  ((app) (-> (request :patch (str "/api/collection/" id))
-             (json-body new_collection))))
-
-(defn collection-id-delete
-  "Deletes collection via app's delete (id) request"
-  [id]
-  ((app) (-> (request :delete (str "/api/collection/" id)))))
-
-(defn content-post
-  "Create a content via app's post request"
-  [content_without_id]
-  ((app) (-> (request :post "/api/content")
-             (json-body content_without_id))))
-
-(defn content-id-get
-  "Retrieves content via app's get (id) request"
-  [id]
-  ((app) (-> (request :get (str "/api/content/" id)))))
-
-(defn content-id-patch
-  "Updates content via app's patch (id) request"
-  [id new_content]
-  ((app) (-> (request :patch (str "/api/content/" id))
-             (json-body new_content))))
-
-(defn content-id-delete
-  "Deletes content via app's delete (id) request"
-  [id]
-  ((app) (-> (request :delete (str "/api/content/" id)))))
-
-
-(defn course-post
-  "Create a course via app's post request"
-  [course_without_id]
-  ((app) (-> (request :post "/api/course")
-             (json-body course_without_id))))
-
-(defn course-id-get
-  "Retrieves course via app's get (id) request"
-  [id]
-  ((app) (-> (request :get (str "/api/course/" id)))))
-
-(defn course-id-patch
-  "Updates course via app's patch (id) request"
-  [id new_course]
-  ((app) (-> (request :patch (str "/api/course/" id))
-             (json-body new_course))))
-
-(defn course-id-delete
-  "Deletes course via app's delete (id) request"
-  [id]
-  ((app) (-> (request :delete (str "/api/course/" id)))))
-
 
 
 (use-fixtures
@@ -233,56 +144,56 @@
   (testing "user"
     (let [test_user_one (model-generator/get_random_user_without_id)]
       ; Add user
-      (let [result (user-post test_user_one)]
+      (let [result (rp/user-post test_user_one)]
       ; Verify
         (is (= 200 (:status result)))
         (let [user_one_id (:id (m/decode-response-body result))]
           ; Retrieve user
-          (let [result (user-id-get user_one_id)]
+          (let [result (rp/user-id-get user_one_id)]
             ; Verify
             (is (= 200 (:status result)))
             (is (= (into test_user_one {:id user_one_id}) (m/decode-response-body result))))
           ; Update user
           (let [new_user_one (model-generator/get_random_user_without_id)]
-            (let [result (user-id-patch user_one_id new_user_one)]
+            (let [result (rp/user-id-patch user_one_id new_user_one)]
               ; Verify
               (is (= 200 (:status result)))
-              (let [result (user-id-get user_one_id)]
+              (let [result (rp/user-id-get user_one_id)]
                 (is (= 200 (:status result)))
                 (is (= (into new_user_one {:id user_one_id}) (m/decode-response-body result))))))
           ; Delete user
-          (let [result (user-id-delete user_one_id)]
+          (let [result (rp/user-id-delete user_one_id)]
             ; Verify
             (is (= 200 (:status result)))
-            (let [result (user-id-get user_one_id)]
+            (let [result (rp/user-id-get user_one_id)]
               (is (= 404 (:status result)))))))))
   (testing "collection"
     (let [test_collection_one (model-generator/get_random_collection_without_id)
           test_user_one (model-generator/get_random_user_without_id)]
-      (let [user_id (:id (m/decode-response-body (user-post test_user_one)))]
+      (let [user_id (:id (m/decode-response-body (rp/user-post test_user_one)))]
       ; Add collection
-         (let [result (collection-post (:collection_name test_collection_one) user_id)]
+         (let [result (rp/collection-post (:collection_name test_collection_one) user_id)]
          ; Verify
            (is (= 200 (:status result)))
            (let [collection_one_id (:id (m/decode-response-body result))]
              ; Retrieve collection
-             (let [result (collection-id-get collection_one_id)]
+             (let [result (rp/collection-id-get collection_one_id)]
                ; Verify
                (is (= 200 (:status result)))
                (is (= (into test_collection_one {:id collection_one_id}) (m/decode-response-body result))))
              ; Update collection
              (let [new_collection_one (model-generator/get_random_collection_without_id)]
-               (let [result (collection-id-patch collection_one_id new_collection_one)]
+               (let [result (rp/collection-id-patch collection_one_id new_collection_one)]
                  ; Verify
                  (is (= 200 (:status result)))
-                 (let [result (collection-id-get collection_one_id)]
+                 (let [result (rp/collection-id-get collection_one_id)]
                    (is (= 200 (:status result)))
                    (is (= (into new_collection_one {:id collection_one_id}) (m/decode-response-body result))))))
              ; Delete collection
-             (let [result (collection-id-delete collection_one_id)]
+             (let [result (rp/collection-id-delete collection_one_id)]
                ; Verify
                (is (= 200 (:status result)))
-               (let [result (collection-id-get collection_one_id)]
+               (let [result (rp/collection-id-get collection_one_id)]
                  (is (= 404 (:status result))))))))))
 
   (testing "content"
@@ -290,56 +201,56 @@
           test_collection_one (model-generator/get_random_collection_without_id)
           test_collection_two (model-generator/get_random_collection_without_id)
           test_user_one (model-generator/get_random_user_without_id)]
-      (let [user_id (:id (m/decode-response-body (user-post test_user_one)))]
-        (let [collection_one_id (:id (m/decode-response-body (collection-post (:collection_name test_collection_one) user_id)))]
+      (let [user_id (:id (m/decode-response-body (rp/user-post test_user_one)))]
+        (let [collection_one_id (:id (m/decode-response-body (rp/collection-post (:collection_name test_collection_one) user_id)))]
           ; Add content
-          (let [result (content-post (into test_content_one {:collection_id collection_one_id}))]
+          (let [result (rp/content-post (into test_content_one {:collection_id collection_one_id}))]
             ; Verify
             (is (= 200 (:status result)))
             (let [content_one_id (:id (m/decode-response-body result))]
               ; Retrieve content
-              (let [result (content-id-get content_one_id)]
+              (let [result (rp/content-id-get content_one_id)]
                 ; Verify
                 (is (= 200 (:status result)))
                 (is (= (into test_content_one {:id content_one_id :collection_id collection_one_id}) (m/decode-response-body result))))
               ; Update content
               (let [new_content_one (model-generator/get_random_content_without_id_or_collection_id)]
-                (let [result (content-id-patch content_one_id (into new_content_one {:collection_id collection_one_id}))]
+                (let [result (rp/content-id-patch content_one_id (into new_content_one {:collection_id collection_one_id}))]
                   ; Verify
                   (is (= 200 (:status result)))
-                  (let [result (content-id-get content_one_id)]
+                  (let [result (rp/content-id-get content_one_id)]
                     (is (= 200 (:status result)))
                     (is (= (into new_content_one {:id content_one_id :collection_id collection_one_id}) (m/decode-response-body result))))))
               ; Delete content
-              (let [result (content-id-delete content_one_id)]
+              (let [result (rp/content-id-delete content_one_id)]
                 ; Verify
                 (is (= 200 (:status result)))
-                (let [result (content-id-get content_one_id)]
+                (let [result (rp/content-id-get content_one_id)]
                   (is (= 404 (:status result)))))))))))
 
   (testing "course"
     (let [test_course_one (model-generator/get_random_course_without_id)]
       ; Add course
-      (let [result (course-post test_course_one)]
+      (let [result (rp/course-post test_course_one)]
       ; Verify
         (is (= 200 (:status result)))
         (let [course_one_id (:id (m/decode-response-body result))]
           ; Retrieve course
-          (let [result (course-id-get course_one_id)]
+          (let [result (rp/course-id-get course_one_id)]
             ; Verify
             (is (= 200 (:status result)))
             (is (= (into test_course_one {:id course_one_id}) (m/decode-response-body result))))
           ; Update course
           (let [new_course_one (model-generator/get_random_course_without_id)]
-            (let [result (course-id-patch course_one_id new_course_one)]
+            (let [result (rp/course-id-patch course_one_id new_course_one)]
               ; Verify
               (is (= 200 (:status result)))
-              (let [result (course-id-get course_one_id)]
+              (let [result (rp/course-id-get course_one_id)]
                 (is (= 200 (:status result)))
                 (is (= (into new_course_one {:id course_one_id}) (m/decode-response-body result))))))
           ; Delete course
-          (let [result (course-id-delete course_one_id)]
+          (let [result (rp/course-id-delete course_one_id)]
             ; Verify
             (is (= 200 (:status result)))
-            (let [result (course-id-get course_one_id)]
+            (let [result (rp/course-id-get course_one_id)]
               (is (= 404 (:status result))))))))))
