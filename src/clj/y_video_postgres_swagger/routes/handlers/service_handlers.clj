@@ -1,7 +1,8 @@
-(ns y-video-postgres-swagger.routes.service_handlers
+(ns y-video-postgres-swagger.routes.handlers.service_handlers
   (:require
     [y-video-postgres-swagger.dbaccess.access :as db-access]
     [y-video-postgres-swagger.models :as models]))
+
 
 (def echo-patch
   {:summary "echo parameter post"
@@ -9,7 +10,22 @@
    :responses {200 {:body {:message string?}}}
    :handler (fn [ignore-me] {:status 200 :body {:message "this route does nothing!"}})})
 
-(def user-create ;; Not tested
+(def connect-collection-and-course ;; Non-functional
+  {:summary "Connects specified collection and course (bidirectional)"
+   :parameters {}
+   :responses {200 {:body {:message string?}}}
+   :handler (fn [args] {:status 200
+                        :body {:message "placeholder"}})})
+
+(def search-by-term ;; Non-functional
+  {:summary "Searches users, collections, and content by search term"
+   :parameters {}
+   :responses {200 {:body {:message string?}}}
+   :handler (fn [args] {:status 200
+                        :body {:message "placeholder"}})})
+
+
+(def user-create
   {:summary "Creates a new user - FOR DEVELOPMENT ONLY"
    :parameters {:body models/user_without_id}
    :responses {200 {:body {:message string?
@@ -22,6 +38,43 @@
                (catch Exception e
                  {:status 409
                   :body {:message "unable to create user, email likely taken"}})))})
+
+(def user-get-by-id
+  {:summary "Retrieves specified user"
+   :parameters {:path {:id uuid?}}
+   :responses {200 {:body models/user}
+               404 {:body {:message string?}}}
+   :handler (fn [{{{:keys [id]} :path} :parameters}]
+             (let [user_result (db-access/get_user id)]
+              (if (= "" (:id user_result))
+                {:status 404
+                 :body {:message "requested user not found"}}
+                {:status 200
+                 :body user_result})))})
+
+(def user-update
+  {:summary "Updates specified user"
+   :parameters {:path {:id uuid?} :body models/user_without_id}
+   :responses {200 {:body {:message string?}}}
+   :handler (fn [{{{:keys [id]} :path :keys [body]} :parameters}]
+             (let [result (db-access/update_user id body)]
+              (if (= 0 result)
+                {:status 404
+                 :body {:message "requested user not found"}}
+                {:status 200
+                 :body {:message (str result " users updated")}})))})
+
+(def user-delete
+  {:summary "Deletes specified user"
+   :parameters {:path {:id uuid?}}
+   :responses {200 {:body {:message string?}}}
+   :handler (fn [{{{:keys [id]} :path} :parameters}]
+             (let [result (db-access/delete_user id)]
+              (if (= 0 result)
+                {:status 404
+                 :body {:message "requested user not found"}}
+                {:status 200
+                 :body {:message (str result " users deleted")}})))})
 
 
 (def user-get-loggged-in ;; Non-functional
@@ -37,32 +90,6 @@
                 {:status 200
                  :body {:message user_result}})))})
 
-(def user-get-by-id ;; Not tested
-  {:summary "Retrieves specified user"
-   :parameters {:path {:id uuid?}}
-   :responses {200 {:body models/user}
-               404 {:body {:message string?}}}
-   :handler (fn [{{{:keys [id]} :path} :parameters}]
-             (let [user_result (db-access/get_user id)]
-              (if (= "" (:id user_result))
-                {:status 404
-                 :body {:message "requested user not found"}}
-                {:status 200
-                 :body user_result})))})
-
-(def user-update ;; Non-functional
-  {:summary "Updates specified user"
-   :parameters {}
-   :responses {200 {:body {:message string?}}}
-   :handler (fn [args] {:status 200
-                        :body {:message "placeholder"}})})
-
-(def user-delete ;; Non-functional
-  {:summary "Deletes specified user"
-   :parameters {}
-   :responses {200 {:body {:message string?}}}
-   :handler (fn [args] {:status 200
-                        :body {:message "placeholder"}})})
 
 (def user-get-all-collections ;; Non-functional
   {:summary "Retrieves all collections for specified user"
@@ -105,6 +132,7 @@
    :responses {200 {:body {:message string?}}}
    :handler (fn [args] {:status 200
                         :body {:message "placeholder"}})})
+
 
 (def collection-get-all-by-user ;; Non-functional
   {:summary "Retrieves collection info for all collections available to the current user_id"
@@ -193,59 +221,6 @@
    :handler (fn [args] {:status 200
                         :body {:message "placeholder"}})})
 
-(def course-create ;; Non-functional
-  {:summary "Creates a new course"
-   :parameters {:body models/course_without_id}
-   :responses {200 {:body {:message string?
-                           :id string?}}
-               409 {:body {:message string?}}}
-   :handler (fn [{{:keys [body]} :parameters}]
-             (try {:status 200
-                   :body {:message "1 course created"
-                          :id (db-access/add_course body)}}
-               (catch Exception e
-                 {:status 409
-                  :body {:message (e)}})))})
-
-(def course-get-by-id ;; Non-functional
-  {:summary "Retrieves specified course"
-   :parameters {:path {:id uuid?}}
-   :responses {200 {:body models/course}
-               404 {:body {:message string?}}}
-   :handler (fn [{{{:keys [id]} :path} :parameters}]
-             (let [res (db-access/get_course id)]
-              (if (= "" (:id res))
-                {:status 404
-                 :body {:message "requested course not found"}}
-                {:status 200
-                 :body res})))})
-
-(def course-update ;; Non-functional
-  {:summary "Updates the specified course"
-   :parameters {:body {:id string? :name string? :published boolean? :archived boolean?
-                       :assoc_courses [{:id string? :department string? :catalog_number string? :section_number string?}]
-                       :assoc_users [{:id string? :role int?}]
-                       :assoc_content [{:id string? :name string? :thumbnail string? :published boolean?
-                                        :allow_definitions boolean? :allow_notes boolean? :allow_captions string?}]}}
-   :responses {200 {:body {:message string?}}}
-   :handler (fn [{{{:keys [id name published archived]} :body} :parameters}]
-             {:status 200
-              :body (db-access/add_collection id name published archived)})})
-
-(def course-delete ;; Non-functional
-  {:summary "Deletes the specified course"
-   :parameters {}
-   :responses {200 {:body {:message string?}}}
-   :handler (fn [args] {:status 200
-                        :body {:message "placeholder"}})})
-
-(def course-get-all-collections ;; Non-functional
-  {:summary "Retrieves all collections connected to specified course"
-   :parameters {}
-   :responses {200 {:body {:message string?}}}
-   :handler (fn [args] {:status 200
-                        :body {:message "placeholder"}})})
-
 
 (def content-create ;; Non-functional
   {:summary "Creates new content"
@@ -319,6 +294,59 @@
                  :body {:message "requested content not found"}})))})
 
 
+(def course-create ;; Non-functional
+  {:summary "Creates a new course"
+   :parameters {:body models/course_without_id}
+   :responses {200 {:body {:message string?
+                           :id string?}}
+               409 {:body {:message string?}}}
+   :handler (fn [{{:keys [body]} :parameters}]
+             (try {:status 200
+                   :body {:message "1 course created"
+                          :id (db-access/add_course body)}}
+               (catch Exception e
+                 {:status 409
+                  :body {:message (e)}})))})
+
+(def course-get-by-id ;; Non-functional
+  {:summary "Retrieves specified course"
+   :parameters {:path {:id uuid?}}
+   :responses {200 {:body models/course}
+               404 {:body {:message string?}}}
+   :handler (fn [{{{:keys [id]} :path} :parameters}]
+             (let [res (db-access/get_course id)]
+              (if (= "" (:id res))
+                {:status 404
+                 :body {:message "requested course not found"}}
+                {:status 200
+                 :body res})))})
+
+(def course-update ;; Non-functional
+  {:summary "Updates the specified course"
+   :parameters {:body {:id string? :name string? :published boolean? :archived boolean?
+                       :assoc_courses [{:id string? :department string? :catalog_number string? :section_number string?}]
+                       :assoc_users [{:id string? :role int?}]
+                       :assoc_content [{:id string? :name string? :thumbnail string? :published boolean?
+                                        :allow_definitions boolean? :allow_notes boolean? :allow_captions string?}]}}
+   :responses {200 {:body {:message string?}}}
+   :handler (fn [{{{:keys [id name published archived]} :body} :parameters}]
+             {:status 200
+              :body (db-access/add_collection id name published archived)})})
+
+(def course-delete ;; Non-functional
+  {:summary "Deletes the specified course"
+   :parameters {}
+   :responses {200 {:body {:message string?}}}
+   :handler (fn [args] {:status 200
+                        :body {:message "placeholder"}})})
+
+(def course-get-all-collections ;; Non-functional
+  {:summary "Retrieves all collections connected to specified course"
+   :parameters {}
+   :responses {200 {:body {:message string?}}}
+   :handler (fn [args] {:status 200
+                        :body {:message "placeholder"}})})
+
 
 (def file-create ;; Non-functional
   {:summary "Creates new file"
@@ -361,21 +389,6 @@
 
 (def file-get-all-contents ;; Non-functional
   {:summary "Retrieves all contents that use the specified file"
-   :parameters {}
-   :responses {200 {:body {:message string?}}}
-   :handler (fn [args] {:status 200
-                        :body {:message "placeholder"}})})
-
-
-(def connect-collection-and-course ;; Non-functional
-  {:summary "Connects specified collection and course (bidirectional)"
-   :parameters {}
-   :responses {200 {:body {:message string?}}}
-   :handler (fn [args] {:status 200
-                        :body {:message "placeholder"}})})
-
-(def search-by-term ;; Non-functional
-  {:summary "Searches users, collections, and content by search term"
    :parameters {}
    :responses {200 {:body {:message string?}}}
    :handler (fn [args] {:status 200

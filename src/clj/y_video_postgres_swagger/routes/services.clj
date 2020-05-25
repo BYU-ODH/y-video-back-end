@@ -10,7 +10,7 @@
     [y-video-postgres-swagger.middleware.formats :as formats]
     [y-video-postgres-swagger.middleware.exception :as exception]
     [y-video-postgres-swagger.dbaccess.access :as db-access]
-    [y-video-postgres-swagger.routes.service_handlers :as service-handlers]
+    [y-video-postgres-swagger.routes.handlers.service_handlers :as service-handlers]
     [ring.util.http-response :refer :all]
     [clojure.java.io :as io]))
 

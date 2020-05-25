@@ -13,6 +13,29 @@
 (defn parse-json [body]
   (m/decode formats/instance "application/json" body))
 
+(defn user-post
+  "Create a user via app's post request"
+  [user_without_id]
+  ((app) (-> (request :post "/api/user")
+             (json-body user_without_id))))
+
+(defn user-id-get
+  "Retrieves user via app's get (id) request"
+  [id]
+  ((app) (-> (request :get (str "/api/user/" id)))))
+
+(defn user-id-patch
+  "Updates user via app's patch (id) request"
+  [id new_user]
+  ((app) (-> (request :patch (str "/api/user/" id))
+             (json-body new_user))))
+
+(defn user-id-delete
+  "Deletes user via app's delete (id) request"
+  [id]
+  ((app) (-> (request :delete (str "/api/user/" id)))))
+
+
 (use-fixtures
   :once
   (fn [f]
@@ -36,12 +59,6 @@
 
 
   (testing "services"
-
-    (comment (testing "success"
-              (let [response ((app) (-> (request :post "/api/math/plus")
-                                        (json-body {:x 10, :y 6})))]
-                (is (= 200 (:status response)))
-                (is (= {:total 16} (m/decode-response-body response))))))
 
     (testing "echo"
       (let [test_string "hello there!"]
@@ -142,31 +159,32 @@
                    (is (= "1 content created" (:message content_res_body)))
                    (let [get_content_res ((app) (-> (request :get (str "/api/content/" (:id content_res_body)))))]
                      (is (= (into test_content {:collection_id (str (:id collection_res_body)) :id (:id content_res_body)})
-                            (m/decode-response-body get_content_res))))))))))))
+                            (m/decode-response-body get_content_res))))))))))))))
 
-    (comment (testing "collections")
-       (let [id "8675309" name "jenny" published false archived false]
-        (let [response ((app) (-> (request :post "/api/collections")
-                                  (json-body {:id id, :name name, :published published, :archived published})))]
-          (is (= 200 (:status response)))
-          (is (= {:message "1 collection added"} (m/decode-response-body response))))))
-
-
-
-    (comment (testing "parameter coercion error"
-              (let [response ((app) (-> (request :post "/api/math/plus")
-                                        (json-body {:x 10, :y "invalid"})))]
-                (is (= 400 (:status response))))))
-
-    (comment (testing "response coercion error"
-              (let [response ((app) (-> (request :post "/api/math/plus")
-                                        (json-body {:x -10, :y 6})))]
-                (is (= 500 (:status response)))))
-
-     (testing "content negotiation"
-       (let [response ((app) (-> (request :post "/api/math/plus")
-                                 (body (pr-str {:x 10, :y 6}))
-                                 (content-type "application/edn")
-                                 (header "accept" "application/transit+json")))]
-         (is (= 200 (:status response)))
-         (is (= {:total 16} (m/decode-response-body response))))))))
+(deftest test-crud
+  (testing "user"
+    (let [test_user_one (model-generator/get_random_user_without_id)]
+      ; Add user
+      (let [result (user-post test_user_one)]
+      ; Verify
+        (is (= 200 (:status result)))
+        (let [user_one_id (:id (m/decode-response-body result))]
+          ; Retrieve user
+          (let [result (user-id-get user_one_id)]
+            ; Verify
+            (is (= 200 (:status result)))
+            (is (= (into test_user_one {:id user_one_id}) (m/decode-response-body result))))
+          ; Update user
+          (let [new_user_one (model-generator/get_random_user_without_id)]
+            (let [result (user-id-patch user_one_id new_user_one)]
+              ; Verify
+              (is (= 200 (:status result)))
+              (let [result (user-id-get user_one_id)]
+                (is (= 200 (:status result)))
+                (is (= (into new_user_one {:id user_one_id}) (m/decode-response-body result))))))
+          ; Delete user
+          (let [result (user-id-delete user_one_id)]
+            ; Verify
+            (is (= 200 (:status result)))
+            (let [result (user-id-get user_one_id)]
+              (is (= 404 (:status result))))))))))

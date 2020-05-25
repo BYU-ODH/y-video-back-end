@@ -7,12 +7,45 @@
   [text_in]
   (java.util.UUID/fromString text_in))
 
-
 (defn check_collection_id
   "Checks if collection exists in database"
   [id]
   (let [result (db/get-collection {:id id})]
     (not (nil? result))))
+
+(defn clear_database
+  "Clears entire database, requires correct password"
+  [password]
+  (if (= password "17e6b095-c7a7-471f-8f89-58e0a57f89f3")
+    ; clear database
+    (db/delete-all)))
+
+;; Create
+(defn add_user
+  "Adds new user to database"
+  [user_without_id]
+  (str (:id (get (db/add-user! user_without_id) 0))))
+
+
+;; Retrieve
+(defn get_user
+  "Retrieve user with given id"
+  [id]
+  (update (db/get-user {:id id}) :id str))
+
+
+;; Update
+(defn update_user
+  "Updates user with given information"
+  [id new_user]
+  (db/update-user (into new_user {:id id})))
+
+;; Delete
+(defn delete_user
+  "Deletes user with given id"
+  [id]
+  (db/delete-user {:id id}))
+
 
 (defn get_collection
   "Retrieve collection with given id"
@@ -52,33 +85,17 @@
    (catch Exception e
      {:message (.getCause e)})))
 
-
-(defn get_user
-  "Retrieve user with given id"
-  [id]
-  (update (db/get-user {:id id}) :id str))
-
 (defn associate_user_with_collection
   "Adds collection to user's assoc_collections"
   [user_id collection_id account_role]
   (db/add-user-collection! {:user_id user_id :collection_id collection_id
                                :account_role account_role}))
-(defn add_user
-  "Adds new user to database"
-  [user_without_id]
-  (str (:id (get (db/add-user! user_without_id) 0))))
 
-(defn add_course
-  "Adds new course to database"
-  [course_without_id]
-  (str (:id (get (db/add-course! course_without_id) 0))))
 
-(defn get_course
-  "Retrieve course with given id"
+(defn get_contents_by_collection
   [id]
-  (update (db/get-course {:id id}) :id str))
-
-
+  (let [all_contents (db/get-contents-by-collection {:collection_id id})]
+    (map #(update (update % :id str) :collection_id str) all_contents)))
 (defn add_content
   "Adds new content to database"
   [content_without_id]
@@ -89,21 +106,19 @@
   [id]
   (update (update (db/get-content {:id id}) :id str) :collection_id str))
 
-(defn get_contents_by_collection
-  [id]
-  (let [all_contents (db/get-contents-by-collection {:collection_id id})]
-    (map #(update (update % :id str) :collection_id str) all_contents)))
-
-(defn clear_database
-  "Clears entire database, requires correct password"
-  [password]
-  (if (= password "17e6b095-c7a7-471f-8f89-58e0a57f89f3")
-    ; clear database
-    (db/delete-all)))
-
 (defn add_view_to_content
   "Adds a view to specified content"
   [id]
   (if (= 1 (db/add-view-to-content {:id id}))
     true
     false))
+
+(defn add_course
+  "Adds new course to database"
+  [course_without_id]
+  (str (:id (get (db/add-course! course_without_id) 0))))
+
+(defn get_course
+  "Retrieve course with given id"
+  [id]
+  (update (db/get-course {:id id}) :id str))
