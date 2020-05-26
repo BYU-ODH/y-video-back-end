@@ -23,3 +23,21 @@
   (let [res ((app) (-> (request :post "/api/content")
                        (json-body (into content {:collection_id (str collection_id)}))))]
     (:id (m/decode-response-body res))))
+
+(defn insert_course
+  [course]
+  (let [res ((app) (-> (request :post "/api/course")
+                       (json-body course)))]
+    (:id (m/decode-response-body res))))
+
+(defn insert_annotation
+  [annotation]
+  (let [res ((app) (-> (request :post "/api/annotation")
+                       (json-body annotation)))]
+    (:id (m/decode-response-body res))))
+
+
+(defn set_up_shire
+  "Fill database with shire inspired dummy data"
+  []
+  0)

@@ -127,6 +127,7 @@
 
 (deftest test-crud
   (testing "user"
+    (db-access/clear_database delete_password)
     (let [test_user_one (model-generator/get_random_user_without_id)]
       ; Add user
       (let [result (rp/user-post test_user_one)]
@@ -153,6 +154,7 @@
             (let [result (rp/user-id-get user_one_id)]
               (is (= 404 (:status result)))))))))
   (testing "collection"
+    (db-access/clear_database delete_password)
     (let [test_collection_one (model-generator/get_random_collection_without_id)
           test_user_one (model-generator/get_random_user_without_id)]
       (let [user_id (:id (m/decode-response-body (rp/user-post test_user_one)))]
@@ -182,6 +184,7 @@
                  (is (= 404 (:status result))))))))))
 
   (testing "content"
+    (db-access/clear_database delete_password)
     (let [test_content_one (model-generator/get_random_content_without_id)
           test_collection_one (model-generator/get_random_collection_without_id)
           test_collection_two (model-generator/get_random_collection_without_id)
@@ -214,6 +217,7 @@
                   (is (= 404 (:status result)))))))))))
 
   (testing "course"
+    (db-access/clear_database delete_password)
     (let [test_course_one (model-generator/get_random_course_without_id)]
       ; Add course
       (let [result (rp/course-post test_course_one)]
@@ -238,4 +242,32 @@
             ; Verify
             (is (= 200 (:status result)))
             (let [result (rp/course-id-get course_one_id)]
+              (is (= 404 (:status result)))))))))
+
+  (testing "file"
+    (db-access/clear_database delete_password)
+    (let [test_file_one (model-generator/get_random_file_without_id)]
+      ; Add file
+      (let [result (rp/file-post test_file_one)]
+      ; Verify
+        (is (= 200 (:status result)))
+        (let [file_one_id (:id (m/decode-response-body result))]
+          ; Retrieve file
+          (let [result (rp/file-id-get file_one_id)]
+            ; Verify
+            (is (= 200 (:status result)))
+            (is (= (into test_file_one {:id file_one_id}) (m/decode-response-body result))))
+          ; Update file
+          (let [new_file_one (model-generator/get_random_file_without_id)]
+            (let [result (rp/file-id-patch file_one_id new_file_one)]
+              ; Verify
+              (is (= 200 (:status result)))
+              (let [result (rp/file-id-get file_one_id)]
+                (is (= 200 (:status result)))
+                (is (= (into new_file_one {:id file_one_id}) (m/decode-response-body result))))))
+          ; Delete file
+          (let [result (rp/file-id-delete file_one_id)]
+            ; Verify
+            (is (= 200 (:status result)))
+            (let [result (rp/file-id-get file_one_id)]
               (is (= 404 (:status result))))))))))

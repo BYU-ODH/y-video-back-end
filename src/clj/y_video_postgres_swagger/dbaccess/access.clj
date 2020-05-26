@@ -27,19 +27,18 @@
    :collections (map #(update % :id str) (db/search-collections {:query_term query_term}))
    :courses (map #(update % :id str) (db/search-courses {:query_term query_term}))
    :contents (map #(update % :id str) (db/search-contents {:query_term query_term}))})
+
 ;; Create
 (defn add_user
   "Adds new user to database"
   [user_without_id]
   (str (:id (get (db/add-user! user_without_id) 0))))
 
-
 ;; Retrieve
 (defn get_user
   "Retrieves user with given id"
   [id]
   (update (db/get-user {:id id}) :id str))
-
 
 ;; Update
 (defn update_user
@@ -171,6 +170,31 @@
   "Deletes course with given id"
   [id]
   (db/delete-course {:id id}))
+
+;; Create
+(defn add_file
+  "Adds new file to database"
+  [file_without_id]
+  (str (:id (get (db/add-file! file_without_id) 0))))
+
+;; Retrieve
+(defn get_file
+  "Retrieves file with given id"
+  [id]
+  (update (db/get-file {:id id}) :id str))
+
+;; Update
+(defn update_file
+  "Updates file with given information"
+  [id new_file]
+  (db/update-file (into new_file {:id id})))
+
+;; Delete
+(defn delete_file
+  "Deletes file with given id"
+  [id]
+  (db/delete-file {:id id}))
+
 
 
 (defn get_collections

@@ -422,45 +422,57 @@
    :handler (fn [args] {:status 200
                         :body {:message "placeholder"}})})
 
+(def file-create
+  {:summary "Creates a new file - FOR DEVELOPMENT ONLY"
+   :parameters {:body models/file_without_id}
+   :responses {200 {:body {:message string?
+                           :id string?}}
+               409 {:body {:message string?}}}
+   :handler (fn [{{:keys [body]} :parameters}]
+             (try {:status 200
+                   :body {:message "1 file created"
+                          :id (db-access/add_file body)}}
+               (catch Exception e
+                 {:status 409
+                  :body {:message "unable to create file, email likely taken"}})))})
 
-(def file-create ;; Non-functional
-  {:summary "Creates new file"
-   :parameters {}
-   :responses {200 {:body {:message string?}}}
-   :handler (fn [args] {:status 200
-                        :body {:message "placeholder"}})})
-
-(def file-get-by-id ;; Non-functional
-  {:summary "Retrieves the specified file"
-   :parameters {:query {:collection_id string?}}
-   :responses {200 {:body {:collection_id string? :name string? :published boolean? :archived boolean?}}
+(def file-get-by-id
+  {:summary "Retrieves specified file"
+   :parameters {:path {:id uuid?}}
+   :responses {200 {:body models/file}
                404 {:body {:message string?}}}
-   :handler (fn [{{{:keys [collection_id]} :query} :parameters}]
-             (let [collection_result (db-access/get_collections collection_id)]
-              (if (nil? collection_result)
+   :handler (fn [{{{:keys [id]} :path} :parameters}]
+             (let [file_result (db-access/get_file id)]
+              (if (= "" (:id file_result))
                 {:status 404
-                 :body {:message "requested collection not found"}}
+                 :body {:message "requested file not found"}}
                 {:status 200
-                 :body collection_result})))})
+                 :body file_result})))})
 
-(def file-update ;; Non-functional
-  {:summary "Updates the specified file"
-   :parameters {:body {:id string? :name string? :published boolean? :archived boolean?
-                       :assoc_courses [{:id string? :department string? :catalog_number string? :section_number string?}]
-                       :assoc_users [{:id string? :role int?}]
-                       :assoc_file [{:id string? :name string? :thumbnail string? :published boolean?
-                                        :allow_definitions boolean? :allow_notes boolean? :allow_captions string?}]}}
+(def file-update
+  {:summary "Updates specified file"
+   :parameters {:path {:id uuid?} :body models/file_without_id}
    :responses {200 {:body {:message string?}}}
-   :handler (fn [{{{:keys [id name published archived]} :body} :parameters}]
-             {:status 200
-              :body (db-access/add_collection id name published archived)})})
+   :handler (fn [{{{:keys [id]} :path :keys [body]} :parameters}]
+             (let [result (db-access/update_file id body)]
+              (if (= 0 result)
+                {:status 404
+                 :body {:message "requested file not found"}}
+                {:status 200
+                 :body {:message (str result " files updated")}})))})
 
-(def file-delete ;; Non-functional
-  {:summary "Deletes the specified file"
-   :parameters {}
+(def file-delete
+  {:summary "Deletes specified file"
+   :parameters {:path {:id uuid?}}
    :responses {200 {:body {:message string?}}}
-   :handler (fn [args] {:status 200
-                        :body {:message "placeholder"}})})
+   :handler (fn [{{{:keys [id]} :path} :parameters}]
+             (let [result (db-access/delete_file id)]
+              (if (= 0 result)
+                {:status 404
+                 :body {:message "requested file not found"}}
+                {:status 200
+                 :body {:message (str result " files deleted")}})))})
+
 
 (def file-get-all-contents ;; Non-functional
   {:summary "Retrieves all contents that use the specified file"

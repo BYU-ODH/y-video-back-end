@@ -92,3 +92,25 @@
   "Deletes course via app's delete (id) request"
   [id]
   ((app) (-> (request :delete (str "/api/course/" id)))))
+
+(defn file-post
+  "Create a file via app's post request"
+  [file_without_id]
+  ((app) (-> (request :post "/api/file")
+             (json-body file_without_id))))
+
+(defn file-id-get
+  "Retrieves file via app's get (id) request"
+  [id]
+  ((app) (-> (request :get (str "/api/file/" id)))))
+
+(defn file-id-patch
+  "Updates file via app's patch (id) request"
+  [id new_file]
+  ((app) (-> (request :patch (str "/api/file/" id))
+             (json-body new_file))))
+
+(defn file-id-delete
+  "Deletes file via app's delete (id) request"
+  [id]
+  ((app) (-> (request :delete (str "/api/file/" id)))))

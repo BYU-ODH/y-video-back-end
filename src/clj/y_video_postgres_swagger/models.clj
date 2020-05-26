@@ -6,7 +6,7 @@
 (def echo_patch
   {:echo string?})
 
-(sch/defschema user_without_id
+(def user_without_id
   {:email string? :last_login string? :account_name string?
    :account_role int? :username string?})
 
