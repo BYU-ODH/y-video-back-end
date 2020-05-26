@@ -26,6 +26,29 @@
   [id]
   ((app) (-> (request :delete (str "/api/user/" id)))))
 
+(defn word-post
+  "Create a word via app's post request"
+  [word_without_id]
+  ((app) (-> (request :post "/api/word")
+             (json-body word_without_id))))
+
+(defn word-id-get
+  "Retrieves word via app's get (id) request"
+  [id]
+  ((app) (-> (request :get (str "/api/word/" id)))))
+
+(defn word-id-patch
+  "Updates word via app's patch (id) request"
+  [id new_word]
+  ((app) (-> (request :patch (str "/api/word/" id))
+             (json-body new_word))))
+
+(defn word-id-delete
+  "Deletes word via app's delete (id) request"
+  [id]
+  ((app) (-> (request :delete (str "/api/word/" id)))))
+
+
 (defn collection-post
   "Create a collection via app's post request"
   [name user_id]

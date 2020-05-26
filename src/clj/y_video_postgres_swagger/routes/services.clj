@@ -92,14 +92,18 @@
       :delete service-handlers/user-delete}]
     ["/{id}/collections"
      {:get service-handlers/user-get-all-collections}]
-    ["/{id}/word"
-     {:post service-handlers/user-word-create}]
-    ["/{id}/word/{id}"
-     {:get service-handlers/user-word-get-by-id
-      :patch service-handlers/user-word-update
-      :delete service-handlers/user-word-delete}]
+
     ["/{id}/words"
      {:get service-handlers/user-get-all-words}]]
+
+   ["/word"
+    {:swagger {:tags ["word"]}}
+    [""
+     {:post service-handlers/user-word-create}]
+    ["/{id}"
+     {:get service-handlers/user-word-get-by-id
+      :patch service-handlers/user-word-update
+      :delete service-handlers/user-word-delete}]]
 
    ["/collections"
     {:swagger {:tags ["collections"]}}

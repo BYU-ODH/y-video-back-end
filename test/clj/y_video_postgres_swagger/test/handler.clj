@@ -153,6 +153,39 @@
             (is (= 200 (:status result)))
             (let [result (rp/user-id-get user_one_id)]
               (is (= 404 (:status result)))))))))
+  (testing "word"
+    (db-access/clear_database delete_password)
+    (let [test_user_one (model-generator/get_random_user_without_id)
+          test_word_one (model-generator/get_random_word_without_id_or_user_id)
+          new_word_one (model-generator/get_random_word_without_id_or_user_id)]
+      ; Add user
+      (let [result (rp/user-post test_user_one)]
+      ; Verify
+        (is (= 200 (:status result)))
+        (let [user_one_id (:id (m/decode-response-body result))]
+          ; Add word
+          (let [result (rp/word-post (into test_word_one {:user_id user_one_id}))]
+            ; Verify
+            (is (= 200 (:status result)))
+            (let [word_one_id (:id (m/decode-response-body result))]
+              ; Retrieve word
+              (let [result (rp/word-id-get word_one_id)]
+                ; Verify
+                (is (= 200 (:status result)))
+                (is (= (into test_word_one {:id word_one_id :user_id user_one_id}) (m/decode-response-body result))))
+              ; Update word
+              (let [result (rp/word-id-patch word_one_id (into new_word_one {:user_id user_one_id}))]
+                ; Verify
+                (is (= 200 (:status result)))
+                (let [result (rp/word-id-get word_one_id)]
+                  (is (= 200 (:status result)))
+                  (is (= (into new_word_one {:id word_one_id :user_id user_one_id}) (m/decode-response-body result)))))
+              ; Delete word
+              (let [result (rp/word-id-delete word_one_id)]
+                ; Verify
+                (is (= 200 (:status result)))
+                (let [result (rp/word-id-get word_one_id)]
+                  (is (= 404 (:status result)))))))))))
   (testing "collection"
     (db-access/clear_database delete_password)
     (let [test_collection_one (model-generator/get_random_collection_without_id)

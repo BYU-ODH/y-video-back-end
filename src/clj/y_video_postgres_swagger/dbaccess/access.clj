@@ -52,6 +52,30 @@
   [id]
   (db/delete-user {:id id}))
 
+;; Create
+(defn add_word
+  "Adds new word to database"
+  [word_without_id]
+  (str (:id (get (db/add-word! (update word_without_id :user_id to_uuid)) 0))))
+
+;; Retrieve
+(defn get_word
+  "Retrieves word with given id"
+  [id]
+  (update (update (db/get-word {:id id}) :id str) :user_id str))
+
+;; Update
+(defn update_word
+  "Updates word with given information"
+  [id new_word]
+  (db/update-word (into new_word {:id id})))
+
+;; Delete
+(defn delete_word
+  "Deletes word with given id"
+  [id]
+  (db/delete-word {:id id}))
+
 
 ;; Create
 (defn add_collection

@@ -103,33 +103,57 @@
    :handler (fn [args] {:status 200
                         :body {:message "placeholder"}})})
 
+
 (def user-word-create
-  {:summary "Creates new word under the specified user"
-   :parameters {}
-   :responses {200 {:body {:message string?}}}
-   :handler (fn [args] {:status 200
-                        :body {:message "placeholder"}})})
+  {:summary "Creates a new word"
+   :parameters {:body models/word_without_id}
+   :responses {200 {:body {:message string?
+                           :id string?}}
+               409 {:body {:message string?}}}
+   :handler (fn [{{{:keys [user_id]} :path :keys [body]} :parameters}]
+             (try {:status 200
+                   :body {:message "1 word created"
+                          :id (db-access/add_word body)}}
+               (catch Exception e
+                 {:status 409
+                  :body {:message e}})))})
 
 (def user-word-get-by-id
-  {:summary "Retrieves the specified word under specified user"
-   :parameters {}
-   :responses {200 {:body {:message string?}}}
-   :handler (fn [args] {:status 200
-                        :body {:message "placeholder"}})})
+  {:summary "Retrieves specified word"
+   :parameters {:path {:id uuid?}}
+   :responses {200 {:body models/word}
+               404 {:body {:message string?}}}
+   :handler (fn [{{{:keys [id]} :path :keys [body]} :parameters}]
+             (let [word_result (db-access/get_word id)]
+              (if (= "" (:id word_result))
+                {:status 404
+                 :body {:message "requested word not found"}}
+                {:status 200
+                 :body word_result})))})
 
 (def user-word-update
-  {:summary "Updates specified word under specified user"
-   :parameters {}
+  {:summary "Updates specified word"
+   :parameters {:path {:id uuid?} :body models/word_without_id}
    :responses {200 {:body {:message string?}}}
-   :handler (fn [args] {:status 200
-                        :body {:message "placeholder"}})})
+   :handler (fn [{{{:keys [id]} :path :keys [body]} :parameters}]
+             (let [result (db-access/update_word id body)]
+              (if (= 0 result)
+                {:status 404
+                 :body {:message "requested word not found"}}
+                {:status 200
+                 :body {:message (str result " words updated")}})))})
 
 (def user-word-delete
-  {:summary "Deletes specified word under specified user"
-   :parameters {}
+  {:summary "Deletes specified word"
+   :parameters {:path {:id uuid?}}
    :responses {200 {:body {:message string?}}}
-   :handler (fn [args] {:status 200
-                        :body {:message "placeholder"}})})
+   :handler (fn [{{{:keys [id]} :path} :parameters}]
+             (let [result (db-access/delete_word id)]
+              (if (= 0 result)
+                {:status 404
+                 :body {:message "requested word not found"}}
+                {:status 200
+                 :body {:message (str result " words deleted")}})))})
 
 (def user-get-all-words
   {:summary "Retrieves all words under specified user"
@@ -423,7 +447,7 @@
                         :body {:message "placeholder"}})})
 
 (def file-create
-  {:summary "Creates a new file - FOR DEVELOPMENT ONLY"
+  {:summary "Creates a new file"
    :parameters {:body models/file_without_id}
    :responses {200 {:body {:message string?
                            :id string?}}
