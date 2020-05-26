@@ -263,8 +263,8 @@
 
 (defn get_collections
   "Retrieve all collections available to given user_id"
-  [user_id]
-  (map #(get_collection (get % :collection_id)) (db/get-collections-by-user {:user_id user_id})))
+  [id]
+  (map #(get_collection (get % :id)) (db/get-collections-by-user {:id id})))
 
 (defn OLD_add_collection
   "Add collection with current user as owner"

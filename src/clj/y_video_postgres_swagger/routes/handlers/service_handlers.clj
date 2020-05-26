@@ -98,10 +98,12 @@
 
 (def user-get-all-collections ;; Non-functional
   {:summary "Retrieves all collections for specified user"
-   :parameters {}
-   :responses {200 {:body {:message string?}}}
-   :handler (fn [args] {:status 200
-                        :body {:message "placeholder"}})})
+   :parameters {:path {:id uuid?}}
+   :responses {200 {:body [models/collection]}}
+   :handler (fn [{{{:keys [id]} :path} :parameters}]
+             (let [result (db-access/get_collections id)]
+               {:status 200
+                :body result}))})
 
 
 (def user-word-create
@@ -162,19 +164,6 @@
    :handler (fn [args] {:status 200
                         :body {:message "placeholder"}})})
 
-
-(def collection-get-all-by-user ;; Non-functional
-  {:summary "Retrieves collection info for all collections available to the current user_id"
-   :parameters {}
-   :responses {200 {:body [{:collection_id string? :name string? :published boolean? :archived boolean?}]}
-               404 {:body {:message string?}}}
-   :handler (fn [{{{:keys [user_id]} :query} :parameters}]
-             (let [collection_result (db-access/get_collections user_id)]
-              (if (nil? collection_result)
-                {:status 404
-                 :body {:message "requested collection not found"}}
-                {:status 200
-                 :body collection_result})))})
 
 (def collection-create ;; Non-functional
   {:summary "Creates a new collection with the given (temp) user as an owner"

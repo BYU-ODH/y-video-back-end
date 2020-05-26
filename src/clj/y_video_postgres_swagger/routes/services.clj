@@ -109,7 +109,7 @@
     {:swagger {:tags ["collections"]}}
 
     [""
-      {:get service-handlers/collection-get-all-by-user}]]
+      {:get service-handlers/user-get-all-collections}]]  ;; This method is a place holder - it is used elsewhere
 
    ["/collection"
     {:swagger {:tags ["collection"]}}
