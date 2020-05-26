@@ -31,10 +31,10 @@ RETURNING id
 -- :name add-content! :<! :raw
 -- :doc creates a new content, returns id
 INSERT INTO contents
-(collection_id, content_name, content_type, requester_email, thumbnail, filters,
+(content_name, content_type, requester_email, thumbnail, filters,
   copyrighted, physical_copy_exists, full_video, published, allow_definitions,
   allow_notes, allow_captions, date_validated, views, metadata)
-VALUES (:collection_id, :content_name, :content_type, :requester_email,
+VALUES (:content_name, :content_type, :requester_email,
   :thumbnail, :filters, :copyrighted, :physical_copy_exists, :full_video,
   :published, :allow_definitions, :allow_notes, :allow_captions,
   :date_validated, :views, :metadata)

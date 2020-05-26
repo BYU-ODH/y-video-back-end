@@ -34,15 +34,12 @@
 (def course
   (into course_without_id {:id string?}))
 
-(def content_without_id_or_collection_id
+(def content_without_id
   {:content_name string? :content_type string? :requester_email string?
    :thumbnail string? :filters string? :copyrighted boolean? :physical_copy_exists boolean?
    :full_video boolean? :published boolean? :allow_definitions boolean?
    :allow_notes boolean? :allow_captions boolean? :date_validated string?
    :views int? :metadata string?})
-
-(def content_without_id
-  (into content_without_id_or_collection_id {:collection_id string?}))
 
 (def content
   (into content_without_id {:id string?}))

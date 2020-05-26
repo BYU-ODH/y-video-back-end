@@ -87,7 +87,7 @@
 
 (deftest test-content
   (jdbc/with-transaction [t-conn *db* {:rollback-only true}]
-    (let [args (into (model-generator/get_random_content_without_id_or_collection_id) {:collection_id nil})]
+    (let [args (model-generator/get_random_content_without_id)]
      (let [res
        ; Add content
            (db/add-content! t-conn args)]
@@ -274,8 +274,7 @@
   ; Create a content and file, connect them, test connection, delete connection, test connection again
  (jdbc/with-transaction [t-conn *db* {:rollback-only true}]
    (let [file_args {:filepath "/usr/then/other/stuff" :mime "what even is this?" :metadata "so meta"}
-         content_args {:collection_id nil
-                       :content_name "content name!" :content_type "text and stuff" :requester_email "notme@gmail.com"
+         content_args {:content_name "content name!" :content_type "text and stuff" :requester_email "notme@gmail.com"
                        :thumbnail "all thumbs" :filters "some filters" :copyrighted false :physical_copy_exists false
                        :full_video false :published false :allow_definitions false :allow_notes false :allow_captions false :date_validated "don't remember"
                        :views 0 :metadata "so meta"}]
@@ -374,13 +373,11 @@
 
 (deftest test-content-update
   (jdbc/with-transaction [t-conn *db* {:rollback-only true}]
-    (let [args_1 {:collection_id nil
-                  :content_name "content name!" :content_type "text and stuff" :requester_email "notme@gmail.com"
+    (let [args_1 {:content_name "content name!" :content_type "text and stuff" :requester_email "notme@gmail.com"
                   :thumbnail "all thumbs" :filters "some filters" :copyrighted false :physical_copy_exists false
                   :full_video false :published false :allow_definitions false :allow_notes false :allow_captions false :date_validated "don't remember"
                   :views 0 :metadata "so meta"}
-          args_2 {:collection_id nil
-                  :content_name "different name!" :content_type "stringy things" :requester_email "notyou@yahoo.com"
+          args_2 {:content_name "different name!" :content_type "stringy things" :requester_email "notyou@yahoo.com"
                   :thumbnail "just two thumbs" :filters "different filters" :copyrighted true :physical_copy_exists true
                   :full_video true :published true :allow_definitions true :allow_notes true :allow_captions true :date_validated "not long ago"
                   :views 1 :metadata "like, really really meta"}]

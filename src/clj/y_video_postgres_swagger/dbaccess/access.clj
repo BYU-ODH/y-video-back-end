@@ -85,14 +85,14 @@
 (defn add_content
   "Adds new content to database"
   [content_without_id]
-  (str (:id (get (db/add-content! (update content_without_id :collection_id to_uuid)) 0))))
+  (str (:id (get (db/add-content! content_without_id) 0))))
 
 
 ;; Retrieve
 (defn get_content
   "Retrieves content with given id"
   [id]
-  (update (update (db/get-content {:id id}) :id str) :collection_id str))
+  (update (db/get-content {:id id}) :id str))
 
 
 ;; Update
@@ -177,7 +177,7 @@
   [content_without_id]
   (str (:id (get (db/add-content! (update content_without_id :collection_id to_uuid)) 0))))
 
-(defn get_content
+(defn OLD_get_content
   "Retrieve content with given id"
   [id]
   (update (update (db/get-content {:id id}) :id str) :collection_id str))

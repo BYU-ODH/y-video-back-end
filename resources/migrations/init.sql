@@ -62,7 +62,6 @@ DROP TABLE IF EXISTS contents CASCADE;
 --;;
 CREATE TABLE contents (
    id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY
-   ,collection_id UUID REFERENCES collections(id)
    ,content_name TEXT
    ,content_type TEXT -- type is a reserved word
    ,requester_email TEXT
@@ -120,6 +119,17 @@ CREATE TABLE collection_courses (
 
 --;;
 COMMENT ON TABLE collection_courses IS 'Many-to-many table connecting collections and courses';
+
+--;;
+DROP TABLE IF EXISTS collection_contents CASCADE;
+--;;
+CREATE TABLE collection_contents (
+    collection_id UUID REFERENCES collections(id)
+    ,content_id UUID REFERENCES contents(id)
+    ,PRIMARY KEY (collection_id, content_id)
+);
+--;;
+COMMENT ON TABLE collection_contents IS 'Many-to-many table connecting collections and contents';
 
 --;;
 DROP TABLE IF EXISTS content_files CASCADE;
