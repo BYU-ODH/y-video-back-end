@@ -229,10 +229,52 @@
 
 (def collection-add-user
   {:summary "Adds user to specified collection"
-   :parameters {}
+   :parameters {:path {:id uuid?} :body {:user_id uuid? :account_role int?}}
    :responses {200 {:body {:message string?}}}
-   :handler (fn [args] {:status 200
-                        :body {:message "placeholder"}})})
+   :handler (fn [{{{:keys [id]} :path :keys [body]} :parameters}]
+             (let [result (db-access/add_user_to_collection id body)]
+              (if (= 0 result)
+                {:status 404
+                 :body {:message "unable to add user"}}
+                {:status 200
+                 :body {:message (str result " users added to collection")}})))})
+
+(def collection-remove-user
+  {:summary "Removes user from specified collection"
+   :parameters {:path {:id uuid?} :body {:user_id uuid?}}
+   :responses {200 {:body {:message string?}}}
+   :handler (fn [{{{:keys [id]} :path :keys [body]} :parameters}]
+             (let [result (db-access/remove_user_from_collection id body)]
+              (if (= 0 result)
+                {:status 404
+                 :body {:message "unable to remove user"}}
+                {:status 200
+                 :body {:message (str result " users removed from collection")}})))})
+
+(def collection-add-content
+  {:summary "Adds content to specified collection"
+   :parameters {:path {:id uuid?} :body {:content_id uuid?}}
+   :responses {200 {:body {:message string?}}}
+   :handler (fn [{{{:keys [id]} :path :keys [body]} :parameters}]
+             (let [result (db-access/add_content_to_collection id body)]
+              (if (= 0 result)
+                {:status 404
+                 :body {:message "unable to add content"}}
+                {:status 200
+                 :body {:message (str result " contents added to collection")}})))})
+
+
+(def collection-remove-content
+  {:summary "Removes content from specified collection"
+   :parameters {:path {:id uuid?} :body {:content_id uuid?}}
+   :responses {200 {:body {:message string?}}}
+   :handler (fn [{{{:keys [id]} :path :keys [body]} :parameters}]
+             (let [result (db-access/remove_content_from_collection id body)]
+              (if (= 0 result)
+                {:status 404
+                 :body {:message "unable to remove content"}}
+                {:status 200
+                 :body {:message (str result " contents removed from collection")}})))})
 
 (def collection-get-all-contents ;; Non-functional
   {:summary "Retrieves all the contents for the specified collection"
@@ -337,6 +379,31 @@
                 {:status 404
                  :body {:message "requested content not found"}})))})
 
+(def content-add-file
+  {:summary "Adds file to specified content"
+   :parameters {:path {:id uuid?} :body {:file_id uuid?}}
+   :responses {200 {:body {:message string?}}}
+   :handler (fn [{{{:keys [id]} :path :keys [body]} :parameters}]
+             (let [result (db-access/add_file_to_content id body)]
+              (if (= 0 result)
+                {:status 404
+                 :body {:message "unable to add file"}}
+                {:status 200
+                 :body {:message (str result " files added to content")}})))})
+
+
+(def content-remove-file
+  {:summary "Removes file from specified content"
+   :parameters {:path {:id uuid?} :body {:file_id uuid?}}
+   :responses {200 {:body {:message string?}}}
+   :handler (fn [{{{:keys [id]} :path :keys [body]} :parameters}]
+             (let [result (db-access/remove_file_from_content id body)]
+              (if (= 0 result)
+                {:status 404
+                 :body {:message "unable to remove file"}}
+                {:status 200
+                 :body {:message (str result " files removed from content")}})))})
+
 (def annotation-create ;; Non-functional
   {:summary "Creates new annotation"
    :parameters {:body models/annotation_without_id}
@@ -438,6 +505,31 @@
                  :body {:message "requested course not found"}}
                 {:status 200
                  :body {:message (str result " courses deleted")}})))})
+
+(def course-add-collection
+  {:summary "Adds collection to specified course"
+   :parameters {:path {:id uuid?} :body {:collection_id uuid?}}
+   :responses {200 {:body {:message string?}}}
+   :handler (fn [{{{:keys [id]} :path :keys [body]} :parameters}]
+             (let [result (db-access/add_collection_to_course id body)]
+              (if (= 0 result)
+                {:status 404
+                 :body {:message "unable to add collection"}}
+                {:status 200
+                 :body {:message (str result " collections added to course")}})))})
+
+
+(def course-remove-collection
+  {:summary "Removes collection from specified course"
+   :parameters {:path {:id uuid?} :body {:collection_id uuid?}}
+   :responses {200 {:body {:message string?}}}
+   :handler (fn [{{{:keys [id]} :path :keys [body]} :parameters}]
+             (let [result (db-access/remove_collection_from_course id body)]
+              (if (= 0 result)
+                {:status 404
+                 :body {:message "unable to remove collection"}}
+                {:status 200
+                 :body {:message (str result " collections removed from course")}})))})
 
 (def course-get-all-collections ;; Non-functional
   {:summary "Retrieves all collections connected to specified course"

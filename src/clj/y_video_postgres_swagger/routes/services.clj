@@ -121,6 +121,12 @@
       :delete service-handlers/collection-delete}]
     ["/{id}/add-user"
      {:post service-handlers/collection-add-user}]
+    ["/{id}/remove-user"
+     {:post service-handlers/collection-remove-user}]
+    ["/{id}/add-content"
+     {:post service-handlers/collection-add-content}]
+    ["/{id}/remove-content"
+     {:post service-handlers/collection-remove-content}]
     ["/{id}/contents"
      {:get service-handlers/collection-get-all-contents}]
     ["/{id}/courses"
@@ -136,6 +142,10 @@
      {:get service-handlers/course-get-by-id
       :patch service-handlers/course-update
       :delete service-handlers/course-delete}]
+    ["/{id}/add-collection"
+     {:post service-handlers/course-add-collection}]
+    ["/{id}/remove-collection"
+     {:post service-handlers/course-remove-collection}]
     ["/{id}/collections"
      {:get service-handlers/course-get-all-collections}]]
 
@@ -153,7 +163,11 @@
     ["/{id}/files"
      {:post service-handlers/content-get-all-files}]
     ["/{id}/add-view"
-     {:post service-handlers/content-add-view}]]
+     {:post service-handlers/content-add-view}]
+    ["/{id}/add-file"
+     {:post service-handlers/content-add-file}]
+    ["/{id}/remove-file"
+     {:post service-handlers/content-remove-file}]]
 
    ["/annotation"
     {:swagger {:tags ["annotation"]}}

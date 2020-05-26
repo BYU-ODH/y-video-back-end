@@ -62,6 +62,12 @@ DELETE FROM collection_courses
 WHERE collection_id = :collection_id
 AND course_id = :course_id
 
+-- :name delete-collection-content :? :n
+-- :doc deletes connection between collection and content
+DELETE FROM collection_contents
+WHERE collection_id = :collection_id
+AND content_id = :content_id
+
 -- :name delete-content-file :? :n
 -- :doc deletes connection between content and file
 DELETE FROM content_files

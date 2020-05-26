@@ -109,7 +109,25 @@
   [id]
   (db/delete-collection {:id id}))
 
+(defn add_user_to_collection
+  "Connects user and collection"
+  [collection_id body]
+  (db/add-user-collection! (into body {:collection_id collection_id})))
 
+(defn remove_user_from_collection
+  "Disconnects user and collection"
+  [collection_id body]
+  (db/delete-user-collection (into body {:collection_id collection_id})))
+
+(defn add_content_to_collection
+  "Connects content and collection"
+  [collection_id body]
+  (db/add-collection-content! (into body {:collection_id collection_id})))
+
+(defn remove_content_from_collection
+  "Disconnects content and collection"
+  [collection_id body]
+  (db/delete-collection-content (into body {:collection_id collection_id})))
 
 ;; Create
 (defn add_content
@@ -136,6 +154,17 @@
   "Deletes content with given id"
   [id]
   (db/delete-content {:id id}))
+
+(defn add_file_to_content
+  "Connects file and content"
+  [content_id body]
+  (db/add-content-file! (into body {:content_id content_id})))
+
+(defn remove_file_from_content
+  "Disconnects file and content"
+  [content_id body]
+  (db/delete-content-file (into body {:content_id content_id})))
+
 
 
 ;; Create
@@ -194,6 +223,17 @@
   "Deletes course with given id"
   [id]
   (db/delete-course {:id id}))
+
+(defn add_collection_to_course
+  "Connects collection and course"
+  [course_id body]
+  (db/add-collection-course! (into body {:course_id course_id})))
+
+(defn remove_collection_from_course
+  "Disconnects collection and course"
+  [course_id body]
+  (db/delete-collection-course (into body {:course_id course_id})))
+
 
 ;; Create
 (defn add_file

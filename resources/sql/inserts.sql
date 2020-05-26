@@ -68,6 +68,12 @@ INSERT INTO collection_courses
 (collection_id, course_id)
 VALUES (:collection_id, :course_id)
 
+-- :name add-collection-content! :! :n
+-- :doc connects collection and content
+INSERT INTO collection_contents
+(collection_id, content_id)
+VALUES (:collection_id, :content_id)
+
 -- :name add-content-file! :! :n
 -- :doc connects content and file
 INSERT INTO content_files
