@@ -19,10 +19,15 @@
 
 (def search-by-term ;; Non-functional
   {:summary "Searches users, collections, and content by search term"
-   :parameters {}
-   :responses {200 {:body {:message string?}}}
-   :handler (fn [args] {:status 200
-                        :body {:message "placeholder"}})})
+   :parameters {:query {:query_term string?}}
+   :responses {200 {:body {:users [models/user]
+                           :collections [models/collection]
+                           :courses [models/course]
+                           :contents [models/content]}}}
+   :handler (fn [{{{:keys [query_term]} :query} :parameters}]
+             (let [result (db-access/search_by_term query_term)]
+               {:status 200
+                :body result}))})
 
 
 (def user-create

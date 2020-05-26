@@ -103,3 +103,31 @@ INNER JOIN content_files as cntf
 INNER JOIN files as f
   ON cntf.file_id = f.id
 WHERE cnt.id = :id
+
+/* SEARCH BY TERM QUERIES */
+
+-- :name search-users :? :*
+-- :doc returns all users with query_term in username, account_name, or email
+SELECT * FROM users
+WHERE username LIKE '%' || :query_term || '%'
+OR account_name LIKE '%' || :query_term || '%'
+OR email LIKE '%' || :query_term || '%'
+
+-- :name search-collections :? :*
+-- :doc returns all collections with query_term in collection_name
+SELECT * FROM collections
+WHERE collection_name LIKE '%' || :query_term || '%'
+
+-- :name search-courses :? :*
+-- :doc returns all courses with query_term in department, catalog_number, or section_number
+SELECT * FROM courses
+WHERE department LIKE '%' || :query_term || '%'
+OR catalog_number LIKE '%' || :query_term || '%'
+OR section_number LIKE '%' || :query_term || '%'
+
+-- :name search-contents :? :*
+-- :doc returns all contents with query_term in content_name, content_type, or requester_email
+SELECT * FROM contents
+WHERE content_name LIKE '%' || :query_term || '%'
+OR content_type LIKE '%' || :query_term || '%'
+OR requester_email LIKE '%' || :query_term || '%'

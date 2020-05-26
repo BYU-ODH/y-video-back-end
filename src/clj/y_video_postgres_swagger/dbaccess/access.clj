@@ -20,6 +20,13 @@
     ; clear database
     (db/delete-all)))
 
+(defn search_by_term
+  "Searches users, collections, courses, and contents by term"
+  [query_term]
+  {:users (map #(update % :id str) (db/search-users {:query_term query_term}))
+   :collections (map #(update % :id str) (db/search-collections {:query_term query_term}))
+   :courses (map #(update % :id str) (db/search-courses {:query_term query_term}))
+   :contents (map #(update % :id str) (db/search-contents {:query_term query_term}))})
 ;; Create
 (defn add_user
   "Adds new user to database"
