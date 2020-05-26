@@ -151,6 +151,16 @@
     ["/{id}/add-view"
      {:post service-handlers/content-add-view}]]
 
+   ["/annotation"
+    {:swagger {:tags ["annotation"]}}
+    [""
+     {:post service-handlers/annotation-create}]
+
+    ["/{id}"
+     {:get service-handlers/annotation-get-by-id
+      :patch service-handlers/annotation-update
+      :delete service-handlers/annotation-delete}]]
+
    ["/file"
     {:swagger {:tags ["file"]}}
     [""

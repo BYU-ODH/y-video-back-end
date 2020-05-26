@@ -40,6 +40,13 @@ VALUES (:content_name, :content_type, :requester_email,
   :date_validated, :views, :metadata)
 RETURNING id
 
+-- :name add-annotation! :<! :raw
+-- :doc creates a new annotation, returns id
+INSERT INTO annotations
+(content_id, collection_id, metadata)
+VALUES (:content_id, :collection_id, :metadata)
+RETURNING id
+
 -- :name add-file! :<! :raw
 -- :doc creates a new file, returns id
 INSERT INTO files

@@ -38,6 +38,12 @@ SET id = :id, content_name = :content_name, content_type = :content_type,
   views = :views, metadata = :metadata
 WHERE id = :id
 
+-- :name update-annotation :! :n
+-- :doc updates annotation
+UPDATE annotations
+SET content_id = :content_id, collection_id = :collection_id, metadata = :metadata
+WHERE id = :id
+
 -- :name update-file :! :n
 -- :doc updates file
 UPDATE files

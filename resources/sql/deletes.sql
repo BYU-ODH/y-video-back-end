@@ -38,6 +38,11 @@ WHERE id = :id
 DELETE FROM contents
 WHERE id = :id
 
+-- :name delete-annotation :? :n
+-- :doc deletes annotation with given id
+DELETE FROM annotations
+WHERE id = :id
+
 -- :name delete-file :? :n
 -- :doc deletes file with given id
 DELETE FROM files

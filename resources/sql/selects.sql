@@ -25,6 +25,11 @@ WHERE id = :id
 SELECT * FROM contents
 WHERE id = :id
 
+-- :name get-annotation :? :1
+-- :doc retreives annotation with given id
+SELECT * FROM annotations
+WHERE id = :id
+
 -- :name get-file :? :1
 -- :doc retreives file with given id
 SELECT * FROM files

@@ -2,6 +2,6 @@ When you request a collection, do you need info about all its users, courses, an
     Or just the collection data, i.e. name, published, archived?
 
 DONE ** Add filters field to content, string? **
-** Change collection-content to many to many **
+DONE ** Change collection-content to many to many **
 ** Add annotation object, many to many as filter over content? **
 DONE ** Auto-generate diagram from init.sql? **

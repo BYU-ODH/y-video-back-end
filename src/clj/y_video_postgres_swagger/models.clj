@@ -44,6 +44,12 @@
 (def content
   (into content_without_id {:id string?}))
 
+(def annotation_without_id
+  {:content_id string? :collection_id string? :metadata string?})
+
+(def annotation
+  (into annotation_without_id {:id string?}))
+
 (def file_without_id
   {:filepath string? :mime string? :metadata string?})
 

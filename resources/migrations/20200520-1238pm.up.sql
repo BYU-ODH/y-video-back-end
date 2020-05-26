@@ -96,6 +96,18 @@ CREATE TABLE files (
 COMMENT ON TABLE files IS 'Files represent media (i.e. videos) with path to file and metadata';
 
 --;;
+DROP TABLE IF EXISTS annotations CASCADE;
+--;;
+CREATE TABLE annotations (
+    id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY
+    ,content_id UUID REFERENCES contents(id)
+    ,collection_id UUID REFERENCES collections(id)
+    ,metadata TEXT
+);
+--;;
+COMMENT ON TABLE annotations IS 'Contains annotations to be applied over contents';
+
+--;;
 DROP TABLE IF EXISTS user_collections CASCADE;
 --;;
 CREATE TABLE user_collections (

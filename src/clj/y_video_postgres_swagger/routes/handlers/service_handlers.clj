@@ -308,6 +308,56 @@
                 {:status 404
                  :body {:message "requested content not found"}})))})
 
+(def annotation-create ;; Non-functional
+  {:summary "Creates new annotation"
+   :parameters {:body models/annotation_without_id}
+   :responses {200 {:body {:message string?
+                           :id string?}}}
+   :handler (fn [{{:keys [body]} :parameters}]
+             (try {:status 200
+                   :body {:message "1 annotation created"
+                          :id (db-access/add_annotation body)}}
+               (catch Exception e
+                 {:status 409
+                  :body {:message "unable to create annotation, likely bad collection id"
+                         :error e}})))})
+
+(def annotation-get-by-id
+  {:summary "Retrieves specified annotation"
+   :parameters {:path {:id uuid?}}
+   :responses {200 {:body models/annotation}
+               404 {:body {:message string?}}}
+   :handler (fn [{{{:keys [id]} :path} :parameters}]
+             (let [annotation_result (db-access/get_annotation id)]
+              (if (= "" (:id annotation_result))
+                {:status 404
+                 :body {:message "requested annotation not found"}}
+                {:status 200
+                 :body annotation_result})))})
+
+(def annotation-update ;; Non-functional
+  {:summary "Updates the specified annotation"
+   :parameters {:path {:id uuid?} :body models/annotation_without_id}
+   :responses {200 {:body {:message string?}}}
+   :handler (fn [{{{:keys [id]} :path :keys [body]} :parameters}]
+             (let [result (db-access/update_annotation id body)]
+              (if (= 0 result)
+                {:status 404
+                 :body {:message "requested annotation not found"}}
+                {:status 200
+                 :body {:message (str result " annotations updated")}})))})
+
+(def annotation-delete ;; Non-functional
+  {:summary "Deletes the specified annotation"
+   :parameters {:path {:id uuid?}}
+   :responses {200 {:body {:message string?}}}
+   :handler (fn [{{{:keys [id]} :path} :parameters}]
+             (let [result (db-access/delete_annotation id)]
+              (if (= 0 result)
+                {:status 404
+                 :body {:message "requested annotation not found"}}
+                {:status 200
+                 :body {:message (str result " annotations deleted")}})))})
 
 (def course-create ;; Non-functional
   {:summary "Creates a new course"

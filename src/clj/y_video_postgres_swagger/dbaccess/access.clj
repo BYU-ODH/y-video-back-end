@@ -107,6 +107,38 @@
   [id]
   (db/delete-content {:id id}))
 
+
+;; Create
+(defn add_annotation
+  "Adds new annotation to database"
+  [annotation_without_id]
+  (str (:id
+         (get
+           (db/add-annotation!
+             (update
+               (update annotation_without_id :content_id to_uuid) :collection_id to_uuid)) 0))))
+
+
+;; Retrieve
+(defn get_annotation
+  "Retrieves annotation with given id"
+  [id]
+  (update (update (update (db/get-annotation {:id id}) :id str) :content_id str) :collection_id str))
+
+
+;; Update
+(defn update_annotation
+  "Updates annotation with given information"
+  [id new_annotation]
+  (db/update-annotation (update (update (into new_annotation {:id id}) :content_id to_uuid) :collection_id to_uuid)))
+
+;; Delete
+(defn delete_annotation
+  "Deletes annotation with given id"
+  [id]
+  (db/delete-annotation {:id id}))
+
+
 ;; Create
 (defn add_course
   "Adds new course to database"
