@@ -28,8 +28,11 @@
                  [metosin/reitit-frontend "0.4.2"]
                  [ring-middleware-format "0.7.4"]
                  [ring-webjars "0.2.0"]
+                 [ring/ring-core "1.8.0"]
+                 ;[clj-commons/clj-yaml "0.7.1"]
                  [ring/ring-defaults "0.3.2"]
-                 [tick "0.4.20-alpha"]]
+                 [tick "0.4.20-alpha"]
+                 [metosin/ring-swagger "0.26.2"]]
 
   :min-lein-version "2.0.0"
   :eastwood {:linters [:all]

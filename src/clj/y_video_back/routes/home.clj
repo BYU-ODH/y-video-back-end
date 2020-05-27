@@ -1,6 +1,25 @@
 (ns y-video-back.routes.home
-  (:require [y-video-back.layout :as layout]
-            [y-video-back.middleware :as middleware]))
+    (:require
+   [y-video-back.layout :as layout]
+   [clojure.java.io :as io]
+   [y-video-back.middleware :as middleware]))
+
+
+
+(defn home-page [request]
+  (layout/render request "home.html" {:docs (-> "docs/docs.md" io/resource slurp)}))
+
+(defn about-page [request]
+  (layout/render request "about.html"))
+
+(defn home-routes []
+  [""
+   {:middleware [middleware/wrap-csrf
+                 middleware/wrap-formats]}
+   ["/" {:get home-page}]
+   ["/about" {:get about-page}]])
+
+
 
 (defn home-page [request-map]
   (layout/hiccup-render-cljs-base {:username request-map}))
