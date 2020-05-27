@@ -5,6 +5,6 @@
    (def READ  (partial db/READ :TABLE_undeleted))
    (def READ-ALL  (partial db/READ :TABLE))
    (def UPDATE (partial db/UPDATE :TABLE))
-   (def DELETE (partial db/DELETE :TABLE))
+   (def DELETE (partial db/mark-deleted :TABLE))
    (def CLONE (partial db/CLONE :TABLE))
-   (def PERMANENT-DELETE (partial db/PERMANENT-DELETE :TABLE))
+   (def PERMANENT-DELETE (partial db/DELETE :TABLE))
