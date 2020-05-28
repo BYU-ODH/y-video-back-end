@@ -41,7 +41,8 @@
 
 (defn cljs-app-base []
   [:div#app
-   [:div.container]])
+   [:div.container
+    [:h1.title "Welcome to the swagger API for Y-Video"]]])
 
 (defn cljs-app-footer []
   [:div#footer
@@ -54,6 +55,7 @@
 
 (defn cljs-includes []
   [:div
+   ;; BELOW needs to be altered to serve any appropriate front-end
    (hp/include-js (context-path script-path "app.js?rnd=" (rand-int 1000)))
    [:script {:type "text/javascript"} "goog.require('y-video-back.app')"]])
 
