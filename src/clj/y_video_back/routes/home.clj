@@ -2,6 +2,7 @@
     (:require
      [y-video-back.layout :as layout]
      [clojure.java.io :as io]
+     [ring.util.http-response :as response]
      [y-video-back.middleware :as middleware]))
 
 
@@ -25,10 +26,7 @@
   (layout/hiccup-render-cljs-base {:username request-map}))
 
 (def ^{:private true} home-paths
-  [
-   "/"
-   "/article"
-   "/admin"])
+  ["/"])
 
 
 (defn home-routes
@@ -37,6 +35,7 @@
   (into [""
          {:middleware [middleware/wrap-base
                        middleware/wrap-formats]}]
-
-        (for [path home-paths]
-          [path {:get home-page}])))
+        (conj 
+         (for [path home-paths]
+           [path {:get home-page}])
+         ["/ping" {:get (constantly (response/ok {:message "pong"}))}])))
