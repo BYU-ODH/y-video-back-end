@@ -1,8 +1,8 @@
 (ns y-video-back.routes.home
     (:require
-   [y-video-back.layout :as layout]
-   [clojure.java.io :as io]
-   [y-video-back.middleware :as middleware]))
+     [y-video-back.layout :as layout]
+     [clojure.java.io :as io]
+     [y-video-back.middleware :as middleware]))
 
 
 
@@ -36,8 +36,7 @@
   []
   (into [""
          {:middleware [middleware/wrap-base
-                       middleware/wrap-formats
-                       ]}]
+                       middleware/wrap-formats]}]
+
         (for [path home-paths]
           [path {:get home-page}])))
-

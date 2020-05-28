@@ -3,7 +3,10 @@
    [hiccup.page :as hp]
    [hiccup.element :refer [javascript-tag]]
    [ring.util.http-response :refer [ok] :as ru]
-   [ring.middleware.anti-forgery :refer [*anti-forgery-token*]]))
+   [ring.middleware.anti-forgery :refer [*anti-forgery-token*]]
+   [selmer.parser :as parser] ;; Probably a temporary fix
+   [ring.util.http-response :refer [content-type ok]])) ;; Probably a temporary fix
+
 
 (declare ^:dynamic *app-context*)
 (def style-path "/css/")
@@ -26,9 +29,9 @@
   [& [_ #_userinfo]]
   [:head [:title "y-video-back"]
    [:meta {:name "viewport"
-           :content "width=device-width, initial-scale=1.0"}]                                        
+           :content "width=device-width, initial-scale=1.0"}]
    (javascript-tag (str "var context = ''"))
-   (hp/include-css 
+   (hp/include-css
     (context-path assets-path "bulma/css/bulma.css")
     (context-path assets-path "font-awesome/css/all.min.css")
     (context-path style-path "style.css"))])
@@ -45,9 +48,9 @@
    [:div.footer]])
 
 (defn boiler-plate []
-  [:div#boiler-wrapper
-   ;; styles   
-   ])
+  [:div#boiler-wrapper])
+   ;; styles
+
 
 (defn cljs-includes []
   [:div
@@ -105,5 +108,23 @@
      (hp/html5
       [:div#receipt
        [:h1 "Your submission was received: "]
-       [:div.content (str application) ]]))
+       [:div.content (str application)]]))
     "text/html; charset=utf-8")))
+
+;; Probably a temporary fix \/ \/ \/
+
+(defn render
+  "renders the HTML template located relative to resources/html"
+  [request template & [params]]
+  (content-type
+    (ok
+      (parser/render-file
+        template
+        (assoc params
+          :page template
+          :csrf-token *anti-forgery-token*)))
+    "text/html; charset=utf-8"))
+
+
+
+;; Probably a temporary fix /\ /\ /\

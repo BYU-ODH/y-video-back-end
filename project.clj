@@ -12,6 +12,7 @@
                  [hiccup "1.0.5"]
                  [hikari-cp "2.11.0"]
                  [honeysql "0.9.10"]
+                 [figwheel-sidecar "0.5.20"]
                  [luminus-immutant "0.2.5"]
                  [luminus-transit "0.1.2"]
                  [luminus/ring-ttl-session "0.3.3"]
@@ -31,6 +32,7 @@
                  [ring/ring-core "1.8.0"]
                  ;[clj-commons/clj-yaml "0.7.1"]
                  [ring/ring-defaults "0.3.2"]
+                 [selmer "1.12.23"]
                  [tick "0.4.20-alpha"]
                  [metosin/ring-swagger "0.26.2"]]
 
@@ -53,7 +55,7 @@
   :immutant {:war {:context-path "/"
                    :name "y-video-back%t"}}
   :test-selectors {:default (complement :integration)
-                 :integration :integration}
+                   :integration :integration}
 
   :profiles
   {:uberjar {:omit-source true
