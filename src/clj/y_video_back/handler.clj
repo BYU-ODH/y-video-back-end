@@ -19,7 +19,8 @@
     (println "Starting ring-handler")
     (ring/ring-handler
      (ring/router
-      [(service-routes)])
+      [(home-routes)
+       (service-routes)])
 
      (ring/routes
       (ring/create-resource-handler
