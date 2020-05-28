@@ -2,6 +2,7 @@
   (:require
             [y-video-back.layout :refer [error-page]]
             [y-video-back.routes.home :refer [home-routes]]
+            [y-video-back.routes.services :refer [service-routes]]
 
             [reitit.ring :as ring]
             [ring.middleware.webjars :refer [wrap-webjars]]
@@ -18,8 +19,8 @@
     (println "Starting ring-handler")
     (ring/ring-handler
      (ring/router
-      [(home-routes)])
-       
+      [(service-routes)])
+
      (ring/routes
       (ring/create-resource-handler
        {:path "/"})
