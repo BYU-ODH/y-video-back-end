@@ -91,7 +91,7 @@ CREATE TABLE files (
 COMMENT ON TABLE files IS 'Files represent media (i.e. videos) with path to file and metadata';
 
 DROP TABLE IF EXISTS user_collections_assoc CASCADE;
-CREATE TABLE user_collections (
+CREATE TABLE user_collections_assoc (
    id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY
    ,deleted TIMESTAMP DEFAULT NULL
    ,updated TIMESTAMP DEFAULT NULL
@@ -101,10 +101,10 @@ CREATE TABLE user_collections (
    ,account_role TEXT
    , CONSTRAINT no_duplicate_user_collections UNIQUE (user_id, collection_id)
 );
-COMMENT ON TABLE user_collections IS 'Many-to-many table connecting users and collections, incl. user roles in collections';
+COMMENT ON TABLE user_collections_assoc IS 'Many-to-many table connecting users and collections, incl. user roles in collections';
 
 DROP TABLE IF EXISTS collection_courses_assoc CASCADE;
-CREATE TABLE collection_courses (
+CREATE TABLE collection_courses_assoc (
    id UUID UNIQUE NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY
    ,deleted TIMESTAMP DEFAULT NULL
    ,updated TIMESTAMP DEFAULT NULL
@@ -113,24 +113,24 @@ CREATE TABLE collection_courses (
    ,course_id UUID REFERENCES courses(id)
    , CONSTRAINT no_duplicate_course_collections UNIQUE (course_id, collection_id)
 );
-COMMENT ON TABLE collection_courses IS 'Many-to-many table connecting collections and courses';
+COMMENT ON TABLE collection_courses_assoc IS 'Many-to-many table connecting collections and courses';
 
 DROP TABLE IF EXISTS content_files_assoc CASCADE;
-CREATE TABLE content_files (
+CREATE TABLE content_files_assoc (
    id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY
    ,deleted TIMESTAMP DEFAULT NULL
    ,updated TIMESTAMP DEFAULT NULL
    ,created  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
    ,content_id UUID REFERENCES contents(id)
    ,file_id UUID REFERENCES files(id)
-   ,PRIMARY KEY (content_id, file_id)
+   , CONSTRAINT no_duplicate_content_files UNIQUE (content_id, file_id)
 );
-COMMENT ON TABLE content_files IS 'Many-to-many table connecting contents and files';
+COMMENT ON TABLE content_files_assoc IS 'Many-to-many table connecting contents and files';
 
 -------------------------------
 -- Auto-update updated --
 -------------------------------
-CREATE OR REPLACE FUNCTION modified_timestamp() RETURNS TRIGGER 
+CREATE OR REPLACE FUNCTION modified_timestamp() RETURNS TRIGGER
 LANGUAGE plpgsql
 AS
 $$
@@ -144,7 +144,7 @@ DO $$
 DECLARE
    t text;
 BEGIN
-   FOR t IN 
+   FOR t IN
       SELECT tabs.table_name, table_type FROM information_schema.columns AS cols
       JOIN information_schema.tables AS tabs
       ON tabs.table_name = cols.table_name
@@ -169,7 +169,7 @@ DO $$
 DECLARE
    t text;
 BEGIN
-   FOR t IN 
+   FOR t IN
      SELECT tabs.table_name, table_type FROM information_schema.columns AS cols
      JOIN information_schema.tables AS tabs
      ON tabs.table_name = cols.table_name

@@ -527,23 +527,24 @@
      :parameters {}
      :responses {200 {:body {:message string?}}}
      :handler (fn [args] {:status 200
-                          :body {:message "placeholder"}})})
+                          :body {:message "placeholder"}})}))
 
-  (def file-create
-    {:summary "Creates a new file"
-     :parameters {:body models/file_without_id}
-     :responses {200 {:body {:message string?
-                             :id string?}}
-                 409 {:body {:message string?}}}
-     :handler (fn [{{:keys [body]} :parameters}]
-                (try {:status 200
-                      :body {:message "1 file created"
-                             :id (files/CREATE body)}}
-                     (catch Exception e
-                       {:status 409
-                        :body {:message "unable to create file, email likely taken"}})))})
+(def file-create
+  {:summary "Creates a new file"
+   :parameters {:body models/file_without_id}
+   :responses {200 {:body {:message string?
+                           :id string?}}
+               409 {:body {:message string?}}}
+   :handler (fn [{{:keys [body]} :parameters}]
+              (try {:status 200
+                    :body {:message "1 file created"
+                           :id (files/CREATE body)}}
+                   (catch Exception e
+                     {:status 409
+                      :body {:message "unable to create file"
+                             :error (e)}})))})
 
-  (def file-get-by-id
+(comment (def file-get-by-id)
     {:summary "Retrieves specified file"
      :parameters {:path {:id uuid?}}
      :responses {200 {:body models/file}
@@ -554,7 +555,7 @@
                     {:status 404
                      :body {:message "requested file not found"}}
                     {:status 200
-                     :body file_result})))})
+                     :body file_result})))}
 
   (def file-update
     {:summary "Updates specified file"

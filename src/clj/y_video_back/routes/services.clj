@@ -179,19 +179,20 @@
        ["/{id}"
         {:get service-handlers/annotation-get-by-id
          :patch service-handlers/annotation-update
-         :delete service-handlers/annotation-delete}]]
+         :delete service-handlers/annotation-delete}]])
 
-      ["/file"
-       {:swagger {:tags ["file"]}}
-       [""
-        {:post service-handlers/file-create}]
+    ["/file"
+     {:swagger {:tags ["file"]}}
+     [""
+      {:post service-handlers/file-create}]]
 
+    (comment
        ["/{id}"
         {:get service-handlers/file-get-by-id
          :patch service-handlers/file-update
          :delete service-handlers/file-delete}]
        ["/{id}/contents"
-        {:get service-handlers/file-get-all-contents}]]
+        {:get service-handlers/file-get-all-contents}]
 
       ["/connect-collection-and-course"
        {:swagger {:tags ["connect"]}}
