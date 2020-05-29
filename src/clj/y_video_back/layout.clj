@@ -12,6 +12,7 @@
 (def style-path "/css/")
 (def script-path "/js/")
 (def assets-path "/assets/")
+(def images-path "/images")
 
 (defn context-path [& path]
   (apply str path))
@@ -86,6 +87,8 @@
    :status - error status
    :title - error title (optional)
    :message - detailed error message (optional)
+   :image - image to be displayed (optional)
+   :caption - caption for image (optional)
    returns a response map with the error page as the body
    and the status specified by the status key"
   [error-details]
@@ -94,9 +97,13 @@
    :body (hp/html5
           (top-matter)
           (boiler-plate)
-          [:div.alert.alert-warning
-           [:h1 (or (:title error-details) (str "Error " (:status error-details)))]
-           [:div.error-details (:message error-details)]])})
+          [:div {:style "margin-top: 10px;" :class "columns is-centered has-text-centered"}
+           [:div {:class "column is-half"}
+            [:div.alert.alert-warning]
+            [:h1 {:class "title"} (or (:title error-details) (str "Error " (:status error-details)))]
+            [:div [:img {:class "is-centered" :src (str images-path "/" (:image error-details))}]]
+            [:div [:h1.title (:caption error-details)]]
+            [:div.error-details (:message error-details)]]])})
 
 (defn receipt-page
   ([]

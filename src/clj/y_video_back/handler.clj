@@ -29,7 +29,8 @@
       (wrap-webjars (constantly nil))
       (ring/create-default-handler
        {:not-found #(do (println "Not found:" (prn-str %))
-                        (error-page {:status 404, :title "404 - Page not found"}))
+                        (error-page {:status 404, :title "404 - Page not found",
+                                     :image "missing_planet.jpg", :caption "This page ought to be here... but it isn't."}))
         :method-not-allowed
         (constantly (error-page {:status 405, :title "405 - Not allowed"}))
         :not-acceptable
