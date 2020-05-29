@@ -1,4 +1,4 @@
-(ns y-video-back.test.usecase.stories.admin
+(comment (ns y-video-back.test.usecase.stories.admin)
   "General process of administration of the system"
   (:require [clojure.test :refer [deftest is testing]]))
 

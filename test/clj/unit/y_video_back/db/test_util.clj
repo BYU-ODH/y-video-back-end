@@ -3,7 +3,7 @@
             [clojure.test :refer [use-fixtures deftest is testing] :as t]
             [mount.core :as mount]
             [clojure.java.jdbc :as jdbc]
-            [y-video-back.db.migratus]
+            ; [y-video-back.db.migratus]
             [y-video-back.config :refer [env]])
   (:import (clojure.lang IDeref)))
 
@@ -36,4 +36,3 @@
          (jdbc/db-set-rollback-only! db/*db*)
          (do ~@forms)
          (f#)))))
-
