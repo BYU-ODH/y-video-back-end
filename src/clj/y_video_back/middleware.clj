@@ -18,7 +18,7 @@
   (:import [javax.servlet ServletContext]))
 
 (defn wrap-cas [handler]
-  (cas/wrap-cas handler (str (-> env :site-url) "/admin")))
+  (cas/wrap-cas handler (str (-> env :y-video-back :site-url) "/admin")))
 
 (defn wrap-context [handler]
   (fn [request]
