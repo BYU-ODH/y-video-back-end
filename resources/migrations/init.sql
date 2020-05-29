@@ -90,6 +90,18 @@ CREATE TABLE files (
 );
 COMMENT ON TABLE files IS 'Files represent media (i.e. videos) with path to file and metadata';
 
+DROP TABLE IF EXISTS annotations CASCADE;
+CREATE TABLE annotations (
+    id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY
+    ,deleted TIMESTAMP DEFAULT NULL
+    ,updated TIMESTAMP DEFAULT NULL
+    ,created  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    ,content_id UUID REFERENCES contents(id)
+    ,collection_id UUID REFERENCES collections(id)
+    ,metadata TEXT
+);
+COMMENT ON TABLE annotations IS 'Contains annotations to be applied over contents';
+
 DROP TABLE IF EXISTS user_collections_assoc CASCADE;
 CREATE TABLE user_collections_assoc (
    id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY
@@ -114,6 +126,19 @@ CREATE TABLE collection_courses_assoc (
    , CONSTRAINT no_duplicate_course_collections UNIQUE (course_id, collection_id)
 );
 COMMENT ON TABLE collection_courses_assoc IS 'Many-to-many table connecting collections and courses';
+
+DROP TABLE IF EXISTS collection_contents_assoc CASCADE;
+CREATE TABLE collection_contents_assoc (
+   id UUID UNIQUE NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY
+   ,deleted TIMESTAMP DEFAULT NULL
+   ,updated TIMESTAMP DEFAULT NULL
+   ,created  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+   ,collection_id UUID REFERENCES collections(id)
+   ,content_id UUID REFERENCES contents(id)
+   , CONSTRAINT no_duplicate_content_collections UNIQUE (content_id, collection_id)
+);
+COMMENT ON TABLE collection_contents_assoc IS 'Many-to-many table connecting collections and contents';
+
 
 DROP TABLE IF EXISTS content_files_assoc CASCADE;
 CREATE TABLE content_files_assoc (
