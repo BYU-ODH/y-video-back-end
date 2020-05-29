@@ -42,7 +42,9 @@
 (defn cljs-app-base []
   [:div#app
    [:div.container
-    [:h1.title "Welcome to the swagger API for Y-Video"]]])
+    [:h1.title "Welcome to the swagger API for Y-Video"]
+    [:h1.title [:a {:href "api/ping"} "ping"]]
+    [:h1.title [:a {:href "api/api-docs/"} "api docs"]]]])
 
 (defn cljs-app-footer []
   [:div#footer
