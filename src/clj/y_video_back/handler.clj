@@ -19,7 +19,7 @@
     (println "Starting ring-handler")
     (ring/ring-handler
      (ring/router
-      [ ;(home-routes)
+      [(home-routes)
        (service-routes)])
 
      (ring/routes
