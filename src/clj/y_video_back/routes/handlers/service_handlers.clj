@@ -533,18 +533,15 @@
   {:summary "Creates a new file"
    :parameters {:body models/file_without_id}
    :responses {200 {:body {:message string?
-                           :id string?}}
-               409 {:body {:message string?}}}
+                           :id string?}}}
    :handler (fn [{{:keys [body]} :parameters}]
-              (try {:status 200
-                    :body {:message "1 file created"
-                           :id (files/CREATE body)}}
-                   (catch Exception e
-                     {:status 409
-                      :body {:message "unable to create file"
-                             :error (e)}})))})
+              {:status 200
+               :body {:message "1 file created"
+                      :id (str (:id (files/CREATE body)))}})})
 
-(comment (def file-get-by-id)
+
+
+(def file-get-by-id
     {:summary "Retrieves specified file"
      :parameters {:path {:id uuid?}}
      :responses {200 {:body models/file}
@@ -555,8 +552,9 @@
                     {:status 404
                      :body {:message "requested file not found"}}
                     {:status 200
-                     :body file_result})))}
+                     :body file_result})))})
 
+(comment
   (def file-update
     {:summary "Updates specified file"
      :parameters {:path {:id uuid?} :body models/file_without_id}

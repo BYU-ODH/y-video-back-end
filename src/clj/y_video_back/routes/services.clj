@@ -184,8 +184,9 @@
     ["/file"
      {:swagger {:tags ["file"]}}
      [""
-      {:post service-handlers/file-create}]]
-
+      {:post service-handlers/file-create}]
+     ["/{id}"
+      {:get service-handlers/file-get-by-id}]]
     (comment
        ["/{id}"
         {:get service-handlers/file-get-by-id

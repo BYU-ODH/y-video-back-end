@@ -7,7 +7,7 @@
    [y-video-back.config :refer [env]]
    [mount.core :refer [defstate]]
    [camel-snake-kebab.core :as csk]
-   [camel-snake-kebab.extras :refer [transform-keys]] 
+   [camel-snake-kebab.extras :refer [transform-keys]]
    [honeysql.core :as sql]
    [clojure.string :refer [join]]
    [tick.alpha.api :as t])
@@ -23,9 +23,9 @@
            java.text.SimpleDateFormat))
 
 (defstate ^:dynamic *db*
-  :start #_{:datasource (hik/make-datasource (-> env :y-video-back :db))}
-  {} 
-  :stop #_(hik/close-datasource (:datasource *db*))
+  :start {:datasource (hik/make-datasource (-> env :y-video-back :db))}
+  {}
+  :stop (hik/close-datasource (:datasource *db*))
   identity)
 
 (defn to-date [^java.sql.Date sql-date]
@@ -51,7 +51,7 @@
         "citext" (str value)
         value))))
 
-;;serializes java.time.Instant as json 
+;;serializes java.time.Instant as json
 (extend-protocol cheshire.generate/JSONable
   java.time.Instant
   (to-json [dt gen]
@@ -226,5 +226,3 @@
                           (clojure.string/join "," stringy-coll)
                           "]")]
     (sql/raw (str (name db-array-field) " && ARRAY" array-format))))
-
-
