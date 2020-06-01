@@ -100,33 +100,33 @@
 
 ;;added by scott griffin on 26 oct 2019. potentially could be removed
 #_(extend-protocol jdbc/ISQLValue
-  clojure.lang.IPersistentMap
-  (sql-value [value]
-    (doto (PGobject.)
-      (.setType "json")
-      (.setValue (json/write-str value)))))
+   clojure.lang.IPersistentMap
+   (sql-value [value]
+     (doto (PGobject.)
+       (.setType "json")
+       (.setValue (json/write-str value)))))
 
 ;;added by scott griffin on 26 oct 2019. potentially could be removed
 #_(extend-protocol jdbc/IResultSetReadColumn
-  PGobject
-  (result-set-read-column [pgobj metadata idx]
-    (let [type  (.getType pgobj)
-          value (.getValue pgobj)]
-      (case type
-        "json" (json/read-str value :key-fn keyword)
-        :else value))))
+   PGobject
+   (result-set-read-column [pgobj metadata idx]
+     (let [type  (.getType pgobj)
+           value (.getValue pgobj)]
+       (case type
+         "json" (json/read-str value :key-fn keyword)
+         :else value))))
 
 #_(defn value-to-json-pgobject [value]
-  (doto (PGobject.)
-    (.setType "json")
-      (.setValue (json/write-str value))))
+   (doto (PGobject.)
+     (.setType "json")
+     (.setValue (json/write-str value))))
 
 #_(extend-protocol jdbc/ISQLValue
-  clojure.lang.IPersistentMap
-  (sql-value [value] (value-to-json-pgobject value))
+   clojure.lang.IPersistentMap
+   (sql-value [value] (value-to-json-pgobject value))
 
-  clojure.lang.IPersistentVector
-  (sql-value [value] (value-to-json-pgobject value)))
+   clojure.lang.IPersistentVector
+   (sql-value [value] (value-to-json-pgobject value)))
 
 
 
@@ -195,7 +195,7 @@
   "Get anything from table by id, or all without id"
   [table-keyword {:keys [current-screen screen-amount select-field-keys]}]
   (if-not screen-amount (throw (ex-info "Missing key: screen-amount" {:cause :missing-key}))
-          (let [off (* screen-amount current-screen) ]
+          (let [off (* screen-amount current-screen)]
             {:select (or select-field-keys [:*])
              :from  [table-keyword]
              :offset off
