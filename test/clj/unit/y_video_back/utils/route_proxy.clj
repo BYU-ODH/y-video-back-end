@@ -18,8 +18,8 @@
 (defn user-id-patch
   "Updates user via app's patch (id) request"
   [id new_user]
-  (app (-> (request :patch (str "/api/user/" id)
-             (json-body new_user)))))
+  (app (-> (request :patch (str "/api/user/" id))
+           (json-body new_user))))
 
 (defn user-id-delete
   "Deletes user via app's delete (id) request"
@@ -30,7 +30,7 @@
   "Create a word via app's post request"
   [word_without_id]
   (app (-> (request :post "/api/word")
-             (json-body word_without_id))))
+           (json-body word_without_id))))
 
 (defn word-id-get
   "Retrieves word via app's get (id) request"
@@ -41,7 +41,7 @@
   "Updates word via app's patch (id) request"
   [id new_word]
   (app (-> (request :patch (str "/api/word/" id))
-             (json-body new_word))))
+           (json-body new_word))))
 
 (defn word-id-delete
   "Deletes word via app's delete (id) request"
@@ -53,7 +53,7 @@
   "Create a collection via app's post request"
   [name user_id]
   (app (-> (request :post "/api/collection")
-             (json-body {:name name :user_id user_id}))))
+           (json-body {:name name :user_id user_id}))))
 
 (defn collection-id-get
   "Retrieves collection via app's get (id) request"
@@ -64,7 +64,7 @@
   "Updates collection via app's patch (id) request"
   [id new_collection]
   (app (-> (request :patch (str "/api/collection/" id))
-             (json-body new_collection))))
+           (json-body new_collection))))
 
 (defn collection-id-delete
   "Deletes collection via app's delete (id) request"
@@ -75,7 +75,7 @@
   "Create a content via app's post request"
   [content_without_id]
   (app (-> (request :post "/api/content")
-             (json-body content_without_id))))
+           (json-body content_without_id))))
 
 (defn content-id-get
   "Retrieves content via app's get (id) request"
@@ -86,7 +86,7 @@
   "Updates content via app's patch (id) request"
   [id new_content]
   (app (-> (request :patch (str "/api/content/" id))
-             (json-body new_content))))
+           (json-body new_content))))
 
 (defn content-id-delete
   "Deletes content via app's delete (id) request"
@@ -98,7 +98,7 @@
   "Create a course via app's post request"
   [course_without_id]
   (app (-> (request :post "/api/course")
-             (json-body course_without_id))))
+           (json-body course_without_id))))
 
 (defn course-id-get
   "Retrieves course via app's get (id) request"
@@ -109,7 +109,7 @@
   "Updates course via app's patch (id) request"
   [id new_course]
   (app (-> (request :patch (str "/api/course/" id))
-             (json-body new_course))))
+           (json-body new_course))))
 
 (defn course-id-delete
   "Deletes course via app's delete (id) request"
@@ -120,7 +120,7 @@
   "Create a file via app's post request"
   [file_without_id]
   (app (-> (request :post "/api/file")
-             (json-body file_without_id))))
+           (json-body file_without_id))))
 
 (defn file-id-get
   "Retrieves file via app's get (id) request"
@@ -131,7 +131,7 @@
   "Updates file via app's patch (id) request"
   [id new_file]
   (app (-> (request :patch (str "/api/file/" id))
-             (json-body new_file))))
+           (json-body new_file))))
 
 (defn file-id-delete
   "Deletes file via app's delete (id) request"

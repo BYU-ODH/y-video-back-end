@@ -47,7 +47,7 @@
   (testing "user CRUD"
     ; Create user
     (let [user_one (g/get_random_user_without_id)
-          useR_two (g/get_random_user_without_id)]
+          user_two (g/get_random_user_without_id)]
      (let [response (rp/user-post user_one)]
        ; Verify user created
        (is (= 200 (:status response)))
@@ -56,5 +56,17 @@
          (let [response (rp/user-id-get user_one_id)]
            ; Verify correct get
            (is (= 200 (:status response)))
-           (is (= (into user_one {:id user_one_id}) (remove-db-only (m/decode-response-body response))))))))))
+           (is (= (into user_one {:id user_one_id}) (remove-db-only (m/decode-response-body response)))))
          ; Update user - all fields
+         (let [response (rp/user-id-patch user_one_id user_two)]
+           (is (= 200 (:status response))))
+         ; Verify info changed
+         (let [response (rp/user-id-get user_one_id)]
+           (is (= 200 (:status response)))
+           (is (= (into user_two {:id user_one_id}) (remove-db-only (m/decode-response-body response)))))
+         ; Delete user
+         (let [response (rp/user-id-delete user_one_id)]
+           (is (= 200 (:status response))))
+         ; Verify deleted
+         (let [response (rp/user-id-get user_one_id)]
+           (is (= 404 (:status response)))))))))

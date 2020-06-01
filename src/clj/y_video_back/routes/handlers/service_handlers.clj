@@ -88,12 +88,13 @@
   {:summary "Retrieves specified user"
    :parameters {:path {:id uuid?}}
    :responses {200 {:body models/user}
-               404 {:body {:message string?}}}
+               404 {:body {:message string?}}
+               500 {:body {:message string?}}}
    :handler (fn [{{{:keys [id]} :path} :parameters}]
               (let [user_result (users/READ id)]
-                (if (= "" (:id user_result))
+                (if (nil? user_result)
                   {:status 404
-                   :body {:message "requested user not found"}}
+                   :body {:message "user not found"}}
                   {:status 200
                    :body user_result})))})
 
