@@ -3,6 +3,7 @@
       [clojure.test :refer :all]
       [ring.mock.request :refer :all]
       [y-video-back.handler :refer :all]
+      [y-video-back.db.test-util :as tcore]
       ;[y-video-postgres-swagger.middleware.formats :as formats]
       ;[y-video-postgres-swagger.test.test_model_generator :as model-generator]
       ;[y-video-postgres-swagger.dbaccess.access :as db-access]
@@ -28,17 +29,20 @@
     ;(f#)
     (f)))
 
-(use-fixtures
-  :each
-  (fn [f]
-    (jdbc/with-db-transaction
-      [transaction *db*]
-      (jdbc/db-set-rollback-only! transaction)
-      (binding [*txn* transaction] (f)))))
+(tcore/basic-transaction-fixtures
+ (mount.core/start #'y-video-back.handler/app))
+
+(defn get-id
+  "Gets id from raw response body"
+  [res]
+  (:id (m/decode-response-body res)))
 
 
 (deftest test-app
   (testing "user"
     (let [user_one (g/get_random_user_without_id)]
      (let [response (rp/user-post user_one)]
-       (is (= 200 (:status response)))))))
+       (is (= 200 (:status response)))
+       (let [user_one_id (get-id response)]
+         (let [response (rp/user-id-get user_one_id)]
+           (is (= 200 (:status response)))))))))

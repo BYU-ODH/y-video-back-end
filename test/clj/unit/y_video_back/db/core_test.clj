@@ -9,4 +9,3 @@
 
 (tcore/basic-transaction-fixtures
  (mount.core/start #'y-video-back.handler/app))
-
