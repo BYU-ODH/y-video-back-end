@@ -73,7 +73,7 @@
 (defn wrap-base [handler]
   (-> ((:middleware defaults) handler)
       wrap-flash
-      wrap-cas
+      ;;wrap-cas
       ;;wrap-csrf
       (wrap-session {:cookie-attrs {:http-only true}})
       (wrap-defaults
