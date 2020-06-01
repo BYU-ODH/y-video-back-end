@@ -28,10 +28,15 @@
       ;; (wrap-content-type
       (wrap-webjars (constantly nil))
       (ring/create-default-handler
-       {:not-found #(do (println "Not found:" (prn-str %))
+       {:unauthorized
+        (constantly (error-page {:status 401, :title "401 - Unauthorized",
+                                 :image "anakin_sitting.jpg", :caption "It's unfair! How can you be on this website and not be an admin?!"}))
+
+        :not-found #(do (println "Not found:" (prn-str %))
                         (error-page {:status 404, :title "404 - Page not found",
                                      :image "missing_planet.jpg", :caption "This page ought to be here... but it isn't."}))
         :method-not-allowed
-        (constantly (error-page {:status 405, :title "405 - Not allowed"}))
+        (constantly (error-page {:status 405, :title "405 - Not allowed",
+                                 :image "anakin_obiwan_mustafar.jpg", :caption "Obi-Wan: Anakin, this is a get method!<br/><br/>Anakin: From my point of view, this is a post method!"}))
         :not-acceptable
         (constantly (error-page {:status 406, :title "406 - Not acceptable"}))})))))

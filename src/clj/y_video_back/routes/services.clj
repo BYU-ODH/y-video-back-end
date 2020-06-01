@@ -54,6 +54,13 @@
     ["/ping"
      {:get (constantly (response/ok {:message "pong"}))}]
 
+    ["/surely-a-get-method"
+     {:post (constantly (response/ok {:message "pong"}))}]
+
+    ["/jedi-council"
+     {:get {:validate false
+            :handler (fn [] "doesn't matter")}}]
+
     ["/echo"
      {:swagger {:tags ["echo"]}}
 
@@ -81,7 +88,16 @@
                         {:status 200
                          :body {:echo word
                                 :second second}})}}]]
+    ["/cas-testing"
+     {:swagger {:tags ["cas-testing"]}}
 
+     [""
+      {:get {:summary "return username"
+             :parameters {}
+             :responses {200 {:body {:username string?}}}
+             :handler (fn [{{{:keys [username]} :username} :parameters}]
+                        {:status 200
+                         :body {:username username}})}}]]
     ["/user"
      {:swagger {:tags ["user"]}}
      [""

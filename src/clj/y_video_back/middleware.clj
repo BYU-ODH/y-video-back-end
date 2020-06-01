@@ -18,7 +18,7 @@
   (:import [javax.servlet ServletContext]))
 
 (defn wrap-cas [handler]
-  (cas/wrap-cas handler (str (-> env :y-video-back :site-url) "/admin")))
+  (cas/wrap-cas handler (str (-> env :y-video-back :site-url) "/")))
 
 (defn wrap-context [handler]
   (fn [request]
@@ -73,8 +73,8 @@
 (defn wrap-base [handler]
   (-> ((:middleware defaults) handler)
       wrap-flash
-      ;;wrap-cas
-      ;;wrap-csrf
+      wrap-cas
+      wrap-csrf
       (wrap-session {:cookie-attrs {:http-only true}})
       (wrap-defaults
         (-> site-defaults

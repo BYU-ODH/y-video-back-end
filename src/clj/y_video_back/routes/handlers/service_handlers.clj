@@ -12,15 +12,23 @@
    [y-video-back.db.users :as users]
    [y-video-back.db.words :as words]
    ;;[y-video-back.dbaccess.access :as db-access] ;; This should be refactored to the relevant db/TABLE files
-   [y-video-back.models :as models]))
+   [y-video-back.models :as models]
+   [clojure.spec.alpha :as s]
+   [spec-tools.core :as st]))
+
 
 (defn get-id
   [res]
   (str (:id res)))
 
+(s/def :echo/first string?)
+(s/def :echo/second string?)
+(s/def ::echo (s/keys :req-un [:echo/first]
+                      :opt-un [:echo/second]))
+
 (def echo-patch
   {:summary "echo parameter post"
-   :parameters {:body models/echo_patch}
+   :parameters {:body ::echo}
    :responses {200 {:body {:message string?}}}
    :handler (fn [ignore-me] {:status 200 :body {:message "this route does nothing!"}})})
 
