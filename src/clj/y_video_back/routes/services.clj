@@ -95,7 +95,7 @@
       {:get {:summary "return username"
              :parameters {}
              :responses {200 {:body {:username string?}}}
-             :handler (fn [{{{:keys [username]} :username} :parameters}]
+             :handler (fn [{{{:keys [username]} :body} :parameters}]
                         {:status 200
                          :body {:username username}})}}]]
     ["/user"

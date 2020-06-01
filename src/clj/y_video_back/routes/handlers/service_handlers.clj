@@ -73,14 +73,16 @@
    :parameters {:body models/user_without_id}
    :responses {200 {:body {:message string?
                            :id string?}}
-               409 {:body {:message string?}}}
+               409 {:body {:message string?
+                           :error string?}}}
    :handler (fn [{{:keys [body]} :parameters}]
               (try {:status 200
                     :body {:message "1 user created"
                            :id (get-id (users/CREATE body))}}
                    (catch Exception e
                      {:status 409
-                      :body {:message "unable to create user, email likely taken"}})))})
+                      :body {:message "unable to create user, email likely taken"
+                             :error (.toString e)}})))})
 
 (def user-get-by-id
   {:summary "Retrieves specified user"

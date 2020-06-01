@@ -181,7 +181,7 @@
   (let [entry (READ table-keyword id)
         val-map (-> entry
                     (dissoc :id)
-                    (assoc :deleted true))]
+                    (assoc :deleted t/now))]
     (UPDATE table-keyword id val-map)))
 
 (defn CLONE

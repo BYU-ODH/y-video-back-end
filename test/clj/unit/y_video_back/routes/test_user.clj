@@ -10,7 +10,8 @@
       [muuntaja.core :as m]
       [mount.core :as mount]
       [y-video-back.utils.model_generator :as g]
-      [y-video-back.utils.route_proxy :as rp]))
+      [y-video-back.utils.route_proxy :as rp]
+      [y-video-back.db.core :refer [*db*] :as db]))
       ;[y-video-postgres-swagger.test.routes_proxy :as rp]))
 
 
@@ -18,7 +19,8 @@
   :once
   (fn [f]
     (mount/start #'y-video-back.config/env
-                 #'y-video-back.handler/app)
+                 #'y-video-back.handler/app
+                 #'y-video-back.db.core/*db*)
     (f)))
 
 (deftest test-app
