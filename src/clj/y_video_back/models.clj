@@ -7,8 +7,8 @@
   {:echo string?})
 
 (def user_without_id
-  {:email string? :last_login string? :account_name string?
-   :account_role int? :username string?})
+  {:email string? :last-login string? :account-name string?
+   :account-role int? :username string?})
 
 (def user
   (into user_without_id {:id uuid?}))
