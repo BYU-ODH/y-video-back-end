@@ -51,9 +51,9 @@
 
 (defn collection-post
   "Create a collection via app's post request"
-  [name user_id]
+  [collection user_id]
   (app (-> (request :post "/api/collection")
-           (json-body {:name name :user_id user_id}))))
+           (json-body {:collection collection :user_id user_id}))))
 
 (defn collection-id-get
   "Retrieves collection via app's get (id) request"

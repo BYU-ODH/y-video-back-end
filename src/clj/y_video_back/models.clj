@@ -40,7 +40,7 @@
   (into word_without_id {:id uuid?}))
 
 (def collection_without_id
-  {:collection_name string? :published boolean? :archived boolean?})
+  {:collection-name string? :published boolean? :archived boolean?})
 
 (def collection
   (into collection_without_id {:id uuid?}))

@@ -1,4 +1,4 @@
-(ns y-video-back.routes.test-user
+(ns y-video-back.routes.crud-tests
     (:require
       [clojure.test :refer :all]
       [ring.mock.request :refer :all]
@@ -43,7 +43,7 @@
   (dissoc my_map :created :updated :deleted))
 
 
-(deftest test-app
+(deftest test-user
   (testing "user CRUD"
     ; Create user
     (let [user_one (g/get_random_user_without_id)
@@ -70,3 +70,35 @@
          ; Verify deleted
          (let [response (rp/user-id-get user_one_id)]
            (is (= 404 (:status response)))))))))
+
+(deftest test-collection
+  (testing "collection CRUD"
+    ; Create user and collection
+    (let [collection_one (g/get_random_collection_without_id)
+          collection_two (g/get_random_collection_without_id)
+          user_one (g/get_random_user_without_id)]
+     (let [response (rp/user-post user_one)]
+       (is (= 200 (:status response)))
+       (let [user_one_id (get-id response)]
+         (let [response (rp/collection-post collection_one user_one_id)]
+           ; Verify collection created
+           (is (= 200 (:status response)))
+           (let [collection_one_id (get-id response)]
+             ; Get collection
+             (let [response (rp/collection-id-get collection_one_id)]
+               ; Verify correct get
+               (is (= 200 (:status response)))
+               (is (= (into collection_one {:id collection_one_id}) (remove-db-only (m/decode-response-body response)))))
+             ; Update collection - all fields
+             (let [response (rp/collection-id-patch collection_one_id collection_two)]
+               (is (= 200 (:status response))))
+             ; Verify info changed
+             (let [response (rp/collection-id-get collection_one_id)]
+               (is (= 200 (:status response)))
+               (is (= (into collection_two {:id collection_one_id}) (remove-db-only (m/decode-response-body response)))))
+             ; Delete collection
+             (let [response (rp/collection-id-delete collection_one_id)]
+               (is (= 200 (:status response))))
+             ; Verify deleted
+             (let [response (rp/collection-id-get collection_one_id)]
+               (is (= 404 (:status response)))))))))))

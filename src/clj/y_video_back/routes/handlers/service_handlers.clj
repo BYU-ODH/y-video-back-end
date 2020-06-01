@@ -8,7 +8,7 @@
    [y-video-back.db.contents :as contents]
    [y-video-back.db.courses :as courses]
    [y-video-back.db.files :as files]
-   [y-video-back.db.users-collections-assoc :as user_collections_assoc]
+   [y-video-back.db.user-collections-assoc :as user_collections_assoc]
    [y-video-back.db.users :as users]
    [y-video-back.db.words :as words]
    ;;[y-video-back.dbaccess.access :as db-access] ;; This should be refactored to the relevant db/TABLE files
@@ -31,6 +31,10 @@
                 ""))
             (get val 1)})
       m)))
+
+(defn to-uuid
+  [text_in]
+  (java.util.UUID/fromString text_in))
 
 (defn get-id
   [res]
@@ -111,6 +115,16 @@
                                :user/account-name
                                :user/account-role
                                :user/username]));(add-namespace "user" models/user_without_id)
+
+; Optional parameter setup for collection update route
+
+(s/def :collection/collection-name string?)
+(s/def :collection/published boolean?)
+(s/def :collection/archived boolean?)
+(s/def ::collection (s/keys :opt-un [:collection/collection-name
+                                     :collection/published
+                                     :collection/archived]))
+
 
 
 (def user-update
@@ -223,21 +237,21 @@
 
 (def collection-create ;; Non-functional
   {:summary "Creates a new collection with the given (temp) user as an owner"
-   :parameters {:body (into models/collection_without_id {:user_id uuid?})}
+   :parameters {:body {:collection models/collection_without_id :user_id uuid?}}
    :responses {200 {:body {:message string?
                            :id string?}}
                409 {:body {:message string?}}}
    :handler (fn [{{:keys [body]} :parameters}]
               (try {:status 200
                     :body {:message "1 collection created"
-                           :id (let [collection_id (get-id (collections/CREATE body))]
+                           :id (let [collection_id (get-id (collections/CREATE (:collection body)))]
                                  (user_collections_assoc/CREATE {:user_id (:user_id body)
-                                                                 :collection_id collection_id
-                                                                 :account_role "owner"})
+                                                                 :collection_id (to-uuid collection_id)
+                                                                 :account_role 0})
                                  collection_id)}}
                    (catch Exception e
                      {:status 409
-                      :body {:message (e)}})))})
+                      :body {:message e}})))})
 
 (def collection-get-by-id ;; Not tested
   {:summary "Retrieves specified collection"
@@ -246,7 +260,7 @@
                404 {:body {:message string?}}}
    :handler (fn [{{{:keys [id]} :path} :parameters}]
               (let [res (collections/READ id)]
-                (if (= "" (:id res))
+                (if (nil? res)
                   {:status 404
                    :body {:message "requested collection not found"}}
                   {:status 200
@@ -254,15 +268,15 @@
 
 (def collection-update ;; Non-functional
   {:summary "Updates the specified collection"
-   :parameters {:path {:id uuid?} :body models/collection_without_id}
+   :parameters {:path {:id uuid?} :body ::collection}
    :responses {200 {:body {:message string?}}}
    :handler (fn [{{{:keys [id]} :path :keys [body]} :parameters}]
               (let [result (collections/UPDATE id body)]
-                (if (= 0 result)
+                (if (nil? result)
                   {:status 404
                    :body {:message "requested collection not found"}}
                   {:status 200
-                   :body {:message (str result " collections updated")}})))})
+                   :body {:message (str 1 " collections updated")}})))})
 
 (def collection-delete ;; Non-functional
   {:summary "Deletes the specified collection"
@@ -274,7 +288,7 @@
                   {:status 404
                    :body {:message "requested collection not found"}}
                   {:status 200
-                   :body {:message (str result " collections deleted")}})))})
+                   :body {:message (str 1 " collections deleted")}})))})
 
 (def collection-add-user
   {:summary "Adds user to specified collection"
