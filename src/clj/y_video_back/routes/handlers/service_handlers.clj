@@ -16,6 +16,11 @@
    [clojure.spec.alpha :as s]
    [spec-tools.core :as st]))
 
+(defn remove-db-only
+  "Compares 2 maps, not counting created, updated, and deleted fields"
+  [my_map]
+  (dissoc my_map :created :updated :deleted))
+
 (defn add-namespace
   "Converts all keywords to namespace-keywords"
   [namespace m]
@@ -44,6 +49,30 @@
 (s/def :echo/second string?)
 (s/def ::echo (s/keys :req-un [:echo/first]
                       :opt-un [:echo/second]))
+
+; Optional parameter setup for user update route
+
+(s/def :user/email string?)
+(s/def :user/last-login string?)
+(s/def :user/account-name string?)
+(s/def :user/account-role int?)
+(s/def :user/username string?)
+(s/def ::user (s/keys :opt-un [:user/email
+                               :user/last-login
+                               :user/account-name
+                               :user/account-role
+                               :user/username]));(add-namespace "user" models/user_without_id)
+
+; Optional parameter setup for collection update route
+
+(s/def :collection/collection-name string?)
+(s/def :collection/published boolean?)
+(s/def :collection/archived boolean?)
+(s/def ::collection (s/keys :opt-un [:collection/collection-name
+                                     :collection/published
+                                     :collection/archived]))
+
+
 
 (def echo-patch
   {:summary "echo parameter post"
@@ -101,30 +130,6 @@
                    :body {:message "user not found"}}
                   {:status 200
                    :body user_result})))})
-
-
-; Optional parameter setup for user update route
-
-(s/def :user/email string?)
-(s/def :user/last-login string?)
-(s/def :user/account-name string?)
-(s/def :user/account-role int?)
-(s/def :user/username string?)
-(s/def ::user (s/keys :opt-un [:user/email
-                               :user/last-login
-                               :user/account-name
-                               :user/account-role
-                               :user/username]));(add-namespace "user" models/user_without_id)
-
-; Optional parameter setup for collection update route
-
-(s/def :collection/collection-name string?)
-(s/def :collection/published boolean?)
-(s/def :collection/archived boolean?)
-(s/def ::collection (s/keys :opt-un [:collection/collection-name
-                                     :collection/published
-                                     :collection/archived]))
-
 
 
 (def user-update
@@ -359,10 +364,16 @@
 
 (def collection-get-all-users
   {:summary "Retrieves all users for the specified collection"
-   :parameters {}
-   :responses {200 {:body {:message string?}}}
-   :handler (fn [args] {:status 200
-                        :body {:message "placeholder"}})})
+   :parameters {:path {:id uuid?}}
+   :responses {200 {:body [models/user]}}
+   :handler (fn [{{{:keys [id]} :path} :parameters}]
+              (let [user_collections_result (user_collections_assoc/READ-BY-COLLECTION id)]
+                (let [user_list (into [] (map (fn [res] (remove-db-only (users/READ (:user-id res)))) user_collections_result))]
+                ;(if (= "" (:id user_collections_result))
+                ;  {:status 404
+                ;   :body {:message "requested content not found"}
+                  {:status 200
+                   :body user_list})))})
 
 
 (def content-create ;; Non-functional

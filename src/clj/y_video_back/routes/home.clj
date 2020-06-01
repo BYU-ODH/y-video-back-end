@@ -35,7 +35,8 @@
   (into [""
          {:middleware [middleware/wrap-base
                        middleware/wrap-formats]}]
-        (conj 
+        (conj
          (for [path home-paths]
            [path {:get home-page}])
-         ["/ping" {:get (constantly (response/ok {:message "pong"}))}])))
+         ["/ping" {:get (constantly (response/ok {:message "pong"}))}]
+         ["/who-am-i" {:get (fn [request] {:status 200 :body {:username (:username request)}})}])))

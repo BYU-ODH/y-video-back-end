@@ -9,6 +9,7 @@
     [reitit.ring.middleware.parameters :as parameters]
     [y-video-back.middleware.formats :as formats]
     [y-video-back.middleware.exception :as exception]
+    [y-video-back.middleware :as middleware]
 ;    [y-video-back.dbaccess.access :as db-access]
     [y-video-back.routes.handlers.service_handlers :as service-handlers]
     [ring.util.http-response :as response]
@@ -37,6 +38,8 @@
                   coercion/coerce-request-middleware
                   ;; multipart
                   multipart/multipart-middleware]}
+                  ;; CAS
+                  ;middleware/wrap-cas-no-redirect]}
 
     ;; swagger documentation
     ["" {:no-doc true

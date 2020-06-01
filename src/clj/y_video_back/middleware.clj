@@ -20,6 +20,9 @@
 (defn wrap-cas [handler]
   (cas/wrap-cas handler (str (-> env :y-video-back :site-url) "/")))
 
+(defn wrap-cas-no-redirect [handler]
+  (cas/cas handler (str (-> env :y-video-back :site-url) "/") true true))
+
 (defn wrap-context [handler]
   (fn [request]
     (binding [*app-context*

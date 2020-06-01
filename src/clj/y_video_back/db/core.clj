@@ -161,6 +161,23 @@
     (= 1 (count select-field-keys))
     (#((first select-field-keys) %))))
 
+; - - - - - - - Matthew inserting potentially useful code - - - - - - - ;
+
+(defn READ-ALL-WHERE
+  "Get all entries from table by column"
+  [table-keyword column-keyword &[id select-field-keys]]
+  (cond-> {:select (or select-field-keys [:*])
+           :from [table-keyword]}
+    id (assoc :where [:= column-keyword id])
+    1 sql/format
+    1 dbr
+    ; id first
+    (= 1 (count select-field-keys))
+    (#((first select-field-keys) %))))
+
+; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ;
+
+
 (defn UPDATE
   "Update anything from table by id"
   [table-keyword id valmap]
