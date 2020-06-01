@@ -16,6 +16,21 @@
    [clojure.spec.alpha :as s]
    [spec-tools.core :as st]))
 
+(defn add-namespace
+  "Converts all keywords to namespace-keywords"
+  [namespace m]
+  (into {}
+    (map (fn [val]
+           {
+            (keyword
+              namespace
+              (clojure.string/replace
+                (str
+                  (get val 0))
+                ":"
+                ""))
+            (get val 1)})
+      m)))
 
 (defn get-id
   [res]
@@ -80,9 +95,24 @@
                   {:status 200
                    :body user_result})))})
 
+
+; Optional parameter setup for user update route
+
+(s/def :user/email string?)
+(s/def :user/last-login string?)
+(s/def :user/account-name string?)
+(s/def :user/account-role int?)
+(s/def :user/username string?)
+(s/def ::user (s/keys :opt-un [:user/email
+                               :user/last-login
+                               :user/account-name
+                               :user/account-role
+                               :user/username]));(add-namespace "user" models/user_without_id)
+
+
 (def user-update
   {:summary "Updates specified user"
-   :parameters {:path {:id uuid?} :body models/user_without_id}
+   :parameters {:path {:id uuid?} :body ::user}
    :responses {200 {:body {:message string?}}}
    :handler (fn [{{{:keys [id]} :path :keys [body]} :parameters}]
               (let [result (users/UPDATE id body)]
@@ -90,7 +120,7 @@
                   {:status 404
                    :body {:message "requested user not found"}}
                   {:status 200
-                   :body {:message (str result " users updated")}})))})
+                   :body {:message (str 1 " users updated")}})))})  ; I know, hard coded. Will change later.
 
 (def user-delete
   {:summary "Deletes specified user"

@@ -3,6 +3,20 @@
             [spec-tools.core :as st]
             [clojure.spec.alpha :as s]))
 
+(defn add-namespace
+  "Converts all keywords to namespace-keywords, returns vector of keywords"
+  [namespace m]
+  (into []
+    (map (fn [val]
+            (keyword
+              namespace
+              (clojure.string/replace
+                (str
+                  (get val 0))
+                ":"
+                "")))
+      m)))
+
 (def echo_patch
   {:echo string?})
 
@@ -12,6 +26,9 @@
 
 (def user
   (into user_without_id {:id uuid?}))
+
+(def user_without_id_ns_params  ; Not in use
+  (add-namespace "user" {:variable string?}))
 
 (def word_without_id_or_user_id
   {:word string? :src_lang string? :dest_lang string?})
