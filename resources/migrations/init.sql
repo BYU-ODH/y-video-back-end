@@ -11,7 +11,7 @@ CREATE TABLE users (
    ,email TEXT UNIQUE
    ,last_login TEXT
    ,account_name TEXT
-   ,account_role INTEGER
+   ,account_type INTEGER
    ,username TEXT
 );
 COMMENT ON TABLE users IS 'User-accounts matching netid';
@@ -213,3 +213,7 @@ $$ LANGUAGE plpgsql;
 ---------------------
 
 -- These will be views which depend upon other views, such as *_undeleted
+
+DROP VIEW IF EXISTS users_by_collection;
+CREATE VIEW users_by_collection AS
+    SELECT users.*,
