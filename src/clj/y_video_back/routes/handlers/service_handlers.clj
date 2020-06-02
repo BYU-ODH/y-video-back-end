@@ -369,12 +369,11 @@
    :responses {200 {:body [(into models/user {:account-role int? :collection-id uuid?})]}}
    :handler (fn [{{{:keys [id]} :path} :parameters}]
               (let [user_collections_result (users-by-collection/READ-BY-COLLECTION id)]
-                ;(let [user_list (into [] (map (fn [res] (remove-db-only (users/READ (:user-id res)))) user_collections_result))]
-                ;(if (= "" (:id user_collections_result))
-                ;  {:status 404
-                ;   :body {:message "requested content not found"}
+                (if (= 0 (count user_collections_result))
+                  {:status 404
+                   :body {:message "no users found for given collection"}}
                   {:status 200
-                   :body user_collections_result}))})
+                   :body user_collections_result})))})
 
 
 (comment (def collection-get-all-users
@@ -384,9 +383,6 @@
             :handler (fn [{{{:keys [id]} :path} :parameters}]
                        (let [user_collections_result (user_collections_assoc/READ-BY-COLLECTION id)]
                          (let [user_list (into [] (map (fn [res] (remove-db-only (users/READ (:user-id res)))) user_collections_result))]
-                         ;(if (= "" (:id user_collections_result))
-                         ;  {:status 404
-                         ;   :body {:message "requested content not found"}
                            {:status 200
                             :body user_list})))}))
 

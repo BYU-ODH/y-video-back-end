@@ -163,15 +163,14 @@
 
 ; - - - - - - - Matthew inserting potentially useful code - - - - - - - ;
 
-(defn READ-ALL-WHERE
+(defn read-all-where
   "Get all entries from table by column"
   [table-keyword column-keyword &[id select-field-keys]]
   (cond-> {:select (or select-field-keys [:*])
            :from [table-keyword]}
     id (assoc :where [:= column-keyword id])
-    1 sql/format
-    1 dbr
-    ; id first
+    true sql/format
+    true dbr
     (= 1 (count select-field-keys))
     (#((first select-field-keys) %))))
 
