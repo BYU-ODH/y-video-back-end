@@ -22,7 +22,7 @@
   [my_map]
   (dissoc my_map :created :updated :deleted))
 
-(defn add-namespace
+(defn add-namespace ; Can probably delete this function, not in use?
   "Converts all keywords to namespace-keywords"
   [namespace m]
   (into {}
@@ -56,12 +56,12 @@
 (s/def :user/email string?)
 (s/def :user/last-login string?)
 (s/def :user/account-name string?)
-(s/def :user/account-role int?)
+(s/def :user/account-type int?)
 (s/def :user/username string?)
 (s/def ::user (s/keys :opt-un [:user/email
                                :user/last-login
                                :user/account-name
-                               :user/account-role
+                               :user/account-type
                                :user/username]));(add-namespace "user" models/user_without_id)
 
 ; Optional parameter setup for collection update route
