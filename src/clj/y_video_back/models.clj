@@ -46,7 +46,7 @@
   (into collection_without_id {:id uuid?}))
 
 (def course_without_id
-  {:department string? :catalog_number string? :section_number string?})
+  {:department string? :catalog-number string? :section-number string?})
 
 (def course
   (into course_without_id {:id uuid?}))

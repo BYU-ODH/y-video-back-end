@@ -77,6 +77,9 @@
   (def test-cont-one (under-to-hyphen (contents/CREATE (g/get_random_content_without_id))))
   (def test-cont-two (under-to-hyphen (contents/CREATE (g/get_random_content_without_id))))
   (def test-cont-thr (under-to-hyphen (contents/CREATE (g/get_random_content_without_id))))
+  (def test-crse-one (under-to-hyphen (courses/CREATE (g/get_random_course_without_id))))
+  (def test-crse-two (under-to-hyphen (courses/CREATE (g/get_random_course_without_id))))
+  (def test-crse-thr (under-to-hyphen (courses/CREATE (g/get_random_course_without_id))))
   (mount.core/start #'y-video-back.handler/app))
 
 (defn get-id
@@ -161,6 +164,27 @@
       (is (= 200 (:status res)))
       (is (= nil (contents/READ (:id test-cont-two)))))))
 
+(deftest test-crse
+  (testing "crse CREATE"
+    (let [new_crse (g/get_random_course_without_id)]
+      (let [res (rp/course-post new_crse)]
+        (is (= 200 (:status res)))
+        (let [id (to-uuid (:id (m/decode-response-body res)))]
+          (is (= (into new_crse {:id id}) (remove-db-only (courses/READ id))))))))
+  (testing "crse READ"
+    (let [res (rp/course-id-get (:id test-crse-one))]
+      (is (= 200 (:status res)))
+      (is (= (update (remove-db-only test-crse-one) :id str)
+             (remove-db-only (m/decode-response-body res))))))
+  (testing "crse UPDATE"
+    (let [new_crse (g/get_random_course_without_id)]
+      (let [res (rp/course-id-patch (:id test-crse-one) new_crse)]
+        (is (= 200 (:status res)))
+        (is (= (into new_crse {:id (:id test-crse-one)}) (remove-db-only (courses/READ (:id test-crse-one))))))))
+  (testing "crse DELETE"
+    (let [res (rp/course-id-delete (:id test-crse-two))]
+      (is (= 200 (:status res)))
+      (is (= nil (courses/READ (:id test-crse-two)))))))
 
 
 
