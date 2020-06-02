@@ -202,13 +202,13 @@
     ["/file"
      {:swagger {:tags ["file"]}}
      [""
-      {:post service-handlers/file-create}
-      ["/{id}"
-       {:get service-handlers/file-get-by-id
-        :patch service-handlers/file-update
-        :delete service-handlers/file-delete}]
-      ["/{id}/contents"
-       {:get service-handlers/file-get-all-contents}]]]
+      {:post service-handlers/file-create}]
+     ["/{id}"
+      {:get service-handlers/file-get-by-id
+       :patch service-handlers/file-update
+       :delete service-handlers/file-delete}]
+     ["/{id}/contents"
+      {:get service-handlers/file-get-all-contents}]]
 
     ["/connect-collection-and-course"
      {:swagger {:tags ["connect"]}}

@@ -80,6 +80,9 @@
   (def test-crse-one (under-to-hyphen (courses/CREATE (g/get_random_course_without_id))))
   (def test-crse-two (under-to-hyphen (courses/CREATE (g/get_random_course_without_id))))
   (def test-crse-thr (under-to-hyphen (courses/CREATE (g/get_random_course_without_id))))
+  (def test-file-one (under-to-hyphen (files/CREATE (g/get_random_file_without_id))))
+  (def test-file-two (under-to-hyphen (files/CREATE (g/get_random_file_without_id))))
+  (def test-file-thr (under-to-hyphen (files/CREATE (g/get_random_file_without_id))))
   (mount.core/start #'y-video-back.handler/app))
 
 (defn get-id
@@ -186,7 +189,27 @@
       (is (= 200 (:status res)))
       (is (= nil (courses/READ (:id test-crse-two)))))))
 
-
+(deftest test-file
+  (testing "file CREATE"
+    (let [new_file (g/get_random_file_without_id)]
+      (let [res (rp/file-post new_file)]
+        (is (= 200 (:status res)))
+        (let [id (to-uuid (:id (m/decode-response-body res)))]
+          (is (= (into new_file {:id id}) (remove-db-only (files/READ id))))))))
+  (testing "file READ"
+    (let [res (rp/file-id-get (:id test-file-one))]
+      (is (= 200 (:status res)))
+      (is (= (update (remove-db-only test-file-one) :id str)
+             (remove-db-only (m/decode-response-body res))))))
+  (testing "file UPDATE"
+    (let [new_file (g/get_random_file_without_id)]
+      (let [res (rp/file-id-patch (:id test-file-one) new_file)]
+        (is (= 200 (:status res)))
+        (is (= (into new_file {:id (:id test-file-one)}) (remove-db-only (files/READ (:id test-file-one))))))))
+  (testing "file DELETE"
+    (let [res (rp/file-id-delete (:id test-file-two))]
+      (is (= 200 (:status res)))
+      (is (= nil (files/READ (:id test-file-two)))))))
 
 
 
