@@ -83,6 +83,9 @@
   (def test-file-one (under-to-hyphen (files/CREATE (g/get_random_file_without_id))))
   (def test-file-two (under-to-hyphen (files/CREATE (g/get_random_file_without_id))))
   (def test-file-thr (under-to-hyphen (files/CREATE (g/get_random_file_without_id))))
+  (def test-word-one (under-to-hyphen (words/CREATE (g/get_random_word_without_id (:id test-user-one)))))
+  (def test-word-two (under-to-hyphen (words/CREATE (g/get_random_word_without_id (:id test-user-two)))))
+  (def test-word-thr (under-to-hyphen (words/CREATE (g/get_random_word_without_id (:id test-user-thr)))))
   (mount.core/start #'y-video-back.handler/app))
 
 (defn get-id
@@ -211,6 +214,27 @@
       (is (= 200 (:status res)))
       (is (= nil (files/READ (:id test-file-two)))))))
 
+(deftest test-word
+  (testing "word CREATE"
+    (let [new_word (g/get_random_word_without_id (:id test-user-one))]
+      (let [res (rp/word-post new_word)]
+        (is (= 200 (:status res)))
+        (let [id (to-uuid (:id (m/decode-response-body res)))]
+          (is (= (into new_word {:id id}) (remove-db-only (words/READ id))))))))
+  (testing "word READ"
+    (let [res (rp/word-id-get (:id test-word-one))]
+      (is (= 200 (:status res)))
+      (is (= (update (update (remove-db-only test-word-one) :id str) :user-id str)
+             (remove-db-only (m/decode-response-body res))))))
+  (testing "word UPDATE"
+    (let [new_word (g/get_random_word_without_id (:id test-user-one))]
+      (let [res (rp/word-id-patch (:id test-word-one) new_word)]
+        (is (= 200 (:status res)))
+        (is (= (into new_word {:id (:id test-word-one)}) (remove-db-only (words/READ (:id test-word-one))))))))
+  (testing "word DELETE"
+    (let [res (rp/word-id-delete (:id test-word-two))]
+      (is (= 200 (:status res)))
+      (is (= nil (words/READ (:id test-word-two)))))))
 
 
 

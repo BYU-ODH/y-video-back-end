@@ -37,8 +37,10 @@
   (get_random_model models/word_without_id_or_user_id))
 
 (defn get_random_word_without_id
-  []
-  (get_random_model models/word_without_id))
+  ([]
+   (get_random_model models/word_without_id))
+  ([user-id]
+   (into (get_random_model models/word_without_id_or_user_id) {:user-id user-id})))
 
 (defn get_random_word_without_id_or_user_id
   []

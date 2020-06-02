@@ -31,10 +31,10 @@
   (add-namespace "user" {:variable string?}))
 
 (def word_without_id_or_user_id
-  {:word string? :src_lang string? :dest_lang string?})
+  {:word string? :src-lang string? :dest-lang string?})
 
 (def word_without_id
-  (into word_without_id_or_user_id {:user_id uuid?}))
+  (into word_without_id_or_user_id {:user-id uuid?}))
 
 (def word
   (into word_without_id {:id uuid?}))
