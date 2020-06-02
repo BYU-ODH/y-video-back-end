@@ -60,7 +60,6 @@ CREATE TABLE contents (
    ,deleted TIMESTAMP DEFAULT NULL
    ,updated TIMESTAMP DEFAULT NULL
    ,created  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-   ,collection_id UUID REFERENCES collections(id)
    ,content_name TEXT
    ,content_type TEXT -- type is a reserved word
    ,requester_email TEXT

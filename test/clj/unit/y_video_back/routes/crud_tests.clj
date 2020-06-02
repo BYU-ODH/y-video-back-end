@@ -74,6 +74,9 @@
   (def test-user-coll-thr (under-to-hyphen (user_collections_assoc/CREATE {:user_id (:id test-user-thr)
                                                                            :collection_id (:id test-coll-thr)
                                                                            :account_role 0})))
+  (def test-cont-one (under-to-hyphen (contents/CREATE (g/get_random_content_without_id))))
+  (def test-cont-two (under-to-hyphen (contents/CREATE (g/get_random_content_without_id))))
+  (def test-cont-thr (under-to-hyphen (contents/CREATE (g/get_random_content_without_id))))
   (mount.core/start #'y-video-back.handler/app))
 
 (defn get-id
@@ -136,7 +139,27 @@
       (is (= 200 (:status res)))
       (is (= nil (collections/READ (:id test-coll-two)))))))
 
-
+(deftest test-cont
+  (testing "cont CREATE"
+    (let [new_cont (g/get_random_content_without_id)]
+      (let [res (rp/content-post new_cont)]
+        (is (= 200 (:status res)))
+        (let [id (to-uuid (:id (m/decode-response-body res)))]
+          (is (= (into new_cont {:id id}) (remove-db-only (contents/READ id))))))))
+  (testing "cont READ"
+    (let [res (rp/content-id-get (:id test-cont-one))]
+      (is (= 200 (:status res)))
+      (is (= (update (remove-db-only test-cont-one) :id str)
+             (remove-db-only (m/decode-response-body res))))))
+  (testing "cont UPDATE"
+    (let [new_cont (g/get_random_content_without_id)]
+      (let [res (rp/content-id-patch (:id test-cont-one) new_cont)]
+        (is (= 200 (:status res)))
+        (is (= (into new_cont {:id (:id test-cont-one)}) (remove-db-only (contents/READ (:id test-cont-one))))))))
+  (testing "cont DELETE"
+    (let [res (rp/content-id-delete (:id test-cont-two))]
+      (is (= 200 (:status res)))
+      (is (= nil (contents/READ (:id test-cont-two)))))))
 
 
 

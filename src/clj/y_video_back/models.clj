@@ -52,10 +52,10 @@
   (into course_without_id {:id uuid?}))
 
 (def content_without_id
-  {:content_name string? :content_type string? :requester_email string?
-   :thumbnail string? :filters string? :copyrighted boolean? :physical_copy_exists boolean?
-   :full_video boolean? :published boolean? :allow_definitions boolean?
-   :allow_notes boolean? :allow_captions boolean? :date_validated string?
+  {:content-name string? :content-type string? :requester-email string?
+   :thumbnail string? :copyrighted boolean? :physical-copy-exists boolean?
+   :full-video boolean? :published boolean? :allow-definitions boolean?
+   :allow-notes boolean? :allow-captions boolean? :date-validated string?
    :views int? :metadata string?})
 
 (def content
