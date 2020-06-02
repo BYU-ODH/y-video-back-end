@@ -110,7 +110,7 @@ CREATE TABLE user_collections_assoc (
    ,created  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
    ,user_id UUID REFERENCES users(id) ON DELETE CASCADE
    ,collection_id UUID REFERENCES collections(id) ON DELETE CASCADE
-   ,account_role TEXT
+   ,account_role INTEGER
    , CONSTRAINT no_duplicate_user_collections UNIQUE (user_id, collection_id)
 );
 COMMENT ON TABLE user_collections_assoc IS 'Many-to-many table connecting users and collections, incl. user roles in collections';
