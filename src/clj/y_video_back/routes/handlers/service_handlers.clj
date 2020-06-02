@@ -369,11 +369,12 @@
    :responses {200 {:body [(into models/user {:account-role int? :collection-id uuid?})]}}
    :handler (fn [{{{:keys [id]} :path} :parameters}]
               (let [user_collections_result (users-by-collection/READ-BY-COLLECTION id)]
-                (if (= 0 (count user_collections_result))
-                  {:status 404
-                   :body {:message "no users found for given collection"}}
-                  {:status 200
-                   :body user_collections_result})))})
+                (let [user_result (map #(remove-db-only %) user_collections_result)]
+                  (if (= 0 (count user_result))
+                    {:status 404
+                     :body {:message "no users found for given collection"}}
+                    {:status 200
+                     :body user_result}))))})
 
 
 (comment (def collection-get-all-users
