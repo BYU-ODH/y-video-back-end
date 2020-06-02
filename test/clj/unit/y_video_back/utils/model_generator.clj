@@ -61,3 +61,9 @@
 (defn get_random_file_without_id
   []
   (get_random_model models/file_without_id))
+
+(defn get_random_user_collections_assoc_without_id
+  ([]
+   (get_random_model models/user_collections_assoc_without_id))
+  ([user-id collection-id]
+   (into (get_random_model models/user_collections_assoc_without_any_ids) {:user-id user-id :collection-id collection-id})))

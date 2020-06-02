@@ -137,3 +137,9 @@
   "Deletes file via app's delete (id) request"
   [id]
   (app (-> (request :delete (str "/api/file/" id)))))
+
+(defn collection-id-add-user
+  "Connects user and collection"
+  [collection-id body]
+  (app (-> (request :post (str "/api/collection/" collection-id "/add-user"))
+           (json-body body))))

@@ -49,6 +49,13 @@
 
 
 
-(defn x-to-y
-  "Convert all instances of x to y in map names"
-  [map_in])
+
+
+(defn lots-of-params
+  [table-keyword [& column-keywords] [& column-vals] & c]
+  (println table-keyword)
+  (println column-keywords)
+  (println column-vals)
+  (if c
+    (println c))
+  "done!")

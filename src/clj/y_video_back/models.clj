@@ -72,3 +72,12 @@
 
 (def file
   (into file_without_id {:id uuid?}))
+
+(def user_collections_assoc_without_any_ids
+  {:account-role int?})
+
+(def user_collections_assoc_without_id
+  (into user_collections_assoc_without_any_ids {:user-id uuid? :collection-id uuid?}))
+
+(def user_collections_assoc
+  (into user_collections_assoc_without_id {:id uuid?}))

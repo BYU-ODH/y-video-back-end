@@ -298,15 +298,16 @@
 
 (def collection-add-user
   {:summary "Adds user to specified collection"
-   :parameters {:path {:id uuid?} :body {:user_id uuid? :account_role int?}}
-   :responses {200 {:body {:message string?}}}
+   :parameters {:path {:id uuid?} :body {:user-id uuid? :account-role int?}}
+   :responses {200 {:body {:message string? :id string?}}}
    :handler (fn [{{{:keys [id]} :path :keys [body]} :parameters}]
-              (let [result (get-id (user_collections_assoc/CREATE id body))]
+              (let [result (get-id (user_collections_assoc/CREATE (into body {:collection-id id})))]
                 (if (= 0 result)
                   {:status 404
                    :body {:message "unable to add user"}}
                   {:status 200
-                   :body {:message (str result " users added to collection")}})))})
+                   :body {:message (str 1 " users added to collection")
+                          :id result}})))})
 
 (def collection-remove-user
   {:summary "Removes user from specified collection"
