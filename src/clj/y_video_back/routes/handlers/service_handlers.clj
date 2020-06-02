@@ -2,6 +2,7 @@
   (:require
    [y-video-back.db.annotations :as annotations]
    [y-video-back.db.collections-contents-assoc :as collection_contents_assoc]
+   [y-video-back.db.users-by-collection :as users-by-collection]
    [y-video-back.db.collections-courses-assoc :as collection_courses_assoc]
    [y-video-back.db.collections :as collections]
    [y-video-back.db.content-files-assoc :as content_files_assoc]
@@ -365,15 +366,29 @@
 (def collection-get-all-users
   {:summary "Retrieves all users for the specified collection"
    :parameters {:path {:id uuid?}}
-   :responses {200 {:body [models/user]}}
+   :responses {200 {:body [(into models/user {:account-role int? :collection-id uuid?})]}}
    :handler (fn [{{{:keys [id]} :path} :parameters}]
-              (let [user_collections_result (user_collections_assoc/READ-BY-COLLECTION id)]
-                (let [user_list (into [] (map (fn [res] (remove-db-only (users/READ (:user-id res)))) user_collections_result))]
+              (let [user_collections_result (users-by-collection/READ-BY-COLLECTION id)]
+                ;(let [user_list (into [] (map (fn [res] (remove-db-only (users/READ (:user-id res)))) user_collections_result))]
                 ;(if (= "" (:id user_collections_result))
                 ;  {:status 404
                 ;   :body {:message "requested content not found"}
                   {:status 200
-                   :body user_list})))})
+                   :body user_collections_result}))})
+
+
+(comment (def collection-get-all-users
+           {:summary "Retrieves all users for the specified collection"
+            :parameters {:path {:id uuid?}}
+            :responses {200 {:body [models/user]}}
+            :handler (fn [{{{:keys [id]} :path} :parameters}]
+                       (let [user_collections_result (user_collections_assoc/READ-BY-COLLECTION id)]
+                         (let [user_list (into [] (map (fn [res] (remove-db-only (users/READ (:user-id res)))) user_collections_result))]
+                         ;(if (= "" (:id user_collections_result))
+                         ;  {:status 404
+                         ;   :body {:message "requested content not found"}
+                           {:status 200
+                            :body user_list})))}))
 
 
 (def content-create ;; Non-functional

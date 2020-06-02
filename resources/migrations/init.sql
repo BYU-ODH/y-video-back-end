@@ -216,4 +216,6 @@ $$ LANGUAGE plpgsql;
 
 DROP VIEW IF EXISTS users_by_collection;
 CREATE VIEW users_by_collection AS
-    SELECT users.*,
+    SELECT users.*, uca.account_role, uca.collection_id
+    FROM users_undeleted JOIN user_collections_assoc_undeleted AS uca
+    ON users.id = uca.user_id;

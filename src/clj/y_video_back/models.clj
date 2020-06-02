@@ -22,7 +22,7 @@
 
 (def user_without_id
   {:email string? :last-login string? :account-name string?
-   :account-role int? :username string?})
+   :account-type int? :username string?})
 
 (def user
   (into user_without_id {:id uuid?}))
