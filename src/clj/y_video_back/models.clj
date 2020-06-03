@@ -99,3 +99,12 @@
 
 (def collection_courses_assoc
   (into collection_courses_assoc_without_id {:id uuid?}))
+
+(def content_files_assoc_without_any_ids
+  {})
+
+(def content_files_assoc_without_id
+  (into content_files_assoc_without_any_ids {:content-id uuid? :file-id uuid?}))
+
+(def content_files_assoc
+  (into content_files_assoc_without_id {:id uuid?}))

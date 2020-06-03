@@ -248,3 +248,15 @@ CREATE VIEW courses_by_collection AS
     SELECT courses_undeleted.*, cca.collection_id
     FROM courses_undeleted JOIN collection_courses_assoc_undeleted AS cca
     ON courses_undeleted.id = cca.course_id;
+
+DROP VIEW IF EXISTS contents_by_file;
+CREATE VIEW contents_by_file AS
+    SELECT contents_undeleted.*, cca.file_id
+    FROM contents_undeleted JOIN content_files_assoc_undeleted AS cca
+    ON contents_undeleted.id = cca.content_id;
+
+DROP VIEW IF EXISTS files_by_content;
+CREATE VIEW files_by_content AS
+    SELECT files_undeleted.*, cca.content_id
+    FROM files_undeleted JOIN content_files_assoc_undeleted AS cca
+    ON files_undeleted.id = cca.file_id;

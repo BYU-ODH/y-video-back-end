@@ -491,18 +491,18 @@
                     {:status 200
                      :body collection_result}))))})
 
-(def content-connect-file ;; Non-functional
-  {:summary "Connects specified file and content (bidirectional)"
-   :parameters {}
-   :responses {200 {:body {:message string?}}}
-   :handler (fn [args] {:status 200
-                        :body {:message "placeholder"}})})
 (def content-get-all-files ;; Non-functional
-  {:summary "Retrieves all files connected to specified content"
-   :parameters {}
-   :responses {200 {:body {:message string?}}}
-   :handler (fn [args] {:status 200
-                        :body {:message "placeholder"}})})
+  {:summary "Retrieves all the files for the specified content"
+   :parameters {:path {:id uuid?}}
+   :responses {200 {:body [(into models/file {:content-id uuid?})]}}
+   :handler (fn [{{{:keys [id]} :path} :parameters}]
+              (let [file_contents_result (content_files_assoc/READ-CONTENTS-BY-COLLECTION id)]
+                (let [file_result (map #(remove-db-only %) file_contents_result)]
+                  (if (= 0 (count file_result))
+                    {:status 404
+                     :body {:message "no files found for given content"}}
+                    {:status 200
+                     :body file_result}))))})
 
 (def content-add-view ;; Non-functional
   {:summary "Adds 1 view to specified content"
@@ -518,23 +518,23 @@
 
 (def content-add-file
   {:summary "Adds file to specified content"
-   :parameters {:path {:id uuid?} :body {:file_id uuid?}}
-   :responses {200 {:body {:message string?}}}
+   :parameters {:path {:id uuid?} :body {:file-id uuid?}}
+   :responses {200 {:body {:message string? :id string?}}}
    :handler (fn [{{{:keys [id]} :path :keys [body]} :parameters}]
-              (let [result "placeholder"]
-                (if (= 0 result)
+              (let [result (get-id (content_files_assoc/CREATE (into body {:content-id id})))]
+                (if (= nil result)
                   {:status 404
                    :body {:message "unable to add file"}}
                   {:status 200
-                   :body {:message (str result " files added to content")}})))})
-
+                   :body {:message (str 1 " files added to content")
+                          :id result}})))})
 
 (def content-remove-file
   {:summary "Removes file from specified content"
-   :parameters {:path {:id uuid?} :body {:file_id uuid?}}
+   :parameters {:path {:id uuid?} :body {:file-id uuid?}}
    :responses {200 {:body {:message string?}}}
    :handler (fn [{{{:keys [id]} :path :keys [body]} :parameters}]
-              (let [result "placeholder"]
+              (let [result (content_files_assoc/DELETE-BY-IDS [id (:file-id body)])]
                 (if (= 0 result)
                   {:status 404
                    :body {:message "unable to remove file"}}
@@ -732,8 +732,14 @@
 
 
 (def file-get-all-contents ;; Non-functional
-  {:summary "Retrieves all contents that use the specified file"
-   :parameters {}
-   :responses {200 {:body {:message string?}}}
-   :handler (fn [args] {:status 200
-                        :body {:message "placeholder"}})})
+  {:summary "Retrieves all contents for specified file"
+   :parameters {:path {:id uuid?}}
+   :responses {200 {:body [(into models/content {:file-id uuid?})]}}
+   :handler (fn [{{{:keys [id]} :path} :parameters}]
+              (let [file_contents_result (content_files_assoc/READ-COLLECTIONS-BY-CONTENT id)]
+                (let [content_result (map #(remove-db-only %) file_contents_result)]
+                  (if (= 0 (count content_result))
+                    {:status 404
+                     :body {:message "no files found for given content"}}
+                    {:status 200
+                     :body content_result}))))})

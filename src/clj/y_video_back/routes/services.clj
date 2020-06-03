@@ -182,10 +182,10 @@
       {:get service-handlers/content-get-by-id
        :patch service-handlers/content-update
        :delete service-handlers/content-delete}]
-     ["/{id}/connect-file"
-      {:post service-handlers/content-connect-file}]
+     ;["/{id}/connect-file"
+     ; {:post service-handlers/content-connect-file}]
      ["/{id}/files"
-      {:post service-handlers/content-get-all-files}]
+      {:get service-handlers/content-get-all-files}]
      ["/{id}/add-view"
       {:post service-handlers/content-add-view}]
      ["/{id}/add-file"

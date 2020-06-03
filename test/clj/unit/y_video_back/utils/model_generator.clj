@@ -79,3 +79,9 @@
    (get_random_model models/collection_courses_assoc_without_id))
   ([collection-id course-id]
    (into (get_random_model models/collection_courses_assoc_without_any_ids) {:collection-id collection-id :course-id course-id})))
+
+(defn get_random_content_files_assoc_without_id
+  ([]
+   (get_random_model models/content_files_assoc_without_id))
+  ([content-id file-id]
+   (into (get_random_model models/content_files_assoc_without_any_ids) {:content-id content-id :file-id file-id})))

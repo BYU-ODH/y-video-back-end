@@ -82,6 +82,13 @@
   (def test-coll-crse-thr (ut/under-to-hyphen (collection_courses_assoc/CREATE {:collection_id (:id test-coll-thr)
                                                                                  :course_id (:id test-crse-thr)})))
 
+  (def test-cont-file-one (ut/under-to-hyphen (content_files_assoc/CREATE {:content_id (:id test-cont-one)
+                                                                           :file_id (:id test-file-one)})))
+  (def test-cont-file-two (ut/under-to-hyphen (content_files_assoc/CREATE {:content_id (:id test-cont-two)
+                                                                           :file_id (:id test-file-two)})))
+  (def test-cont-file-thr (ut/under-to-hyphen (content_files_assoc/CREATE {:content_id (:id test-cont-thr)
+                                                                           :file_id (:id test-file-thr)})))
+
 
 
 
@@ -180,6 +187,38 @@
       (is (= (-> test-crse-thr
                  (update :id str)
                  (into {:collection-id (str (:id test-coll-thr))})
+                 (ut/remove-db-only)
+                 (list))
+             (map ut/remove-db-only (m/decode-response-body res)))))))
+
+(deftest test-cont-file-assoc
+  (testing "connect content and file"
+    (let [new_content_file_assoc (g/get_random_content_files_assoc_without_id (:id test-cont-one) (:id test-file-two))]
+      (let [res (rp/content-id-add-file (:content-id new_content_file_assoc) (:file-id new_content_file_assoc))]
+        (is (= 200 (:status res)))
+        (let [id (ut/to-uuid (:id (m/decode-response-body res)))]
+          (is (= (list (into new_content_file_assoc {:id id}))
+                 (map ut/remove-db-only (content_files_assoc/READ-BY-IDS [(:content-id new_content_file_assoc) (:file-id new_content_file_assoc)])))))))
+    (testing "disconnect content and file")
+    (let [res (rp/content-id-remove-file (:id test-cont-one) (:id test-file-one))]
+      (is (= 200 (:status res)))
+      (is (= '()
+             (content_files_assoc/READ-BY-IDS [(:id test-cont-one) (:id test-file-one)])))))
+  (testing "find all contents by file"
+    (let [res (rp/file-id-contents (:id test-file-thr))]
+      (is (= 200 (:status res)))
+      (is (= (-> test-cont-thr
+                 (update :id str)
+                 (into {:file-id (str (:id test-file-thr))})
+                 (ut/remove-db-only)
+                 (list))
+             (map ut/remove-db-only (m/decode-response-body res))))))
+  (testing "find all files by content"
+    (let [res (rp/content-id-files (:id test-cont-thr))]
+      (is (= 200 (:status res)))
+      (is (= (-> test-file-thr
+                 (update :id str)
+                 (into {:content-id (str (:id test-cont-thr))})
                  (ut/remove-db-only)
                  (list))
              (map ut/remove-db-only (m/decode-response-body res)))))))

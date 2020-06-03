@@ -203,3 +203,25 @@
   "Reads all collections connected to course"
   [id]
   (app (-> (request :get (str "/api/course/" id "/collections")))))
+
+(defn content-id-add-file
+  "Connects file and content"
+  [content-id file-id]
+  (app (-> (request :post (str "/api/content/" content-id "/add-file"))
+           (json-body {:file-id file-id}))))
+
+(defn content-id-remove-file
+  "Connects file and content"
+  [content-id file-id]
+  (app (-> (request :post (str "/api/content/" content-id "/remove-file"))
+           (json-body {:file-id file-id}))))
+
+(defn content-id-files
+  "Reads all files connected to content"
+  [id]
+  (app (-> (request :get (str "/api/content/" id "/files")))))
+
+(defn file-id-contents
+  "Reads all contents connected to file"
+  [id]
+  (app (-> (request :get (str "/api/file/" id "/contents")))))
