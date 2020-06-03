@@ -173,12 +173,23 @@
              :from [table-keyword]}
       (> (count column-keywords) 0) (assoc :where (into [:and] (map #(vector := %1 %2) column-keywords column-vals)))
       true sql/format
+      ;true (spy)
+      true dbr)))
+      ;(= 1 (count select-field-keys))
+      ;(#((first select-field-keys) %)))))
+
+(defn read-where-or
+  "Get entry from table by column(s), conditionals joined by OR"
+  [table-keyword [& column-keywords] [& column-vals] &[select-field-keys]]
+  (if (= (count column-keywords) (count column-vals))
+    (cond-> {:select (or select-field-keys [:*])
+             :from [table-keyword]}
+      (> (count column-keywords) 0) (assoc :where (into [:or] (map #(vector := %1 %2) column-keywords column-vals)))
+      true sql/format
       true (spy)
-      true dbr
-      (= 1 (count select-field-keys))
-      (#((first select-field-keys) %)))))
-
-
+      true dbr)))
+      ;(= 1 (count select-field-keys))
+      ;(#((first select-field-keys) %)))))
 
 
 (defn read-all-where
