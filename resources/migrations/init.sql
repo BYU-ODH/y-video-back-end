@@ -224,3 +224,15 @@ CREATE VIEW collections_by_user AS
     SELECT collections_undeleted.*, uca.account_role, uca.user_id
     FROM collections_undeleted JOIN user_collections_assoc_undeleted AS uca
     ON collections_undeleted.id = uca.collection_id;
+
+DROP VIEW IF EXISTS collections_by_content;
+CREATE VIEW collections_by_content AS
+    SELECT collections_undeleted.*, cca.content_id
+    FROM collections_undeleted JOIN collection_contents_assoc_undeleted AS cca
+    ON collections_undeleted.id = cca.collection_id;
+
+DROP VIEW IF EXISTS contents_by_collection;
+CREATE VIEW contents_by_collection AS
+    SELECT contents_undeleted.*, cca.collection_id
+    FROM contents_undeleted JOIN collection_contents_assoc_undeleted AS cca
+    ON contents_undeleted.id = cca.content_id;

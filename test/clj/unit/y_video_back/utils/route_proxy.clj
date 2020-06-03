@@ -140,9 +140,9 @@
 
 (defn collection-id-add-user
   "Connects user and collection"
-  [collection-id body]
+  [collection-id user-id role]
   (app (-> (request :post (str "/api/collection/" collection-id "/add-user"))
-           (json-body body))))
+           (json-body {:user-id user-id :account-role role}))))
 
 (defn collection-id-remove-user
   "Connects user and collection"
@@ -159,3 +159,25 @@
   "Reads all collections connected to user"
   [id]
   (app (-> (request :get (str "/api/user/" id "/collections")))))
+
+(defn collection-id-add-content
+  "Connects content and collection"
+  [collection-id content-id]
+  (app (-> (request :post (str "/api/collection/" collection-id "/add-content"))
+           (json-body {:content-id content-id}))))
+
+(defn collection-id-remove-content
+  "Connects content and collection"
+  [collection-id content-id]
+  (app (-> (request :post (str "/api/collection/" collection-id "/remove-content"))
+           (json-body {:content-id content-id}))))
+
+(defn collection-id-contents
+  "Reads all contents connected to collection"
+  [id]
+  (app (-> (request :get (str "/api/collection/" id "/contents")))))
+
+(defn content-id-collections
+  "Reads all collections connected to content"
+  [id]
+  (app (-> (request :get (str "/api/content/" id "/collections")))))

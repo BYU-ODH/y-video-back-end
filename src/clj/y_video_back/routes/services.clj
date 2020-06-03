@@ -187,7 +187,9 @@
      ["/{id}/add-file"
       {:post service-handlers/content-add-file}]
      ["/{id}/remove-file"
-      {:post service-handlers/content-remove-file}]]
+      {:post service-handlers/content-remove-file}]
+     ["/{id}/collections"
+      {:get service-handlers/content-get-all-collections}]]
 
     ["/annotation"
      {:swagger {:tags ["annotation"]}}

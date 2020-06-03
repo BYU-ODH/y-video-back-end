@@ -306,7 +306,7 @@
    :responses {200 {:body {:message string? :id string?}}}
    :handler (fn [{{{:keys [id]} :path :keys [body]} :parameters}]
               (let [result (get-id (user_collections_assoc/CREATE (into body {:collection-id id})))]
-                (if (= 0 result)
+                (if (= nil result)
                   {:status 404
                    :body {:message "unable to add user"}}
                   {:status 200
@@ -327,23 +327,23 @@
 
 (def collection-add-content
   {:summary "Adds content to specified collection"
-   :parameters {:path {:id uuid?} :body {:content_id uuid?}}
-   :responses {200 {:body {:message string?}}}
+   :parameters {:path {:id uuid?} :body {:content-id uuid?}}
+   :responses {200 {:body {:message string? :id string?}}}
    :handler (fn [{{{:keys [id]} :path :keys [body]} :parameters}]
-              (let [result (get-id (collection_contents_assoc/CREATE id body))]
-                (if (= 0 result)
+              (let [result (get-id (collection_contents_assoc/CREATE (into body {:collection-id id})))]
+                (if (= nil result)
                   {:status 404
                    :body {:message "unable to add content"}}
                   {:status 200
-                   :body {:message (str result " contents added to collection")}})))})
-
+                   :body {:message (str 1 " contents added to collection")
+                          :id result}})))})
 
 (def collection-remove-content
   {:summary "Removes content from specified collection"
-   :parameters {:path {:id uuid?} :body {:content_id uuid?}}
+   :parameters {:path {:id uuid?} :body {:content-id uuid?}}
    :responses {200 {:body {:message string?}}}
    :handler (fn [{{{:keys [id]} :path :keys [body]} :parameters}]
-              (let [result (collection_contents_assoc/DELETE id body)]
+              (let [result (collection_contents_assoc/DELETE-BY-IDS [id (:content-id body)])]
                 (if (= 0 result)
                   {:status 404
                    :body {:message "unable to remove content"}}
@@ -353,13 +353,15 @@
 (def collection-get-all-contents ;; Non-functional
   {:summary "Retrieves all the contents for the specified collection"
    :parameters {:path {:id uuid?}}
-   :responses {200 {:body string?}
-               404 {:body {:message string?}}}
+   :responses {200 {:body [(into models/content {:collection-id uuid?})]}}
    :handler (fn [{{{:keys [id]} :path} :parameters}]
-              {:status 200
-               :body "placeholder"}
-              {:status 404
-               :body {:message "collection not found"}})})
+              (let [content_collections_result (collection_contents_assoc/READ-CONTENTS-BY-COLLECTION id)]
+                (let [content_result (map #(remove-db-only %) content_collections_result)]
+                  (if (= 0 (count content_result))
+                    {:status 404
+                     :body {:message "no contents found for given collection"}}
+                    {:status 200
+                     :body content_result}))))})
 
 (def collection-get-all-courses
   {:summary "Retrieves all courses for the specified collection"
@@ -443,6 +445,19 @@
                    :body {:message "requested content not found"}}
                   {:status 200
                    :body {:message (str result " contents deleted")}})))})
+
+(def content-get-all-collections ;; Non-functional
+  {:summary "Retrieves all collections for specified content"
+   :parameters {:path {:id uuid?}}
+   :responses {200 {:body [(into models/collection {:content-id uuid?})]}}
+   :handler (fn [{{{:keys [id]} :path} :parameters}]
+              (let [content_collections_result (collection_contents_assoc/READ-COLLECTIONS-BY-CONTENT id)]
+                (let [collection_result (map #(remove-db-only %) content_collections_result)]
+                  (if (= 0 (count collection_result))
+                    {:status 404
+                     :body {:message "no contents found for given collection"}}
+                    {:status 200
+                     :body collection_result}))))})
 
 (def content-connect-file ;; Non-functional
   {:summary "Connects specified file and content (bidirectional)"

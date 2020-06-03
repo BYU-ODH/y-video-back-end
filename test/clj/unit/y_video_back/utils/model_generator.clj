@@ -67,3 +67,9 @@
    (get_random_model models/user_collections_assoc_without_id))
   ([user-id collection-id]
    (into (get_random_model models/user_collections_assoc_without_any_ids) {:user-id user-id :collection-id collection-id})))
+
+(defn get_random_collection_contents_assoc_without_id
+  ([]
+   (get_random_model models/collection_contents_assoc_without_id))
+  ([collection-id content-id]
+   (into (get_random_model models/collection_contents_assoc_without_any_ids) {:collection-id collection-id :content-id content-id})))

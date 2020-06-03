@@ -81,3 +81,12 @@
 
 (def user_collections_assoc
   (into user_collections_assoc_without_id {:id uuid?}))
+
+(def collection_contents_assoc_without_any_ids
+  {})
+
+(def collection_contents_assoc_without_id
+  (into collection_contents_assoc_without_any_ids {:collection-id uuid? :content-id uuid?}))
+
+(def collection_contents_assoc
+  (into collection_contents_assoc_without_id {:id uuid?}))

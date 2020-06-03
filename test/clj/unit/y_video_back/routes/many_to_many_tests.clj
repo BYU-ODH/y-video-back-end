@@ -69,6 +69,12 @@
   (def test-user-coll-thr (ut/under-to-hyphen (user_collections_assoc/CREATE {:user_id (:id test-user-thr)
                                                                               :collection_id (:id test-coll-thr)
                                                                               :account_role 0})))
+  (def test-coll-cont-one (ut/under-to-hyphen (collection_contents_assoc/CREATE {:collection_id (:id test-coll-one)
+                                                                                 :content_id (:id test-cont-one)})))
+  (def test-coll-cont-two (ut/under-to-hyphen (collection_contents_assoc/CREATE {:collection_id (:id test-coll-two)
+                                                                                 :content_id (:id test-cont-two)})))
+  (def test-coll-cont-thr (ut/under-to-hyphen (collection_contents_assoc/CREATE {:collection_id (:id test-coll-thr)
+                                                                                 :content_id (:id test-cont-thr)})))
 
 
 
@@ -79,11 +85,11 @@
 (deftest test-user-collection-assoc
   (testing "connect user and collection"
     (let [new_user_coll_assoc (g/get_random_user_collections_assoc_without_id (:id test-user-one) (:id test-coll-two))]
-      (let [res (rp/collection-id-add-user (:collection-id new_user_coll_assoc) (dissoc new_user_coll_assoc :collection-id))]
+      (let [res (rp/collection-id-add-user (:collection-id new_user_coll_assoc) (:id test-user-one) (:account-role new_user_coll_assoc))]
         (is (= 200 (:status res)))
         (let [id (ut/to-uuid (:id (m/decode-response-body res)))]
           (is (= (list (into new_user_coll_assoc {:id id}))
-                 (map ut/remove-db-only (user_collections_assoc/READ-BY-IDS [(:id test-coll-two) (:id test-user-one)]))))))))
+                 (map ut/remove-db-only (user_collections_assoc/READ-BY-IDS [(:collection-id new_user_coll_assoc) (:user-id new_user_coll_assoc)]))))))))
   (testing "disconnect user and collection"
     (let [res (rp/collection-id-remove-user (:id test-coll-one) (:id test-user-one))]
       (is (= 200 (:status res)))
@@ -104,6 +110,38 @@
       (is (= (-> test-coll-thr
                  (update :id str)
                  (into {:user-id (str (:id test-user-thr)) :account-role 0})
+                 (ut/remove-db-only)
+                 (list))
+             (map ut/remove-db-only (m/decode-response-body res)))))))
+
+(deftest test-coll-content-assoc
+  (testing "connect collection and content"
+    (let [new_collection_content_assoc (g/get_random_collection_contents_assoc_without_id (:id test-coll-one) (:id test-cont-two))]
+      (let [res (rp/collection-id-add-content (:collection-id new_collection_content_assoc) (:content-id new_collection_content_assoc))]
+        (is (= 200 (:status res)))
+        (let [id (ut/to-uuid (:id (m/decode-response-body res)))]
+          (is (= (list (into new_collection_content_assoc {:id id}))
+                 (map ut/remove-db-only (collection_contents_assoc/READ-BY-IDS [(:collection-id new_collection_content_assoc) (:content-id new_collection_content_assoc)]))))))))
+  (testing "disconnect collection and content"
+    (let [res (rp/collection-id-remove-content (:id test-coll-one) (:id test-cont-one))]
+      (is (= 200 (:status res)))
+      (is (= '()
+             (collection_contents_assoc/READ-BY-IDS [(:id test-coll-one) (:id test-cont-one)])))))
+  (testing "find all collections by content"
+    (let [res (rp/content-id-collections (:id test-cont-thr))]
+      (is (= 200 (:status res)))
+      (is (= (-> test-coll-thr
+                 (update :id str)
+                 (into {:content-id (str (:id test-cont-thr))})
+                 (ut/remove-db-only)
+                 (list))
+             (map ut/remove-db-only (m/decode-response-body res))))))
+  (testing "find all contents by collection"
+    (let [res (rp/collection-id-contents (:id test-coll-thr))]
+      (is (= 200 (:status res)))
+      (is (= (-> test-cont-thr
+                 (update :id str)
+                 (into {:collection-id (str (:id test-coll-thr))})
                  (ut/remove-db-only)
                  (list))
              (map ut/remove-db-only (m/decode-response-body res)))))))
