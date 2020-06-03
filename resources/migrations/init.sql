@@ -218,3 +218,9 @@ CREATE VIEW users_by_collection AS
     SELECT users_undeleted.*, uca.account_role, uca.collection_id
     FROM users_undeleted JOIN user_collections_assoc_undeleted AS uca
     ON users_undeleted.id = uca.user_id;
+
+DROP VIEW IF EXISTS collections_by_user;
+CREATE VIEW collections_by_user AS
+    SELECT collections_undeleted.*, uca.account_role, uca.user_id
+    FROM collections_undeleted JOIN user_collections_assoc_undeleted AS uca
+    ON collections_undeleted.id = uca.collection_id;

@@ -175,11 +175,15 @@
 (def user-get-all-collections ;; Non-functional
   {:summary "Retrieves all collections for specified user"
    :parameters {:path {:id uuid?}}
-   :responses {200 {:body [models/collection]}}
+   :responses {200 {:body [(into models/collection {:account-role int? :user-id uuid?})]}}
    :handler (fn [{{{:keys [id]} :path} :parameters}]
-              (let [result "placeholder"]
-                {:status 200
-                 :body result}))})
+              (let [user_collections_result (user_collections_assoc/READ-COLLECTIONS-BY-USER id)]
+                (let [collection_result (map #(remove-db-only %) user_collections_result)]
+                  (if (= 0 (count collection_result))
+                    {:status 404
+                     :body {:message "no users found for given collection"}}
+                    {:status 200
+                     :body collection_result}))))})
 
 
 (def user-word-create
@@ -314,7 +318,7 @@
    :parameters {:path {:id uuid?} :body {:user_id uuid?}}
    :responses {200 {:body {:message string?}}}
    :handler (fn [{{{:keys [id]} :path :keys [body]} :parameters}]
-              (let [result (user_collections_assoc/DELETE id body)]
+              (let [result (user_collections_assoc/DELETE-BY-IDS [id (:user_id body)])]
                 (if (= 0 result)
                   {:status 404
                    :body {:message "unable to remove user"}}
@@ -369,7 +373,7 @@
    :parameters {:path {:id uuid?}}
    :responses {200 {:body [(into models/user {:account-role int? :collection-id uuid?})]}}
    :handler (fn [{{{:keys [id]} :path} :parameters}]
-              (let [user_collections_result (users-by-collection/READ-BY-COLLECTION id)]
+              (let [user_collections_result (user_collections_assoc/READ-USERS-BY-COLLECTION id)]
                 (let [user_result (map #(remove-db-only %) user_collections_result)]
                   (if (= 0 (count user_result))
                     {:status 404

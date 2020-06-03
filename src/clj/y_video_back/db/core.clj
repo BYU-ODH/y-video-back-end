@@ -161,6 +161,15 @@
     (= 1 (count select-field-keys))
     (#((first select-field-keys) %))))
 
+(defn UPDATE
+  "Update anything from table by id"
+  [table-keyword id valmap]
+  (let [tk (csk/->snake_case_keyword table-keyword)
+        valmap (transform-keys csk/->snake_case_keyword valmap)]
+    (dbu! tk valmap ["id = ?" id])
+    (transform-keys csk/->kebab-case-keyword
+                    (READ tk id))))
+
 ; - - - - - - - Matthew inserting potentially useful code - - - - - - - ;
 
 (def spy #(do (println "DEBUG:" %) %))
@@ -173,10 +182,8 @@
              :from [table-keyword]}
       (> (count column-keywords) 0) (assoc :where (into [:and] (map #(vector := %1 %2) column-keywords column-vals)))
       true sql/format
-      ;true (spy)
+      ;;true (spy)
       true dbr)))
-      ;(= 1 (count select-field-keys))
-      ;(#((first select-field-keys) %)))))
 
 (defn read-where-or
   "Get entry from table by column(s), conditionals joined by OR"
@@ -186,10 +193,21 @@
              :from [table-keyword]}
       (> (count column-keywords) 0) (assoc :where (into [:or] (map #(vector := %1 %2) column-keywords column-vals)))
       true sql/format
-      true (spy)
+      ;;true (spy)
       true dbr)))
-      ;(= 1 (count select-field-keys))
-      ;(#((first select-field-keys) %)))))
+
+
+(defn delete-where-and
+  "Update delete status in table by column-keywords"
+  [table-keyword [& column-keywords] [& column-vals]]
+  (let [id (-> (read-where-and table-keyword column-keywords column-vals)
+               (first)
+               (:id))]
+    (let [entry (READ table-keyword id)
+          val-map (-> entry
+                      (dissoc :id)
+                      (assoc :deleted (t/now)))]
+      (UPDATE table-keyword id val-map))))
 
 
 (defn read-all-where
@@ -206,16 +224,6 @@
 
 
 ; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ;
-
-
-(defn UPDATE
-  "Update anything from table by id"
-  [table-keyword id valmap]
-  (let [tk (csk/->snake_case_keyword table-keyword)
-        valmap (transform-keys csk/->snake_case_keyword valmap)]
-    (dbu! tk valmap ["id = ?" id])
-    (transform-keys csk/->kebab-case-keyword
-                    (READ tk id))))
 
 (defn DELETE
   "Generic delete"

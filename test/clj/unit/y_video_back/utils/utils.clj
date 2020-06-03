@@ -26,7 +26,7 @@
   (:id (m/decode-response-body res)))
 
 (defn remove-db-only
-  "Compares 2 maps, not counting created, updated, and deleted fields"
+  "Removes created, updated, and deleted fields"
   [my_map]
   (dissoc my_map :created :updated :deleted))
 

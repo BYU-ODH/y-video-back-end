@@ -143,3 +143,19 @@
   [collection-id body]
   (app (-> (request :post (str "/api/collection/" collection-id "/add-user"))
            (json-body body))))
+
+(defn collection-id-remove-user
+  "Connects user and collection"
+  [collection-id user-id]
+  (app (-> (request :post (str "/api/collection/" collection-id "/remove-user"))
+           (json-body {:user_id user-id}))))
+
+(defn collection-id-users
+  "Reads all users connected to collection"
+  [id]
+  (app (-> (request :get (str "/api/collection/" id "/users")))))
+
+(defn user-id-collections
+  "Reads all collections connected to user"
+  [id]
+  (app (-> (request :get (str "/api/user/" id "/collections")))))

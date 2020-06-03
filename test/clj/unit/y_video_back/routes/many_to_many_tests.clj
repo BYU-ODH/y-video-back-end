@@ -82,34 +82,28 @@
       (let [res (rp/collection-id-add-user (:collection-id new_user_coll_assoc) (dissoc new_user_coll_assoc :collection-id))]
         (is (= 200 (:status res)))
         (let [id (ut/to-uuid (:id (m/decode-response-body res)))]
-          (is (= (into new_user_coll_assoc {:id id}) (ut/remove-db-only (user_collections_assoc/READ id))))))))
-  (testing "connect user and collection TEMP"
-    (let [new_user_coll_assoc (g/get_random_user_collections_assoc_without_id (:id test-user-two) (:id test-coll-one))]
-      (let [res (rp/collection-id-add-user (:collection-id new_user_coll_assoc) (dissoc new_user_coll_assoc :collection-id))]
-        (is (= 200 (:status res)))
-        (let [id (ut/to-uuid (:id (m/decode-response-body res)))]
-          (is (= (into new_user_coll_assoc {:id id}) (ut/remove-db-only (user_collections_assoc/READ id)))))))
-    (testing "temp"
-      (is (= "test-coll-one id" (:id test-coll-one)))
-      (is (= "test-user-one id" (:id test-user-one)))
-      (is (= "" (user_collections_assoc/READ-BY-IDS [(:id test-coll-one) (:id test-user-one)])))))
-  (comment (testing "disconnect user and collection")
-    (let [new_user_coll_assoc (g/get_random_user_collections_assoc_without_id (:id test-user-one) (:id test-coll-two))]
-      (let [res (rp/collection-id-add-user (:collection-id new_user_coll_assoc) (dissoc new_user_coll_assoc :collection-id))]
-        (is (= 200 (:status res)))
-        (let [id (ut/to-uuid (:id (m/decode-response-body res)))]
-          (is (= (into new_user_coll_assoc {:id id}) (ut/remove-db-only (user_collections_assoc/READ id)))))))
-
-
-
-
-
-
-    (comment (let [res (rp/collection-id-add-user (:id test-coll-one) (:id test-user-two) 1)])
+          (is (= (list (into new_user_coll_assoc {:id id}))
+                 (map ut/remove-db-only (user_collections_assoc/READ-BY-IDS [(:id test-coll-two) (:id test-user-one)]))))))))
+  (testing "disconnect user and collection"
+    (let [res (rp/collection-id-remove-user (:id test-coll-one) (:id test-user-one))]
       (is (= 200 (:status res)))
-      (let [assoc-id (ut/get-id res)]
-        (is (= {:collection-id (:id test-coll-one)
-                :user-id (:id test-user-two)
-                :account-role 1
-                :id (ut/to-uuid assoc-id)}
-               (ut/remove-db-only (user_collections_assoc/READ (ut/to-uuid assoc-id)))))))))
+      (is (= '()
+             (user_collections_assoc/READ-BY-IDS [(:id test-coll-one) (:id test-user-one)])))))
+  (testing "find all users by collection"
+    (let [res (rp/collection-id-users (:id test-coll-thr))]
+      (is (= 200 (:status res)))
+      (is (= (-> test-user-thr
+                 (update :id str)
+                 (into {:collection-id (str (:id test-coll-thr)) :account-role 0})
+                 (ut/remove-db-only)
+                 (list))
+             (map ut/remove-db-only (m/decode-response-body res))))))
+  (testing "find all collections by user"
+    (let [res (rp/user-id-collections (:id test-user-thr))]
+      (is (= 200 (:status res)))
+      (is (= (-> test-coll-thr
+                 (update :id str)
+                 (into {:user-id (str (:id test-user-thr)) :account-role 0})
+                 (ut/remove-db-only)
+                 (list))
+             (map ut/remove-db-only (m/decode-response-body res)))))))
