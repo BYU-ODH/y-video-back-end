@@ -61,8 +61,11 @@
 (def content
   (into content_without_id {:id uuid?}))
 
+(def annotation_without_any_ids
+  {:metadata string?})
+
 (def annotation_without_id
-  {:content_id string? :collection_id string? :metadata string?})
+  (into annotation_without_any_ids {:content-id uuid? :collection-id uuid?}))
 
 (def annotation
   (into annotation_without_id {:id uuid?}))

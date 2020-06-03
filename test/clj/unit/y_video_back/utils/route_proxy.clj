@@ -93,6 +93,29 @@
   [id]
   (app (-> (request :delete (str "/api/content/" id)))))
 
+(defn annotation-post
+  "Create a annotation via app's post request"
+  [annotation_without_id]
+  (app (-> (request :post "/api/annotation")
+           (json-body annotation_without_id))))
+
+(defn annotation-id-get
+  "Retrieves annotation via app's get (id) request"
+  [id]
+  (app (-> (request :get (str "/api/annotation/" id)))))
+
+(defn annotation-id-patch
+  "Updates annotation via app's patch (id) request"
+  [id new_annotation]
+  (app (-> (request :patch (str "/api/annotation/" id))
+           (json-body new_annotation))))
+
+(defn annotation-id-delete
+  "Deletes annotation via app's delete (id) request"
+  [id]
+  (app (-> (request :delete (str "/api/annotation/" id)))))
+
+
 
 (defn course-post
   "Create a course via app's post request"

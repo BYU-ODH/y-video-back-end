@@ -85,3 +85,9 @@
    (get_random_model models/content_files_assoc_without_id))
   ([content-id file-id]
    (into (get_random_model models/content_files_assoc_without_any_ids) {:content-id content-id :file-id file-id})))
+
+(defn get_random_annotation_without_id
+  ([]
+   (get_random_model models/annotation_without_id))
+  ([collection-id content-id]
+   (into (get_random_model models/annotation_without_any_ids) {:collection-id collection-id :content-id content-id})))
