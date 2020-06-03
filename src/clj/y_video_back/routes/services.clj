@@ -147,6 +147,10 @@
       {:post service-handlers/collection-add-content}]
      ["/{id}/remove-content"
       {:post service-handlers/collection-remove-content}]
+     ["/{id}/add-course"
+      {:post service-handlers/collection-add-course}]
+     ["/{id}/remove-course"
+      {:post service-handlers/collection-remove-course}]
      ["/{id}/contents"
       {:get service-handlers/collection-get-all-contents}]
      ["/{id}/courses"
@@ -212,10 +216,10 @@
      ["/{id}/contents"
       {:get service-handlers/file-get-all-contents}]]
 
-    ["/connect-collection-and-course"
-     {:swagger {:tags ["connect"]}}
-     [""
-      {:post service-handlers/connect-collection-and-course}]]
+    ;["/connect-collection-and-course"
+    ; {:swagger {:tags ["connect"]}}
+    ; [""
+    ;  {:post service-handlers/connect-collection-and-course}]]
 
     ["/search"
      {:swagger {:tags ["search"]}}

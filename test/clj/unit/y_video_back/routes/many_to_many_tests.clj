@@ -75,6 +75,12 @@
                                                                                  :content_id (:id test-cont-two)})))
   (def test-coll-cont-thr (ut/under-to-hyphen (collection_contents_assoc/CREATE {:collection_id (:id test-coll-thr)
                                                                                  :content_id (:id test-cont-thr)})))
+  (def test-coll-crse-one (ut/under-to-hyphen (collection_courses_assoc/CREATE {:collection_id (:id test-coll-one)
+                                                                                 :course_id (:id test-crse-one)})))
+  (def test-coll-crse-two (ut/under-to-hyphen (collection_courses_assoc/CREATE {:collection_id (:id test-coll-two)
+                                                                                 :course_id (:id test-crse-two)})))
+  (def test-coll-crse-thr (ut/under-to-hyphen (collection_courses_assoc/CREATE {:collection_id (:id test-coll-thr)
+                                                                                 :course_id (:id test-crse-thr)})))
 
 
 
@@ -140,6 +146,38 @@
     (let [res (rp/collection-id-contents (:id test-coll-thr))]
       (is (= 200 (:status res)))
       (is (= (-> test-cont-thr
+                 (update :id str)
+                 (into {:collection-id (str (:id test-coll-thr))})
+                 (ut/remove-db-only)
+                 (list))
+             (map ut/remove-db-only (m/decode-response-body res)))))))
+
+(deftest test-coll-course-assoc
+  (testing "connect collection and course"
+    (let [new_collection_course_assoc (g/get_random_collection_courses_assoc_without_id (:id test-coll-one) (:id test-crse-two))]
+      (let [res (rp/collection-id-add-course (:collection-id new_collection_course_assoc) (:course-id new_collection_course_assoc))]
+        (is (= 200 (:status res)))
+        (let [id (ut/to-uuid (:id (m/decode-response-body res)))]
+          (is (= (list (into new_collection_course_assoc {:id id}))
+                 (map ut/remove-db-only (collection_courses_assoc/READ-BY-IDS [(:collection-id new_collection_course_assoc) (:course-id new_collection_course_assoc)]))))))))
+  (testing "disconnect collection and course"
+    (let [res (rp/collection-id-remove-course (:id test-coll-one) (:id test-crse-one))]
+      (is (= 200 (:status res)))
+      (is (= '()
+             (collection_courses_assoc/READ-BY-IDS [(:id test-coll-one) (:id test-crse-one)])))))
+  (testing "find all collections by course"
+    (let [res (rp/course-id-collections (:id test-crse-thr))]
+      (is (= 200 (:status res)))
+      (is (= (-> test-coll-thr
+                 (update :id str)
+                 (into {:course-id (str (:id test-crse-thr))})
+                 (ut/remove-db-only)
+                 (list))
+             (map ut/remove-db-only (m/decode-response-body res))))))
+  (testing "find all courses by collection"
+    (let [res (rp/collection-id-courses (:id test-coll-thr))]
+      (is (= 200 (:status res)))
+      (is (= (-> test-crse-thr
                  (update :id str)
                  (into {:collection-id (str (:id test-coll-thr))})
                  (ut/remove-db-only)

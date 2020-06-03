@@ -90,3 +90,12 @@
 
 (def collection_contents_assoc
   (into collection_contents_assoc_without_id {:id uuid?}))
+
+(def collection_courses_assoc_without_any_ids
+  {})
+
+(def collection_courses_assoc_without_id
+  (into collection_courses_assoc_without_any_ids {:collection-id uuid? :course-id uuid?}))
+
+(def collection_courses_assoc
+  (into collection_courses_assoc_without_id {:id uuid?}))

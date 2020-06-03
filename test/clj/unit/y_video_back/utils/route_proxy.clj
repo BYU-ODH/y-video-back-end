@@ -181,3 +181,25 @@
   "Reads all collections connected to content"
   [id]
   (app (-> (request :get (str "/api/content/" id "/collections")))))
+
+(defn collection-id-add-course
+  "Connects course and collection"
+  [collection-id course-id]
+  (app (-> (request :post (str "/api/collection/" collection-id "/add-course"))
+           (json-body {:course-id course-id}))))
+
+(defn collection-id-remove-course
+  "Connects course and collection"
+  [collection-id course-id]
+  (app (-> (request :post (str "/api/collection/" collection-id "/remove-course"))
+           (json-body {:course-id course-id}))))
+
+(defn collection-id-courses
+  "Reads all courses connected to collection"
+  [id]
+  (app (-> (request :get (str "/api/collection/" id "/courses")))))
+
+(defn course-id-collections
+  "Reads all collections connected to course"
+  [id]
+  (app (-> (request :get (str "/api/course/" id "/collections")))))

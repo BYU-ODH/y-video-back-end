@@ -350,6 +350,32 @@
                   {:status 200
                    :body {:message (str result " contents removed from collection")}})))})
 
+(def collection-add-course
+  {:summary "Adds course to specified collection"
+   :parameters {:path {:id uuid?} :body {:course-id uuid?}}
+   :responses {200 {:body {:message string? :id string?}}}
+   :handler (fn [{{{:keys [id]} :path :keys [body]} :parameters}]
+              (let [result (get-id (collection_courses_assoc/CREATE (into body {:collection-id id})))]
+                (if (= nil result)
+                  {:status 404
+                   :body {:message "unable to add course"}}
+                  {:status 200
+                   :body {:message (str 1 " courses added to collection")
+                          :id result}})))})
+
+(def collection-remove-course
+  {:summary "Removes course from specified collection"
+   :parameters {:path {:id uuid?} :body {:course-id uuid?}}
+   :responses {200 {:body {:message string?}}}
+   :handler (fn [{{{:keys [id]} :path :keys [body]} :parameters}]
+              (let [result (collection_courses_assoc/DELETE-BY-IDS [id (:course-id body)])]
+                (if (= 0 result)
+                  {:status 404
+                   :body {:message "unable to remove course"}}
+                  {:status 200
+                   :body {:message (str result " courses removed from collection")}})))})
+
+
 (def collection-get-all-contents ;; Non-functional
   {:summary "Retrieves all the contents for the specified collection"
    :parameters {:path {:id uuid?}}
@@ -363,12 +389,18 @@
                     {:status 200
                      :body content_result}))))})
 
-(def collection-get-all-courses
-  {:summary "Retrieves all courses for the specified collection"
-   :parameters {}
-   :responses {200 {:body {:message string?}}}
-   :handler (fn [args] {:status 200
-                        :body {:message "placeholder"}})})
+(def collection-get-all-courses ;; Non-functional
+  {:summary "Retrieves all the courses for the specified collection"
+   :parameters {:path {:id uuid?}}
+   :responses {200 {:body [(into models/course {:collection-id uuid?})]}}
+   :handler (fn [{{{:keys [id]} :path} :parameters}]
+              (let [course_collections_result (collection_courses_assoc/READ-CONTENTS-BY-COLLECTION id)]
+                (let [course_result (map #(remove-db-only %) course_collections_result)]
+                  (if (= 0 (count course_result))
+                    {:status 404
+                     :body {:message "no courses found for given collection"}}
+                    {:status 200
+                     :body course_result}))))})
 
 (def collection-get-all-users
   {:summary "Retrieves all users for the specified collection"
@@ -637,11 +669,17 @@
                    :body {:message (str result " collections removed from course")}})))})
 
 (def course-get-all-collections ;; Non-functional
-  {:summary "Retrieves all collections connected to specified course"
-   :parameters {}
-   :responses {200 {:body {:message string?}}}
-   :handler (fn [args] {:status 200
-                        :body {:message "placeholder"}})})
+  {:summary "Retrieves all collections for specified course"
+   :parameters {:path {:id uuid?}}
+   :responses {200 {:body [(into models/collection {:course-id uuid?})]}}
+   :handler (fn [{{{:keys [id]} :path} :parameters}]
+              (let [course_collections_result (collection_courses_assoc/READ-COLLECTIONS-BY-CONTENT id)]
+                (let [collection_result (map #(remove-db-only %) course_collections_result)]
+                  (if (= 0 (count collection_result))
+                    {:status 404
+                     :body {:message "no courses found for given collection"}}
+                    {:status 200
+                     :body collection_result}))))})
 
 (def file-create
   {:summary "Creates a new file"
