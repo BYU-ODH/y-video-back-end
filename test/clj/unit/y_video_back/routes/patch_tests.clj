@@ -158,3 +158,32 @@
           (is (= 200 (:status res))))
         (is (= (ut/remove-db-only (merge test-cont-thr new_cont))
                (ut/remove-db-only (contents/READ id))))))))
+
+(deftest test-crse-patch
+  (testing "crse fields one at a time"
+    (let [new_crse (g/get_random_course_without_id)
+          id (:id test-crse-one)]
+      (is (= (ut/remove-db-only test-crse-one) (ut/remove-db-only (courses/READ id))))
+      (doseq [val (seq new_crse)]
+             [(do
+                (let [res (rp/course-id-patch id {(get val 0) (get val 1)})]
+                  (is (= 200 (:status res))))
+                (is (= ((get val 0) new_crse) ((get val 0) (courses/READ id)))))])
+      (is (= (into new_crse {:id id}) (ut/remove-db-only (courses/READ id))))))
+  (testing "crse multiple fields at once"
+    (let [new_crse (g/get_random_course_without_id)
+          id (:id test-crse-two)]
+      (is (= (ut/remove-db-only test-crse-two) (ut/remove-db-only (courses/READ id))))
+      (let [fields-to-change (ut/random-submap new_crse)]
+        (let [res (rp/course-id-patch id fields-to-change)]
+          (is (= 200 (:status res))))
+        (is (= (ut/remove-db-only (merge test-crse-two fields-to-change))
+               (ut/remove-db-only (courses/READ id))))))
+    (testing "crse all fields at once"
+      (let [new_crse (g/get_random_course_without_id)
+            id (:id test-crse-thr)]
+        (is (= (ut/remove-db-only test-crse-thr) (ut/remove-db-only (courses/READ id))))
+        (let [res (rp/course-id-patch id new_crse)]
+          (is (= 200 (:status res))))
+        (is (= (ut/remove-db-only (merge test-crse-thr new_crse))
+               (ut/remove-db-only (courses/READ id))))))))
