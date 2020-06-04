@@ -216,3 +216,32 @@
           (is (= 200 (:status res))))
         (is (= (ut/remove-db-only (merge test-file-thr new_file))
                (ut/remove-db-only (files/READ id))))))))
+
+(deftest test-word-patch
+  (testing "word fields one at a time"
+    (let [new_word (g/get_random_word_without_id (:id test-user-one))
+          id (:id test-word-one)]
+      (is (= (ut/remove-db-only test-word-one) (ut/remove-db-only (words/READ id))))
+      (doseq [val (seq new_word)]
+             [(do
+                (let [res (rp/word-id-patch id {(get val 0) (get val 1)})]
+                  (is (= 200 (:status res))))
+                (is (= ((get val 0) new_word) ((get val 0) (words/READ id)))))])
+      (is (= (into new_word {:id id}) (ut/remove-db-only (words/READ id))))))
+  (testing "word multiple fields at once"
+    (let [new_word (g/get_random_word_without_id (:id test-user-two))
+          id (:id test-word-two)]
+      (is (= (ut/remove-db-only test-word-two) (ut/remove-db-only (words/READ id))))
+      (let [fields-to-change (ut/random-submap new_word)]
+        (let [res (rp/word-id-patch id fields-to-change)]
+          (is (= 200 (:status res))))
+        (is (= (ut/remove-db-only (merge test-word-two fields-to-change))
+               (ut/remove-db-only (words/READ id))))))
+    (testing "word all fields at once"
+      (let [new_word (g/get_random_word_without_id (:id test-user-thr))
+            id (:id test-word-thr)]
+        (is (= (ut/remove-db-only test-word-thr) (ut/remove-db-only (words/READ id))))
+        (let [res (rp/word-id-patch id new_word)]
+          (is (= 200 (:status res))))
+        (is (= (ut/remove-db-only (merge test-word-thr new_word))
+               (ut/remove-db-only (words/READ id))))))))
