@@ -187,3 +187,32 @@
           (is (= 200 (:status res))))
         (is (= (ut/remove-db-only (merge test-crse-thr new_crse))
                (ut/remove-db-only (courses/READ id))))))))
+
+(deftest test-file-patch
+  (testing "file fields one at a time"
+    (let [new_file (g/get_random_file_without_id)
+          id (:id test-file-one)]
+      (is (= (ut/remove-db-only test-file-one) (ut/remove-db-only (files/READ id))))
+      (doseq [val (seq new_file)]
+             [(do
+                (let [res (rp/file-id-patch id {(get val 0) (get val 1)})]
+                  (is (= 200 (:status res))))
+                (is (= ((get val 0) new_file) ((get val 0) (files/READ id)))))])
+      (is (= (into new_file {:id id}) (ut/remove-db-only (files/READ id))))))
+  (testing "file multiple fields at once"
+    (let [new_file (g/get_random_file_without_id)
+          id (:id test-file-two)]
+      (is (= (ut/remove-db-only test-file-two) (ut/remove-db-only (files/READ id))))
+      (let [fields-to-change (ut/random-submap new_file)]
+        (let [res (rp/file-id-patch id fields-to-change)]
+          (is (= 200 (:status res))))
+        (is (= (ut/remove-db-only (merge test-file-two fields-to-change))
+               (ut/remove-db-only (files/READ id))))))
+    (testing "file all fields at once"
+      (let [new_file (g/get_random_file_without_id)
+            id (:id test-file-thr)]
+        (is (= (ut/remove-db-only test-file-thr) (ut/remove-db-only (files/READ id))))
+        (let [res (rp/file-id-patch id new_file)]
+          (is (= 200 (:status res))))
+        (is (= (ut/remove-db-only (merge test-file-thr new_file))
+               (ut/remove-db-only (files/READ id))))))))
