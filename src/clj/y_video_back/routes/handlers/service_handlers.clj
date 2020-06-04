@@ -51,27 +51,30 @@
 (s/def ::echo (s/keys :req-un [:echo/first]
                       :opt-un [:echo/second]))
 
-; Optional parameter setup for user update route
 
-(s/def :user/email string?)
-(s/def :user/last-login string?)
-(s/def :user/account-name string?)
-(s/def :user/account-type int?)
-(s/def :user/username string?)
-(s/def ::user (s/keys :opt-un [:user/email
-                               :user/last-login
-                               :user/account-name
-                               :user/account-type
-                               :user/username]));(add-namespace "user" models/user_without_id)
+(defn model-to-defs
+  "Produces namespace args from model for patch routes"
+  [namespace model_in]
+  (let [model_conv (seq (add-namespace namespace model_in))]
+    ; For each field in model, generate: (s/def :namespace/key val)
+    (doseq [val model_conv]
+           [(eval
+              `(s/def ~(keyword (clojure.string/replace (str (get val 0)) ":" ""))
+                      ~(get val 1)))])
+    ; Generate: (s/def ::user (s/keys :opt-un [:user/email :user/last-login ...]))
+    (eval `(s/def ~(keyword (str *ns*) (str namespace))
+                   (s/keys :opt-un ~(into [] (map (fn [val] (get val 0)) model_conv)))))))
 
-; Optional parameter setup for collection update route
+; Establish params for coercing patch update routes
 
-(s/def :collection/collection-name string?)
-(s/def :collection/published boolean?)
-(s/def :collection/archived boolean?)
-(s/def ::collection (s/keys :opt-un [:collection/collection-name
-                                     :collection/published
-                                     :collection/archived]))
+(model-to-defs "user" models/user_without_id)
+(model-to-defs "word" models/word_without_id)
+(model-to-defs "collection" models/collection_without_id)
+(model-to-defs "content" models/content_without_id)
+(model-to-defs "annotation" models/annotation_without_id)
+(model-to-defs "file" models/file_without_id)
+(model-to-defs "course" models/course_without_id)
+
 
 
 
@@ -215,7 +218,7 @@
 
 (def user-word-update
   {:summary "Updates specified word"
-   :parameters {:path {:id uuid?} :body models/word_without_id}
+   :parameters {:path {:id uuid?} :body ::word}
    :responses {200 {:body {:message string?}}}
    :handler (fn [{{{:keys [id]} :path :keys [body]} :parameters}]
               (let [result (words/UPDATE id body)]
@@ -456,7 +459,7 @@
 
 (def content-update ;; Non-functional
   {:summary "Updates the specified content"
-   :parameters {:path {:id uuid?} :body models/content_without_id}
+   :parameters {:path {:id uuid?} :body ::content}
    :responses {200 {:body {:message string?}}}
    :handler (fn [{{{:keys [id]} :path :keys [body]} :parameters}]
               (let [result (contents/UPDATE id body)]
@@ -570,7 +573,7 @@
 
 (def annotation-update ;; Non-functional
   {:summary "Updates the specified annotation"
-   :parameters {:path {:id uuid?} :body models/annotation_without_id}
+   :parameters {:path {:id uuid?} :body ::annotation}
    :responses {200 {:body {:message string?}}}
    :handler (fn [{{{:keys [id]} :path :keys [body]} :parameters}]
               (let [result (annotations/UPDATE id body)]
@@ -621,7 +624,7 @@
 
 (def course-update ;; Non-functional
   {:summary "Updates the specified course"
-   :parameters {:path {:id uuid?} :body models/course_without_id}
+   :parameters {:path {:id uuid?} :body ::course}
    :responses {200 {:body {:message string?}}}
    :handler (fn [{{{:keys [id]} :path :keys [body]} :parameters}]
               (let [result (courses/UPDATE id body)]
@@ -708,7 +711,7 @@
 
 (def file-update
   {:summary "Updates specified file"
-   :parameters {:path {:id uuid?} :body models/file_without_id}
+   :parameters {:path {:id uuid?} :body ::file}
    :responses {200 {:body {:message string?}}}
    :handler (fn [{{{:keys [id]} :path :keys [body]} :parameters}]
               (let [result (files/UPDATE id body)]
