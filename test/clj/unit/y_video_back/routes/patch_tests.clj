@@ -245,3 +245,32 @@
           (is (= 200 (:status res))))
         (is (= (ut/remove-db-only (merge test-word-thr new_word))
                (ut/remove-db-only (words/READ id))))))))
+
+(deftest test-annotation-patch
+  (testing "annotation fields one at a time"
+    (let [new_annotation (g/get_random_annotation_without_id (:id test-coll-one) (:id test-cont-one))
+          id (:id test-annotation-one)]
+      (is (= (ut/remove-db-only test-annotation-one) (ut/remove-db-only (annotations/READ id))))
+      (doseq [val (seq new_annotation)]
+             [(do
+                (let [res (rp/annotation-id-patch id {(get val 0) (get val 1)})]
+                  (is (= 200 (:status res))))
+                (is (= ((get val 0) new_annotation) ((get val 0) (annotations/READ id)))))])
+      (is (= (into new_annotation {:id id}) (ut/remove-db-only (annotations/READ id))))))
+  (testing "annotation multiple fields at once"
+    (let [new_annotation (g/get_random_annotation_without_id (:id test-coll-one) (:id test-cont-one))
+          id (:id test-annotation-two)]
+      (is (= (ut/remove-db-only test-annotation-two) (ut/remove-db-only (annotations/READ id))))
+      (let [fields-to-change (ut/random-submap new_annotation)]
+        (let [res (rp/annotation-id-patch id fields-to-change)]
+          (is (= 200 (:status res))))
+        (is (= (ut/remove-db-only (merge test-annotation-two fields-to-change))
+               (ut/remove-db-only (annotations/READ id))))))
+    (testing "annotation all fields at once"
+      (let [new_annotation (g/get_random_annotation_without_id (:id test-coll-one) (:id test-cont-one))
+            id (:id test-annotation-thr)]
+        (is (= (ut/remove-db-only test-annotation-thr) (ut/remove-db-only (annotations/READ id))))
+        (let [res (rp/annotation-id-patch id new_annotation)]
+          (is (= 200 (:status res))))
+        (is (= (ut/remove-db-only (merge test-annotation-thr new_annotation))
+               (ut/remove-db-only (annotations/READ id))))))))
