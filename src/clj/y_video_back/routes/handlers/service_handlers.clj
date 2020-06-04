@@ -15,7 +15,8 @@
    ;;[y-video-back.dbaccess.access :as db-access] ;; This should be refactored to the relevant db/TABLE files
    [y-video-back.models :as models]
    [clojure.spec.alpha :as s]
-   [spec-tools.core :as st]))
+   [spec-tools.core :as st]
+   [y-video-back.model-specs :as sp]))
 
 (defn remove-db-only
   "Compares 2 maps, not counting created, updated, and deleted fields"
@@ -51,29 +52,6 @@
 (s/def ::echo (s/keys :req-un [:echo/first]
                       :opt-un [:echo/second]))
 
-
-(defn model-to-defs
-  "Produces namespace args from model for patch routes"
-  [namespace model_in]
-  (let [model_conv (seq (add-namespace namespace model_in))]
-    ; For each field in model, generate: (s/def :namespace/key val)
-    (doseq [val model_conv]
-           [(eval
-              `(s/def ~(keyword (clojure.string/replace (str (get val 0)) ":" ""))
-                      ~(get val 1)))])
-    ; Generate: (s/def ::user (s/keys :opt-un [:user/email :user/last-login ...]))
-    (eval `(s/def ~(keyword (str *ns*) (str namespace))
-                   (s/keys :opt-un ~(into [] (map (fn [val] (get val 0)) model_conv)))))))
-
-; Establish params for coercing patch update routes
-
-(model-to-defs "user" models/user_without_id)
-(model-to-defs "word" models/word_without_id)
-(model-to-defs "collection" models/collection_without_id)
-(model-to-defs "content" models/content_without_id)
-(model-to-defs "annotation" models/annotation_without_id)
-(model-to-defs "file" models/file_without_id)
-(model-to-defs "course" models/course_without_id)
 
 
 
@@ -138,7 +116,7 @@
 
 (def user-update
   {:summary "Updates specified user"
-   :parameters {:path {:id uuid?} :body ::user}
+   :parameters {:path {:id uuid?} :body ::sp/user}
    :responses {200 {:body {:message string?}}}
    :handler (fn [{{{:keys [id]} :path :keys [body]} :parameters}]
               (let [result (users/UPDATE id body)]
@@ -218,7 +196,7 @@
 
 (def user-word-update
   {:summary "Updates specified word"
-   :parameters {:path {:id uuid?} :body ::word}
+   :parameters {:path {:id uuid?} :body ::sp/word}
    :responses {200 {:body {:message string?}}}
    :handler (fn [{{{:keys [id]} :path :keys [body]} :parameters}]
               (let [result (words/UPDATE id body)]
@@ -281,7 +259,7 @@
 
 (def collection-update ;; Non-functional
   {:summary "Updates the specified collection"
-   :parameters {:path {:id uuid?} :body ::collection}
+   :parameters {:path {:id uuid?} :body ::sp/collection}
    :responses {200 {:body {:message string?}}}
    :handler (fn [{{{:keys [id]} :path :keys [body]} :parameters}]
               (let [result (collections/UPDATE id body)]
@@ -459,7 +437,7 @@
 
 (def content-update ;; Non-functional
   {:summary "Updates the specified content"
-   :parameters {:path {:id uuid?} :body ::content}
+   :parameters {:path {:id uuid?} :body ::sp/content}
    :responses {200 {:body {:message string?}}}
    :handler (fn [{{{:keys [id]} :path :keys [body]} :parameters}]
               (let [result (contents/UPDATE id body)]
@@ -573,7 +551,7 @@
 
 (def annotation-update ;; Non-functional
   {:summary "Updates the specified annotation"
-   :parameters {:path {:id uuid?} :body ::annotation}
+   :parameters {:path {:id uuid?} :body ::sp/annotation}
    :responses {200 {:body {:message string?}}}
    :handler (fn [{{{:keys [id]} :path :keys [body]} :parameters}]
               (let [result (annotations/UPDATE id body)]
@@ -624,7 +602,7 @@
 
 (def course-update ;; Non-functional
   {:summary "Updates the specified course"
-   :parameters {:path {:id uuid?} :body ::course}
+   :parameters {:path {:id uuid?} :body ::sp/course}
    :responses {200 {:body {:message string?}}}
    :handler (fn [{{{:keys [id]} :path :keys [body]} :parameters}]
               (let [result (courses/UPDATE id body)]
@@ -711,7 +689,7 @@
 
 (def file-update
   {:summary "Updates specified file"
-   :parameters {:path {:id uuid?} :body ::file}
+   :parameters {:path {:id uuid?} :body ::sp/file}
    :responses {200 {:body {:message string?}}}
    :handler (fn [{{{:keys [id]} :path :keys [body]} :parameters}]
               (let [result (files/UPDATE id body)]
