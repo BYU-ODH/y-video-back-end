@@ -11,7 +11,7 @@
     [y-video-back.middleware.exception :as exception]
     [y-video-back.middleware :as middleware]
 ;    [y-video-back.dbaccess.access :as db-access]
-    [y-video-back.routes.handlers.service_handlers :as service-handlers]
+    [y-video-back.routes.service_handlers.handlers :as service-handlers]
     [ring.util.http-response :as response]
     [clojure.java.io :as io]))
 
@@ -105,7 +105,7 @@
      {:swagger {:tags ["user"]}}
      [""
       {:post service-handlers/user-create
-       :get service-handlers/user-get-loggged-in}]
+       :get service-handlers/user-get-logged-in}]
      ["/{id}"
       {:get service-handlers/user-get-by-id
        :patch service-handlers/user-update
@@ -119,11 +119,11 @@
     ["/word"
      {:swagger {:tags ["word"]}}
      [""
-      {:post service-handlers/user-word-create}]
+      {:post service-handlers/word-create}]
      ["/{id}"
-      {:get service-handlers/user-word-get-by-id
-       :patch service-handlers/user-word-update
-       :delete service-handlers/user-word-delete}]]
+      {:get service-handlers/word-get-by-id
+       :patch service-handlers/word-update
+       :delete service-handlers/word-delete}]]
 
     ["/collections"
      {:swagger {:tags ["collections"]}}
