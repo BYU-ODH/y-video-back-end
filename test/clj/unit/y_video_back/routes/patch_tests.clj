@@ -129,3 +129,32 @@
           (is (= 200 (:status res))))
         (is (= (ut/remove-db-only (merge test-coll-thr new_coll))
                (ut/remove-db-only (collections/READ id))))))))
+
+(deftest test-cont-patch
+  (testing "cont fields one at a time"
+    (let [new_cont (g/get_random_content_without_id)
+          id (:id test-cont-one)]
+      (is (= (ut/remove-db-only test-cont-one) (ut/remove-db-only (contents/READ id))))
+      (doseq [val (seq new_cont)]
+             [(do
+                (let [res (rp/content-id-patch id {(get val 0) (get val 1)})]
+                  (is (= 200 (:status res))))
+                (is (= ((get val 0) new_cont) ((get val 0) (contents/READ id)))))])
+      (is (= (into new_cont {:id id}) (ut/remove-db-only (contents/READ id))))))
+  (testing "cont multiple fields at once"
+    (let [new_cont (g/get_random_content_without_id)
+          id (:id test-cont-two)]
+      (is (= (ut/remove-db-only test-cont-two) (ut/remove-db-only (contents/READ id))))
+      (let [fields-to-change (ut/random-submap new_cont)]
+        (let [res (rp/content-id-patch id fields-to-change)]
+          (is (= 200 (:status res))))
+        (is (= (ut/remove-db-only (merge test-cont-two fields-to-change))
+               (ut/remove-db-only (contents/READ id))))))
+    (testing "cont all fields at once"
+      (let [new_cont (g/get_random_content_without_id)
+            id (:id test-cont-thr)]
+        (is (= (ut/remove-db-only test-cont-thr) (ut/remove-db-only (contents/READ id))))
+        (let [res (rp/content-id-patch id new_cont)]
+          (is (= 200 (:status res))))
+        (is (= (ut/remove-db-only (merge test-cont-thr new_cont))
+               (ut/remove-db-only (contents/READ id))))))))
