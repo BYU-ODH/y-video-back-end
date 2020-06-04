@@ -100,3 +100,32 @@
           (is (= 200 (:status res))))
         (is (= (ut/remove-db-only (merge test-user-thr new_user))
                (ut/remove-db-only (users/READ id))))))))
+
+(deftest test-coll-patch
+  (testing "coll fields one at a time"
+    (let [new_coll (g/get_random_collection_without_id)
+          id (:id test-coll-one)]
+      (is (= (ut/remove-db-only test-coll-one) (ut/remove-db-only (collections/READ id))))
+      (doseq [val (seq new_coll)]
+             [(do
+                (let [res (rp/collection-id-patch id {(get val 0) (get val 1)})]
+                  (is (= 200 (:status res))))
+                (is (= ((get val 0) new_coll) ((get val 0) (collections/READ id)))))])
+      (is (= (into new_coll {:id id}) (ut/remove-db-only (collections/READ id))))))
+  (testing "coll multiple fields at once"
+    (let [new_coll (g/get_random_collection_without_id)
+          id (:id test-coll-two)]
+      (is (= (ut/remove-db-only test-coll-two) (ut/remove-db-only (collections/READ id))))
+      (let [fields-to-change (ut/random-submap new_coll)]
+        (let [res (rp/collection-id-patch id fields-to-change)]
+          (is (= 200 (:status res))))
+        (is (= (ut/remove-db-only (merge test-coll-two fields-to-change))
+               (ut/remove-db-only (collections/READ id))))))
+    (testing "coll all fields at once"
+      (let [new_coll (g/get_random_collection_without_id)
+            id (:id test-coll-thr)]
+        (is (= (ut/remove-db-only test-coll-thr) (ut/remove-db-only (collections/READ id))))
+        (let [res (rp/collection-id-patch id new_coll)]
+          (is (= 200 (:status res))))
+        (is (= (ut/remove-db-only (merge test-coll-thr new_coll))
+               (ut/remove-db-only (collections/READ id))))))))
