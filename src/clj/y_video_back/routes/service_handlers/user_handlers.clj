@@ -92,7 +92,9 @@
 
 (def user-get-all-words
   {:summary "Retrieves all words under specified user"
-   :parameters {}
-   :responses {200 {:body {:message string?}}}
-   :handler (fn [args] {:status 200
-                        :body {:message "placeholder"}})})
+   :parameters {:path {:id uuid?}}
+   :responses {200 {:body [models/word]}}
+   :handler (fn [{{{:keys [id]} :path} :parameters}]
+              (let [res (users/READ-WORDS id)]
+                {:status 200
+                 :body res}))})

@@ -8,3 +8,4 @@
 (def DELETE (partial db/mark-deleted :users))
 (def CLONE (partial db/CLONE :users))
 (def PERMANENT-DELETE (partial db/DELETE :users))
+(def READ-WORDS (partial db/read-all-where :words-undeleted :user-id))

@@ -74,7 +74,7 @@
    (ok
     (hp/html5
      (top-matter userinfo)
-                                        ;(anti-forgery-element)
+     ;(anti-forgery-element)
      (cljs-app-modal)
      (cljs-app-navbar)
      (cljs-app-base)

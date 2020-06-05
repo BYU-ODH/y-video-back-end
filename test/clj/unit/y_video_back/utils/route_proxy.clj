@@ -26,6 +26,11 @@
   [id]
   (app (-> (request :delete (str "/api/user/" id)))))
 
+(defn user-id-get-words
+  "Retrieves all words connected to user"
+  [id]
+  (app (-> (request :get (str "/api/user/" id "/words")))))
+
 (defn word-post
   "Create a word via app's post request"
   [word_without_id]
