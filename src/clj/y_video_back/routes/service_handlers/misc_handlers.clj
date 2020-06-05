@@ -3,7 +3,8 @@
    [y-video-back.models :as models]
    [y-video-back.model-specs :as sp]
    [clojure.spec.alpha :as s]
-   [y-video-back.routes.service_handlers.utils :as utils]))
+   [y-video-back.routes.service_handlers.utils :as utils]
+   [y-video-back.db.core :as db]))
 
 
 (s/def :echo/first string?)
@@ -25,14 +26,34 @@
    :handler (fn [args] {:status 200
                         :body {:message "placeholder"}})})
 
+;; Searches across users, collections, contents, and courses
 (def search-by-term ;; Non-functional
-  {:summary "Searches users, collections, and content by search term"
+  {:summary "Searches users, collections, contents, and courses by search term"
    :parameters {:query {:query_term string?}}
    :responses {200 {:body {:users [models/user]
                            :collections [models/collection]
-                           :courses [models/course]
-                           :contents [models/content]}}}
+                           :contents [models/content]
+                           :courses [models/course]}}}
    :handler (fn [{{{:keys [query_term]} :query} :parameters}]
-              (let [result "placeholder"]
+              (let [user-result (map utils/remove-db-only
+                                     (db/read-all-pattern :users
+                                                          [:email :account-name :username]
+                                                          (str "%" query_term "%")))
+                    collection-result (map utils/remove-db-only
+                                              (db/read-all-pattern :collections
+                                                                   [:collection-name]
+                                                                   (str "%" query_term "%")))
+                    content-result (map utils/remove-db-only
+                                        (db/read-all-pattern :contents
+                                                             [:content-name :content-type :requester-email
+                                                              :thumbnail]
+                                                             (str "%" query_term "%")))
+                    course-result (map utils/remove-db-only
+                                       (db/read-all-pattern :courses
+                                                            [:department :catalog-number :section-number]
+                                                            (str "%" query_term "%")))]
                 {:status 200
-                 :body result}))})
+                 :body {:users user-result
+                        :collections collection-result
+                        :contents content-result
+                        :courses course-result}}))})

@@ -221,6 +221,17 @@
     (= 1 (count select-field-keys))
     (#((first select-field-keys) %))))
 
+(defn read-all-pattern
+  "Get all entries from table by column and pattern"
+  [table-keyword column-keywords pattern &[select-field-keys]]
+  (cond-> {:select (or select-field-keys [:*])
+           :from [table-keyword]}
+    (> (count column-keywords) 0) (assoc :where (into [:or] (map #(vector "LIKE" %1 pattern) column-keywords)))
+    true sql/format
+    ;true (clojure.string/replace "=" "LIKE")
+    true (spy)
+    true dbr))
+
 
 
 ; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ;

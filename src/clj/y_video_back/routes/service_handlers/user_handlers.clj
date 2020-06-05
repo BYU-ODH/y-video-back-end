@@ -65,16 +65,17 @@
 
 (def user-get-logged-in ;; Non-functional
   {:summary "Retrieves the current logged-in user"
-   :parameters {:query {:user_id string?}}
-   :responses {200 {:body {:user_id string? :email string? :lastlogin string? :name string? :role int? :username string?}}
-               404 {:body {:message string?}}}
-   :handler (fn [{{{:keys [id]} :query} :parameters}]
+   :parameters {:path {:id uuid?}}
+   :responses {200 {:body models/user}
+               404 {:body {:message string?}}
+               500 {:body {:message string?}}}
+   :handler (fn [{{{:keys [id]} :path} :parameters}]
               (let [user_result (users/READ id)]
                 (if (nil? user_result)
                   {:status 404
-                   :body {:message "requested user not found"}}
+                   :body {:message "user not found"}}
                   {:status 200
-                   :body {:message user_result}})))})
+                   :body user_result})))})
 
 
 (def user-get-all-collections ;; Non-functional
