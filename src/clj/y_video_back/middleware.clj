@@ -74,7 +74,9 @@
     {:error-response
      (error-page
        {:status 403
-        :title "Invalid anti-forgery token"})}))
+        :title "Invalid anti-forgery token"
+        :image "lack_of_faith.jpg"
+        :caption "I find your lack of valid anti-forgery token disturbing."})}))
 
 (defn wrap-formats
   "Ensure that json<>map conversion is in place"
