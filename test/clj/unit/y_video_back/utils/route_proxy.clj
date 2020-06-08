@@ -253,3 +253,8 @@
   "Reads all contents connected to file"
   [id]
   (app (-> (request :get (str "/api/file/" id "/contents")))))
+
+(defn search
+  "Searches by query_term"
+  [query_term]
+  (app (-> (request :get (str "/api/search?query_term=" (java.net.URLEncoder/encode query_term))))))

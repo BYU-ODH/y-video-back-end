@@ -37,9 +37,10 @@
                   ;; coercing request parameters
                   coercion/coerce-request-middleware
                   ;; multipart
-                  multipart/multipart-middleware]}
+                  multipart/multipart-middleware
                   ;; CAS
-                  ;middleware/wrap-cas-no-redirect]}
+                  ;middleware/wrap-cas-no-redirect]
+                  middleware/wrap-api]}
 
     ;; swagger documentation
     ["" {:no-doc true

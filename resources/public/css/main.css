@@ -1,0 +1,33 @@
+.numpadbutton {
+  width: 100%;
+  height: 100%;
+}
+
+.xl_h1 {
+  font-size: 50pt;
+}
+
+.l_h1 {
+  font-size: 45pt;
+}
+
+.numpad button {
+  font-size: 25pt;
+}
+
+.submit_button {
+  font-size: 25pt;
+  margin: 15px;
+}
+
+html, body {
+  height: 100%;
+}
+
+.guessed {
+   background-color: #d7ffe2;
+}
+
+.hideMe {
+  display: none;
+}

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>Fear No Factor</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+  <link type="text/css" href="main.css" rel="stylesheet">
+
+</head>
+
+<body onload="loadFirstProblem()">
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
+    <div class="container">
+      <a class="navbar-brand" href="fear_no_factor.html">Fear No Factor</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <button id="modeButton" class="btn btn-warning hideMe" onclick="toggleMode()">Basic Mode</button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="fear_no_factor.html">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="about.html">About</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="contact.html">Contact</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Page Content -->
+  <div class="container">
+
+    <div class="row text-center">
+        <div class="col-lg-12">
+            <h4 style="color: #777777">*This site is best viewed in landscape mode*</h4>
+        </div>
+    </div>
+
+    <div class="row text-center">
+      <div class="col-lg-12">
+        <h1><span id="totalProblemsPassed" onchange="stopTampering()">0</span> exercises completed</h1>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-lg-12 text-center">
+        <h1 class="xl_h1" id="numberToFactor" onclick="manualGetProduct()"></h1>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-lg-4 text-center">
+        <h1 class="l_h1"><span id="factor1"></span></h1>
+      </div>
+      <div class="col-lg-4 text-center">
+        <h1 class="l_h1" style="color: white">*</h1>
+      </div>
+      <div class="col-lg-4 text-center">
+        <h1 class="l_h1"><span id="factor2"></span></h1>
+      </div>
+    </div>
+
+    <div class="row">
+
+
+      <div class="col-lg-4 text-center">
+        <table class="table numpad">
+          <tr>
+            <td><button class="btn btn-primary numpadbutton" onclick="numPress(1, 7)">7</button></td>
+            <td><button class="btn btn-primary numpadbutton" onclick="numPress(1, 8)">8</button></td>
+            <td><button class="btn btn-primary numpadbutton" onclick="numPress(1, 9)">9</button></td>
+          </tr>
+          <tr>
+            <td><button class="btn btn-primary numpadbutton" onclick="numPress(1, 4)">4</button></td>
+            <td><button class="btn btn-primary numpadbutton" onclick="numPress(1, 5)">5</button></td>
+            <td><button class="btn btn-primary numpadbutton" onclick="numPress(1, 6)">6</button></td>
+          </tr>
+          <tr>
+            <td><button class="btn btn-primary numpadbutton" onclick="numPress(1, 1)">1</button></td>
+            <td><button class="btn btn-primary numpadbutton" onclick="numPress(1, 2)">2</button></td>
+            <td><button class="btn btn-primary numpadbutton" onclick="numPress(1, 3)">3</button></td>
+          </tr>
+          <tr>
+            <td><button class="btn btn-primary numpadbutton" onclick="numPress(1, 0)">0</button></td>
+            <td colspan='2'><button class="btn btn-primary numpadbutton" onclick="numPress(1, -1)"><-</button></td>
+          </tr>
+          <tr>
+            <td colspan='3'><button class="btn btn-success numpadbutton submitButton" onclick="submitButtonPress()">Submit</button></td>
+          </tr>
+        </table>
+      </div>
+      <div class="col-lg-4 text-center">
+
+        <div><h2><span id="possiblePairs">1</span> factor pair(s) remaining</h2></div>
+        <hr>
+        <!-- <div id="grader"></div> -->
+        <div id="guessedPairs"></div>
+      </div>
+
+      <div class="col-lg-4">
+        <table class="table numpad">
+          <tr>
+            <td><button class="btn btn-primary numpadbutton" onclick="numPress(2, 7)">7</button></td>
+            <td><button class="btn btn-primary numpadbutton" onclick="numPress(2, 8)">8</button></td>
+            <td><button class="btn btn-primary numpadbutton" onclick="numPress(2, 9)">9</button></td>
+          </tr>
+          <tr>
+            <td><button class="btn btn-primary numpadbutton" onclick="numPress(2, 4)">4</button></td>
+            <td><button class="btn btn-primary numpadbutton" onclick="numPress(2, 5)">5</button></td>
+            <td><button class="btn btn-primary numpadbutton" onclick="numPress(2, 6)">6</button></td>
+          </tr>
+          <tr>
+            <td><button class="btn btn-primary numpadbutton" onclick="numPress(2, 1)">1</button></td>
+            <td><button class="btn btn-primary numpadbutton" onclick="numPress(2, 2)">2</button></td>
+            <td><button class="btn btn-primary numpadbutton" onclick="numPress(2, 3)">3</button></td>
+          </tr>
+          <tr>
+            <td><button class="btn btn-primary numpadbutton" onclick="numPress(2, 0)">0</button></td>
+            <td colspan='2'><button class="btn btn-primary numpadbutton" onclick="numPress(2, -1)"><-</button></td>
+          </tr>
+          <tr>
+            <td colspan='3'><button class="btn btn-success numpadbutton submitButton" onclick="submitButtonPress()">Submit</button></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap core JavaScript -->
+  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+  <script type="text/javascript" src="brains.js"></script>
+
+</body>
+
+</html>

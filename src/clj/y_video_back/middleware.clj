@@ -20,9 +20,21 @@
 (defn wrap-cas [handler]
   (cas/wrap-cas handler (str (-> env :y-video-back :site-url) "/")))
 
-(defn wrap-cas-no-redirect [handler]
-  (cas/cas handler (str (-> env :y-video-back :site-url) "/") true true))
-
+(defn wrap-cas-to-request-url
+  "redirects user to BYU cas login"
+  [handler]
+  (fn [request]
+    (let [etaoin-test? (:etaoin-test env)
+          request (if etaoin-test?
+                    (assoc request :username "puppypar"
+                      request))]
+      (if-not (and (:username request)
+                   (or (:test env) etaoin-test?))
+        ((cas/wrap-cas handler (str (-> env
+                                        :humhelp
+                                        :site-url)
+                                    (-> request :path-info))) request)
+        (handler request)))))
 (defn wrap-context [handler]
   (fn [request]
     (binding [*app-context*
@@ -77,7 +89,7 @@
   (-> ((:middleware defaults) handler)
       wrap-flash
       ;;wrap-cas
-      ;;wrap-csrf
+      wrap-csrf
       (wrap-session {:cookie-attrs {:http-only true}})
       (wrap-defaults
         (-> site-defaults
@@ -85,3 +97,18 @@
             (dissoc :session)))
       wrap-context
       wrap-internal-error))
+
+(defn wrap-api [handler]
+  (let [check-csrf  (if-not (:test env) wrap-csrf identity)]
+      (-> ((:middleware defaults) handler)
+          check-csrf)))
+          ;wrap-flash
+          ;;wrap-cas
+          ;wrap-csrf))
+          ;(wrap-session {:cookie-attrs {:http-only true}})
+          ;(wrap-defaults
+          ;  (-> site-defaults
+          ;      (assoc-in [:security :anti-forgery] false)
+          ;      (dissoc :session)
+          ;wrap-context
+          ;wrap-internal-error))

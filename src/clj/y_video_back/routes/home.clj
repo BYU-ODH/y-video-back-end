@@ -25,6 +25,7 @@
 (defn home-page [request-map]
   (layout/hiccup-render-cljs-base {:username request-map}))
 
+
 (def ^{:private true} home-paths
   ["/"])
 

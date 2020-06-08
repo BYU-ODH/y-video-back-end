@@ -229,7 +229,7 @@
     (> (count column-keywords) 0) (assoc :where (into [:or] (map #(vector "LIKE" %1 pattern) column-keywords)))
     true sql/format
     ;true (clojure.string/replace "=" "LIKE")
-    true (spy)
+    false (spy)
     true dbr))
 
 
