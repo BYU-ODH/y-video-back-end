@@ -23,7 +23,7 @@ print("testing echo PATCH")
 data = {"first": "Hello, World!"}
 res = r.patch(f"{URL}/api/echo", json=data)
 if res.status_code != 403:
-    print("POST test failed")
+    print("PATCH test failed")
     print(res.status_code)
     print(res.text)
 

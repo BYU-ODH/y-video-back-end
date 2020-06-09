@@ -39,4 +39,4 @@
         (constantly (error-page {:status 405, :title "405 - Not allowed",
                                  :image "anakin_obiwan_mustafar.jpg", :caption "Obi-Wan: Anakin, this is a get method!<br/><br/>Anakin: From my point of view, this is a post method!"}))
         :not-acceptable
-        (constantly (error-page {:status 406, :title "406 - Not acceptable"}))})))))
+        (constantly (error-page {:status 406, :title "406 - Not acceptable"}))})))))                

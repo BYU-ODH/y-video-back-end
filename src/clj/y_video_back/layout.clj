@@ -3,9 +3,14 @@
    [hiccup.page :as hp]
    [hiccup.element :refer [javascript-tag]]
    [ring.util.http-response :refer [ok] :as ru]
-   [ring.middleware.anti-forgery :refer [*anti-forgery-token*]]
    [selmer.parser :as parser] ;; Probably a temporary fix
+   [ring.util.anti-forgery :refer [anti-forgery-field]]
+   [ring.middleware.anti-forgery :refer [*anti-forgery-token*]]
    [ring.util.http-response :refer [content-type ok]])) ;; Probably a temporary fix
+
+
+(parser/set-resource-path!  (clojure.java.io/resource "html"))
+(parser/add-tag! :csrf-field (fn [_ _] (anti-forgery-field)))
 
 
 (declare ^:dynamic *app-context*)
@@ -17,9 +22,9 @@
 (defn context-path [& path]
   (apply str path))
 
-(defn anti-forgery-element []
-  [:input {:id "token" :value *anti-forgery-token* :type "hidden"}
-   (javascript-tag (str  "var csrfToken = '" *anti-forgery-token* "'"))])
+;(defn anti-forgery-element []
+;  [:input {:id "token" :value *anti-forgery-token* :type "hidden"}
+;   (javascript-tag (str  "var csrfToken = '" *anti-forgery-token* "'"))))
 
 (defn include-byu-deps []
   (hp/include-css "https://cdn.byu.edu/byu-theme-components/latest/byu-theme-components.min.css")

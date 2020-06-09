@@ -26,6 +26,22 @@
   (layout/hiccup-render-cljs-base {:username request-map}))
 
 
+(defn hello-page [request]
+  (layout/render request "hello.html"))
+
+
+(defn factor-home [request]
+  (layout/render request "fear_no_factor.html"))
+
+(defn factor-about [request]
+  (layout/render request "about.html"))
+
+(defn factor-contact [request]
+  (layout/render request "contact.html"))
+
+(defn echo-page [request]
+  (layout/render request "echo.html"))
+
 (def ^{:private true} home-paths
   ["/"])
 
@@ -40,4 +56,10 @@
          (for [path home-paths]
            [path {:get home-page}])
          ["/ping" {:get (constantly (response/ok {:message "pong"}))}]
-         ["/who-am-i" {:get (fn [request] {:status 200 :body {:username (:username request)}})}])))
+         ["/ping_post" {:post (constantly (response/ok {:message "pong"}))}]
+         ["/who-am-i" {:get (fn [request] {:status 200 :body {:username (:username request)}})}]
+         ["/hello" {:get hello-page}]
+         ["/factoring" {:get factor-home}]
+         ["/about" {:get factor-about}]
+         ["/contact" {:get factor-contact}]
+         ["/echo" {:get echo-page}])))

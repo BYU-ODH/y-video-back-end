@@ -74,7 +74,7 @@
     {:error-response
      (error-page
        {:status 403
-        :title "Invalid anti-forgery token"
+        :title "403 - Invalid anti-forgery token"
         :image "lack_of_faith.jpg"
         :caption "I find your lack of valid anti-forgery token disturbing."})}))
 
@@ -87,11 +87,29 @@
     (fn [request]
       ((if (:websocket? request) handler wrapped) request))))
 
+
+(defn wrap-api [handler]
+  (comment (let [check-csrf  (if-not (:test env) wrap-csrf identity)])
+      (-> ((:middleware defaults) handler)
+          check-csrf)))
+          ;wrap-flash
+          ;;wrap-cas
+          ;wrap-csrf)))
+          ;(wrap-session {:cookie-attrs {:http-only true}})
+          ;(wrap-defaults
+          ;  (-> site-defaults
+          ;      (assoc-in [:security :anti-forgery] false)
+          ;      (dissoc :session)
+          ;wrap-context
+          ;wrap-internal-error)))
+
+
 (defn wrap-base [handler]
   (-> ((:middleware defaults) handler)
       wrap-flash
       ;;wrap-cas
       wrap-csrf
+      ;wrap-api
       (wrap-session {:cookie-attrs {:http-only true}})
       (wrap-defaults
         (-> site-defaults
@@ -99,18 +117,3 @@
             (dissoc :session)))
       wrap-context
       wrap-internal-error))
-
-(defn wrap-api [handler]
-  (let [check-csrf  (if-not (:test env) wrap-csrf identity)]
-      (-> ((:middleware defaults) handler)
-          check-csrf)))
-          ;wrap-flash
-          ;;wrap-cas
-          ;wrap-csrf))
-          ;(wrap-session {:cookie-attrs {:http-only true}})
-          ;(wrap-defaults
-          ;  (-> site-defaults
-          ;      (assoc-in [:security :anti-forgery] false)
-          ;      (dissoc :session)
-          ;wrap-context
-          ;wrap-internal-error))

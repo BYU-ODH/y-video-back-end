@@ -1,0 +1,64 @@
+<html>
+
+<head>
+    <script>
+        var csrfToken = "{{ csrf-token }}"
+    </script>
+</head>
+
+<body>
+
+<div>
+    <button onclick="get_form()">get</button>
+    <button onclick="post_form()">post</button>
+</div>
+
+<!--
+<form action="api/surely-a-get-method" method="POST">
+    <input name="__anti-forgery-token" value="{{ csrf-token }}" disabled>
+    <button type="submit">Go</button>
+</form>
+-->
+
+<div id="req_res"></div>
+
+
+<script>
+function get_form() {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      document.getElementById("req_res").innerHTML = this.responseText;
+    }
+  };
+  xhttp.open("GET", "api/echo?echo=secret+message", true);
+  xhttp.send();
+}
+
+function post_form() {
+
+
+    var xhr = new XMLHttpRequest();
+    var url = "ping_post";
+    xhr.open("POST", url, true);
+    xhr.setRequestHeader("x-csrf-token", "{{ csrf-token }}");
+    xhr.setRequestHeader("X-CSRF-Token", "{{ csrf-token }}");
+    //xhr.setRequestHeader("__anti-forgery-token", "{{ csrf-token }}");
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+            document.getElementById("req_res").innerHTML = this.responseText;
+        }
+    };
+    var data = JSON.stringify({"echo": "the token worked!", "x-csrf-token": "{{ csrf-token }}",
+                                "anti-forgery-token": "{{ csrf-token }}", "__anti-forgery-token": "{{ csrf-token }}"});
+    xhr.send(data);
+}
+
+
+</script>
+
+</body>
+
+
+</html>
