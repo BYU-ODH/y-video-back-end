@@ -39,7 +39,7 @@ function post_form() {
 
 
     var xhr = new XMLHttpRequest();
-    var url = "ping_post";
+    var url = "api/echo";
     xhr.open("POST", url, true);
     xhr.setRequestHeader("x-csrf-token", "{{ csrf-token }}");
     xhr.setRequestHeader("X-CSRF-Token", "{{ csrf-token }}");
