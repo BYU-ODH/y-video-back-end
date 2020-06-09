@@ -17,7 +17,6 @@
 
 
 (defn service-routes []
-  ["" {}
    ["/api"
     {:coercion spec-coercion/coercion
      :muuntaja formats/instance
@@ -225,4 +224,4 @@
     ["/search"
      {:swagger {:tags ["search"]}}
      [""
-      {:get service-handlers/search-by-term}]]]])
+      {:get service-handlers/search-by-term}]]])

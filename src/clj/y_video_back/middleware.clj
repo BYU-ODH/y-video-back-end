@@ -68,6 +68,8 @@
     (println (str req))
     (handler req)))
 
+
+
 (defn wrap-csrf [handler]
   (wrap-anti-forgery
     handler
@@ -90,8 +92,8 @@
 
 (defn wrap-api [handler]
   (let [check-csrf  (if-not (:test env) wrap-csrf identity)]
-      (-> ((:middleware defaults) handler)
-          check-csrf)))
+      (-> ((:middleware defaults) handler))))
+          ;check-csrf)))
           ;wrap-flash
           ;;wrap-cas
           ;wrap-csrf)))
@@ -108,8 +110,7 @@
   (-> ((:middleware defaults) handler)
       wrap-flash
       ;;wrap-cas
-      wrap-csrf
-      ;wrap-api
+      ;wrap-csrf
       (wrap-session {:cookie-attrs {:http-only true}})
       (wrap-defaults
         (-> site-defaults
