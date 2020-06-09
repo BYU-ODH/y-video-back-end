@@ -89,7 +89,7 @@
 
 
 (defn wrap-api [handler]
-  (comment (let [check-csrf  (if-not (:test env) wrap-csrf identity)])
+  (let [check-csrf  (if-not (:test env) wrap-csrf identity)]
       (-> ((:middleware defaults) handler)
           check-csrf)))
           ;wrap-flash
