@@ -47,7 +47,7 @@ function post_form() {
             document.getElementById("req_res").innerHTML = this.responseText;
         }
     };
-    var data = JSON.stringify({"echo": "the token worked!", "x-csrf-token": "{{ csrf-token }}"});
+    var data = JSON.stringify({"echo": "the token worked!"});
     xhr.send(data);
     }
 

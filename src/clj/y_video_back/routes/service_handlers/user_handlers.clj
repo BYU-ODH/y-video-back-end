@@ -15,13 +15,13 @@
                409 {:body {:message string?
                            :error string?}}}
    :handler (fn [{{:keys [body]} :parameters}]
-              (try {:status 200
-                    :body {:message "1 user created"
-                           :id (utils/get-id (users/CREATE body))}}
-                   (catch Exception e
-                     {:status 409
-                      :body {:message "unable to create user, email likely taken"
-                             :error (.toString e)}})))})
+                (try {:status 200
+                      :body {:message "1 user created"
+                             :id (utils/get-id (users/CREATE body))}}
+                     (catch Exception e
+                       {:status 409
+                        :body {:message "unable to create user, email likely taken"
+                               :error (.toString e)}})))})
 
 (def user-get-by-id
   {:summary "Retrieves specified user"

@@ -168,8 +168,9 @@
 
 (defn collection-id-add-user
   "Connects user and collection"
-  [collection-id user-id role]
+  [session-id collection-id user-id role]
   (app (-> (request :post (str "/api/collection/" collection-id "/add-user"))
+           (header :session-id session-id)
            (json-body {:user-id user-id :account-role role}))))
 
 (defn collection-id-remove-user

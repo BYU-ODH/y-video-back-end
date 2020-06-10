@@ -21,7 +21,8 @@
     {:coercion spec-coercion/coercion
      :muuntaja formats/instance
      :swagger {:id ::api}
-     :middleware [;; query-params & form-params
+     :middleware [middleware/wrap-api
+                  ;; query-params & form-params
                   parameters/parameters-middleware
                   ;; content-negotiation
                   muuntaja/format-negotiate-middleware
@@ -36,10 +37,9 @@
                   ;; coercing request parameters
                   coercion/coerce-request-middleware
                   ;; multipart
-                  multipart/multipart-middleware
+                  multipart/multipart-middleware]}
                   ;; CAS
                   ;middleware/wrap-cas-no-redirect]
-                  middleware/wrap-api]}
 
     ;; swagger documentation
     ["" {:no-doc true

@@ -12,21 +12,24 @@
 
 (def collection-create ;; Non-functional
   {:summary "Creates a new collection with the given (temp) user as an owner"
-   :parameters {:body {:collection models/collection_without_id :user_id uuid?}}
+   :parameters {:header {:session-id uuid?}
+                :body {:collection models/collection_without_id :user_id uuid?}}
    :responses {200 {:body {:message string?
                            :id string?}}
                409 {:body {:message string?}}}
-   :handler (fn [{{:keys [body]} :parameters}]
-              (try {:status 200
-                    :body {:message "1 collection created"
-                           :id (let [collection_id (utils/get-id (collections/CREATE (:collection body)))]
-                                 (user_collections_assoc/CREATE {:user_id (:user_id body)
-                                                                 :collection_id (utils/to-uuid collection_id)
-                                                                 :account_role 0})
-                                 collection_id)}}
-                   (catch Exception e
-                     {:status 409
-                      :body {:message e}})))})
+   :handler (fn [{{{:keys [session-id]} :header :keys [body]} :parameters}]
+              (if-not (utils/has-permission session-id "collection-create" 0)
+                utils/forbidden-page
+                (try {:status 200
+                      :body {:message "1 collection created"
+                             :id (let [collection_id (utils/get-id (collections/CREATE (:collection body)))]
+                                   (user_collections_assoc/CREATE {:user_id (:user_id body)
+                                                                   :collection_id (utils/to-uuid collection_id)
+                                                                   :account_role 0})
+                                   collection_id)}}
+                     (catch Exception e
+                       {:status 409
+                        :body {:message e}}))))})
 
 (def collection-get-by-id ;; Not tested
   {:summary "Retrieves specified collection"
@@ -67,16 +70,19 @@
 
 (def collection-add-user
   {:summary "Adds user to specified collection"
-   :parameters {:path {:id uuid?} :body {:user-id uuid? :account-role int?}}
+   :parameters {:header {:session-id uuid?}
+                :path {:id uuid?} :body {:user-id uuid? :account-role int?}}
    :responses {200 {:body {:message string? :id string?}}}
-   :handler (fn [{{{:keys [id]} :path :keys [body]} :parameters}]
-              (let [result (utils/get-id (user_collections_assoc/CREATE (into body {:collection-id id})))]
-                (if (= nil result)
-                  {:status 404
-                   :body {:message "unable to add user"}}
-                  {:status 200
-                   :body {:message (str 1 " users added to collection")
-                          :id result}})))})
+   :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
+              (if-not (utils/has-permission session-id "collection-add-user" {:collection-id id})
+                utils/forbidden-page
+                (let [result (utils/get-id (user_collections_assoc/CREATE (into body {:collection-id id})))]
+                  (if (= nil result)
+                    {:status 404
+                     :body {:message "unable to add user"}}
+                    {:status 200
+                     :body {:message (str 1 " users added to collection")
+                            :id result}}))))})
 
 (def collection-remove-user
   {:summary "Removes user from specified collection"

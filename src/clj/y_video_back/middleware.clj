@@ -14,7 +14,8 @@
             ;[cognitect.transit :as transit]
             [y-video-back.middleware.formats :as formats]
             ;[muuntaja.middleware :refer [wrap-format wrap-params]]
-            [ring-ttl-session.core :refer [ttl-memory-store]])
+            [ring-ttl-session.core :refer [ttl-memory-store]]
+            [y-video-back.routes.service_handlers.utils :as sh-utils])
   (:import [javax.servlet ServletContext]))
 
 (defn wrap-cas [handler]
@@ -90,10 +91,16 @@
       ((if (:websocket? request) handler wrapped) request))))
 
 
+(defn check-permission
+  "Checks user has permission for route"
+  [handler]
+  (fn [request] (handler {:status 401 :body "forbidden"})))
+
 (defn wrap-api [handler]
   (let [check-csrf  (if-not (:test env) wrap-csrf identity)]
       (-> ((:middleware defaults) handler))))
           ;check-csrf)))
+          ;check-permission)))
           ;wrap-flash
           ;;wrap-cas
           ;wrap-csrf)))
