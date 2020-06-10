@@ -1,0 +1,15 @@
+- - - - - - - - - - - - - -
+Least Permissions
+
+    Student
+
+    TA
+
+    Instructor (i.e. professor)
+
+    Lab Assistant
+
+    Admin
+
+Most Permissions
+- - - - - - - - - - - - - -
