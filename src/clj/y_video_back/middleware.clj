@@ -110,7 +110,7 @@
   (-> ((:middleware defaults) handler)
       wrap-flash
       ;;wrap-cas
-      ;wrap-csrf
+      wrap-csrf
       (wrap-session {:cookie-attrs {:http-only true}})
       (wrap-defaults
         (-> site-defaults

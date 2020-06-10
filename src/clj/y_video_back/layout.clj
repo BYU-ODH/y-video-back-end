@@ -22,9 +22,9 @@
 (defn context-path [& path]
   (apply str path))
 
-;(defn anti-forgery-element []
-;  [:input {:id "token" :value *anti-forgery-token* :type "hidden"}
-;   (javascript-tag (str  "var csrfToken = '" *anti-forgery-token* "'"))))
+(defn anti-forgery-element []
+ [:input {:id "token" :value *anti-forgery-token* :type "hidden"}
+  (javascript-tag (str  "var csrfToken = '" *anti-forgery-token* "'"))])
 
 (defn include-byu-deps []
   (hp/include-css "https://cdn.byu.edu/byu-theme-components/latest/byu-theme-components.min.css")
@@ -79,7 +79,7 @@
    (ok
     (hp/html5
      (top-matter userinfo)
-     ;(anti-forgery-element)
+     (anti-forgery-element)
      (cljs-app-modal)
      (cljs-app-navbar)
      (cljs-app-base)
