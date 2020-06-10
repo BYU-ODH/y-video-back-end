@@ -66,6 +66,15 @@
 (deftest dummy
   (is (= 0 0)))
 
+(deftest no-session-id-for-testing
+  (testing "no session id"
+    (let [res (rp/echo-post "6bc824a6-f446-416d-8dd6-06350ae577f4" "hey")]
+      (is (= 200 (:status res)))
+      (is (= {:echo "hey"} (m/decode-response-body res))))
+    (let [res (rp/echo-post "there")]
+      (is (= 200 (:status res)))
+      (is (= {:echo "there"} (m/decode-response-body res))))))
+
 (deftest test-collection-add-user
   (testing "student adding student, no connection to coll"
     (let [res (rp/collection-id-add-user (:id user-student-one) ; session-id

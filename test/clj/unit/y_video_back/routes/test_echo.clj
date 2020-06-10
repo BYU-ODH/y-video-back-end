@@ -3,6 +3,7 @@
       [clojure.test :refer :all]
       [ring.mock.request :refer :all]
       [y-video-back.handler :refer :all]
+      [y-video-back.utils.route_proxy :as rp]
       ;[y-video-postgres-swagger.middleware.formats :as formats]
       ;[y-video-postgres-swagger.test.test_model_generator :as model-generator]
       ;[y-video-postgres-swagger.dbaccess.access :as db-access]
@@ -37,7 +38,6 @@
 
     (testing "echo"
       (let [test_string "hello there!"]
-       (let [response (app (-> (request :post "/api/echo")
-                               (json-body {:echo test_string})))]
+       (let [response (rp/echo-post test_string)]
          (is (= 200 (:status response)))
          (is (= {:echo test_string} (m/decode-response-body response))))))))

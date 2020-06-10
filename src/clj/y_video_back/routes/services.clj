@@ -13,7 +13,9 @@
 ;    [y-video-back.dbaccess.access :as db-access]
     [y-video-back.routes.service_handlers.handlers :as service-handlers]
     [ring.util.http-response :as response]
-    [clojure.java.io :as io]))
+    [clojure.java.io :as io]
+    [y-video-back.routes.service_handlers.utils :as utils]))
+
 
 
 (defn service-routes []
@@ -75,11 +77,14 @@
                         {:status 200
                          :body {:echo echo}})}
        :post {:summary "echo parameter post"
-              :parameters {:body {:echo string?}}
+              :parameters {:header {:session-id uuid?}
+                           :body {:echo string?}}
               :responses {200 {:body {:echo string?}}}
-              :handler (fn [{{{:keys [echo]} :body} :parameters}]
-                         {:status 200
-                          :body {:echo echo}})}
+              :handler (fn [{{{:keys [session-id]} :header :keys [body]} :parameters}]
+                         (if-not (utils/has-permission session-id "echo-post" 0)
+                           utils/forbidden-page
+                           {:status 200
+                            :body body}))}
        :patch service-handlers/echo-patch}]
      ["/:word"
       {:get {:summary "echo parameter get"
