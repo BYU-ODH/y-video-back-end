@@ -142,65 +142,80 @@
 
 (def collection-add-course
   {:summary "Adds course to specified collection"
-   :parameters {:path {:id uuid?} :body {:course-id uuid?}}
+   :parameters {:header {:session-id uuid?}
+                :path {:id uuid?} :body {:course-id uuid?}}
    :responses {200 {:body {:message string? :id string?}}}
-   :handler (fn [{{{:keys [id]} :path :keys [body]} :parameters}]
-              (let [result (utils/get-id (collection_courses_assoc/CREATE (into body {:collection-id id})))]
-                (if (= nil result)
-                  {:status 404
-                   :body {:message "unable to add course"}}
-                  {:status 200
-                   :body {:message (str 1 " courses added to collection")
-                          :id result}})))})
+   :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
+              (if-not (ru/has-permission session-id "collection-add-course" 0)
+                ru/forbidden-page
+                (let [result (utils/get-id (collection_courses_assoc/CREATE (into body {:collection-id id})))]
+                  (if (= nil result)
+                    {:status 404
+                     :body {:message "unable to add course"}}
+                    {:status 200
+                     :body {:message (str 1 " courses added to collection")
+                            :id result}}))))})
 
 (def collection-remove-course
   {:summary "Removes course from specified collection"
-   :parameters {:path {:id uuid?} :body {:course-id uuid?}}
+   :parameters {:header {:session-id uuid?}
+                :path {:id uuid?} :body {:course-id uuid?}}
    :responses {200 {:body {:message string?}}}
-   :handler (fn [{{{:keys [id]} :path :keys [body]} :parameters}]
-              (let [result (collection_courses_assoc/DELETE-BY-IDS [id (:course-id body)])]
-                (if (= 0 result)
-                  {:status 404
-                   :body {:message "unable to remove course"}}
-                  {:status 200
-                   :body {:message (str result " courses removed from collection")}})))})
+   :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
+              (if-not (ru/has-permission session-id "collection-remove-course" 0)
+                ru/forbidden-page
+                (let [result (collection_courses_assoc/DELETE-BY-IDS [id (:course-id body)])]
+                  (if (= 0 result)
+                    {:status 404
+                     :body {:message "unable to remove course"}}
+                    {:status 200
+                     :body {:message (str result " courses removed from collection")}}))))})
 
 
 (def collection-get-all-contents ;; Non-functional
   {:summary "Retrieves all the contents for the specified collection"
-   :parameters {:path {:id uuid?}}
+   :parameters {:header {:session-id uuid?}
+                :path {:id uuid?}}
    :responses {200 {:body [(into models/content {:collection-id uuid?})]}}
-   :handler (fn [{{{:keys [id]} :path} :parameters}]
-              (let [content_collections_result (collection_contents_assoc/READ-CONTENTS-BY-COLLECTION id)]
-                (let [content_result (map #(utils/remove-db-only %) content_collections_result)]
-                  (if (= 0 (count content_result))
-                    {:status 404
-                     :body {:message "no contents found for given collection"}}
-                    {:status 200
-                     :body content_result}))))})
+   :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
+              (if-not (ru/has-permission session-id "collection-get-all-contents" 0)
+                ru/forbidden-page
+                (let [content_collections_result (collection_contents_assoc/READ-CONTENTS-BY-COLLECTION id)]
+                  (let [content_result (map #(utils/remove-db-only %) content_collections_result)]
+                    (if (= 0 (count content_result))
+                      {:status 404
+                       :body {:message "no contents found for given collection"}}
+                      {:status 200
+                       :body content_result})))))})
 
 (def collection-get-all-courses ;; Non-functional
   {:summary "Retrieves all the courses for the specified collection"
-   :parameters {:path {:id uuid?}}
+   :parameters {:header {:session-id uuid?}
+                :path {:id uuid?}}
    :responses {200 {:body [(into models/course {:collection-id uuid?})]}}
-   :handler (fn [{{{:keys [id]} :path} :parameters}]
-              (let [course_collections_result (collection_courses_assoc/READ-CONTENTS-BY-COLLECTION id)]
-                (let [course_result (map #(utils/remove-db-only %) course_collections_result)]
-                  (if (= 0 (count course_result))
-                    {:status 404
-                     :body {:message "no courses found for given collection"}}
-                    {:status 200
-                     :body course_result}))))})
+   :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
+              (if-not (ru/has-permission session-id "collection-get-all-courses" 0)
+                ru/forbidden-page
+                (let [course_collections_result (collection_courses_assoc/READ-CONTENTS-BY-COLLECTION id)]
+                  (let [course_result (map #(utils/remove-db-only %) course_collections_result)]
+                    (if (= 0 (count course_result))
+                      {:status 404
+                       :body {:message "no courses found for given collection"}}
+                      {:status 200
+                       :body course_result})))))})
 
 (def collection-get-all-users
   {:summary "Retrieves all users for the specified collection"
-   :parameters {:path {:id uuid?}}
+   :parameters {:header {:session-id uuid?}
+                :path {:id uuid?}}
    :responses {200 {:body [(into models/user {:account-role int? :collection-id uuid?})]}}
-   :handler (fn [{{{:keys [id]} :path} :parameters}]
-              (let [user_collections_result (user_collections_assoc/READ-USERS-BY-COLLECTION id)]
-                (let [user_result (map #(utils/remove-db-only %) user_collections_result)]
-                  (if (= 0 (count user_result))
-                    {:status 404
-                     :body {:message "no users found for given collection"}}
-                    {:status 200
-                     :body user_result}))))})
+   :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
+              (if-not (ru/has-permission session-id "collection-get-all-users" 0)
+                ru/forbidden-page
+                (let [user_collections_result (user_collections_assoc/READ-USERS-BY-COLLECTION id)]
+                  (let [user_result (map #(utils/remove-db-only %) user_collections_result)]
+                    (if (= 0 (count user_result))
+                      {:status 404
+                       :body {:message "no users found for given collection"}}
+                      {:status 200
+                       :body user_result})))))})
