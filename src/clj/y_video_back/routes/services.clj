@@ -14,7 +14,8 @@
     [y-video-back.routes.service_handlers.handlers :as service-handlers]
     [ring.util.http-response :as response]
     [clojure.java.io :as io]
-    [y-video-back.routes.service_handlers.utils :as utils]))
+    [y-video-back.routes.service_handlers.utils :as utils]
+    [y-video-back.routes.service_handlers.role_utils :as ru]))
 
 
 
@@ -81,8 +82,8 @@
                            :body {:echo string?}}
               :responses {200 {:body {:echo string?}}}
               :handler (fn [{{{:keys [session-id]} :header :keys [body]} :parameters}]
-                         (if-not (utils/has-permission session-id "echo-post" 0)
-                           utils/forbidden-page
+                         (if-not (ru/has-permission session-id "echo-post" 0)
+                           ru/forbidden-page
                            {:status 200
                             :body body}))}
        :patch service-handlers/echo-patch}]

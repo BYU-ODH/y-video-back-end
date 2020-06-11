@@ -1,15 +1,27 @@
 - - - - - - - - - - - - - -
+UNIVERSAL
+
 Least Permissions
 
-    Student - 4
-
-    TA - 3
+    Student - 3
 
     Instructor (i.e. professor) - 2
 
     Lab Assistant - 1
 
     Admin - 0
+
+Most Permissions
+- - - - - - - - - - - - - -
+DEPENDENT
+
+Least Permissions
+
+    Student - 2
+
+    TA - 1
+
+    Instructor/Owner - 0
 
 Most Permissions
 - - - - - - - - - - - - - -

@@ -1,4 +1,4 @@
-(ns y-video-back.routes.permission-tests
+(ns y-video-back.routes.permissions.collection-tests
   (:require
     [clojure.test :refer :all]
     [ring.mock.request :refer :all]
@@ -40,11 +40,26 @@
                                      :account-name "Mr. Admin 1"
                                      :account-type 0
                                      :username "a1"}))
+  (def user-la-one (users/CREATE {:email "la_1@gmail.com"
+                                  :last-login "never"
+                                  :account-name "Mr. Assistant 1"
+                                  :account-type 1
+                                  :username "l1"}))
   (def user-instr-one (users/CREATE {:email "instructor_1@gmail.com"
                                      :last-login "never"
                                      :account-name "Mr. Instructor 1"
                                      :account-type 2
                                      :username "i1"}))
+  (def user-instr-two (users/CREATE {:email "instructor_2@gmail.com"
+                                     :last-login "never"
+                                     :account-name "Mr. Instructor 2"
+                                     :account-type 2
+                                     :username "i2"}))
+  (def user-instr-thr (users/CREATE {:email "instructor_3@gmail.com"
+                                     :last-login "never"
+                                     :account-name "Mr. Instructor 3"
+                                     :account-type 2
+                                     :username "i3"}))
   (def user-student-one (users/CREATE {:email "student_1@gmail.com"
                                        :last-login "never"
                                        :account-name "Mr. Student 1"
@@ -55,6 +70,11 @@
                                        :account-name "Mr. Student 2"
                                        :account-type 4
                                        :username "s2"}))
+  (def user-student-thr (users/CREATE {:email "student_3@gmail.com"
+                                       :last-login "never"
+                                       :account-name "Mr. Student 3"
+                                       :account-type 4
+                                       :username "s3"}))
   (def test-user-two (ut/under-to-hyphen (users/CREATE (g/get_random_user_without_id))))
   (def test-user-thr (ut/under-to-hyphen (users/CREATE (g/get_random_user_without_id))))
   (def test-coll-one (ut/under-to-hyphen (collections/CREATE (g/get_random_collection_without_id))))
@@ -65,6 +85,24 @@
 
 (deftest dummy
   (is (= 0 0)))
+
+; Create collection
+(deftest collection-create
+  (testing ""))
+; Retrieve collection
+; Update collection
+; Delete collection
+; Connect user and collection
+; Disconnects user and collection
+; Connect content and collection
+; Disconnects content and collection
+; Retrieve all contents for collection
+; Retrieve all courses for collection
+; Retrieve all users for collection
+; Connect course and collection
+; Disconnects course and collection
+
+
 
 (deftest no-session-id-for-testing
   (testing "no session id"

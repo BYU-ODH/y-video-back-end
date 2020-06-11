@@ -7,7 +7,8 @@
    [y-video-back.db.collections :as collections]
    [y-video-back.models :as models]
    [y-video-back.model-specs :as sp]
-   [y-video-back.routes.service_handlers.utils :as utils]))
+   [y-video-back.routes.service_handlers.utils :as utils]
+   [y-video-back.routes.service_handlers.role_utils :as ru]))
 
 
 (def collection-create ;; Non-functional
@@ -18,8 +19,8 @@
                            :id string?}}
                409 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header :keys [body]} :parameters}]
-              (if-not (utils/has-permission session-id "collection-create" 0)
-                utils/forbidden-page
+              (if-not (ru/has-permission session-id "collection-create" 0)
+                ru/forbidden-page
                 (try {:status 200
                       :body {:message "1 collection created"
                              :id (let [collection_id (utils/get-id (collections/CREATE (:collection body)))]
@@ -74,8 +75,8 @@
                 :path {:id uuid?} :body {:user-id uuid? :account-role int?}}
    :responses {200 {:body {:message string? :id string?}}}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
-              (if-not (utils/has-permission session-id "collection-add-user" {:collection-id id})
-                utils/forbidden-page
+              (if-not (ru/has-permission session-id "collection-add-user" {:collection-id id})
+                ru/forbidden-page
                 (let [result (utils/get-id (user_collections_assoc/CREATE (into body {:collection-id id})))]
                   (if (= nil result)
                     {:status 404
