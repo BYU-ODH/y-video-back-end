@@ -78,7 +78,8 @@
                                         (<= (get-user-role-coll user-id (:collection-id args)) 0))
         "collection-add-course" (or (<= user-type 0) false)
         "collection-remove-course" (or (<= user-type 0) false)
-        "collection-get-all-contents" (or (<= user-type 0) false)
+        "collection-get-all-contents" (or (<= user-type 1))
+
         "collection-get-all-courses" (or (<= user-type 0) false)
         "collection-get-all-users" (or (<= user-type 0) false)
 

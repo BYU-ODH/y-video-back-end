@@ -438,6 +438,36 @@
         (is (= 200 (:status res)))))))
 
 ; Retrieve all contents for collection
+(deftest collection-get-all-contents
+  (testing "student get contents, no connection"
+    (let [res (rp/collection-id-contents (:id user-stud-na)
+                                         (:id test-coll-one))]
+      (is (= 401 (:status res)))))
+  (testing "instructor get contents, no connection"
+    (let [res (rp/collection-id-contents (:id user-instr-na)
+                                         (:id test-coll-one))]
+      (is (= 401 (:status res)))))
+  (testing "lab assistant get contents, no connection"
+    (let [res (rp/collection-id-contents (:id user-la)
+                                         (:id test-coll-one))]
+      (is (= 200 (:status res)))))
+  (testing "admin get contents, no connection"
+    (let [res (rp/collection-id-contents (:id user-admin)
+                                         (:id test-coll-one))]
+      (is (= 200 (:status res)))))
+  (testing "student get contents, with connection (student)"
+    (let [res (rp/collection-id-contents (:id user-stud-stud)
+                                         (:id test-coll-one))]
+      (is (= 200 (:status res)))))
+  (testing "student get contents, with connection (TA)"
+    (let [res (rp/collection-id-contents (:id user-stud-ta)
+                                         (:id test-coll-one))]
+      (is (= 200 (:status res)))))
+  (testing "instructor get contents, with connection (owner)"
+    (let [res (rp/collection-id-contents (:id user-instr-c1)
+                                         (:id test-coll-one))]
+      (is (= 200 (:status res))))))
+
 ; Retrieve all courses for collection
 ; Retrieve all users for collection
 ; Connect course and collection
