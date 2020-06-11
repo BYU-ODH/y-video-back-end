@@ -90,14 +90,20 @@
 
 (defn collection-id-patch
   "Updates collection via app's patch (id) request"
-  [id new_collection]
-  (app (-> (request :patch (str "/api/collection/" id))
-           (json-body new_collection))))
+  ([session-id id new_collection]
+   (app (-> (request :patch (str "/api/collection/" id))
+            (header :session-id session-id)
+            (json-body new_collection))))
+  ([id new_collection]
+   (collection-id-patch SESSION-ID-BYPASS id new_collection)))
 
 (defn collection-id-delete
   "Deletes collection via app's delete (id) request"
-  [id]
-  (app (-> (request :delete (str "/api/collection/" id)))))
+  ([session-id id]
+   (app (-> (request :delete (str "/api/collection/" id))
+            (header :session-id session-id))))
+  ([id]
+   (collection-id-delete SESSION-ID-BYPASS id)))
 
 (defn content-post
   "Create a content via app's post request"
@@ -175,12 +181,15 @@
             (json-body {:user-id user-id :account-role role}))))
   ([collection-id user-id role]
    (collection-id-add-user SESSION-ID-BYPASS collection-id user-id role)))
+
 (defn collection-id-remove-user
   "Connects user and collection"
-  [collection-id user-id]
-  (app (-> (request :post (str "/api/collection/" collection-id "/remove-user"))
-           (json-body {:user_id user-id}))))
-
+  ([session-id collection-id user-id]
+   (app (-> (request :post (str "/api/collection/" collection-id "/remove-user"))
+            (header :session-id session-id)
+            (json-body {:user_id user-id}))))
+  ([collection-id user-id]
+   (collection-id-remove-user SESSION-ID-BYPASS collection-id user-id)))
 
 (defn file-post
   "Create a file via app's post request"

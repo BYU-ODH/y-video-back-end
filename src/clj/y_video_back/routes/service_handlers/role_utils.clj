@@ -46,10 +46,16 @@
         "user-create" true
         "echo-post" (<= user-type 2)
         "collection-create" (<= user-type 2)
+        "collection-update" (or (<= user-type 1)
+                                (<= (get-user-role-coll user-id (:collection-id args)) 1))
+        "collection-delete" (<= user-type 0)
         "collection-get-by-id" (or (<= user-type 2)
                                    (<= (get-user-role-coll user-id (:collection-id args)) 2)
                                    (user-crse-coll user-id (:collection-id args)))
-        "collection-add-user" (or (<= user-type 1) (<= (get-user-role-coll user-id (:collection-id args)) 3))
+        "collection-add-user" (or (<= user-type 1)
+                                  (<= (get-user-role-coll user-id (:collection-id args)) 0))
+        "collection-remove-user" (or (<= user-type 1)
+                                  (<= (get-user-role-coll user-id (:collection-id args)) 0))
         false))))
 
 (def forbidden-page

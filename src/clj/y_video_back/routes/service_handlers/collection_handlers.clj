@@ -50,27 +50,33 @@
 
 (def collection-update ;; Non-functional
   {:summary "Updates the specified collection"
-   :parameters {:path {:id uuid?} :body ::sp/collection}
+   :parameters {:header {:session-id uuid?}
+                :path {:id uuid?} :body ::sp/collection}
    :responses {200 {:body {:message string?}}}
-   :handler (fn [{{{:keys [id]} :path :keys [body]} :parameters}]
-              (let [result (collections/UPDATE id body)]
-                (if (nil? result)
-                  {:status 404
-                   :body {:message "requested collection not found"}}
-                  {:status 200
-                   :body {:message (str 1 " collections updated")}})))})
+   :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
+              (if-not (ru/has-permission session-id "collection-update" {:collection-id id})
+                ru/forbidden-page
+                (let [result (collections/UPDATE id body)]
+                  (if (nil? result)
+                    {:status 404
+                     :body {:message "requested collection not found"}}
+                    {:status 200
+                     :body {:message (str 1 " collections updated")}}))))})
 
 (def collection-delete ;; Non-functional
   {:summary "Deletes the specified collection"
-   :parameters {:path {:id uuid?}}
+   :parameters {:header {:session-id uuid?}
+                :path {:id uuid?}}
    :responses {200 {:body {:message string?}}}
-   :handler (fn [{{{:keys [id]} :path} :parameters}]
-              (let [result (collections/DELETE id)]
-                (if (= 0 result)
-                  {:status 404
-                   :body {:message "requested collection not found"}}
-                  {:status 200
-                   :body {:message (str 1 " collections deleted")}})))})
+   :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
+              (if-not (ru/has-permission session-id "collection-delete" 0)
+                ru/forbidden-page
+                (let [result (collections/DELETE id)]
+                  (if (= 0 result)
+                    {:status 404
+                     :body {:message "requested collection not found"}}
+                    {:status 200
+                     :body {:message (str 1 " collections deleted")}}))))})
 
 (def collection-add-user
   {:summary "Adds user to specified collection"
@@ -90,15 +96,18 @@
 
 (def collection-remove-user
   {:summary "Removes user from specified collection"
-   :parameters {:path {:id uuid?} :body {:user_id uuid?}}
+   :parameters {:header {:session-id uuid?}
+                :path {:id uuid?} :body {:user_id uuid?}}
    :responses {200 {:body {:message string?}}}
-   :handler (fn [{{{:keys [id]} :path :keys [body]} :parameters}]
-              (let [result (user_collections_assoc/DELETE-BY-IDS [id (:user_id body)])]
-                (if (= 0 result)
-                  {:status 404
-                   :body {:message "unable to remove user"}}
-                  {:status 200
-                   :body {:message (str result " users removed from collection")}})))})
+   :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
+              (if-not (ru/has-permission session-id "collection-remove-user" {:collection-id id})
+                ru/forbidden-page
+                (let [result (user_collections_assoc/DELETE-BY-IDS [id (:user_id body)])]
+                  (if (= 0 result)
+                    {:status 404
+                     :body {:message "unable to remove user"}}
+                    {:status 200
+                     :body {:message (str result " users removed from collection")}}))))})
 
 (def collection-add-content
   {:summary "Adds content to specified collection"
