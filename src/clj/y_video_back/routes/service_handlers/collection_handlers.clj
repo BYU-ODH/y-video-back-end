@@ -111,28 +111,34 @@
 
 (def collection-add-content
   {:summary "Adds content to specified collection"
-   :parameters {:path {:id uuid?} :body {:content-id uuid?}}
+   :parameters {:header {:session-id uuid?}
+                :path {:id uuid?} :body {:content-id uuid?}}
    :responses {200 {:body {:message string? :id string?}}}
-   :handler (fn [{{{:keys [id]} :path :keys [body]} :parameters}]
-              (let [result (utils/get-id (collection_contents_assoc/CREATE (into body {:collection-id id})))]
-                (if (= nil result)
-                  {:status 404
-                   :body {:message "unable to add content"}}
-                  {:status 200
-                   :body {:message (str 1 " contents added to collection")
-                          :id result}})))})
+   :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
+              (if-not (ru/has-permission session-id "collection-add-content" {:collection-id id})
+                ru/forbidden-page
+                (let [result (utils/get-id (collection_contents_assoc/CREATE (into body {:collection-id id})))]
+                  (if (= nil result)
+                    {:status 404
+                     :body {:message "unable to add content"}}
+                    {:status 200
+                     :body {:message (str 1 " contents added to collection")
+                            :id result}}))))})
 
 (def collection-remove-content
   {:summary "Removes content from specified collection"
-   :parameters {:path {:id uuid?} :body {:content-id uuid?}}
+   :parameters {:header {:session-id uuid?}
+                :path {:id uuid?} :body {:content-id uuid?}}
    :responses {200 {:body {:message string?}}}
-   :handler (fn [{{{:keys [id]} :path :keys [body]} :parameters}]
-              (let [result (collection_contents_assoc/DELETE-BY-IDS [id (:content-id body)])]
-                (if (= 0 result)
-                  {:status 404
-                   :body {:message "unable to remove content"}}
-                  {:status 200
-                   :body {:message (str result " contents removed from collection")}})))})
+   :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
+              (if-not (ru/has-permission session-id "collection-remove-content" {:collection-id id})
+                ru/forbidden-page
+                (let [result (collection_contents_assoc/DELETE-BY-IDS [id (:content-id body)])]
+                  (if (= 0 result)
+                    {:status 404
+                     :body {:message "unable to remove content"}}
+                    {:status 200
+                     :body {:message (str result " contents removed from collection")}}))))})
 
 (def collection-add-course
   {:summary "Adds course to specified collection"

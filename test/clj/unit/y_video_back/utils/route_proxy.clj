@@ -250,16 +250,21 @@
 
 (defn collection-id-add-content
   "Connects content and collection"
-  [collection-id content-id]
-  (app (-> (request :post (str "/api/collection/" collection-id "/add-content"))
-           (json-body {:content-id content-id}))))
+  ([session-id collection-id content-id]
+   (app (-> (request :post (str "/api/collection/" collection-id "/add-content"))
+            (header :session-id session-id)
+            (json-body {:content-id content-id}))))
+  ([collection-id content-id]
+   (collection-id-add-content SESSION-ID-BYPASS collection-id content-id)))
 
 (defn collection-id-remove-content
   "Connects content and collection"
-  [collection-id content-id]
-  (app (-> (request :post (str "/api/collection/" collection-id "/remove-content"))
-           (json-body {:content-id content-id}))))
-
+  ([session-id collection-id content-id]
+   (app (-> (request :post (str "/api/collection/" collection-id "/remove-content"))
+            (header :session-id session-id)
+            (json-body {:content-id content-id}))))
+  ([collection-id content-id]
+   (collection-id-remove-content SESSION-ID-BYPASS collection-id content-id)))
 (defn collection-id-contents
   "Reads all contents connected to collection"
   [id]

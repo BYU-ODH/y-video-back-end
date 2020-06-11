@@ -36,58 +36,53 @@
     (f)))
 
 (tcore/basic-transaction-fixtures
-  (def user-admin-one (users/CREATE {:email "admin_1@gmail.com"
+  (def user-admin (users/CREATE {:email "admin_1@gmail.com"
+                                 :last-login "never"
+                                 :account-name "Mr. Admin 1"
+                                 :account-type 0
+                                 :username "a1"}))
+  (def user-la (users/CREATE {:email "la_1@gmail.com"
+                              :last-login "never"
+                              :account-name "Mr. Assistant 1"
+                              :account-type 1
+                              :username "l1"}))
+  (def user-instr-c1 (users/CREATE {:email "instructor_1@gmail.com"
+                                    :last-login "never"
+                                    :account-name "Mr. Instructor 1"
+                                    :account-type 2
+                                    :username "i1"}))
+  (def user-instr-na (users/CREATE {:email "instructor_2@gmail.com"
+                                    :last-login "never"
+                                    :account-name "Mr. Instructor 2"
+                                    :account-type 2
+                                    :username "i2"}))
+  (def user-stud-stud (users/CREATE {:email "student_1@gmail.com"
                                      :last-login "never"
-                                     :account-name "Mr. Admin 1"
-                                     :account-type 0
-                                     :username "a1"}))
-  (def user-la-one (users/CREATE {:email "la_1@gmail.com"
-                                  :last-login "never"
-                                  :account-name "Mr. Assistant 1"
-                                  :account-type 1
-                                  :username "l1"}))
-  (def user-instr-one (users/CREATE {:email "instructor_1@gmail.com"
-                                     :last-login "never"
-                                     :account-name "Mr. Instructor 1"
-                                     :account-type 2
-                                     :username "i1"}))
-  (def user-instr-two (users/CREATE {:email "instructor_2@gmail.com"
-                                     :last-login "never"
-                                     :account-name "Mr. Instructor 2"
-                                     :account-type 2
-                                     :username "i2"}))
-  (def user-instr-thr (users/CREATE {:email "instructor_3@gmail.com"
-                                     :last-login "never"
-                                     :account-name "Mr. Instructor 3"
-                                     :account-type 2
-                                     :username "i3"}))
-  (def user-student-one (users/CREATE {:email "student_1@gmail.com"
-                                       :last-login "never"
-                                       :account-name "Mr. Student 1"
-                                       :account-type 3
-                                       :username "s1"}))
-  (def user-student-two (users/CREATE {:email "student_2@gmail.com"
-                                       :last-login "never"
-                                       :account-name "Mr. Student 2"
-                                       :account-type 3
-                                       :username "s2"}))
-  (def user-student-thr (users/CREATE {:email "student_3@gmail.com"
-                                       :last-login "never"
-                                       :account-name "Mr. Student 3"
-                                       :account-type 3
-                                       :username "s3"}))
+                                     :account-name "Mr. Student 1"
+                                     :account-type 3
+                                     :username "s1"}))
+  (def user-stud-ta (users/CREATE {:email "student_2@gmail.com"
+                                   :last-login "never"
+                                   :account-name "Mr. Student 2"
+                                   :account-type 3
+                                   :username "s2"}))
+  (def user-stud-na (users/CREATE {:email "student_3@gmail.com"
+                                   :last-login "never"
+                                   :account-name "Mr. Student 3"
+                                   :account-type 3
+                                   :username "s3"}))
   (def test-coll-one (ut/under-to-hyphen (collections/CREATE (g/get_random_collection_without_id))))
   (def test-crse-one (ut/under-to-hyphen (courses/CREATE (g/get_random_course_without_id))))
-  (def test-user-crse-one (ut/under-to-hyphen (user_courses_assoc/CREATE {:user_id (:id user-student-one)
+  (def test-user-crse-one (ut/under-to-hyphen (user_courses_assoc/CREATE {:user_id (:id user-stud-stud)
                                                                           :course_id (:id test-crse-one)
                                                                           :account_role 2}))) ; student in course
-  (def test-user-crse-two (ut/under-to-hyphen (user_courses_assoc/CREATE {:user_id (:id user-instr-one)
+  (def test-user-crse-two (ut/under-to-hyphen (user_courses_assoc/CREATE {:user_id (:id user-instr-c1)
                                                                           :course_id (:id test-crse-one)
                                                                           :account_role 0})))
-  (def test-user-coll-one (ut/under-to-hyphen (user_collections_assoc/CREATE {:user_id (:id user-instr-one)
+  (def test-user-coll-one (ut/under-to-hyphen (user_collections_assoc/CREATE {:user_id (:id user-instr-c1)
                                                                               :collection_id (:id test-coll-one)
                                                                               :account_role 0}))) ; owner of collection
-  (def test-user-coll-two (ut/under-to-hyphen (user_collections_assoc/CREATE {:user_id (:id user-student-two)
+  (def test-user-coll-two (ut/under-to-hyphen (user_collections_assoc/CREATE {:user_id (:id user-stud-ta)
                                                                               :collection_id (:id test-coll-one)
                                                                               :account_role 1}))) ; TA for collection
   (def test-coll-crse-one (ut/under-to-hyphen (collection_courses_assoc/CREATE {:collection_id (:id test-coll-one)
@@ -95,100 +90,96 @@
 
   (mount.core/start #'y-video-back.handler/app))
 
-
-(deftest dummy
-  (is (= 0 0)))
-
 ; (no|with) connection -> (not) connected via many-to-many table
 
 ; Create collection
 (deftest collection-create
   (testing "student create collection, no connection"
-    (let [res (rp/collection-post (:id user-student-one)
+    (let [res (rp/collection-post (:id user-stud-stud)
                                   (g/get_random_collection_without_id)
-                                  (:id user-student-one))]
+                                  (:id user-stud-stud))]
       (is (= 401 (:status res)))))
   (testing "instr create collection"
-    (let [res (rp/collection-post (:id user-instr-one)
+    (let [res (rp/collection-post (:id user-instr-c1)
                                   (g/get_random_collection_without_id)
-                                  (:id user-instr-one))]
+                                  (:id user-instr-c1))]
       (is (= 200 (:status res)))))
   (testing "lab assistant create collection"
-    (let [res (rp/collection-post (:id user-la-one)
+    (let [res (rp/collection-post (:id user-la)
                                   (g/get_random_collection_without_id)
-                                  (:id user-instr-one))]
+                                  (:id user-instr-c1))]
       (is (= 200 (:status res)))))
   (testing "admin create collection"
-    (let [res (rp/collection-post (:id user-admin-one)
+    (let [res (rp/collection-post (:id user-admin)
                                   (g/get_random_collection_without_id)
-                                  (:id user-instr-one))]
+                                  (:id user-instr-c1))]
       (is (= 200 (:status res))))))
 
 ; Retrieve collection
 (deftest collection-read
   (testing "student reading collection, no connection"
-    (let [res (rp/collection-id-get (:id user-student-thr)
+    (let [res (rp/collection-id-get (:id user-stud-na)
                                     (:id test-coll-one))]
       (is (= 401 (:status res)))))
   (testing "instructor reading collection, no connection"
-    (let [res (rp/collection-id-get (:id user-instr-two)
+    (let [res (rp/collection-id-get (:id user-instr-na)
                                     (:id test-coll-one))]
       (is (= 200 (:status res)))))
   (testing "lab assistant reading collection, no connection"
-    (let [res (rp/collection-id-get (:id user-la-one)
+    (let [res (rp/collection-id-get (:id user-la)
                                     (:id test-coll-one))]
       (is (= 200 (:status res)))))
   (testing "admin reading collection, no connection"
-    (let [res (rp/collection-id-get (:id user-admin-one)
+    (let [res (rp/collection-id-get (:id user-admin)
                                     (:id test-coll-one))]
       (is (= 200 (:status res)))))
   (testing "student reading collection, with connection (student)"
-    (let [res (rp/collection-id-get (:id user-student-one)
+    (let [res (rp/collection-id-get (:id user-stud-stud)
                                     (:id test-coll-one))]
       (is (= 200 (:status res)))))
   (testing "student reading collection, with connection (TA)"
-    (let [res (rp/collection-id-get (:id user-student-two)
+    (let [res (rp/collection-id-get (:id user-stud-ta)
                                     (:id test-coll-one))]
       (is (= 200 (:status res)))))
   (testing "instructor reading collection, with connection"
-    (let [res (rp/collection-id-get (:id user-instr-one)
+    (let [res (rp/collection-id-get (:id user-instr-c1)
                                     (:id test-coll-one))]
       (is (= 200 (:status res))))))
 
 ; Update collection
 (deftest collection-update
   (testing "student update collection, no connection"
-    (let [res (rp/collection-id-patch (:id user-student-thr)
+    (let [res (rp/collection-id-patch (:id user-stud-na)
                                       (:id test-coll-one)
                                       (g/get_random_collection_without_id))]
       (is (= 401 (:status res)))))
   (testing "instructor update collection, no connection"
-    (let [res (rp/collection-id-patch (:id user-instr-two)
+    (let [res (rp/collection-id-patch (:id user-instr-na)
                                       (:id test-coll-one)
                                       (g/get_random_collection_without_id))]
       (is (= 401 (:status res)))))
   (testing "lab assistant update collection, no connection"
-    (let [res (rp/collection-id-patch (:id user-la-one)
+    (let [res (rp/collection-id-patch (:id user-la)
                                       (:id test-coll-one)
                                       (g/get_random_collection_without_id))]
       (is (= 200 (:status res)))))
   (testing "admin update collection, no connection"
-    (let [res (rp/collection-id-patch (:id user-admin-one)
+    (let [res (rp/collection-id-patch (:id user-admin)
                                       (:id test-coll-one)
                                       (g/get_random_collection_without_id))]
       (is (= 200 (:status res)))))
   (testing "student update collection, with connection (student)"
-    (let [res (rp/collection-id-patch (:id user-student-one)
+    (let [res (rp/collection-id-patch (:id user-stud-stud)
                                       (:id test-coll-one)
                                       (g/get_random_collection_without_id))]
       (is (= 401 (:status res)))))
   (testing "student update collection, with connection (TA)"
-    (let [res (rp/collection-id-patch (:id user-student-two)
+    (let [res (rp/collection-id-patch (:id user-stud-ta)
                                       (:id test-coll-one)
                                       (g/get_random_collection_without_id))]
       (is (= 200 (:status res)))))
   (testing "instructor update collection, with connection (owner?)"
-    (let [res (rp/collection-id-patch (:id user-instr-one)
+    (let [res (rp/collection-id-patch (:id user-instr-c1)
                                       (:id test-coll-one)
                                       (g/get_random_collection_without_id))]
       (is (= 200 (:status res))))))
@@ -196,31 +187,31 @@
 ; Delete collection
 (deftest collection-delete
   (testing "student delete collection, no connection"
-    (let [res (rp/collection-id-delete (:id user-student-thr)
+    (let [res (rp/collection-id-delete (:id user-stud-na)
                                        (:id test-coll-one))]
       (is (= 401 (:status res)))))
   (testing "instructor delete collection, no connection"
-    (let [res (rp/collection-id-delete (:id user-instr-two)
+    (let [res (rp/collection-id-delete (:id user-instr-na)
                                        (:id test-coll-one))]
       (is (= 401 (:status res)))))
   (testing "lab assistant delete collection, no connection"
-    (let [res (rp/collection-id-delete (:id user-la-one)
+    (let [res (rp/collection-id-delete (:id user-la)
                                        (:id test-coll-one))]
       (is (= 401 (:status res)))))
   (testing "admin delete collection, no connection"
-    (let [res (rp/collection-id-delete (:id user-admin-one)
+    (let [res (rp/collection-id-delete (:id user-admin)
                                        (:id test-coll-one))]
       (is (= 200 (:status res)))))
   (testing "student delete collection, with connection (student)"
-    (let [res (rp/collection-id-delete (:id user-student-one)
+    (let [res (rp/collection-id-delete (:id user-stud-stud)
                                        (:id test-coll-one))]
       (is (= 401 (:status res)))))
   (testing "student delete collection, with connection (TA)"
-    (let [res (rp/collection-id-delete (:id user-student-two)
+    (let [res (rp/collection-id-delete (:id user-stud-ta)
                                        (:id test-coll-one))]
       (is (= 401 (:status res)))))
   (testing "instructor delete collection, with connection (owner?)"
-    (let [res (rp/collection-id-delete (:id user-instr-one)
+    (let [res (rp/collection-id-delete (:id user-instr-c1)
                                        (:id test-coll-one))]
       (is (= 401 (:status res))))))
 
@@ -228,49 +219,49 @@
 (deftest collection-add-user
   (testing "student add user, no connection"
     (let [test-add-user (users/CREATE (g/get_random_user_without_id))]
-      (let [res (rp/collection-id-add-user (:id user-student-thr)
+      (let [res (rp/collection-id-add-user (:id user-stud-na)
                                            (:id test-coll-one)
                                            (:id test-add-user)
                                            0)]
         (is (= 401 (:status res))))))
   (testing "instructor add user, no connection"
     (let [test-add-user (users/CREATE (g/get_random_user_without_id))]
-      (let [res (rp/collection-id-add-user (:id user-instr-two)
+      (let [res (rp/collection-id-add-user (:id user-instr-na)
                                            (:id test-coll-one)
                                            (:id test-add-user)
                                            0)]
         (is (= 401 (:status res))))))
   (testing "lab assistant add user, no connection"
     (let [test-add-user (users/CREATE (g/get_random_user_without_id))]
-      (let [res (rp/collection-id-add-user (:id user-la-one)
+      (let [res (rp/collection-id-add-user (:id user-la)
                                            (:id test-coll-one)
                                            (:id test-add-user)
                                            0)]
         (is (= 200 (:status res))))))
   (testing "admin add user, no connection"
     (let [test-add-user (users/CREATE (g/get_random_user_without_id))]
-      (let [res (rp/collection-id-add-user (:id user-admin-one)
+      (let [res (rp/collection-id-add-user (:id user-admin)
                                            (:id test-coll-one)
                                            (:id test-add-user)
                                            0)]
         (is (= 200 (:status res))))))
   (testing "student add user, with connection (student)"
     (let [test-add-user (users/CREATE (g/get_random_user_without_id))]
-      (let [res (rp/collection-id-add-user (:id user-student-one)
+      (let [res (rp/collection-id-add-user (:id user-stud-stud)
                                            (:id test-coll-one)
                                            (:id test-add-user)
                                            0)]
         (is (= 401 (:status res))))))
   (testing "student add user, with connection (TA)"
     (let [test-add-user (users/CREATE (g/get_random_user_without_id))]
-      (let [res (rp/collection-id-add-user (:id user-student-two)
+      (let [res (rp/collection-id-add-user (:id user-stud-ta)
                                            (:id test-coll-one)
                                            (:id test-add-user)
                                            0)]
         (is (= 401 (:status res))))))
   (testing "instructor add user, with connection"
     (let [test-add-user (users/CREATE (g/get_random_user_without_id))]
-      (let [res (rp/collection-id-add-user (:id user-instr-one)
+      (let [res (rp/collection-id-add-user (:id user-instr-c1)
                                            (:id test-coll-one)
                                            (:id test-add-user)
                                            0)]
@@ -283,7 +274,7 @@
       (user_collections_assoc/CREATE {:user_id (:id test-remove-user)
                                       :collection_id (:id test-coll-one)
                                       :account_role 0})
-      (let [res (rp/collection-id-remove-user (:id user-student-thr)
+      (let [res (rp/collection-id-remove-user (:id user-stud-na)
                                            (:id test-coll-one)
                                            (:id test-remove-user))]
         (is (= 401 (:status res))))))
@@ -292,7 +283,7 @@
       (user_collections_assoc/CREATE {:user_id (:id test-remove-user)
                                       :collection_id (:id test-coll-one)
                                       :account_role 0})
-      (let [res (rp/collection-id-remove-user (:id user-instr-two)
+      (let [res (rp/collection-id-remove-user (:id user-instr-na)
                                            (:id test-coll-one)
                                            (:id test-remove-user))]
         (is (= 401 (:status res))))))
@@ -301,7 +292,7 @@
       (user_collections_assoc/CREATE {:user_id (:id test-remove-user)
                                       :collection_id (:id test-coll-one)
                                       :account_role 0})
-      (let [res (rp/collection-id-remove-user (:id user-la-one)
+      (let [res (rp/collection-id-remove-user (:id user-la)
                                            (:id test-coll-one)
                                            (:id test-remove-user))]
         (is (= 200 (:status res))))))
@@ -310,7 +301,7 @@
       (user_collections_assoc/CREATE {:user_id (:id test-remove-user)
                                       :collection_id (:id test-coll-one)
                                       :account_role 0})
-      (let [res (rp/collection-id-remove-user (:id user-admin-one)
+      (let [res (rp/collection-id-remove-user (:id user-admin)
                                            (:id test-coll-one)
                                            (:id test-remove-user))]
         (is (= 200 (:status res))))))
@@ -319,7 +310,7 @@
       (user_collections_assoc/CREATE {:user_id (:id test-remove-user)
                                       :collection_id (:id test-coll-one)
                                       :account_role 0})
-      (let [res (rp/collection-id-remove-user (:id user-student-one)
+      (let [res (rp/collection-id-remove-user (:id user-stud-stud)
                                            (:id test-coll-one)
                                            (:id test-remove-user))]
         (is (= 401 (:status res))))))
@@ -328,7 +319,7 @@
       (user_collections_assoc/CREATE {:user_id (:id test-remove-user)
                                       :collection_id (:id test-coll-one)
                                       :account_role 0})
-      (let [res (rp/collection-id-remove-user (:id user-student-two)
+      (let [res (rp/collection-id-remove-user (:id user-stud-ta)
                                            (:id test-coll-one)
                                            (:id test-remove-user))]
         (is (= 401 (:status res))))))
@@ -337,40 +328,117 @@
       (user_collections_assoc/CREATE {:user_id (:id test-remove-user)
                                       :collection_id (:id test-coll-one)
                                       :account_role 0})
-      (let [res (rp/collection-id-remove-user (:id user-instr-one)
+      (let [res (rp/collection-id-remove-user (:id user-instr-c1)
                                            (:id test-coll-one)
                                            (:id test-remove-user))]
         (is (= 200 (:status res)))))))
 
 ; Connect content and collection
+(deftest collection-add-content
+  (testing "student add content, no connection"
+    (let [new-content (contents/CREATE (g/get_random_content_without_id))]
+      (let [res (rp/collection-id-add-content (:id user-stud-na)
+                                              (:id test-coll-one)
+                                              (:id new-content))]
+        (is (= 401 (:status res))))))
+  (testing "instructor add content, no connection"
+    (let [new-content (contents/CREATE (g/get_random_content_without_id))]
+      (let [res (rp/collection-id-add-content (:id user-instr-na)
+                                              (:id test-coll-one)
+                                              (:id new-content))]
+        (is (= 401 (:status res))))))
+  (testing "lab assistant add content, no connection"
+    (let [new-content (contents/CREATE (g/get_random_content_without_id))]
+      (let [res (rp/collection-id-add-content (:id user-la)
+                                              (:id test-coll-one)
+                                              (:id new-content))]
+        (is (= 200 (:status res))))))
+  (testing "admin add content, no connection"
+    (let [new-content (contents/CREATE (g/get_random_content_without_id))]
+      (let [res (rp/collection-id-add-content (:id user-admin)
+                                              (:id test-coll-one)
+                                              (:id new-content))]
+        (is (= 200 (:status res))))))
+  (testing "student add content, with connection (student)"
+    (let [new-content (contents/CREATE (g/get_random_content_without_id))]
+      (let [res (rp/collection-id-add-content (:id user-stud-stud)
+                                              (:id test-coll-one)
+                                              (:id new-content))]
+        (is (= 401 (:status res))))))
+  (testing "student add content, with connection (TA)"
+    (let [new-content (contents/CREATE (g/get_random_content_without_id))]
+      (let [res (rp/collection-id-add-content (:id user-stud-ta)
+                                              (:id test-coll-one)
+                                              (:id new-content))]
+        (is (= 401 (:status res))))))
+  (testing "instructor add content, with connection (owner?)"
+    (let [new-content (contents/CREATE (g/get_random_content_without_id))]
+      (let [res (rp/collection-id-add-content (:id user-instr-c1)
+                                              (:id test-coll-one)
+                                              (:id new-content))]
+        (is (= 200 (:status res)))))))
+
 ; Disconnects content and collection
+(deftest collection-remove-content
+  (testing "student remove content, no connection"
+    (let [new-content (contents/CREATE (g/get_random_content_without_id))]
+      (collection_contents_assoc/CREATE {:content_id (:id new-content)
+                                         :collection_id (:id test-coll-one)})
+      (let [res (rp/collection-id-remove-content (:id user-stud-na)
+                                                 (:id test-coll-one)
+                                                 (:id new-content))]
+        (is (= 401 (:status res))))))
+  (testing "instructor remove content, no connection"
+    (let [new-content (contents/CREATE (g/get_random_content_without_id))]
+      (collection_contents_assoc/CREATE {:content_id (:id new-content)
+                                         :collection_id (:id test-coll-one)})
+      (let [res (rp/collection-id-remove-content (:id user-instr-na)
+                                                 (:id test-coll-one)
+                                                 (:id new-content))]
+        (is (= 401 (:status res))))))
+  (testing "lab assistant remove content, no connection"
+    (let [new-content (contents/CREATE (g/get_random_content_without_id))]
+      (collection_contents_assoc/CREATE {:content_id (:id new-content)
+                                         :collection_id (:id test-coll-one)})
+      (let [res (rp/collection-id-remove-content (:id user-la)
+                                                 (:id test-coll-one)
+                                                 (:id new-content))]
+        (is (= 200 (:status res))))))
+  (testing "admin remove content, no connection"
+    (let [new-content (contents/CREATE (g/get_random_content_without_id))]
+      (collection_contents_assoc/CREATE {:content_id (:id new-content)
+                                         :collection_id (:id test-coll-one)})
+      (let [res (rp/collection-id-remove-content (:id user-admin)
+                                                 (:id test-coll-one)
+                                                 (:id new-content))]
+        (is (= 200 (:status res))))))
+  (testing "student remove content, with connection (student)"
+    (let [new-content (contents/CREATE (g/get_random_content_without_id))]
+      (collection_contents_assoc/CREATE {:content_id (:id new-content)
+                                         :collection_id (:id test-coll-one)})
+      (let [res (rp/collection-id-remove-content (:id user-stud-stud)
+                                                 (:id test-coll-one)
+                                                 (:id new-content))]
+        (is (= 401 (:status res))))))
+  (testing "student remove content, with connection (TA)"
+    (let [new-content (contents/CREATE (g/get_random_content_without_id))]
+      (collection_contents_assoc/CREATE {:content_id (:id new-content)
+                                         :collection_id (:id test-coll-one)})
+      (let [res (rp/collection-id-remove-content (:id user-stud-ta)
+                                                 (:id test-coll-one)
+                                                 (:id new-content))]
+        (is (= 401 (:status res))))))
+  (testing "instructor remove content, with connection (owner?)"
+    (let [new-content (contents/CREATE (g/get_random_content_without_id))]
+      (collection_contents_assoc/CREATE {:content_id (:id new-content)
+                                         :collection_id (:id test-coll-one)})
+      (let [res (rp/collection-id-remove-content (:id user-instr-c1)
+                                                 (:id test-coll-one)
+                                                 (:id new-content))]
+        (is (= 200 (:status res)))))))
+
 ; Retrieve all contents for collection
 ; Retrieve all courses for collection
 ; Retrieve all users for collection
 ; Connect course and collection
 ; Disconnects course and collection
-
-
-
-(deftest no-session-id-for-testing
-  (testing "no session id"
-    (let [res (rp/echo-post "6bc824a6-f446-416d-8dd6-06350ae577f4" "hey")]
-      (is (= 200 (:status res)))
-      (is (= {:echo "hey"} (m/decode-response-body res))))
-    (let [res (rp/echo-post "there")]
-      (is (= 200 (:status res)))
-      (is (= {:echo "there"} (m/decode-response-body res))))))
-
-(deftest test-collection-add-user
-  (testing "student adding student, no connection to coll"
-    (let [res (rp/collection-id-add-user (:id user-student-one) ; session-id
-                                         (:id test-coll-one)
-                                         (:id user-student-two)
-                                         0)]
-      (is (= 401 (:status res)))))
-  (testing "instructor adding student"
-    (let [res (rp/collection-id-add-user (:id user-instr-one) ; session-id
-                                         (:id test-coll-one)
-                                         (:id user-student-one)
-                                         0)]
-      (is (= 200 (:status res))))))

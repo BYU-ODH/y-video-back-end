@@ -38,7 +38,7 @@
 (defn has-permission
   "Returns true if user has permission for route, else false"
   [token route args]
-  (if (= token (utils/to-uuid "6bc824a6-f446-416d-8dd6-06350ae577f4"))
+  (if (= token (utils/to-uuid "6bc824a6-f446-416d-8dd6-06350ae577f4")) ; Add if test before deployment
     true
     (let [user-id (token-to-user-id token)
           user-type (get-user-type user-id)]
@@ -55,7 +55,11 @@
         "collection-add-user" (or (<= user-type 1)
                                   (<= (get-user-role-coll user-id (:collection-id args)) 0))
         "collection-remove-user" (or (<= user-type 1)
-                                  (<= (get-user-role-coll user-id (:collection-id args)) 0))
+                                     (<= (get-user-role-coll user-id (:collection-id args)) 0))
+        "collection-add-content" (or (<= user-type 1)
+                                     (<= (get-user-role-coll user-id (:collection-id args)) 0))
+        "collection-remove-content" (or (<= user-type 1)
+                                        (<= (get-user-role-coll user-id (:collection-id args)) 0))
         false))))
 
 (def forbidden-page
