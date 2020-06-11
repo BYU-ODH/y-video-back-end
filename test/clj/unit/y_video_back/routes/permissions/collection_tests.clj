@@ -63,17 +63,17 @@
   (def user-student-one (users/CREATE {:email "student_1@gmail.com"
                                        :last-login "never"
                                        :account-name "Mr. Student 1"
-                                       :account-type 4
+                                       :account-type 3
                                        :username "s1"}))
   (def user-student-two (users/CREATE {:email "student_2@gmail.com"
                                        :last-login "never"
                                        :account-name "Mr. Student 2"
-                                       :account-type 4
+                                       :account-type 3
                                        :username "s2"}))
   (def user-student-thr (users/CREATE {:email "student_3@gmail.com"
                                        :last-login "never"
                                        :account-name "Mr. Student 3"
-                                       :account-type 4
+                                       :account-type 3
                                        :username "s3"}))
   (def test-user-two (ut/under-to-hyphen (users/CREATE (g/get_random_user_without_id))))
   (def test-user-thr (ut/under-to-hyphen (users/CREATE (g/get_random_user_without_id))))
@@ -86,9 +86,30 @@
 (deftest dummy
   (is (= 0 0)))
 
+; (no|with) connection -> (not) connected via many-to-many table
+
 ; Create collection
 (deftest collection-create
-  (testing ""))
+  (testing "student create collection, no connection"
+    (let [res (rp/collection-post (:id user-student-one)
+                                  (g/get_random_collection_without_id)
+                                  (:id user-student-one))]
+      (is (= 401 (:status res)))))
+  (testing "instr create collection"
+    (let [res (rp/collection-post (:id user-instr-one)
+                                  (g/get_random_collection_without_id)
+                                  (:id user-instr-one))]
+      (is (= 401 (:status res)))))
+  (testing "lab assistant create collection"
+    (let [res (rp/collection-post (:id user-la-one)
+                                  (g/get_random_collection_without_id)
+                                  (:id user-instr-one))]
+      (is (= 200 (:status res)))))
+  (testing "admin create collection"
+    (let [res (rp/collection-post (:id user-admin-one)
+                                  (g/get_random_collection_without_id)
+                                  (:id user-instr-one))]
+      (is (= 200 (:status res))))))
 ; Retrieve collection
 ; Update collection
 ; Delete collection

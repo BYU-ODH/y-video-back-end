@@ -16,3 +16,4 @@ profiles.clj
 /.eastwood
 notes.txt
 todo.txt
+*.swp

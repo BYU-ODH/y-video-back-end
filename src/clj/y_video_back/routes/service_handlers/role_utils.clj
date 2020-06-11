@@ -46,7 +46,7 @@
       (case route
         "user-create" true
         "echo-post" (<= user-type 2)
-        "collection-create" (<= user-type 2)
+        "collection-create" (<= user-type 1)
         "collection-add-user" (or (<= user-type 1) (<= (get-user-role user-id (:collection-id args)) 3))
         false))))
 
