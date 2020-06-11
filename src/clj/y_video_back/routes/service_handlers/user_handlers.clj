@@ -1,6 +1,7 @@
 (ns y-video-back.routes.service_handlers.user_handlers
   (:require
    [y-video-back.db.user-collections-assoc :as user_collections_assoc]
+   [y-video-back.db.user-courses-assoc :as user_courses_assoc]
    [y-video-back.db.users :as users]
    [y-video-back.models :as models]
    [y-video-back.model-specs :as sp]
@@ -90,6 +91,20 @@
                      :body {:message "no users found for given collection"}}
                     {:status 200
                      :body collection_result}))))})
+
+(def user-get-all-courses ;; Non-functional
+  {:summary "Retrieves all courses for specified user"
+   :parameters {:path {:id uuid?}}
+   :responses {200 {:body [(into models/course {:account-role int? :user-id uuid?})]}}
+   :handler (fn [{{{:keys [id]} :path} :parameters}]
+              (let [user_courses_result (user_courses_assoc/READ-COURSES-BY-USER id)]
+                (let [course_result (map #(utils/remove-db-only %) user_courses_result)]
+                  (if (= 0 (count course_result))
+                    {:status 404
+                     :body {:message "no users found for given course"}}
+                    {:status 200
+                     :body course_result}))))})
+
 
 (def user-get-all-words
   {:summary "Retrieves all words under specified user"

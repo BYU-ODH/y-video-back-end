@@ -2,9 +2,11 @@
   (:require
    [y-video-back.db.courses :as courses]
    [y-video-back.db.collections-courses-assoc :as collection_courses_assoc]
+   [y-video-back.db.user-courses-assoc :as user_courses_assoc]
    [y-video-back.models :as models]
    [y-video-back.model-specs :as sp]
-   [y-video-back.routes.service_handlers.utils :as utils]))
+   [y-video-back.routes.service_handlers.utils :as utils]
+   [y-video-back.routes.service_handlers.role_utils :as ru]))
 
 (def course-create ;; Non-functional
   {:summary "Creates a new course"
@@ -94,3 +96,44 @@
                      :body {:message "no courses found for given collection"}}
                     {:status 200
                      :body collection_result}))))})
+
+(def course-add-user
+  {:summary "Adds user to specified course"
+   :parameters {:header {:session-id uuid?}
+                :path {:id uuid?} :body {:user-id uuid? :account-role int?}}
+   :responses {200 {:body {:message string? :id string?}}}
+   :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
+              (if-not (ru/has-permission session-id "course-add-user" {:course-id id})
+                ru/forbidden-page
+                (let [result (utils/get-id (user_courses_assoc/CREATE (into body {:course-id id})))]
+                  (if (= nil result)
+                    {:status 404
+                     :body {:message "unable to add user"}}
+                    {:status 200
+                     :body {:message (str 1 " users added to course")
+                            :id result}}))))})
+
+(def course-remove-user
+  {:summary "Removes user from specified course"
+   :parameters {:path {:id uuid?} :body {:user_id uuid?}}
+   :responses {200 {:body {:message string?}}}
+   :handler (fn [{{{:keys [id]} :path :keys [body]} :parameters}]
+              (let [result (user_courses_assoc/DELETE-BY-IDS [id (:user_id body)])]
+                (if (= 0 result)
+                  {:status 404
+                   :body {:message "unable to remove user"}}
+                  {:status 200
+                   :body {:message (str result " users removed from course")}})))})
+
+(def course-get-all-users
+  {:summary "Retrieves all users for the specified course"
+   :parameters {:path {:id uuid?}}
+   :responses {200 {:body [(into models/user {:account-role int? :course-id uuid?})]}}
+   :handler (fn [{{{:keys [id]} :path} :parameters}]
+              (let [user_courses_result (user_courses_assoc/READ-USERS-BY-COURSE id)]
+                (let [user_result (map #(utils/remove-db-only %) user_courses_result)]
+                  (if (= 0 (count user_result))
+                    {:status 404
+                     :body {:message "no users found for given course"}}
+                    {:status 200
+                     :body user_result}))))})

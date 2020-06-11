@@ -21,6 +21,7 @@
 (def user-delete users/user-delete)
 (def user-get-logged-in users/user-get-logged-in)
 (def user-get-all-collections users/user-get-all-collections)
+(def user-get-all-courses users/user-get-all-courses)
 (def user-get-all-words users/user-get-all-words)
 
 ; Collection handlers
@@ -64,6 +65,9 @@
 (def course-add-collection courses/course-add-collection)
 (def course-remove-collection courses/course-remove-collection)
 (def course-get-all-collections courses/course-get-all-collections)
+(def course-add-user courses/course-add-user)
+(def course-remove-user courses/course-remove-user)
+(def course-get-all-users courses/course-get-all-users)
 
 ; Word handlers
 (def word-create words/word-create)

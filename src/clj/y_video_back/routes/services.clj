@@ -118,6 +118,8 @@
        :delete service-handlers/user-delete}]
      ["/{id}/collections"
       {:get service-handlers/user-get-all-collections}]
+     ["/{id}/courses"
+      {:get service-handlers/user-get-all-courses}]
 
      ["/{id}/words"
       {:get service-handlers/user-get-all-words}]]
@@ -177,7 +179,13 @@
      ["/{id}/remove-collection"
       {:post service-handlers/course-remove-collection}]
      ["/{id}/collections"
-      {:get service-handlers/course-get-all-collections}]]
+      {:get service-handlers/course-get-all-collections}]
+     ["/{id}/add-user"
+      {:post service-handlers/course-add-user}]
+     ["/{id}/remove-user"
+      {:post service-handlers/course-remove-user}]
+     ["/{id}/users"
+      {:get service-handlers/course-get-all-users}]]
 
     ["/content"
      {:swagger {:tags ["content"]}}

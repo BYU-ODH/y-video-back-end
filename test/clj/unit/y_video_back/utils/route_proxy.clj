@@ -164,6 +164,21 @@
   [id]
   (app (-> (request :delete (str "/api/course/" id)))))
 
+(defn collection-id-add-user
+  "Connects user and collection"
+  ([session-id collection-id user-id role]
+   (app (-> (request :post (str "/api/collection/" collection-id "/add-user"))
+            (header :session-id session-id)
+            (json-body {:user-id user-id :account-role role}))))
+  ([collection-id user-id role]
+   (collection-id-add-user SESSION-ID-BYPASS collection-id user-id role)))
+(defn collection-id-remove-user
+  "Connects user and collection"
+  [collection-id user-id]
+  (app (-> (request :post (str "/api/collection/" collection-id "/remove-user"))
+           (json-body {:user_id user-id}))))
+
+
 (defn file-post
   "Create a file via app's post request"
   [file_without_id]
@@ -186,19 +201,30 @@
   [id]
   (app (-> (request :delete (str "/api/file/" id)))))
 
-(defn collection-id-add-user
-  "Connects user and collection"
-  ([session-id collection-id user-id role]
-   (app (-> (request :post (str "/api/collection/" collection-id "/add-user"))
+(defn course-id-add-user
+  "Connects user and course"
+  ([session-id course-id user-id role]
+   (app (-> (request :post (str "/api/course/" course-id "/add-user"))
             (header :session-id session-id)
             (json-body {:user-id user-id :account-role role}))))
-  ([collection-id user-id role]
-   (collection-id-add-user SESSION-ID-BYPASS collection-id user-id role)))
-(defn collection-id-remove-user
-  "Connects user and collection"
-  [collection-id user-id]
-  (app (-> (request :post (str "/api/collection/" collection-id "/remove-user"))
+  ([course-id user-id role]
+   (course-id-add-user SESSION-ID-BYPASS course-id user-id role)))
+(defn course-id-remove-user
+  "Connects user and course"
+  [course-id user-id]
+  (app (-> (request :post (str "/api/course/" course-id "/remove-user"))
            (json-body {:user_id user-id}))))
+
+(defn course-id-users
+  "Reads all users connected to course"
+  [id]
+  (app (-> (request :get (str "/api/course/" id "/users")))))
+
+(defn user-id-courses
+  "Reads all courses connected to user"
+  [id]
+  (app (-> (request :get (str "/api/user/" id "/courses")))))
+
 
 (defn collection-id-users
   "Reads all users connected to collection"
@@ -248,6 +274,12 @@
   "Reads all courses connected to collection"
   [id]
   (app (-> (request :get (str "/api/collection/" id "/courses")))))
+
+(defn course-id-users
+  "Reads all users connected to course"
+  [id]
+  (app (-> (request :get (str "/api/course/" id "/users")))))
+
 
 (defn course-id-collections
   "Reads all collections connected to course"

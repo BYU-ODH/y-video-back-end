@@ -26,6 +26,7 @@
       [y-video-back.db.courses :as courses]
       [y-video-back.db.files :as files]
       [y-video-back.db.user-collections-assoc :as user_collections_assoc]
+      [y-video-back.db.user-courses-assoc :as user_courses_assoc]
       [y-video-back.db.users :as users]
       [y-video-back.db.words :as words]
       [y-video-back.utils.utils :as ut]))
@@ -69,6 +70,15 @@
   (def test-user-coll-thr (ut/under-to-hyphen (user_collections_assoc/CREATE {:user_id (:id test-user-thr)
                                                                               :collection_id (:id test-coll-thr)
                                                                               :account_role 0})))
+  (def test-user-crse-one (ut/under-to-hyphen (user_courses_assoc/CREATE {:user_id (:id test-user-one)
+                                                                          :course_id (:id test-crse-one)
+                                                                          :account_role 0})))
+  (def test-user-crse-two (ut/under-to-hyphen (user_courses_assoc/CREATE {:user_id (:id test-user-two)
+                                                                          :course_id (:id test-crse-two)
+                                                                          :account_role 0})))
+  (def test-user-crse-thr (ut/under-to-hyphen (user_courses_assoc/CREATE {:user_id (:id test-user-thr)
+                                                                          :course_id (:id test-crse-thr)
+                                                                          :account_role 0})))
   (def test-coll-cont-one (ut/under-to-hyphen (collection_contents_assoc/CREATE {:collection_id (:id test-coll-one)
                                                                                  :content_id (:id test-cont-one)})))
   (def test-coll-cont-two (ut/under-to-hyphen (collection_contents_assoc/CREATE {:collection_id (:id test-coll-two)
@@ -126,6 +136,39 @@
                  (ut/remove-db-only)
                  (list))
              (map ut/remove-db-only (m/decode-response-body res)))))))
+(deftest test-user-course-assoc
+  (testing "connect user and course"
+    (let [new_user_crse_assoc (g/get_random_user_courses_assoc_without_id (:id test-user-one) (:id test-crse-two))]
+      (let [res (rp/course-id-add-user (:course-id new_user_crse_assoc) (:id test-user-one) (:account-role new_user_crse_assoc))]
+        (is (= 200 (:status res)))
+        (let [id (ut/to-uuid (:id (m/decode-response-body res)))]
+          (is (= (list (into new_user_crse_assoc {:id id}))
+                 (map ut/remove-db-only (user_courses_assoc/READ-BY-IDS [(:course-id new_user_crse_assoc) (:user-id new_user_crse_assoc)]))))))))
+  (testing "disconnect user and course"
+    (let [res (rp/course-id-remove-user (:id test-crse-one) (:id test-user-one))]
+      (is (= 200 (:status res)))
+      (is (= '()
+             (user_courses_assoc/READ-BY-IDS [(:id test-crse-one) (:id test-user-one)])))))
+  (testing "find all users by course"
+    (let [res (rp/course-id-users (:id test-crse-thr))]
+      (is (= 200 (:status res)))
+      (is (= (-> test-user-thr
+                 (update :id str)
+                 (into {:course-id (str (:id test-crse-thr)) :account-role 0})
+                 (ut/remove-db-only)
+                 (list))
+             (map ut/remove-db-only (m/decode-response-body res))))))
+  (testing "find all courses by user"
+    (let [res (rp/user-id-courses (:id test-user-thr))]
+      (is (= 200 (:status res)))
+      (is (= (-> test-crse-thr
+                 (update :id str)
+                 (into {:user-id (str (:id test-user-thr)) :account-role 0})
+                 (ut/remove-db-only)
+                 (list))
+             (map ut/remove-db-only (m/decode-response-body res)))))))
+
+
 
 (deftest test-coll-content-assoc
   (testing "connect collection and content"

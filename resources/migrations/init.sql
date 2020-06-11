@@ -114,6 +114,20 @@ CREATE TABLE user_collections_assoc (
 );
 COMMENT ON TABLE user_collections_assoc IS 'Many-to-many table connecting users and collections, incl. user roles in collections';
 
+DROP TABLE IF EXISTS user_courses_assoc CASCADE;
+CREATE TABLE user_courses_assoc (
+   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY
+   ,deleted TIMESTAMP DEFAULT NULL
+   ,updated TIMESTAMP DEFAULT NULL
+   ,created  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+   ,user_id UUID REFERENCES users(id) ON DELETE CASCADE
+   ,course_id UUID REFERENCES courses(id) ON DELETE CASCADE
+   ,account_role INTEGER
+   , CONSTRAINT no_duplicate_user_courses UNIQUE (user_id, course_id)
+);
+COMMENT ON TABLE user_courses_assoc IS 'Many-to-many table connecting users and courses, incl. user roles in courses';
+
+
 DROP TABLE IF EXISTS collection_courses_assoc CASCADE;
 CREATE TABLE collection_courses_assoc (
    id UUID UNIQUE NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY
@@ -224,6 +238,19 @@ CREATE VIEW collections_by_user AS
     SELECT collections_undeleted.*, uca.account_role, uca.user_id
     FROM collections_undeleted JOIN user_collections_assoc_undeleted AS uca
     ON collections_undeleted.id = uca.collection_id;
+
+DROP VIEW IF EXISTS users_by_course;
+CREATE VIEW users_by_course AS
+    SELECT users_undeleted.*, uca.account_role, uca.course_id
+    FROM users_undeleted JOIN user_courses_assoc_undeleted AS uca
+    ON users_undeleted.id = uca.user_id;
+
+DROP VIEW IF EXISTS courses_by_user;
+CREATE VIEW courses_by_user AS
+    SELECT courses_undeleted.*, uca.account_role, uca.user_id
+    FROM courses_undeleted JOIN user_courses_assoc_undeleted AS uca
+    ON courses_undeleted.id = uca.course_id;
+
 
 DROP VIEW IF EXISTS collections_by_content;
 CREATE VIEW collections_by_content AS

@@ -85,6 +85,16 @@
 (def user_collections_assoc
   (into user_collections_assoc_without_id {:id uuid?}))
 
+(def user_courses_assoc_without_any_ids
+  {:account-role int?})
+
+(def user_courses_assoc_without_id
+  (into user_courses_assoc_without_any_ids {:user-id uuid? :course-id uuid?}))
+
+(def user_courses_assoc
+  (into user_courses_assoc_without_id {:id uuid?}))
+
+
 (def collection_contents_assoc_without_any_ids
   {})
 

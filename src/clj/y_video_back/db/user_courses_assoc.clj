@@ -1,0 +1,15 @@
+(ns y-video-back.db.user-courses-assoc
+  (:require [y-video-back.db.core :as db]))
+
+(def CREATE (partial db/CREATE :user-courses-assoc))
+(def READ  (partial db/READ :user-courses-assoc-undeleted))
+(def READ-ALL  (partial db/READ :user-courses-assoc))
+(def UPDATE (partial db/UPDATE :user-courses-assoc))
+(def DELETE (partial db/mark-deleted :user-courses-assoc))
+(def CLONE (partial db/CLONE :user-courses-assoc))
+(def PERMANENT-DELETE (partial db/DELETE :user-courses-assoc))
+(def READ-BY-COURSE (partial db/read-all-where :user-courses-assoc-undeleted :course_id))
+(def READ-BY-IDS "[column-vals & select-field-keys]\ncolumn-vals must be a course containing course-id then user-id. select-field-keys, if given, must be a course containing keywords representing columns to return from db." (partial db/read-where-and :user-courses-assoc-undeleted [:course-id :user-id]))
+(def DELETE-BY-IDS "[column-vals]\ncolumn-vals must be a course containing course-id then user-id." (partial db/delete-where-and :user-courses-assoc-undeleted [:course-id :user-id]))
+(def READ-USERS-BY-COURSE (partial db/read-all-where :users-by-course :course_id))
+(def READ-COURSES-BY-USER (partial db/read-all-where :courses-by-user :user_id))
