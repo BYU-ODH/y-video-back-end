@@ -34,16 +34,19 @@
 
 (def collection-get-by-id ;; Not tested
   {:summary "Retrieves specified collection"
-   :parameters {:path {:id uuid?}}
+   :parameters {:header {:session-id uuid?}
+                :path {:id uuid?}}
    :responses {200 {:body models/collection}
                404 {:body {:message string?}}}
-   :handler (fn [{{{:keys [id]} :path} :parameters}]
-              (let [res (collections/READ id)]
-                (if (nil? res)
-                  {:status 404
-                   :body {:message "requested collection not found"}}
-                  {:status 200
-                   :body res})))})
+   :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
+              (if-not (ru/has-permission session-id "collection-get-by-id" {:collection-id id})
+                ru/forbidden-page
+                (let [res (collections/READ id)]
+                  (if (nil? res)
+                    {:status 404
+                     :body {:message "requested collection not found"}}
+                    {:status 200
+                     :body res}))))})
 
 (def collection-update ;; Non-functional
   {:summary "Updates the specified collection"

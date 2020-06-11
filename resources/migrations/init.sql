@@ -287,3 +287,14 @@ CREATE VIEW files_by_content AS
     SELECT files_undeleted.*, cca.content_id
     FROM files_undeleted JOIN content_files_assoc_undeleted AS cca
     ON files_undeleted.id = cca.file_id;
+
+DROP VIEW IF EXISTS collections_by_users_via_courses;
+CREATE VIEW collections_by_users_via_courses AS
+    SELECT collections_undeleted.*, uca.user_id
+    FROM users_undeleted
+    JOIN user_courses_assoc AS uca
+    ON users_undeleted.id = uca.user_id
+    JOIN collection_courses_assoc AS cca
+    ON uca.course_id = cca.course_id
+    JOIN collections_undeleted
+    ON cca.collection_id = collections_undeleted.id;

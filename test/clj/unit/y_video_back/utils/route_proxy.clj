@@ -82,8 +82,11 @@
 
 (defn collection-id-get
   "Retrieves collection via app's get (id) request"
-  [id]
-  (app (-> (request :get (str "/api/collection/" id)))))
+  ([session-id id]
+   (app (-> (request :get (str "/api/collection/" id))
+            (header :session-id session-id))))
+  ([id]
+   (collection-id-get SESSION-ID-BYPASS id)))
 
 (defn collection-id-patch
   "Updates collection via app's patch (id) request"
