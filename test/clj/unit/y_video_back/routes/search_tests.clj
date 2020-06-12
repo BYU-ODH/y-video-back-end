@@ -116,7 +116,7 @@
   [table-key query_term expected_users]
   (let [res (rp/search query_term)]
     (is (= 200 (:status res)))
-    (is (= (map #(update (ut/remove-db-only %) :id str) expected_users)
+    (is (= (into [] (map #(update (ut/remove-db-only %) :id str) expected_users))
            (table-key (m/decode-response-body res))))))
 
 (deftest test-search-users

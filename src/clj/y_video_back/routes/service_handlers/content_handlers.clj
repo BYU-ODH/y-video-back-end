@@ -33,7 +33,7 @@
    :responses {200 {:body models/content}
                404 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
-              (if-not (ru/has-permission session-id "content-get-by-id" 0)
+              (if-not (ru/has-permission session-id "content-get-by-id" {:content-id id})
                 ru/forbidden-page
                 (let [content_result (contents/READ id)]
                   (if (= "" (:id content_result))
@@ -48,7 +48,7 @@
                 :path {:id uuid?} :body ::sp/content}
    :responses {200 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
-              (if-not (ru/has-permission session-id "content-update" 0)
+              (if-not (ru/has-permission session-id "content-update" {:content-id id})
                 ru/forbidden-page
                 (let [result (contents/UPDATE id body)]
                   (if (= 0 result)
@@ -63,7 +63,7 @@
                 :path {:id uuid?}}
    :responses {200 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
-              (if-not (ru/has-permission session-id "content-delete" 0)
+              (if-not (ru/has-permission session-id "content-delete" {:content-id id})
                 ru/forbidden-page
                 (let [result (contents/DELETE id)]
                   (if (= 0 result)
@@ -78,7 +78,7 @@
                 :path {:id uuid?}}
    :responses {200 {:body [(into models/collection {:content-id uuid?})]}}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
-              (if-not (ru/has-permission session-id "content-get-all-collections" 0)
+              (if-not (ru/has-permission session-id "content-get-all-collections" {:content-id id})
                 ru/forbidden-page
                 (let [content_collections_result (collection_contents_assoc/READ-COLLECTIONS-BY-CONTENT id)]
                   (let [collection_result (map #(utils/remove-db-only %) content_collections_result)]
@@ -94,7 +94,7 @@
                 :path {:id uuid?}}
    :responses {200 {:body [(into models/file {:content-id uuid?})]}}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
-              (if-not (ru/has-permission session-id "content-get-all-files" 0)
+              (if-not (ru/has-permission session-id "content-get-all-files" {:content-id id})
                 ru/forbidden-page
                 (let [file_contents_result (content_files_assoc/READ-FILES-BY-CONTENT id)]
                   (let [file_result (map #(utils/remove-db-only %) file_contents_result)]
@@ -110,7 +110,7 @@
                 :path {:id uuid?}}
    :responses {200 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
-              (if-not (ru/has-permission session-id "content-add-view" 0)
+              (if-not (ru/has-permission session-id "content-add-view" {:content-id id})
                 ru/forbidden-page
                 (let [result "placeholder"]
                   (if result
@@ -125,7 +125,7 @@
                 :path {:id uuid?} :body {:file-id uuid?}}
    :responses {200 {:body {:message string? :id string?}}}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
-              (if-not (ru/has-permission session-id "content-add-file" 0)
+              (if-not (ru/has-permission session-id "content-add-file" {:content-id id})
                 ru/forbidden-page
                 (let [result (utils/get-id (content_files_assoc/CREATE (into body {:content-id id})))]
                   (if (= nil result)
@@ -141,7 +141,7 @@
                 :path {:id uuid?} :body {:file-id uuid?}}
    :responses {200 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
-              (if-not (ru/has-permission session-id "content-remove-file" 0)
+              (if-not (ru/has-permission session-id "content-remove-file" {:content-id id})
                 ru/forbidden-page
                 (let [result (content_files_assoc/DELETE-BY-IDS [id (:file-id body)])]
                   (if (= 0 result)

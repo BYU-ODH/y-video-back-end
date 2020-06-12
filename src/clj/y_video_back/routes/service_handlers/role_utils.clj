@@ -131,15 +131,21 @@
         "collection-get-all-users" (la+ user-type)
 
         ; Content handlers
-        "content-create" (or (admin+ user-type) false)
-        "content-get-by-id" (or (admin+ user-type) false)
-        "content-update" (or (admin+ user-type) false)
-        "content-delete" (or (admin+ user-type) false)
-        "content-get-all-collections" (or (admin+ user-type) false)
-        "content-get-all-files" (or (admin+ user-type) false)
-        "content-add-view" (or (admin+ user-type) false)
-        "content-add-file" (or (admin+ user-type) false)
-        "content-remove-file" (or (admin+ user-type) false)
+        "content-create" (or (la+ user-type))
+        "content-get-by-id" (or (instr+ user-type)
+                                (is-child? (:content-id args) user-id CRSE-STUD))
+        "content-update" (or (la+ user-type)
+                             (is-child? (:content-id args) user-id TA))
+        "content-delete" (or (admin+ user-type))
+        "content-get-all-collections" (or (la+ user-type))
+        "content-get-all-files" (or (la+ user-type)
+                                    (is-child? (:content-id args) user-id CRSE-STUD))
+        "content-add-view" (or (la+ user-type
+                                (is-child? (:content-id args) user-id CRSE-STUD)))
+        "content-add-file" (or (la+ user-type)
+                               (is-child? (:content-id args) user-id TA))
+        "content-remove-file" (or (la+ user-type)
+                                  (is-child? (:content-id args) user-id TA))
 
         ; File handlers
         "file-create" (or (admin+ user-type) false)
