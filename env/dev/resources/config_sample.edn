@@ -2,6 +2,13 @@
 {:dev true
  :port 3030
  :nrepl-port 7000
+ :roles {:ADMIN 0
+         :LA 1
+         :INSTR 2
+         :STUD 3
+         :CRSE-STUD 2
+         :TA 1
+         :OWNER 2}
  :y-video-back {:site-url "http://localhost:3030"
                 :db {:database-name "y-video-back"
                      :adapter "postgresql"

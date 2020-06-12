@@ -5,6 +5,8 @@
             [y-video-back.db.user-courses-assoc :as user-courses-assoc]
             [y-video-back.db.users :as users]
             [y-video-back.routes.service_handlers.db-utils :as dbu]))
+            ;[y-video-back.config :refer [env]]))
+
 ; User account types
 (def ADMIN 0) ; administrator
 (def LA 1) ; lab assistant
@@ -14,7 +16,7 @@
 ; User-Collection roles
 (def CRSE-STUD 2) ; student enrolled in course
 (def TA 1) ; student with TA privileges
-(def OWNER 0) ; typically professor who own collection
+(def OWNER 0) ; typically professor who own collection)
 
 (defn token-to-user-id
   "Returns userID associated with token. Returns false if token invalid."
@@ -49,23 +51,23 @@
 ; Permission checks
 (defn admin+
   "Returns true if user has at least admin privileges"
-  [user-id]
-  (<= user-id ADMIN))
+  [user-type]
+  (<= user-type ADMIN))
 
 (defn la+
   "Returns true if user has at least lab assistant privileges"
-  [user-id]
-  (<= user-id LA))
+  [user-type]
+  (<= user-type LA))
 
 (defn instr+
   "Returns true if user has at least instructor privileges"
-  [user-id]
-  (<= user-id INSTR))
+  [user-type]
+  (<= user-type INSTR))
 
 (defn stud+
   "Returns true if user has at least student privileges"
-  [user-id]
-  (<= user-id STUD))
+  [user-type]
+  (<= user-type STUD))
 
 
 (defn is-child?
