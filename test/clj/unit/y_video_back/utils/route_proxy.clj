@@ -194,7 +194,15 @@
   ([id]
    (annotation-id-delete SESSION-ID-BYPASS id)))
 
-
+(defn annotation-get-by-ids
+  "Reads all annotations by collection and content ids"
+  ([session-id collection-id content-id]
+   (app (-> (request :get "/api/annotation")
+            (header :session-id session-id)
+            (json-body {:collection-id collection-id
+                        :content-id content-id}))))
+  ([collection-id content-id]
+   (annotation-get-by-ids SESSION-ID-BYPASS collection-id content-id)))
 
 (defn course-post
   "Create a course via app's post request"

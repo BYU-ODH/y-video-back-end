@@ -212,7 +212,8 @@
     ["/annotation"
      {:swagger {:tags ["annotation"]}}
      [""
-      {:post service-handlers/annotation-create}]
+      {:post service-handlers/annotation-create
+       :get service-handlers/annotation-get-by-collection-and-content}]
 
      ["/{id}"
       {:get service-handlers/annotation-get-by-id

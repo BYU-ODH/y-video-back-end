@@ -80,3 +80,4 @@
 (def annotation-get-by-id annotations/annotation-get-by-id)
 (def annotation-update annotations/annotation-update)
 (def annotation-delete annotations/annotation-delete)
+(def annotation-get-by-collection-and-content annotations/annotation-get-by-collection-and-content)

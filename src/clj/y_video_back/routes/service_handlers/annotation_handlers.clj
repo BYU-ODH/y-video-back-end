@@ -69,3 +69,21 @@
                      :body {:message "requested annotation not found"}}
                     {:status 200
                      :body {:message (str result " annotations deleted")}}))))})
+
+(def annotation-get-by-collection-and-content
+  {:summary "Gets annotations by collection and content ids"
+   :parameters {:header {:session-id uuid?}
+                :body {:collection-id uuid?
+                       :content-id uuid?}}
+   :responses {200 {:body [models/annotation]}
+               400 {:body {:message string?}}}
+   :handler (fn [{{{:keys [session-id]} :header :keys [body]} :parameters}]
+              (if-not (ru/has-permission session-id "annotation-create" 0)
+                ru/forbidden-page
+                (let [res (annotations/READ-BY-IDS [(:collection-id body)
+                                                    (:content-id body)])]
+                  (if (= 0 (count res))
+                    {:status 404
+                     :body {:message "no annotations found"}}
+                    {:status 200
+                     :body res}))))})

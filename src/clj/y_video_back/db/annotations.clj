@@ -8,3 +8,4 @@
 (def DELETE (partial db/mark-deleted :annotations))
 (def CLONE (partial db/CLONE :annotations))
 (def PERMANENT-DELETE (partial db/DELETE :annotations))
+(def READ-BY-IDS (partial db/read-where-and :annotations [:collection-id :content-id]))
