@@ -73,6 +73,7 @@
                                    :username "s3"}))
   (def test-coll-one (ut/under-to-hyphen (collections/CREATE (g/get_random_collection_without_id))))
   (def test-crse-one (ut/under-to-hyphen (courses/CREATE (g/get_random_course_without_id))))
+  (def test-cont-one (ut/under-to-hyphen (contents/CREATE (g/get_random_content_without_id))))
   (def test-user-crse-one (ut/under-to-hyphen (user_courses_assoc/CREATE {:user_id (:id user-stud-stud)
                                                                           :course_id (:id test-crse-one)
                                                                           :account_role 2}))) ; student in course
@@ -87,7 +88,8 @@
                                                                               :account_role 1}))) ; TA for collection
   (def test-coll-crse-one (ut/under-to-hyphen (collection_courses_assoc/CREATE {:collection_id (:id test-coll-one)
                                                                                 :course_id (:id test-crse-one)})))
-
+  (def test-coll-cont-one (ut/under-to-hyphen (collection_contents_assoc/CREATE {:collection_id (:id test-coll-one)
+                                                                                 :content_id (:id test-cont-one)})))
   (mount.core/start #'y-video-back.handler/app))
 
 ; (no|with) connection -> (not) connected via many-to-many table
@@ -469,6 +471,167 @@
       (is (= 200 (:status res))))))
 
 ; Retrieve all courses for collection
+(deftest collection-get-all-courses
+  (testing "student get courses, no connection"
+    (let [res (rp/collection-id-courses (:id user-stud-na)
+                                        (:id test-coll-one))]
+      (is (= 401 (:status res)))))
+  (testing "instructor get courses, no connection"
+    (let [res (rp/collection-id-courses (:id user-instr-na)
+                                        (:id test-coll-one))]
+      (is (= 401 (:status res)))))
+  (testing "lab assistant get courses, no connection"
+    (let [res (rp/collection-id-courses (:id user-la)
+                                        (:id test-coll-one))]
+      (is (= 200 (:status res)))))
+  (testing "admin get courses, no connection"
+    (let [res (rp/collection-id-courses (:id user-admin)
+                                        (:id test-coll-one))]
+      (is (= 200 (:status res)))))
+  (testing "student get courses, with connection (student)"
+    (let [res (rp/collection-id-courses (:id user-stud-stud)
+                                        (:id test-coll-one))]
+      (is (= 401 (:status res)))))
+  (testing "student get courses, with connection (TA)"
+    (let [res (rp/collection-id-courses (:id user-stud-ta)
+                                        (:id test-coll-one))]
+      (is (= 401 (:status res)))))
+  (testing "instructor get courses, with connection (owner)"
+    (let [res (rp/collection-id-courses (:id user-instr-c1)
+                                        (:id test-coll-one))]
+      (is (= 401 (:status res))))))
+
 ; Retrieve all users for collection
+(deftest collection-get-all-users
+  (testing "student get users, no connection"
+    (let [res (rp/collection-id-users (:id user-stud-na)
+                                      (:id test-coll-one))]
+      (is (= 401 (:status res)))))
+  (testing "instructor get users, no connection"
+    (let [res (rp/collection-id-users (:id user-instr-na)
+                                      (:id test-coll-one))]
+      (is (= 401 (:status res)))))
+  (testing "lab assistant get users, no connection"
+    (let [res (rp/collection-id-users (:id user-la)
+                                      (:id test-coll-one))]
+      (is (= 200 (:status res)))))
+  (testing "admin get users, no connection"
+    (let [res (rp/collection-id-users (:id user-admin)
+                                      (:id test-coll-one))]
+      (is (= 200 (:status res)))))
+  (testing "student get users, with connection (student)"
+    (let [res (rp/collection-id-users (:id user-stud-stud)
+                                      (:id test-coll-one))]
+      (is (= 401 (:status res)))))
+  (testing "student get users, with connection (TA)"
+    (let [res (rp/collection-id-users (:id user-stud-ta)
+                                      (:id test-coll-one))]
+      (is (= 401 (:status res)))))
+  (testing "instructor get users, with connection (owner)"
+    (let [res (rp/collection-id-users (:id user-instr-c1)
+                                      (:id test-coll-one))]
+      (is (= 401 (:status res))))))
+
 ; Connect course and collection
+(deftest collection-add-course
+  (testing "student add course, no connection"
+    (let [new-course (courses/CREATE (g/get_random_course_without_id))]
+      (let [res (rp/collection-id-add-course (:id user-stud-na)
+                                             (:id test-coll-one)
+                                             (:id new-course))]
+        (is (= 401 (:status res))))))
+  (testing "instructor add course, no connection"
+    (let [new-course (courses/CREATE (g/get_random_course_without_id))]
+      (let [res (rp/collection-id-add-course (:id user-instr-na)
+                                             (:id test-coll-one)
+                                             (:id new-course))]
+        (is (= 401 (:status res))))))
+  (testing "lab assistant add course, no connection"
+    (let [new-course (courses/CREATE (g/get_random_course_without_id))]
+      (let [res (rp/collection-id-add-course (:id user-la)
+                                             (:id test-coll-one)
+                                             (:id new-course))]
+        (is (= 200 (:status res))))))
+  (testing "admin add course, no connection"
+    (let [new-course (courses/CREATE (g/get_random_course_without_id))]
+      (let [res (rp/collection-id-add-course (:id user-admin)
+                                             (:id test-coll-one)
+                                             (:id new-course))]
+        (is (= 200 (:status res))))))
+  (testing "student add course, with connection (student)"
+    (let [new-course (courses/CREATE (g/get_random_course_without_id))]
+      (let [res (rp/collection-id-add-course (:id user-stud-stud)
+                                             (:id test-coll-one)
+                                             (:id new-course))]
+        (is (= 401 (:status res))))))
+  (testing "student add course, with connection (TA)"
+    (let [new-course (courses/CREATE (g/get_random_course_without_id))]
+      (let [res (rp/collection-id-add-course (:id user-stud-ta)
+                                             (:id test-coll-one)
+                                             (:id new-course))]
+        (is (= 401 (:status res))))))
+  (testing "instructor add course, with connection (owner)"
+    (let [new-course (courses/CREATE (g/get_random_course_without_id))]
+      (let [res (rp/collection-id-add-course (:id user-instr-c1)
+                                             (:id test-coll-one)
+                                             (:id new-course))]
+        (is (= 200 (:status res)))))))
+
 ; Disconnects course and collection
+(deftest collection-remove-course
+  (testing "student remove course, no connection"
+    (let [new-course (courses/CREATE (g/get_random_course_without_id))]
+      (collection_courses_assoc/CREATE {:collection_id (:id test-coll-one)
+                                        :course_id (:id new-course)})
+      (let [res (rp/collection-id-remove-course (:id user-stud-na)
+                                                (:id test-coll-one)
+                                                (:id new-course))]
+        (is (= 401 (:status res))))))
+  (testing "instructor remove course, no connection"
+    (let [new-course (courses/CREATE (g/get_random_course_without_id))]
+      (collection_courses_assoc/CREATE {:collection_id (:id test-coll-one)
+                                        :course_id (:id new-course)})
+      (let [res (rp/collection-id-remove-course (:id user-instr-na)
+                                                (:id test-coll-one)
+                                                (:id new-course))]
+        (is (= 401 (:status res))))))
+  (testing "lab assistant remove course, no connection"
+    (let [new-course (courses/CREATE (g/get_random_course_without_id))]
+      (collection_courses_assoc/CREATE {:collection_id (:id test-coll-one)
+                                        :course_id (:id new-course)})
+      (let [res (rp/collection-id-remove-course (:id user-la)
+                                                (:id test-coll-one)
+                                                (:id new-course))]
+        (is (= 200 (:status res))))))
+  (testing "admin remove course, no connection"
+    (let [new-course (courses/CREATE (g/get_random_course_without_id))]
+      (collection_courses_assoc/CREATE {:collection_id (:id test-coll-one)
+                                        :course_id (:id new-course)})
+      (let [res (rp/collection-id-remove-course (:id user-admin)
+                                                (:id test-coll-one)
+                                                (:id new-course))]
+        (is (= 200 (:status res))))))
+  (testing "student remove course, with connection (student)"
+    (let [new-course (courses/CREATE (g/get_random_course_without_id))]
+      (collection_courses_assoc/CREATE {:collection_id (:id test-coll-one)
+                                        :course_id (:id new-course)})
+      (let [res (rp/collection-id-remove-course (:id user-stud-stud)
+                                                (:id test-coll-one)
+                                                (:id new-course))]
+        (is (= 401 (:status res))))))
+  (testing "student remove course, with connection (TA)"
+    (let [new-course (courses/CREATE (g/get_random_course_without_id))]
+      (collection_courses_assoc/CREATE {:collection_id (:id test-coll-one)
+                                        :course_id (:id new-course)})
+      (let [res (rp/collection-id-remove-course (:id user-stud-ta)
+                                                (:id test-coll-one)
+                                                (:id new-course))]
+        (is (= 401 (:status res))))))
+  (testing "instructor remove course, with connection (owner)"
+    (let [new-course (courses/CREATE (g/get_random_course_without_id))]
+      (collection_courses_assoc/CREATE {:collection_id (:id test-coll-one)
+                                        :course_id (:id new-course)})
+      (let [res (rp/collection-id-remove-course (:id user-instr-c1)
+                                                (:id test-coll-one)
+                                                (:id new-course))]
+        (is (= 200 (:status res)))))))

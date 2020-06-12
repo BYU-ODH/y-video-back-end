@@ -146,7 +146,7 @@
                 :path {:id uuid?} :body {:course-id uuid?}}
    :responses {200 {:body {:message string? :id string?}}}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
-              (if-not (ru/has-permission session-id "collection-add-course" 0)
+              (if-not (ru/has-permission session-id "collection-add-course" {:collection-id id})
                 ru/forbidden-page
                 (let [result (utils/get-id (collection_courses_assoc/CREATE (into body {:collection-id id})))]
                   (if (= nil result)
@@ -162,7 +162,7 @@
                 :path {:id uuid?} :body {:course-id uuid?}}
    :responses {200 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
-              (if-not (ru/has-permission session-id "collection-remove-course" 0)
+              (if-not (ru/has-permission session-id "collection-remove-course" {:collection-id id})
                 ru/forbidden-page
                 (let [result (collection_courses_assoc/DELETE-BY-IDS [id (:course-id body)])]
                   (if (= 0 result)
@@ -178,7 +178,7 @@
                 :path {:id uuid?}}
    :responses {200 {:body [(into models/content {:collection-id uuid?})]}}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
-              (if-not (ru/has-permission session-id "collection-get-all-contents" 0)
+              (if-not (ru/has-permission session-id "collection-get-all-contents" {:collection-id id})
                 ru/forbidden-page
                 (let [content_collections_result (collection_contents_assoc/READ-CONTENTS-BY-COLLECTION id)]
                   (let [content_result (map #(utils/remove-db-only %) content_collections_result)]
@@ -194,7 +194,7 @@
                 :path {:id uuid?}}
    :responses {200 {:body [(into models/course {:collection-id uuid?})]}}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
-              (if-not (ru/has-permission session-id "collection-get-all-courses" 0)
+              (if-not (ru/has-permission session-id "collection-get-all-courses" {:collection-id id})
                 ru/forbidden-page
                 (let [course_collections_result (collection_courses_assoc/READ-CONTENTS-BY-COLLECTION id)]
                   (let [course_result (map #(utils/remove-db-only %) course_collections_result)]
@@ -210,7 +210,7 @@
                 :path {:id uuid?}}
    :responses {200 {:body [(into models/user {:account-role int? :collection-id uuid?})]}}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
-              (if-not (ru/has-permission session-id "collection-get-all-users" 0)
+              (if-not (ru/has-permission session-id "collection-get-all-users" {:collection-id id})
                 ru/forbidden-page
                 (let [user_collections_result (user_collections_assoc/READ-USERS-BY-COLLECTION id)]
                   (let [user_result (map #(utils/remove-db-only %) user_collections_result)]

@@ -5,6 +5,17 @@
             [y-video-back.db.user-courses-assoc :as user-courses-assoc]
             [y-video-back.db.users :as users]))
 
+; User account types
+(def ADMIN 0) ; administrator
+(def LA 1) ; lab assistant
+(def INSTR 2) ; instructor
+(def STUD 3) ; student
+
+; User-Collection roles
+(def CRSE-STUD 2) ; student enrolled in course
+(def TA 1) ; student with TA privileges
+(def OWNER 0) ; typically professor who own collection
+
 (defn token-to-user-id
   "Returns userID associated with token. Returns false if token invalid."
   [token]
@@ -45,85 +56,89 @@
       (case route
 
         ; Misc handlers
-        "echo-post" (<= user-type 2)
-        "echo-patch" (or (<= user-type 0) false)
-        "connect-collection-and-course" (or (<= user-type 0) false)
-        "search-by-term" (or (<= user-type 0) false)
+        "echo-post" (<= user-type INSTR)
+        "echo-patch" (or (<= user-type ADMIN) false)
+        "connect-collection-and-course" (or (<= user-type ADMIN) false)
+        "search-by-term" (or (<= user-type ADMIN) false)
 
         ; User handlers
         "user-create" true ; For development only
-        "user-get-by-id" (or (<= user-type 0) false)
-        "user-update" (or (<= user-type 0) false)
-        "user-delete" (or (<= user-type 0) false)
-        "user-get-logged-in" (or (<= user-type 0) false)
-        "user-get-all-collections" (or (<= user-type 0) false)
-        "user-get-all-courses" (or (<= user-type 0) false)
-        "user-get-all-words" (or (<= user-type 0) false)
+        "user-get-by-id" (or (<= user-type ADMIN) false)
+        "user-update" (or (<= user-type ADMIN) false)
+        "user-delete" (or (<= user-type ADMIN) false)
+        "user-get-logged-in" (or (<= user-type ADMIN) false)
+        "user-get-all-collections" (or (<= user-type ADMIN) false)
+        "user-get-all-courses" (or (<= user-type ADMIN) false)
+        "user-get-all-words" (or (<= user-type ADMIN) false)
 
         ; Collection handlers
-        "collection-create" (or (<= user-type 2))
-        "collection-get-by-id" (or (<= user-type 2)
-                                   (<= (get-user-role-coll user-id (:collection-id args)) 2)
+        "collection-create" (or (<= user-type INSTR))
+        "collection-get-by-id" (or (<= user-type INSTR)
+                                   (<= (get-user-role-coll user-id (:collection-id args)) CRSE-STUD)
                                    (user-crse-coll user-id (:collection-id args)))
-        "collection-update" (or (<= user-type 1)
-                                (<= (get-user-role-coll user-id (:collection-id args)) 1))
-        "collection-delete" (or (<= user-type 0))
-        "collection-add-user" (or (<= user-type 1)
-                                  (<= (get-user-role-coll user-id (:collection-id args)) 0))
-        "collection-remove-user" (or (<= user-type 1)
-                                     (<= (get-user-role-coll user-id (:collection-id args)) 0))
-        "collection-add-content" (or (<= user-type 1)
-                                     (<= (get-user-role-coll user-id (:collection-id args)) 0))
-        "collection-remove-content" (or (<= user-type 1)
-                                        (<= (get-user-role-coll user-id (:collection-id args)) 0))
-        "collection-add-course" (or (<= user-type 0) false)
-        "collection-remove-course" (or (<= user-type 0) false)
-        "collection-get-all-contents" (or (<= user-type 1))
+        "collection-update" (or (<= user-type LA)
+                                (<= (get-user-role-coll user-id (:collection-id args)) TA))
+        "collection-delete" (or (<= user-type ADMIN))
+        "collection-add-user" (or (<= user-type LA)
+                                  (<= (get-user-role-coll user-id (:collection-id args)) OWNER))
+        "collection-remove-user" (or (<= user-type LA)
+                                     (<= (get-user-role-coll user-id (:collection-id args)) OWNER))
+        "collection-add-content" (or (<= user-type LA)
+                                     (<= (get-user-role-coll user-id (:collection-id args)) OWNER))
+        "collection-remove-content" (or (<= user-type LA)
+                                        (<= (get-user-role-coll user-id (:collection-id args)) OWNER))
+        "collection-add-course" (or (<= user-type LA)
+                                    (<= (get-user-role-coll user-id (:collection-id args)) OWNER))
+        "collection-remove-course" (or (<= user-type LA)
+                                       (<= (get-user-role-coll user-id (:collection-id args)) OWNER))
+        "collection-get-all-contents" (or (<= user-type LA)
+                                          (<= (get-user-role-coll user-id (:collection-id args)) CRSE-STUD)
+                                          (user-crse-coll user-id (:collection-id args)))
 
-        "collection-get-all-courses" (or (<= user-type 0) false)
-        "collection-get-all-users" (or (<= user-type 0) false)
+        "collection-get-all-courses" (<= user-type LA)
+        "collection-get-all-users" (<= user-type LA)
 
         ; Content handlers
-        "content-create" (or (<= user-type 0) false)
-        "content-get-by-id" (or (<= user-type 0) false)
-        "content-update" (or (<= user-type 0) false)
-        "content-delete" (or (<= user-type 0) false)
-        "content-get-all-collections" (or (<= user-type 0) false)
-        "content-get-all-files" (or (<= user-type 0) false)
-        "content-add-view" (or (<= user-type 0) false)
-        "content-add-file" (or (<= user-type 0) false)
-        "content-remove-file" (or (<= user-type 0) false)
+        "content-create" (or (<= user-type ADMIN) false)
+        "content-get-by-id" (or (<= user-type ADMIN) false)
+        "content-update" (or (<= user-type ADMIN) false)
+        "content-delete" (or (<= user-type ADMIN) false)
+        "content-get-all-collections" (or (<= user-type ADMIN) false)
+        "content-get-all-files" (or (<= user-type ADMIN) false)
+        "content-add-view" (or (<= user-type ADMIN) false)
+        "content-add-file" (or (<= user-type ADMIN) false)
+        "content-remove-file" (or (<= user-type ADMIN) false)
 
         ; File handlers
-        "file-create" (or (<= user-type 0) false)
-        "file-get-by-id" (or (<= user-type 0) false)
-        "file-update" (or (<= user-type 0) false)
-        "file-delete" (or (<= user-type 0) false)
-        "file-get-all-contents" (or (<= user-type 0) false)
+        "file-create" (or (<= user-type ADMIN) false)
+        "file-get-by-id" (or (<= user-type ADMIN) false)
+        "file-update" (or (<= user-type ADMIN) false)
+        "file-delete" (or (<= user-type ADMIN) false)
+        "file-get-all-contents" (or (<= user-type ADMIN) false)
 
         ; Course handlers
-        "course-create" (or (<= user-type 0) false)
-        "course-get-by-id" (or (<= user-type 0) false)
-        "course-update" (or (<= user-type 0) false)
-        "course-delete" (or (<= user-type 0) false)
-        "course-add-collection" (or (<= user-type 0) false)
-        "course-remove-collection" (or (<= user-type 0) false)
-        "course-get-all-collections" (or (<= user-type 0) false)
-        "course-add-user" (or (<= user-type 0) false)
-        "course-remove-user" (or (<= user-type 0) false)
-        "course-get-all-users" (or (<= user-type 0) false)
+        "course-create" (or (<= user-type ADMIN) false)
+        "course-get-by-id" (or (<= user-type ADMIN) false)
+        "course-update" (or (<= user-type ADMIN) false)
+        "course-delete" (or (<= user-type ADMIN) false)
+        "course-add-collection" (or (<= user-type ADMIN) false)
+        "course-remove-collection" (or (<= user-type ADMIN) false)
+        "course-get-all-collections" (or (<= user-type ADMIN) false)
+        "course-add-user" (or (<= user-type ADMIN) false)
+        "course-remove-user" (or (<= user-type ADMIN) false)
+        "course-get-all-users" (or (<= user-type ADMIN) false)
 
         ; Word handlers
-        "word-create" (or (<= user-type 0) false)
-        "word-get-by-id" (or (<= user-type 0) false)
-        "word-update" (or (<= user-type 0) false)
-        "word-delete" (or (<= user-type 0) false)
+        "word-create" (or (<= user-type ADMIN) false)
+        "word-get-by-id" (or (<= user-type ADMIN) false)
+        "word-update" (or (<= user-type ADMIN) false)
+        "word-delete" (or (<= user-type ADMIN) false)
 
         ; Annotation handlers
-        "annotation-create" (or (<= user-type 0) false)
-        "annotation-get-by-id" (or (<= user-type 0) false)
-        "annotation-update" (or (<= user-type 0) false)
-        "annotation-delete" (or (<= user-type 0) false)
+        "annotation-create" (or (<= user-type ADMIN) false)
+        "annotation-get-by-id" (or (<= user-type ADMIN) false)
+        "annotation-update" (or (<= user-type ADMIN) false)
+        "annotation-delete" (or (<= user-type ADMIN) false)
 
 
         false))))
