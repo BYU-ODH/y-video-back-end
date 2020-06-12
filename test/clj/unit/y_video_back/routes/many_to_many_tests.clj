@@ -46,6 +46,7 @@
   (def test-user-one (ut/under-to-hyphen (users/CREATE (g/get_random_user_without_id))))
   (def test-user-two (ut/under-to-hyphen (users/CREATE (g/get_random_user_without_id))))
   (def test-user-thr (ut/under-to-hyphen (users/CREATE (g/get_random_user_without_id))))
+  (def test-user-fou (ut/under-to-hyphen (users/CREATE (g/get_random_user_without_id))))
   (def test-coll-one (ut/under-to-hyphen (collections/CREATE (g/get_random_collection_without_id))))
   (def test-coll-two (ut/under-to-hyphen (collections/CREATE (g/get_random_collection_without_id))))
   (def test-coll-thr (ut/under-to-hyphen (collections/CREATE (g/get_random_collection_without_id))))
@@ -80,6 +81,9 @@
   (def test-user-crse-thr (ut/under-to-hyphen (user_courses_assoc/CREATE {:user_id (:id test-user-thr)
                                                                           :course_id (:id test-crse-thr)
                                                                           :account_role 0})))
+  (def test-user-crse-fou (ut/under-to-hyphen (user_courses_assoc/CREATE {:user_id (:id test-user-fou)
+                                                                          :course_id (:id test-crse-one)
+                                                                          :account_role 2})))
   (def test-coll-cont-one (ut/under-to-hyphen (collection_contents_assoc/CREATE {:collection_id (:id test-coll-one)
                                                                                  :content_id (:id test-cont-one)})))
   (def test-coll-cont-two (ut/under-to-hyphen (collection_contents_assoc/CREATE {:collection_id (:id test-coll-two)
@@ -112,6 +116,7 @@
     (user_collections_assoc/CREATE {:user_id (:id test-user-one)
                                     :collection_id (:id test-coll-two)
                                     :account_role 1})
+    ()
     (def test-annotation-one (ut/under-to-hyphen (annotations/CREATE (g/get_random_annotation_without_id (:id test-coll-one) (:id test-cont-one)))))
 
     (is (= (set [(:id test-user-one)
@@ -125,6 +130,17 @@
                  (:id test-word-one)
                  (:id test-annotation-one)])
            (dbu/get-all-child-ids (:id test-user-one))))))
+(deftest get-all-child-ids-roles
+  (testing "get-all-child-ids with roles"
+    ; TA for test-coll-two
+    (user_collections_assoc/CREATE {:user_id (:id test-user-one)
+                                    :collection_id (:id test-coll-two)
+                                    :account_role 1})
+    (def test-annotation-one (ut/under-to-hyphen (annotations/CREATE (g/get_random_annotation_without_id (:id test-coll-one) (:id test-cont-one)))))
+
+    (is (= (set [(:id test-user-fou)
+                 (:id test-crse-one)])
+           (dbu/get-all-child-ids (:id test-user-fou) 0)))))
 
 
 (deftest test-user-collection-assoc

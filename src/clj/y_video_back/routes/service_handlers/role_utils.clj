@@ -3,8 +3,8 @@
             [y-video-back.db.core :as db]
             [y-video-back.routes.service_handlers.utils :as utils]
             [y-video-back.db.user-courses-assoc :as user-courses-assoc]
-            [y-video-back.db.users :as users]))
-
+            [y-video-back.db.users :as users]
+            [y-video-back.routes.service_handlers.db-utils :as dbu]))
 ; User account types
 (def ADMIN 0) ; administrator
 (def LA 1) ; lab assistant
@@ -68,7 +68,14 @@
   (<= user-id STUD))
 
 
-
+(defn is-child?
+  "Returns true if target-id is child of user-id and user-id has at least
+  'role' permissions for relevant collections. If 'role' is omitted, all
+  children regardless of role are checked."
+  ([target-id user-id role]
+   (contains? (dbu/get-all-child-ids user-id role) target-id))
+  ([target-id user-id]
+   (is-child? target-id user-id ##Inf)))
 
 
 (defn has-permission
@@ -99,26 +106,24 @@
         ; Collection handlers
         "collection-create" (or (instr+ user-type))
         "collection-get-by-id" (or (instr+ user-type)
-                                   (<= (get-user-role-coll user-id (:collection-id args)) CRSE-STUD)
-                                   (user-crse-coll user-id (:collection-id args)))
+                                   (is-child? (:collection-id args) user-id CRSE-STUD))
         "collection-update" (or (la+ user-type)
-                                (<= (get-user-role-coll user-id (:collection-id args)) TA))
+                                (is-child? (:collection-id args) user-id TA))
         "collection-delete" (or (admin+ user-type))
         "collection-add-user" (or (la+ user-type)
-                                  (<= (get-user-role-coll user-id (:collection-id args)) OWNER))
+                                  (is-child? (:collection-id args) user-id OWNER))
         "collection-remove-user" (or (la+ user-type)
-                                     (<= (get-user-role-coll user-id (:collection-id args)) OWNER))
+                                     (is-child? (:collection-id args) user-id OWNER))
         "collection-add-content" (or (la+ user-type)
-                                     (<= (get-user-role-coll user-id (:collection-id args)) OWNER))
+                                     (is-child? (:collection-id args) user-id OWNER))
         "collection-remove-content" (or (la+ user-type)
-                                        (<= (get-user-role-coll user-id (:collection-id args)) OWNER))
+                                        (is-child? (:collection-id args) user-id OWNER))
         "collection-add-course" (or (la+ user-type)
-                                    (<= (get-user-role-coll user-id (:collection-id args)) OWNER))
+                                    (is-child? (:collection-id args) user-id OWNER))
         "collection-remove-course" (or (la+ user-type)
-                                       (<= (get-user-role-coll user-id (:collection-id args)) OWNER))
+                                       (is-child? (:collection-id args) user-id OWNER))
         "collection-get-all-contents" (or (la+ user-type)
-                                          (<= (get-user-role-coll user-id (:collection-id args)) CRSE-STUD)
-                                          (user-crse-coll user-id (:collection-id args)))
+                                          (is-child? (:collection-id args) user-id CRSE-STUD))
 
         "collection-get-all-courses" (la+ user-type)
         "collection-get-all-users" (la+ user-type)
