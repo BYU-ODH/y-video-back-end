@@ -122,8 +122,8 @@
                  (:id test-file-one)
                  (:id test-cont-two)
                  (:id test-file-two)
-                 (:id test-word-one)])
-                 ;(:id test-annotation-one)])
+                 (:id test-word-one)
+                 (:id test-annotation-one)])
            (dbu/get-all-child-ids (:id test-user-one))))))
 
 

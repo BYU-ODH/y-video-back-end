@@ -37,26 +37,34 @@
                                         #(:id %)
                                          (collection_courses_assoc/READ-COLLECTIONS-BY-COURSE arg1)))
                                     all-courses))))]
-        (let [all-contents (clojure.core/flatten
-                             (map
-                               (fn [arg1]
-                                 (map
-                                   #(:id %)
-                                   (collection_contents_assoc/READ-CONTENTS-BY-COLLECTION arg1)))
-                               all-collections))]
-          (let [all-files (clojure.core/flatten
-                            (map
-                              (fn [arg1]
+        (let [all-annotations (clojure.core/flatten
                                 (map
-                                  #(:id %)
-                                  (content_files_assoc/READ-FILES-BY-CONTENT arg1)))
-                              all-contents))]
-            (let [all-words (map
-                              #(:id %)
-                              (users/READ-WORDS user-id))]
-              (-> (set [user-id])
-                  (into all-collections)
-                  (into all-courses)
-                  (into all-contents)
-                  (into all-files)
-                  (into all-words)))))))))
+                                  (fn [arg1]
+                                    (map
+                                      #(:id %)
+                                      (collections/READ-ANNOTATIONS arg1)))
+                                  all-collections))]
+          (let [all-contents (clojure.core/flatten
+                               (map
+                                 (fn [arg1]
+                                   (map
+                                     #(:id %)
+                                     (collection_contents_assoc/READ-CONTENTS-BY-COLLECTION arg1)))
+                                 all-collections))]
+            (let [all-files (clojure.core/flatten
+                              (map
+                                (fn [arg1]
+                                  (map
+                                    #(:id %)
+                                    (content_files_assoc/READ-FILES-BY-CONTENT arg1)))
+                                all-contents))]
+              (let [all-words (map
+                                #(:id %)
+                                (users/READ-WORDS user-id))]
+                (-> (set [user-id])
+                    (into all-collections)
+                    (into all-annotations)
+                    (into all-courses)
+                    (into all-contents)
+                    (into all-files)
+                    (into all-words))))))))))
