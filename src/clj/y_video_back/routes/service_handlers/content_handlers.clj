@@ -96,7 +96,7 @@
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
               (if-not (ru/has-permission session-id "content-get-all-files" 0)
                 ru/forbidden-page
-                (let [file_contents_result (content_files_assoc/READ-CONTENTS-BY-COLLECTION id)]
+                (let [file_contents_result (content_files_assoc/READ-FILES-BY-CONTENT id)]
                   (let [file_result (map #(utils/remove-db-only %) file_contents_result)]
                     (if (= 0 (count file_result))
                       {:status 404

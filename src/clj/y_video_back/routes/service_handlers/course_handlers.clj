@@ -110,7 +110,7 @@
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
               (if-not (ru/has-permission session-id "course-get-all-collections" 0)
                 ru/forbidden-page
-                (let [course_collections_result (collection_courses_assoc/READ-COLLECTIONS-BY-CONTENT id)]
+                (let [course_collections_result (collection_courses_assoc/READ-COLLECTIONS-BY-COURSE id)]
                   (let [collection_result (map #(utils/remove-db-only %) course_collections_result)]
                     (if (= 0 (count collection_result))
                       {:status 404

@@ -29,7 +29,8 @@
       [y-video-back.db.user-courses-assoc :as user_courses_assoc]
       [y-video-back.db.users :as users]
       [y-video-back.db.words :as words]
-      [y-video-back.utils.utils :as ut]))
+      [y-video-back.utils.utils :as ut]
+      [y-video-back.routes.service_handlers.db-utils :as dbu]))
 
 (declare ^:dynamic *txn*)
 
@@ -104,6 +105,27 @@
 
 
   (mount.core/start #'y-video-back.handler/app))
+
+(deftest get-all-child-ids
+  (testing "get-all-child-ids test"
+    ; TA for test-coll-two
+    (user_collections_assoc/CREATE {:user_id (:id test-user-one)
+                                    :collection_id (:id test-coll-two)
+                                    :account_role 1})
+    (def test-annotation-one (ut/under-to-hyphen (annotations/CREATE (g/get_random_annotation_without_id (:id test-coll-one) (:id test-cont-one)))))
+
+    (is (= (set [(:id test-user-one)
+                 (:id test-crse-one)
+                 (:id test-coll-one)
+                 (:id test-coll-two)
+                 (:id test-cont-one)
+                 (:id test-file-one)
+                 (:id test-cont-two)
+                 (:id test-file-two)
+                 (:id test-word-one)])
+                 ;(:id test-annotation-one)])
+           (dbu/get-all-child-ids (:id test-user-one))))))
+
 
 (deftest test-user-collection-assoc
   (testing "connect user and collection"

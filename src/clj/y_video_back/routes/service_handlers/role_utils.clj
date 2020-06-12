@@ -46,6 +46,31 @@
     (contains? (set (map #(:id %) user-colls)) collection-id)))
 
 
+; Permission checks
+(defn admin+
+  "Returns true if user has at least admin privileges"
+  [user-id]
+  (<= user-id ADMIN))
+
+(defn la+
+  "Returns true if user has at least lab assistant privileges"
+  [user-id]
+  (<= user-id LA))
+
+(defn instr+
+  "Returns true if user has at least instructor privileges"
+  [user-id]
+  (<= user-id INSTR))
+
+(defn stud+
+  "Returns true if user has at least student privileges"
+  [user-id]
+  (<= user-id STUD))
+
+
+
+
+
 (defn has-permission
   "Returns true if user has permission for route, else false"
   [token route args]
@@ -56,89 +81,89 @@
       (case route
 
         ; Misc handlers
-        "echo-post" (<= user-type INSTR)
-        "echo-patch" (or (<= user-type ADMIN) false)
-        "connect-collection-and-course" (or (<= user-type ADMIN) false)
-        "search-by-term" (or (<= user-type ADMIN) false)
+        "echo-post" (instr+ user-type)
+        "echo-patch" (or (admin+ user-type) false)
+        "connect-collection-and-course" (or (admin+ user-type) false)
+        "search-by-term" (or (admin+ user-type) false)
 
         ; User handlers
         "user-create" true ; For development only
-        "user-get-by-id" (or (<= user-type ADMIN) false)
-        "user-update" (or (<= user-type ADMIN) false)
-        "user-delete" (or (<= user-type ADMIN) false)
-        "user-get-logged-in" (or (<= user-type ADMIN) false)
-        "user-get-all-collections" (or (<= user-type ADMIN) false)
-        "user-get-all-courses" (or (<= user-type ADMIN) false)
-        "user-get-all-words" (or (<= user-type ADMIN) false)
+        "user-get-by-id" (or (admin+ user-type) false)
+        "user-update" (or (admin+ user-type) false)
+        "user-delete" (or (admin+ user-type) false)
+        "user-get-logged-in" (or (admin+ user-type) false)
+        "user-get-all-collections" (or (admin+ user-type) false)
+        "user-get-all-courses" (or (admin+ user-type) false)
+        "user-get-all-words" (or (admin+ user-type) false)
 
         ; Collection handlers
-        "collection-create" (or (<= user-type INSTR))
-        "collection-get-by-id" (or (<= user-type INSTR)
+        "collection-create" (or (instr+ user-type))
+        "collection-get-by-id" (or (instr+ user-type)
                                    (<= (get-user-role-coll user-id (:collection-id args)) CRSE-STUD)
                                    (user-crse-coll user-id (:collection-id args)))
-        "collection-update" (or (<= user-type LA)
+        "collection-update" (or (la+ user-type)
                                 (<= (get-user-role-coll user-id (:collection-id args)) TA))
-        "collection-delete" (or (<= user-type ADMIN))
-        "collection-add-user" (or (<= user-type LA)
+        "collection-delete" (or (admin+ user-type))
+        "collection-add-user" (or (la+ user-type)
                                   (<= (get-user-role-coll user-id (:collection-id args)) OWNER))
-        "collection-remove-user" (or (<= user-type LA)
+        "collection-remove-user" (or (la+ user-type)
                                      (<= (get-user-role-coll user-id (:collection-id args)) OWNER))
-        "collection-add-content" (or (<= user-type LA)
+        "collection-add-content" (or (la+ user-type)
                                      (<= (get-user-role-coll user-id (:collection-id args)) OWNER))
-        "collection-remove-content" (or (<= user-type LA)
+        "collection-remove-content" (or (la+ user-type)
                                         (<= (get-user-role-coll user-id (:collection-id args)) OWNER))
-        "collection-add-course" (or (<= user-type LA)
+        "collection-add-course" (or (la+ user-type)
                                     (<= (get-user-role-coll user-id (:collection-id args)) OWNER))
-        "collection-remove-course" (or (<= user-type LA)
+        "collection-remove-course" (or (la+ user-type)
                                        (<= (get-user-role-coll user-id (:collection-id args)) OWNER))
-        "collection-get-all-contents" (or (<= user-type LA)
+        "collection-get-all-contents" (or (la+ user-type)
                                           (<= (get-user-role-coll user-id (:collection-id args)) CRSE-STUD)
                                           (user-crse-coll user-id (:collection-id args)))
 
-        "collection-get-all-courses" (<= user-type LA)
-        "collection-get-all-users" (<= user-type LA)
+        "collection-get-all-courses" (la+ user-type)
+        "collection-get-all-users" (la+ user-type)
 
         ; Content handlers
-        "content-create" (or (<= user-type ADMIN) false)
-        "content-get-by-id" (or (<= user-type ADMIN) false)
-        "content-update" (or (<= user-type ADMIN) false)
-        "content-delete" (or (<= user-type ADMIN) false)
-        "content-get-all-collections" (or (<= user-type ADMIN) false)
-        "content-get-all-files" (or (<= user-type ADMIN) false)
-        "content-add-view" (or (<= user-type ADMIN) false)
-        "content-add-file" (or (<= user-type ADMIN) false)
-        "content-remove-file" (or (<= user-type ADMIN) false)
+        "content-create" (or (admin+ user-type) false)
+        "content-get-by-id" (or (admin+ user-type) false)
+        "content-update" (or (admin+ user-type) false)
+        "content-delete" (or (admin+ user-type) false)
+        "content-get-all-collections" (or (admin+ user-type) false)
+        "content-get-all-files" (or (admin+ user-type) false)
+        "content-add-view" (or (admin+ user-type) false)
+        "content-add-file" (or (admin+ user-type) false)
+        "content-remove-file" (or (admin+ user-type) false)
 
         ; File handlers
-        "file-create" (or (<= user-type ADMIN) false)
-        "file-get-by-id" (or (<= user-type ADMIN) false)
-        "file-update" (or (<= user-type ADMIN) false)
-        "file-delete" (or (<= user-type ADMIN) false)
-        "file-get-all-contents" (or (<= user-type ADMIN) false)
+        "file-create" (or (admin+ user-type) false)
+        "file-get-by-id" (or (admin+ user-type) false)
+        "file-update" (or (admin+ user-type) false)
+        "file-delete" (or (admin+ user-type) false)
+        "file-get-all-contents" (or (admin+ user-type) false)
 
         ; Course handlers
-        "course-create" (or (<= user-type ADMIN) false)
-        "course-get-by-id" (or (<= user-type ADMIN) false)
-        "course-update" (or (<= user-type ADMIN) false)
-        "course-delete" (or (<= user-type ADMIN) false)
-        "course-add-collection" (or (<= user-type ADMIN) false)
-        "course-remove-collection" (or (<= user-type ADMIN) false)
-        "course-get-all-collections" (or (<= user-type ADMIN) false)
-        "course-add-user" (or (<= user-type ADMIN) false)
-        "course-remove-user" (or (<= user-type ADMIN) false)
-        "course-get-all-users" (or (<= user-type ADMIN) false)
+        "course-create" (or (admin+ user-type) false)
+        "course-get-by-id" (or (admin+ user-type) false)
+        "course-update" (or (admin+ user-type) false)
+        "course-delete" (or (admin+ user-type) false)
+        "course-add-collection" (or (admin+ user-type) false)
+        "course-remove-collection" (or (admin+ user-type) false)
+        "course-get-all-collections" (or (admin+ user-type) false)
+        "course-add-user" (or (admin+ user-type) false)
+        "course-remove-user" (or (admin+ user-type) false)
+        "course-get-all-users" (or (admin+ user-type) false)
 
         ; Word handlers
-        "word-create" (or (<= user-type ADMIN) false)
-        "word-get-by-id" (or (<= user-type ADMIN) false)
-        "word-update" (or (<= user-type ADMIN) false)
-        "word-delete" (or (<= user-type ADMIN) false)
+        "word-create" (or (admin+ user-type) false)
+        "word-get-by-id" (or (admin+ user-type) false)
+        "word-update" (or (admin+ user-type) false)
+        "word-delete" (or (admin+ user-type) false)
 
         ; Annotation handlers
-        "annotation-create" (or (<= user-type ADMIN) false)
-        "annotation-get-by-id" (or (<= user-type ADMIN) false)
-        "annotation-update" (or (<= user-type ADMIN) false)
-        "annotation-delete" (or (<= user-type ADMIN) false)
+        "annotation-create" (or (admin+ user-type) false)
+        "annotation-get-by-id" (or (admin+ user-type) false)
+        "annotation-update" (or (admin+ user-type) false)
+        "annotation-delete" (or (admin+ user-type) false)
 
 
         false))))

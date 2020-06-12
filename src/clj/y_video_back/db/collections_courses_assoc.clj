@@ -10,5 +10,5 @@
 (def PERMANENT-DELETE (partial db/DELETE :collection-courses-assoc))
 (def READ-BY-IDS "[column-vals & select-field-keys]\ncolumn-vals must be a collection containing collection-id then course-id. select-field-keys, if given, must be a collection containing keywords representing columns to return from db." (partial db/read-where-and :collection-courses-assoc-undeleted [:collection-id :course-id]))
 (def DELETE-BY-IDS "[column-vals]\ncolumn-vals must be a collection containing collection-id then course-id." (partial db/delete-where-and :collection-courses-assoc-undeleted [:collection-id :course-id]))
-(def READ-CONTENTS-BY-COLLECTION (partial db/read-all-where :courses-by-collection :collection_id))
-(def READ-COLLECTIONS-BY-CONTENT (partial db/read-all-where :collections-by-course :course_id))
+(def READ-COURSES-BY-COLLECTION (partial db/read-all-where :courses-by-collection :collection_id))
+(def READ-COLLECTIONS-BY-COURSE (partial db/read-all-where :collections-by-course :course_id))

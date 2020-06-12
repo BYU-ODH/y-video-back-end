@@ -24,7 +24,6 @@
     [y-video-back.db.users :as users]
     [y-video-back.db.words :as words]
     [y-video-back.utils.utils :as ut]))
-
 (declare ^:dynamic *txn*)
 
 (use-fixtures
