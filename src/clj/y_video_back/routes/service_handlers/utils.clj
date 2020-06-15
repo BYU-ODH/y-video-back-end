@@ -29,3 +29,13 @@
 (defn get-id
   [res]
   (str (:id res)))
+
+(defn user-db-to-front
+  "Replace keywords with what the front end expects"
+  [user]
+  {:id (:id user)
+   :username (:username user)
+   :name (:account-name user)
+   :email (:email user)
+   :roles [(:account-type user)]
+   :lastLogin (:last-login user)})

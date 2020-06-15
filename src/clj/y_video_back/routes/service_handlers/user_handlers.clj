@@ -4,6 +4,7 @@
    [y-video-back.db.user-courses-assoc :as user_courses_assoc]
    [y-video-back.db.users :as users]
    [y-video-back.models :as models]
+   [y-video-back.front-end-models :as fmodels]
    [y-video-back.model-specs :as sp]
    [y-video-back.routes.service_handlers.utils :as utils]
    [y-video-back.routes.service_handlers.role_utils :as ru]))
@@ -32,7 +33,7 @@
   {:summary "Retrieves specified user"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
-   :responses {200 {:body models/user}
+   :responses {200 {:body fmodels/user}
                404 {:body {:message string?}}
                500 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
@@ -43,7 +44,7 @@
                     {:status 404
                      :body {:message "user not found"}}
                     {:status 200
-                     :body user_result}))))})
+                     :body (utils/user-db-to-front user_result)}))))})
 
 
 (def user-update
@@ -82,6 +83,7 @@
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
    :responses {200 {:body models/user}
+                     ;:header {:Access-Control-Allow-Origin "http://localhost:3000"}}
                404 {:body {:message string?}}
                500 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
@@ -92,7 +94,8 @@
                     {:status 404
                      :body {:message "user not found"}}
                     {:status 200
-                     :body user_result}))))})
+                     :body (utils/user-db-to-front user_result)}))))})
+                     ;:header {"Access-Control-Allow-Origin" "*"}}))))})
 
 
 (def user-get-all-collections ;; Non-functional

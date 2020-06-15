@@ -34,7 +34,8 @@
                  [ring/ring-defaults "0.3.2"]
                  [selmer "1.12.23"]
                  [tick "0.4.20-alpha"]
-                 [metosin/ring-swagger "0.26.2"]]
+                 [metosin/ring-swagger "0.26.2"]
+                 [ring-cors "0.1.9"]]
 
   :min-lein-version "2.0.0"
   :eastwood {:linters [:all]

@@ -1,0 +1,5 @@
+In ApiProxy:
+  Under auth.cas:
+	window.location.href = `${process.env.REACT_APP_YVIDEO_SERVER}/auth/cas/redirect${window.location.href}`
+    to
+	window.location.href = `${process.env.REACT_APP_YVIDEO_SERVER}/cas-login`

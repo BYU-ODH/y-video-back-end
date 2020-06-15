@@ -15,8 +15,15 @@
             [y-video-back.middleware.formats :as formats]
             ;[muuntaja.middleware :refer [wrap-format wrap-params]]
             [ring-ttl-session.core :refer [ttl-memory-store]]
-            [y-video-back.routes.service_handlers.utils :as sh-utils])
+            [y-video-back.routes.service_handlers.utils :as sh-utils]
+            [ring.middleware.cors :refer [wrap-cors]])
   (:import [javax.servlet ServletContext]))
+
+(def cors-headers
+  "Generic CORS headers"
+  {"Access-Control-Allow-Origin"  "*"
+   "Access-Control-Allow-Headers" "*"
+   "Access-Control-Allow-Methods" "GET POST OPTIONS DELETE PUT"})
 
 (defn wrap-cas [handler]
   (cas/wrap-cas handler (str (-> env :y-video-back :site-url) "/")))
@@ -98,7 +105,8 @@
 
 (defn wrap-api [handler]
   (let [check-csrf  (if-not (:test env) wrap-csrf identity)]
-      (-> ((:middleware defaults) handler))))
+      (-> ((:middleware defaults) handler)
+          (wrap-cors :access-control-allow-origin #"http://localhost:3000" :access-control-allow-methods [:get :put :post :delete :patch]))))
           ;check-csrf)))
           ;check-permission)))
           ;wrap-flash
