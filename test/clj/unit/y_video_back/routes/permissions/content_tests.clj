@@ -379,12 +379,12 @@
   (testing "student get collections by content, with connection (student)"
     (let [res (rp/content-id-collections (:id user-stud-stud)
                                          (:id test-cont-one))]
-      (is (= 200 (:status res)))))
+      (is (= 401 (:status res)))))
   (testing "student get collections by content, with connection (TA)"
     (let [res (rp/content-id-collections (:id user-stud-ta)
                                          (:id test-cont-one))]
-      (is (= 200 (:status res)))))
+      (is (= 401 (:status res)))))
   (testing "instructor get collections by content, with connection (owner)"
     (let [res (rp/content-id-collections (:id user-instr-c1)
                                          (:id test-cont-one))]
-      (is (= 200 (:status res))))))
+      (is (= 401 (:status res))))))

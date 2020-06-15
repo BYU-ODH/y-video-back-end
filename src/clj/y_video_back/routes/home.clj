@@ -29,6 +29,8 @@
 (defn hello-page [request]
   (layout/render request "hello.html"))
 
+(defn index-page [request]
+  (layout/render request "index.html"))
 
 (defn factor-home [request]
   (layout/render request "fear_no_factor.html"))
@@ -62,4 +64,5 @@
          ["/factoring" {:get factor-home}]
          ["/about" {:get factor-about}]
          ["/contact" {:get factor-contact}]
-         ["/echo" {:get echo-page}])))
+         ["/echo" {:get echo-page}]
+         ["/index" {:get index-page}])))
