@@ -262,12 +262,129 @@
                                         (:id test-cont-one)
                                         (:id new-file))]
         (is (= 401 (:status res))))))
-  (testing "instructor add file, no connection")
-  (testing "lab assistant add file, no connection")
-  (testing "admin add file, no connection")
-  (testing "student add file, with connection (student)")
-  (testing "student add file, with connection (TA)")
-  (testing "instructor add file, with connection (owner?)"))
+  (testing "instructor add file, no connection"
+    (let [new-file (ut/under-to-hyphen (files/CREATE (g/get_random_file_without_id)))]
+      (let [res (rp/content-id-add-file (:id user-instr-na)
+                                        (:id test-cont-one)
+                                        (:id new-file))]
+        (is (= 401 (:status res))))))
+  (testing "lab assistant add file, no connection"
+    (let [new-file (ut/under-to-hyphen (files/CREATE (g/get_random_file_without_id)))]
+      (let [res (rp/content-id-add-file (:id user-la)
+                                        (:id test-cont-one)
+                                        (:id new-file))]
+        (is (= 200 (:status res))))))
+  (testing "admin add file, no connection"
+    (let [new-file (ut/under-to-hyphen (files/CREATE (g/get_random_file_without_id)))]
+      (let [res (rp/content-id-add-file (:id user-admin)
+                                        (:id test-cont-one)
+                                        (:id new-file))]
+        (is (= 200 (:status res))))))
+  (testing "student add file, with connection (student)"
+    (let [new-file (ut/under-to-hyphen (files/CREATE (g/get_random_file_without_id)))]
+      (let [res (rp/content-id-add-file (:id user-stud-stud)
+                                        (:id test-cont-one)
+                                        (:id new-file))]
+        (is (= 401 (:status res))))))
+  (testing "student add file, with connection (TA)"
+    (let [new-file (ut/under-to-hyphen (files/CREATE (g/get_random_file_without_id)))]
+      (let [res (rp/content-id-add-file (:id user-stud-ta)
+                                        (:id test-cont-one)
+                                        (:id new-file))]
+        (is (= 200 (:status res))))))
+  (testing "instructor add file, with connection (owner?)"
+    (let [new-file (ut/under-to-hyphen (files/CREATE (g/get_random_file_without_id)))]
+      (let [res (rp/content-id-add-file (:id user-instr-c1)
+                                        (:id test-cont-one)
+                                        (:id new-file))]
+        (is (= 200 (:status res)))))))
 
 ; Disconnect content and file
+(deftest content-remove-file
+  (testing "student remove file, no connection"
+    (let [new-file (ut/under-to-hyphen (files/CREATE (g/get_random_file_without_id)))]
+      (content_files_assoc/CREATE {:content_id (:id test-cont-one)
+                                   :file_id (:id new-file)})
+      (let [res (rp/content-id-remove-file (:id user-stud-na)
+                                           (:id test-cont-one)
+                                           (:id new-file))]
+        (is (= 401 (:status res))))))
+  (testing "instructor remove file, no connection"
+    (let [new-file (ut/under-to-hyphen (files/CREATE (g/get_random_file_without_id)))]
+      (content_files_assoc/CREATE {:content_id (:id test-cont-one)
+                                   :file_id (:id new-file)})
+      (let [res (rp/content-id-remove-file (:id user-instr-na)
+                                           (:id test-cont-one)
+                                           (:id new-file))]
+        (is (= 401 (:status res))))))
+  (testing "lab assistant remove file, no connection"
+    (let [new-file (ut/under-to-hyphen (files/CREATE (g/get_random_file_without_id)))]
+      (content_files_assoc/CREATE {:content_id (:id test-cont-one)
+                                   :file_id (:id new-file)})
+      (let [res (rp/content-id-remove-file (:id user-la)
+                                           (:id test-cont-one)
+                                           (:id new-file))]
+        (is (= 200 (:status res))))))
+  (testing "admin remove file, no connection"
+    (let [new-file (ut/under-to-hyphen (files/CREATE (g/get_random_file_without_id)))]
+      (content_files_assoc/CREATE {:content_id (:id test-cont-one)
+                                   :file_id (:id new-file)})
+      (let [res (rp/content-id-remove-file (:id user-admin)
+                                           (:id test-cont-one)
+                                           (:id new-file))]
+        (is (= 200 (:status res))))))
+  (testing "student remove file, with connection (student)"
+    (let [new-file (ut/under-to-hyphen (files/CREATE (g/get_random_file_without_id)))]
+      (content_files_assoc/CREATE {:content_id (:id test-cont-one)
+                                   :file_id (:id new-file)})
+      (let [res (rp/content-id-remove-file (:id user-stud-stud)
+                                           (:id test-cont-one)
+                                           (:id new-file))]
+        (is (= 401 (:status res))))))
+  (testing "student remove file, with connection (TA)"
+    (let [new-file (ut/under-to-hyphen (files/CREATE (g/get_random_file_without_id)))]
+      (content_files_assoc/CREATE {:content_id (:id test-cont-one)
+                                   :file_id (:id new-file)})
+      (let [res (rp/content-id-remove-file (:id user-stud-ta)
+                                           (:id test-cont-one)
+                                           (:id new-file))]
+        (is (= 200 (:status res))))))
+  (testing "instructor remove file, with connection (owner)"
+    (let [new-file (ut/under-to-hyphen (files/CREATE (g/get_random_file_without_id)))]
+      (content_files_assoc/CREATE {:content_id (:id test-cont-one)
+                                   :file_id (:id new-file)})
+      (let [res (rp/content-id-remove-file (:id user-instr-c1)
+                                           (:id test-cont-one)
+                                           (:id new-file))]
+        (is (= 200 (:status res)))))))
+
 ; Retrieve all collections for content
+(deftest content-get-all-collections
+  (testing "student get collections by content, no connection"
+    (let [res (rp/content-id-collections (:id user-stud-na)
+                                         (:id test-cont-one))]
+      (is (= 401 (:status res)))))
+  (testing "instructor get collections by content, no connection"
+    (let [res (rp/content-id-collections (:id user-instr-na)
+                                         (:id test-cont-one))]
+      (is (= 401 (:status res)))))
+  (testing "lab assistant get collections by content, no connection"
+    (let [res (rp/content-id-collections (:id user-la)
+                                         (:id test-cont-one))]
+      (is (= 200 (:status res)))))
+  (testing "admin get collections by content, no connection"
+    (let [res (rp/content-id-collections (:id user-admin)
+                                         (:id test-cont-one))]
+      (is (= 200 (:status res)))))
+  (testing "student get collections by content, with connection (student)"
+    (let [res (rp/content-id-collections (:id user-stud-stud)
+                                         (:id test-cont-one))]
+      (is (= 200 (:status res)))))
+  (testing "student get collections by content, with connection (TA)"
+    (let [res (rp/content-id-collections (:id user-stud-ta)
+                                         (:id test-cont-one))]
+      (is (= 200 (:status res)))))
+  (testing "instructor get collections by content, with connection (owner)"
+    (let [res (rp/content-id-collections (:id user-instr-c1)
+                                         (:id test-cont-one))]
+      (is (= 200 (:status res))))))

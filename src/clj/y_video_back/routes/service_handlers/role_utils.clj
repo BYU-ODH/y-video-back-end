@@ -137,7 +137,8 @@
         "content-update" (or (la+ user-type)
                              (is-child? (:content-id args) user-id TA))
         "content-delete" (or (admin+ user-type))
-        "content-get-all-collections" (or (la+ user-type))
+        "content-get-all-collections" (or (la+ user-type)
+                                          (is-child? (:content-id args) user-id CRSE-STUD))
         "content-get-all-files" (or (la+ user-type)
                                     (is-child? (:content-id args) user-id CRSE-STUD))
         "content-add-view" (or (la+ user-type
