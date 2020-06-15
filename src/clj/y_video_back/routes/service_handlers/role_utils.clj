@@ -155,16 +155,23 @@
         "file-get-all-contents" (or (admin+ user-type) false)
 
         ; Course handlers
-        "course-create" (or (admin+ user-type) false)
-        "course-get-by-id" (or (admin+ user-type) false)
-        "course-update" (or (admin+ user-type) false)
+        "course-create" (or (la+ user-type) false)
+        "course-get-by-id" (or (la+ user-type) false
+                               (is-child? (:course-id args) user-id CRSE-STUD))
+        "course-update" (or (la+ user-type) false)
         "course-delete" (or (admin+ user-type) false)
-        "course-add-collection" (or (admin+ user-type) false)
-        "course-remove-collection" (or (admin+ user-type) false)
-        "course-get-all-collections" (or (admin+ user-type) false)
-        "course-add-user" (or (admin+ user-type) false)
-        "course-remove-user" (or (admin+ user-type) false)
-        "course-get-all-users" (or (admin+ user-type) false)
+        "course-add-collection" (or (la+ user-type) false
+                                    (is-child? (:course-id args) user-id INSTR))
+        "course-remove-collection" (or (la+ user-type) false
+                                       (is-child? (:course-id args) user-id INSTR))
+        "course-get-all-collections" (or (la+ user-type) false
+                                         (is-child? (:course-id args) user-id CRSE-STUD))
+        "course-add-user" (or (la+ user-type) false
+                              (is-child? (:course-id args) user-id INSTR))
+        "course-remove-user" (or (la+ user-type) false
+                                 (is-child? (:course-id args) user-id INSTR))
+        "course-get-all-users" (or (la+ user-type) false
+                                   (is-child? (:course-id args) user-id INSTR))
 
         ; Word handlers
         "word-create" (or (admin+ user-type) false)

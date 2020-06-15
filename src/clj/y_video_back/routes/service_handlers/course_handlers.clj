@@ -32,7 +32,7 @@
    :responses {200 {:body models/course}
                404 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
-              (if-not (ru/has-permission session-id "course-get-by-id" 0)
+              (if-not (ru/has-permission session-id "course-get-by-id" {:course-id id})
                 ru/forbidden-page
                 (let [result (courses/READ id)]
                   (if (= "" (:id result))
@@ -47,7 +47,7 @@
                 :path {:id uuid?} :body ::sp/course}
    :responses {200 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
-              (if-not (ru/has-permission session-id "course-update" 0)
+              (if-not (ru/has-permission session-id "course-update" {:course-id id})
                 ru/forbidden-page
                 (let [result (courses/UPDATE id body)]
                   (if (= 0 result)
@@ -62,7 +62,7 @@
                 :path {:id uuid?}}
    :responses {200 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
-              (if-not (ru/has-permission session-id "course-delete" 0)
+              (if-not (ru/has-permission session-id "course-delete" {:course-id id})
                 ru/forbidden-page
                 (let [result (courses/DELETE id)]
                   (if (= 0 result)
@@ -77,7 +77,7 @@
                 :path {:id uuid?} :body {:collection_id uuid?}}
    :responses {200 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
-              (if-not (ru/has-permission session-id "course-add-collection" 0)
+              (if-not (ru/has-permission session-id "course-add-collection" {:course-id id})
                 ru/forbidden-page
                 (let [result "placeholder"]
                   (if (= 0 result)
@@ -93,7 +93,7 @@
                 :path {:id uuid?} :body {:collection_id uuid?}}
    :responses {200 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
-              (if-not (ru/has-permission session-id "course-remove-collection" 0)
+              (if-not (ru/has-permission session-id "course-remove-collection" {:course-id id})
                 ru/forbidden-page
                 (let [result "placeholder"] ;; needs adjustment
                   (if (= 0 result)
@@ -108,7 +108,7 @@
                 :path {:id uuid?}}
    :responses {200 {:body [(into models/collection {:course-id uuid?})]}}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
-              (if-not (ru/has-permission session-id "course-get-all-collections" 0)
+              (if-not (ru/has-permission session-id "course-get-all-collections" {:course-id id})
                 ru/forbidden-page
                 (let [course_collections_result (collection_courses_assoc/READ-COLLECTIONS-BY-COURSE id)]
                   (let [collection_result (map #(utils/remove-db-only %) course_collections_result)]
@@ -140,7 +140,7 @@
                 :path {:id uuid?} :body {:user_id uuid?}}
    :responses {200 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
-              (if-not (ru/has-permission session-id "course-remove-user" 0)
+              (if-not (ru/has-permission session-id "course-remove-user" {:course-id id})
                 ru/forbidden-page
                 (let [result (user_courses_assoc/DELETE-BY-IDS [id (:user_id body)])]
                   (if (= 0 result)
@@ -155,7 +155,7 @@
                 :path {:id uuid?}}
    :responses {200 {:body [(into models/user {:account-role int? :course-id uuid?})]}}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
-              (if-not (ru/has-permission session-id "course-get-all-users" 0)
+              (if-not (ru/has-permission session-id "course-get-all-users" {:course-id id})
                 ru/forbidden-page
                 (let [user_courses_result (user_courses_assoc/READ-USERS-BY-COURSE id)]
                   (let [user_result (map #(utils/remove-db-only %) user_courses_result)]
