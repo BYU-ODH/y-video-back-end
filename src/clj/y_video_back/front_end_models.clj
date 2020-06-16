@@ -40,7 +40,7 @@
   (into word_without_id {:id uuid?}))
 
 (def collection_without_id
-  {:collection-name string? :published boolean? :archived boolean?})
+  {:name string? :published boolean? :archived boolean?})
 
 (def collection
   (into collection_without_id {:id uuid?}))
@@ -52,10 +52,10 @@
   (into course_without_id {:id uuid?}))
 
 (def content_without_id
-  {:content-name string? :content-type string? :requester-email string?
-   :thumbnail string? :copyrighted boolean? :physical-copy-exists boolean?
-   :full-video boolean? :published boolean? :allow-definitions boolean?
-   :allow-notes boolean? :allow-captions boolean? :date-validated string?
+  {:name string? :contentType string? :requester string?
+   :thumbnail string? :isCopyrighted boolean? :physicalCopyExists boolean?
+   :fullVideo boolean? :published boolean? :allow-definitions boolean?
+   :allow-notes boolean? :allow-captions boolean? :dateValidated string?
    :views int? :metadata string?})
 
 (def content

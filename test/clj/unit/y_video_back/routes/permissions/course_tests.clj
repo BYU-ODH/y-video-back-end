@@ -24,238 +24,241 @@
     [y-video-back.db.users :as users]
     [y-video-back.db.words :as words]
     [y-video-back.utils.utils :as ut]))
-(declare ^:dynamic *txn*)
 
-(use-fixtures
-  :once
-  (fn [f]
-    (mount/start #'y-video-back.config/env
-                 #'y-video-back.handler/app
-                 #'y-video-back.db.core/*db*)
-    (f)))
+(comment
 
-(tcore/basic-transaction-fixtures
-  (def user-admin (users/CREATE {:email "admin_1@gmail.com"
-                                 :last-login "never"
-                                 :account-name "Mr. Admin 1"
-                                 :account-type 0
-                                 :username "a1"}))
-  (def user-la (users/CREATE {:email "la_1@gmail.com"
-                              :last-login "never"
-                              :account-name "Mr. Assistant 1"
-                              :account-type 1
-                              :username "l1"}))
-  (def user-instr-c1 (users/CREATE {:email "instructor_1@gmail.com"
-                                    :last-login "never"
-                                    :account-name "Mr. Instructor 1"
-                                    :account-type 2
-                                    :username "i1"}))
-  (def user-instr-na (users/CREATE {:email "instructor_2@gmail.com"
-                                    :last-login "never"
-                                    :account-name "Mr. Instructor 2"
-                                    :account-type 2
-                                    :username "i2"}))
-  (def user-stud-stud (users/CREATE {:email "student_1@gmail.com"
+  (declare ^:dynamic *txn*)
+
+  (use-fixtures
+    :once
+    (fn [f]
+      (mount/start #'y-video-back.config/env
+                   #'y-video-back.handler/app
+                   #'y-video-back.db.core/*db*)
+      (f)))
+
+  (tcore/basic-transaction-fixtures
+    (def user-admin (users/CREATE {:email "admin_1@gmail.com"
+                                   :last-login "never"
+                                   :account-name "Mr. Admin 1"
+                                   :account-type 0
+                                   :username "a1"}))
+    (def user-la (users/CREATE {:email "la_1@gmail.com"
+                                :last-login "never"
+                                :account-name "Mr. Assistant 1"
+                                :account-type 1
+                                :username "l1"}))
+    (def user-instr-c1 (users/CREATE {:email "instructor_1@gmail.com"
+                                      :last-login "never"
+                                      :account-name "Mr. Instructor 1"
+                                      :account-type 2
+                                      :username "i1"}))
+    (def user-instr-na (users/CREATE {:email "instructor_2@gmail.com"
+                                      :last-login "never"
+                                      :account-name "Mr. Instructor 2"
+                                      :account-type 2
+                                      :username "i2"}))
+    (def user-stud-stud (users/CREATE {:email "student_1@gmail.com"
+                                       :last-login "never"
+                                       :account-name "Mr. Student 1"
+                                       :account-type 3
+                                       :username "s1"}))
+    (def user-stud-ta (users/CREATE {:email "student_2@gmail.com"
                                      :last-login "never"
-                                     :account-name "Mr. Student 1"
+                                     :account-name "Mr. Student 2"
                                      :account-type 3
-                                     :username "s1"}))
-  (def user-stud-ta (users/CREATE {:email "student_2@gmail.com"
-                                   :last-login "never"
-                                   :account-name "Mr. Student 2"
-                                   :account-type 3
-                                   :username "s2"}))
-  (def user-stud-na (users/CREATE {:email "student_3@gmail.com"
-                                   :last-login "never"
-                                   :account-name "Mr. Student 3"
-                                   :account-type 3
-                                   :username "s3"}))
-  (def test-coll-one (ut/under-to-hyphen (collections/CREATE (g/get_random_collection_without_id))))
-  (def test-crse-one (ut/under-to-hyphen (courses/CREATE (g/get_random_course_without_id))))
-  (def test-cont-one (ut/under-to-hyphen (contents/CREATE (g/get_random_content_without_id))))
-  (def test-file-one (ut/under-to-hyphen (files/CREATE (g/get_random_file_without_id))))
-  (def test-user-crse-one (ut/under-to-hyphen (user_courses_assoc/CREATE {:user_id (:id user-stud-stud)
-                                                                          :course_id (:id test-crse-one)
-                                                                          :account_role 2}))) ; student in course
-  (def test-user-crse-two (ut/under-to-hyphen (user_courses_assoc/CREATE {:user_id (:id user-instr-c1)
-                                                                          :course_id (:id test-crse-one)
-                                                                          :account_role 0})))
-  (def test-user-coll-one (ut/under-to-hyphen (user_collections_assoc/CREATE {:user_id (:id user-instr-c1)
-                                                                              :collection_id (:id test-coll-one)
-                                                                              :account_role 0}))) ; owner of collection
-  (def test-user-coll-two (ut/under-to-hyphen (user_collections_assoc/CREATE {:user_id (:id user-stud-ta)
-                                                                              :collection_id (:id test-coll-one)
-                                                                              :account_role 1}))) ; TA for collection
-  (def test-coll-crse-one (ut/under-to-hyphen (collection_courses_assoc/CREATE {:collection_id (:id test-coll-one)
-                                                                                :course_id (:id test-crse-one)})))
-  (def test-coll-cont-one (ut/under-to-hyphen (collection_contents_assoc/CREATE {:collection_id (:id test-coll-one)
-                                                                                 :content_id (:id test-cont-one)})))
-  (def test-cont-file-one (ut/under-to-hyphen (content_files_assoc/CREATE {:content_id (:id test-cont-one)
-                                                                           :file_id (:id test-file-one)})))
-  (mount.core/start #'y-video-back.handler/app))
+                                     :username "s2"}))
+    (def user-stud-na (users/CREATE {:email "student_3@gmail.com"
+                                     :last-login "never"
+                                     :account-name "Mr. Student 3"
+                                     :account-type 3
+                                     :username "s3"}))
+    (def test-coll-one (ut/under-to-hyphen (collections/CREATE (g/get_random_collection_without_id))))
+    (def test-crse-one (ut/under-to-hyphen (courses/CREATE (g/get_random_course_without_id))))
+    (def test-cont-one (ut/under-to-hyphen (contents/CREATE (g/get_random_content_without_id))))
+    (def test-file-one (ut/under-to-hyphen (files/CREATE (g/get_random_file_without_id))))
+    (def test-user-crse-one (ut/under-to-hyphen (user_courses_assoc/CREATE {:user_id (:id user-stud-stud)
+                                                                            :course_id (:id test-crse-one)
+                                                                            :account_role 2}))) ; student in course
+    (def test-user-crse-two (ut/under-to-hyphen (user_courses_assoc/CREATE {:user_id (:id user-instr-c1)
+                                                                            :course_id (:id test-crse-one)
+                                                                            :account_role 0})))
+    (def test-user-coll-one (ut/under-to-hyphen (user_collections_assoc/CREATE {:user_id (:id user-instr-c1)
+                                                                                :collection_id (:id test-coll-one)
+                                                                                :account_role 0}))) ; owner of collection
+    (def test-user-coll-two (ut/under-to-hyphen (user_collections_assoc/CREATE {:user_id (:id user-stud-ta)
+                                                                                :collection_id (:id test-coll-one)
+                                                                                :account_role 1}))) ; TA for collection
+    (def test-coll-crse-one (ut/under-to-hyphen (collection_courses_assoc/CREATE {:collection_id (:id test-coll-one)
+                                                                                  :course_id (:id test-crse-one)})))
+    (def test-coll-cont-one (ut/under-to-hyphen (collection_contents_assoc/CREATE {:collection_id (:id test-coll-one)
+                                                                                   :content_id (:id test-cont-one)})))
+    (def test-cont-file-one (ut/under-to-hyphen (content_files_assoc/CREATE {:content_id (:id test-cont-one)
+                                                                             :file_id (:id test-file-one)})))
+    (mount.core/start #'y-video-back.handler/app))
 
-; (no|with) connection -> (not) connected via many-to-many table
+  ; (no|with) connection -> (not) connected via many-to-many table
 
-; Create course
-(deftest course-create
-  (testing "student create course, no connection"
-    (let [res (rp/course-post (:id user-stud-stud)
-                              (g/get_random_course_without_id))]
-      (is (= 401 (:status res)))))
-  (testing "instr create course"
-    (let [res (rp/course-post (:id user-instr-c1)
-                              (g/get_random_course_without_id))]
-      (is (= 401 (:status res)))))
-  (testing "lab assistant create course"
-    (let [res (rp/course-post (:id user-la)
-                              (g/get_random_course_without_id))]
-      (is (= 200 (:status res)))))
-  (testing "admin create course"
-    (let [res (rp/course-post (:id user-admin)
-                              (g/get_random_course_without_id))]
-      (is (= 200 (:status res))))))
-
-
-; Retrieve course
-(deftest course-read
-  (testing "student reading course, no connection"
-    (let [res (rp/course-id-get (:id user-stud-na)
-                                (:id test-crse-one))]
-      (is (= 401 (:status res)))))
-  (testing "instructor reading course, no connection"
-    (let [res (rp/course-id-get (:id user-instr-na)
-                                (:id test-crse-one))]
-      (is (= 401 (:status res)))))
-  (testing "lab assistant reading course, no connection"
-    (let [res (rp/course-id-get (:id user-la)
-                                (:id test-crse-one))]
-      (is (= 200 (:status res)))))
-  (testing "admin reading course, no connection"
-    (let [res (rp/course-id-get (:id user-admin)
-                                (:id test-crse-one))]
-      (is (= 200 (:status res)))))
-  (testing "student reading course, with connection (student)"
-    (let [res (rp/course-id-get (:id user-stud-stud)
-                                (:id test-crse-one))]
-      (is (= 200 (:status res)))))
-  (testing "student reading course, with connection (TA)"
-    (let [res (rp/course-id-get (:id user-stud-ta)
-                                (:id test-crse-one))]
-      (is (= 401 (:status res)))))
-  (testing "instructor reading course, with connection"
-    (let [res (rp/course-id-get (:id user-instr-c1)
-                                (:id test-crse-one))]
-      (is (= 200 (:status res))))))
-
-; Update course
-(deftest course-update
-  (testing "student update course, no connection"
-    (let [res (rp/course-id-patch (:id user-stud-na)
-                                  (:id test-crse-one)
-                                  (g/get_random_course_without_id))]
-      (is (= 401 (:status res)))))
-  (testing "instructor update course, no connection"
-    (let [res (rp/course-id-patch (:id user-instr-na)
-                                  (:id test-crse-one)
-                                  (g/get_random_course_without_id))]
-      (is (= 401 (:status res)))))
-  (testing "lab assistant update course, no connection"
-    (let [res (rp/course-id-patch (:id user-la)
-                                  (:id test-crse-one)
-                                  (g/get_random_course_without_id))]
-      (is (= 200 (:status res)))))
-  (testing "admin update course, no connection"
-    (let [res (rp/course-id-patch (:id user-admin)
-                                  (:id test-crse-one)
-                                  (g/get_random_course_without_id))]
-      (is (= 200 (:status res)))))
-  (testing "student update course, with connection (student)"
-    (let [res (rp/course-id-patch (:id user-stud-stud)
-                                  (:id test-crse-one)
-                                  (g/get_random_course_without_id))]
-      (is (= 401 (:status res)))))
-  (testing "student update course, with connection (TA)"
-    (let [res (rp/course-id-patch (:id user-stud-ta)
-                                  (:id test-crse-one)
-                                  (g/get_random_course_without_id))]
-      (is (= 401 (:status res)))))
-  (testing "instructor update course, with connection (owner?)"
-    (let [res (rp/course-id-patch (:id user-instr-c1)
-                                  (:id test-crse-one)
-                                  (g/get_random_course_without_id))]
-      (is (= 401 (:status res))))))
-
-; Delete course
-(deftest course-delete
-  (testing "student delete course, no connection"
-    (let [new-course (ut/under-to-hyphen (courses/CREATE (g/get_random_course_without_id)))]
-      (let [res (rp/course-id-delete (:id user-stud-na)
-                                     (:id new-course))]
-        (is (= 401 (:status res))))))
-  (testing "instructor delete course, no connection"
-    (let [new-course (ut/under-to-hyphen (courses/CREATE (g/get_random_course_without_id)))]
-      (let [res (rp/course-id-delete (:id user-instr-na)
-                                     (:id new-course))]
-        (is (= 401 (:status res))))))
-  (testing "lab assistant delete course, no connection"
-    (let [new-course (ut/under-to-hyphen (courses/CREATE (g/get_random_course_without_id)))]
-      (let [res (rp/course-id-delete (:id user-la)
-                                     (:id new-course))]
-        (is (= 401 (:status res))))))
-  (testing "admin delete course, no connection"
-    (let [new-course (ut/under-to-hyphen (courses/CREATE (g/get_random_course_without_id)))]
-      (let [res (rp/course-id-delete (:id user-admin)
-                                     (:id new-course))]
+  ; Create course
+  (deftest course-create
+    (testing "student create course, no connection"
+      (let [res (rp/course-post (:id user-stud-stud)
+                                (g/get_random_course_without_id))]
+        (is (= 401 (:status res)))))
+    (testing "instr create course"
+      (let [res (rp/course-post (:id user-instr-c1)
+                                (g/get_random_course_without_id))]
+        (is (= 401 (:status res)))))
+    (testing "lab assistant create course"
+      (let [res (rp/course-post (:id user-la)
+                                (g/get_random_course_without_id))]
+        (is (= 200 (:status res)))))
+    (testing "admin create course"
+      (let [res (rp/course-post (:id user-admin)
+                                (g/get_random_course_without_id))]
         (is (= 200 (:status res))))))
-  (testing "student delete course, with connection (student)"
-    (let [new-course (ut/under-to-hyphen (courses/CREATE (g/get_random_course_without_id)))]
-      (let [res (rp/course-id-delete (:id user-stud-stud)
-                                     (:id new-course))]
-        (is (= 401 (:status res))))))
-  (testing "student delete course, with connection (TA)"
-    (let [new-course (ut/under-to-hyphen (courses/CREATE (g/get_random_course_without_id)))]
-      (let [res (rp/course-id-delete (:id user-stud-ta)
-                                     (:id new-course))]
-        (is (= 401 (:status res))))))
-  (testing "instructor delete course, with connection (owner?)"
-    (let [new-course (ut/under-to-hyphen (courses/CREATE (g/get_random_course_without_id)))]
-      (let [res (rp/course-id-delete (:id user-instr-c1)
-                                     (:id new-course))]
-        (is (= 401 (:status res)))))))
 
-; Retrieve all collections for course
-(deftest course-get-all-collections
-  (testing "student get all collections by course, no connection"
-    (let [res (rp/course-id-collections (:id user-stud-na)
-                                        (:id test-crse-one))]
-      (is (= 401 (:status res)))))
-  (testing "instructor get all collections by course, no connection"
-    (let [res (rp/course-id-collections (:id user-instr-na)
-                                        (:id test-crse-one))]
-      (is (= 401 (:status res)))))
-  (testing "lab assistant get all collections by course, no connection"
-    (let [res (rp/course-id-collections (:id user-la)
-                                        (:id test-crse-one))]
-      (is (= 200 (:status res)))))
-  (testing "admin get all collections by course, no connection"
-    (let [res (rp/course-id-collections (:id user-admin)
-                                        (:id test-crse-one))]
-      (is (= 200 (:status res)))))
-  (testing "student get all collections by course, with connection (student)"
-    (let [res (rp/course-id-collections (:id user-stud-stud)
-                                        (:id test-crse-one))]
-      (is (= 200 (:status res)))))
-  (testing "student get all collections by course, with connection (TA)"
-    (let [res (rp/course-id-collections (:id user-stud-ta)
-                                        (:id test-crse-one))]
-      (is (= 200 (:status res)))))
-  (testing "instructor get all collections by course, with connection (owner?)"
-    (let [res (rp/course-id-collections (:id user-instr-c1)
-                                        (:id test-crse-one))]
-      (is (= 200 (:status res))))))
 
-; Connect course and collection
-; Disconnect course and collection
-; Connect user and course
-; Disconnect user and course
-; Retrieve all users for course
+  ; Retrieve course
+  (deftest course-read
+    (testing "student reading course, no connection"
+      (let [res (rp/course-id-get (:id user-stud-na)
+                                  (:id test-crse-one))]
+        (is (= 401 (:status res)))))
+    (testing "instructor reading course, no connection"
+      (let [res (rp/course-id-get (:id user-instr-na)
+                                  (:id test-crse-one))]
+        (is (= 401 (:status res)))))
+    (testing "lab assistant reading course, no connection"
+      (let [res (rp/course-id-get (:id user-la)
+                                  (:id test-crse-one))]
+        (is (= 200 (:status res)))))
+    (testing "admin reading course, no connection"
+      (let [res (rp/course-id-get (:id user-admin)
+                                  (:id test-crse-one))]
+        (is (= 200 (:status res)))))
+    (testing "student reading course, with connection (student)"
+      (let [res (rp/course-id-get (:id user-stud-stud)
+                                  (:id test-crse-one))]
+        (is (= 200 (:status res)))))
+    (testing "student reading course, with connection (TA)"
+      (let [res (rp/course-id-get (:id user-stud-ta)
+                                  (:id test-crse-one))]
+        (is (= 401 (:status res)))))
+    (testing "instructor reading course, with connection"
+      (let [res (rp/course-id-get (:id user-instr-c1)
+                                  (:id test-crse-one))]
+        (is (= 200 (:status res))))))
+
+  ; Update course
+  (deftest course-update
+    (testing "student update course, no connection"
+      (let [res (rp/course-id-patch (:id user-stud-na)
+                                    (:id test-crse-one)
+                                    (g/get_random_course_without_id))]
+        (is (= 401 (:status res)))))
+    (testing "instructor update course, no connection"
+      (let [res (rp/course-id-patch (:id user-instr-na)
+                                    (:id test-crse-one)
+                                    (g/get_random_course_without_id))]
+        (is (= 401 (:status res)))))
+    (testing "lab assistant update course, no connection"
+      (let [res (rp/course-id-patch (:id user-la)
+                                    (:id test-crse-one)
+                                    (g/get_random_course_without_id))]
+        (is (= 200 (:status res)))))
+    (testing "admin update course, no connection"
+      (let [res (rp/course-id-patch (:id user-admin)
+                                    (:id test-crse-one)
+                                    (g/get_random_course_without_id))]
+        (is (= 200 (:status res)))))
+    (testing "student update course, with connection (student)"
+      (let [res (rp/course-id-patch (:id user-stud-stud)
+                                    (:id test-crse-one)
+                                    (g/get_random_course_without_id))]
+        (is (= 401 (:status res)))))
+    (testing "student update course, with connection (TA)"
+      (let [res (rp/course-id-patch (:id user-stud-ta)
+                                    (:id test-crse-one)
+                                    (g/get_random_course_without_id))]
+        (is (= 401 (:status res)))))
+    (testing "instructor update course, with connection (owner?)"
+      (let [res (rp/course-id-patch (:id user-instr-c1)
+                                    (:id test-crse-one)
+                                    (g/get_random_course_without_id))]
+        (is (= 401 (:status res))))))
+
+  ; Delete course
+  (deftest course-delete
+    (testing "student delete course, no connection"
+      (let [new-course (ut/under-to-hyphen (courses/CREATE (g/get_random_course_without_id)))]
+        (let [res (rp/course-id-delete (:id user-stud-na)
+                                       (:id new-course))]
+          (is (= 401 (:status res))))))
+    (testing "instructor delete course, no connection"
+      (let [new-course (ut/under-to-hyphen (courses/CREATE (g/get_random_course_without_id)))]
+        (let [res (rp/course-id-delete (:id user-instr-na)
+                                       (:id new-course))]
+          (is (= 401 (:status res))))))
+    (testing "lab assistant delete course, no connection"
+      (let [new-course (ut/under-to-hyphen (courses/CREATE (g/get_random_course_without_id)))]
+        (let [res (rp/course-id-delete (:id user-la)
+                                       (:id new-course))]
+          (is (= 401 (:status res))))))
+    (testing "admin delete course, no connection"
+      (let [new-course (ut/under-to-hyphen (courses/CREATE (g/get_random_course_without_id)))]
+        (let [res (rp/course-id-delete (:id user-admin)
+                                       (:id new-course))]
+          (is (= 200 (:status res))))))
+    (testing "student delete course, with connection (student)"
+      (let [new-course (ut/under-to-hyphen (courses/CREATE (g/get_random_course_without_id)))]
+        (let [res (rp/course-id-delete (:id user-stud-stud)
+                                       (:id new-course))]
+          (is (= 401 (:status res))))))
+    (testing "student delete course, with connection (TA)"
+      (let [new-course (ut/under-to-hyphen (courses/CREATE (g/get_random_course_without_id)))]
+        (let [res (rp/course-id-delete (:id user-stud-ta)
+                                       (:id new-course))]
+          (is (= 401 (:status res))))))
+    (testing "instructor delete course, with connection (owner?)"
+      (let [new-course (ut/under-to-hyphen (courses/CREATE (g/get_random_course_without_id)))]
+        (let [res (rp/course-id-delete (:id user-instr-c1)
+                                       (:id new-course))]
+          (is (= 401 (:status res)))))))
+
+  ; Retrieve all collections for course
+  (deftest course-get-all-collections
+    (testing "student get all collections by course, no connection"
+      (let [res (rp/course-id-collections (:id user-stud-na)
+                                          (:id test-crse-one))]
+        (is (= 401 (:status res)))))
+    (testing "instructor get all collections by course, no connection"
+      (let [res (rp/course-id-collections (:id user-instr-na)
+                                          (:id test-crse-one))]
+        (is (= 401 (:status res)))))
+    (testing "lab assistant get all collections by course, no connection"
+      (let [res (rp/course-id-collections (:id user-la)
+                                          (:id test-crse-one))]
+        (is (= 200 (:status res)))))
+    (testing "admin get all collections by course, no connection"
+      (let [res (rp/course-id-collections (:id user-admin)
+                                          (:id test-crse-one))]
+        (is (= 200 (:status res)))))
+    (testing "student get all collections by course, with connection (student)"
+      (let [res (rp/course-id-collections (:id user-stud-stud)
+                                          (:id test-crse-one))]
+        (is (= 200 (:status res)))))
+    (testing "student get all collections by course, with connection (TA)"
+      (let [res (rp/course-id-collections (:id user-stud-ta)
+                                          (:id test-crse-one))]
+        (is (= 401 (:status res))))) ; Will be 200 eventually
+    (testing "instructor get all collections by course, with connection (owner?)"
+      (let [res (rp/course-id-collections (:id user-instr-c1)
+                                          (:id test-crse-one))]
+        (is (= 200 (:status res)))))))
+
+  ; Connect course and collection
+  ; Disconnect course and collection
+  ; Connect user and course
+  ; Disconnect user and course
+  ; Retrieve all users for course

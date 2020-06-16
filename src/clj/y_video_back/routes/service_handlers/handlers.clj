@@ -7,7 +7,9 @@
    [y-video-back.routes.service_handlers.course_handlers :as courses]
    [y-video-back.routes.service_handlers.file_handlers :as files]
    [y-video-back.routes.service_handlers.annotation_handlers :as annotations]
-   [y-video-back.routes.service_handlers.word_handlers :as words]))
+   [y-video-back.routes.service_handlers.word_handlers :as words]
+   [y-video-back.routes.service_handlers.admin_handlers :as admin]))
+
 
 ; Misc handlers
 (def echo-patch miscs/echo-patch)
@@ -21,6 +23,7 @@
 (def user-delete users/user-delete)
 (def user-get-logged-in users/user-get-logged-in)
 (def user-get-all-collections users/user-get-all-collections)
+(def user-get-all-collections-by-logged-in users/user-get-all-collections-by-logged-in)
 (def user-get-all-courses users/user-get-all-courses)
 (def user-get-all-words users/user-get-all-words)
 
@@ -81,3 +84,8 @@
 (def annotation-update annotations/annotation-update)
 (def annotation-delete annotations/annotation-delete)
 (def annotation-get-by-collection-and-content annotations/annotation-get-by-collection-and-content)
+
+; Admin handlers
+(def search-by-user admin/search-by-user)
+(def search-by-collection admin/search-by-collection)
+(def search-by-content admin/search-by-content)

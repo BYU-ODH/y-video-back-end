@@ -106,7 +106,8 @@
 (defn wrap-api [handler]
   (let [check-csrf  (if-not (:test env) wrap-csrf identity)]
       (-> ((:middleware defaults) handler)
-          (wrap-cors :access-control-allow-origin #"http://localhost:3000" :access-control-allow-methods [:get :put :post :delete :patch]))))
+          (wrap-cors :access-control-allow-origin #"http://localhost:3000" :access-control-allow-methods [:get :put :post :delete :patch]
+                     :access-control-allow-credentials "true"))))
           ;check-csrf)))
           ;check-permission)))
           ;wrap-flash
@@ -124,7 +125,7 @@
 (defn wrap-base [handler]
   (-> ((:middleware defaults) handler)
       wrap-flash
-      ;;wrap-cas
+      wrap-cas
       wrap-csrf
       (wrap-session {:cookie-attrs {:http-only true}})
       (wrap-defaults

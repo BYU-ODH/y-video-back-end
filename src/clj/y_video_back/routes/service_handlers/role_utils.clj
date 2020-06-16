@@ -79,114 +79,119 @@
   ([target-id user-id]
    (is-child? target-id user-id ##Inf)))
 
-
 (defn has-permission
-  "Returns true if user has permission for route, else false"
+  "Placeholder for real has-permission function. Always returns true."
   [token route args]
-  (if (= token (utils/to-uuid "6bc824a6-f446-416d-8dd6-06350ae577f4")) ; Add if test before deployment
-    true
-    (let [user-id (token-to-user-id token)
-          user-type (get-user-type user-id)]
-      (case route
+  true)
 
-        ; Misc handlers
-        "echo-post" (instr+ user-type)
-        "echo-patch" (or (admin+ user-type) false)
-        "connect-collection-and-course" (or (admin+ user-type) false)
-        "search-by-term" (or (admin+ user-type) false)
+(comment
+  (defn has-permission
+    "Returns true if user has permission for route, else false"
+    [token route args]
+    (if (= token (utils/to-uuid "6bc824a6-f446-416d-8dd6-06350ae577f4")) ; Add if test before deployment
+      true
+      (let [user-id (token-to-user-id token)
+            user-type (get-user-type user-id)]
+        (case route
 
-        ; User handlers
-        "user-create" true ; For development only
-        "user-get-by-id" (or (admin+ user-type) false)
-        "user-update" (or (admin+ user-type) false)
-        "user-delete" (or (admin+ user-type) false)
-        "user-get-logged-in" (or (admin+ user-type) false)
-        "user-get-all-collections" (or (admin+ user-type) false)
-        "user-get-all-courses" (or (admin+ user-type) false)
-        "user-get-all-words" (or (admin+ user-type) false)
+          ; Misc handlers
+          "echo-post" (instr+ user-type)
+          "echo-patch" (or (admin+ user-type) false)
+          "connect-collection-and-course" (or (admin+ user-type) false)
+          "search-by-term" (or (admin+ user-type) false)
 
-        ; Collection handlers
-        "collection-create" (or (instr+ user-type))
-        "collection-get-by-id" (or (instr+ user-type)
-                                   (is-child? (:collection-id args) user-id CRSE-STUD))
-        "collection-update" (or (la+ user-type)
-                                (is-child? (:collection-id args) user-id TA))
-        "collection-delete" (or (admin+ user-type))
-        "collection-add-user" (or (la+ user-type)
-                                  (is-child? (:collection-id args) user-id OWNER))
-        "collection-remove-user" (or (la+ user-type)
-                                     (is-child? (:collection-id args) user-id OWNER))
-        "collection-add-content" (or (la+ user-type)
-                                     (is-child? (:collection-id args) user-id OWNER))
-        "collection-remove-content" (or (la+ user-type)
-                                        (is-child? (:collection-id args) user-id OWNER))
-        "collection-add-course" (or (la+ user-type)
+          ; User handlers
+          "user-create" true ; For development only
+          "user-get-by-id" (or (admin+ user-type) false)
+          "user-update" (or (admin+ user-type) false)
+          "user-delete" (or (admin+ user-type) false)
+          "user-get-logged-in" (or (admin+ user-type) false)
+          "user-get-all-collections" (or (admin+ user-type) false)
+          "user-get-all-courses" (or (admin+ user-type) false)
+          "user-get-all-words" (or (admin+ user-type) false)
+
+          ; Collection handlers
+          "collection-create" (or (instr+ user-type))
+          "collection-get-by-id" (or (instr+ user-type)
+                                     (is-child? (:collection-id args) user-id CRSE-STUD))
+          "collection-update" (or (la+ user-type)
+                                  (is-child? (:collection-id args) user-id TA))
+          "collection-delete" (or (admin+ user-type))
+          "collection-add-user" (or (la+ user-type)
                                     (is-child? (:collection-id args) user-id OWNER))
-        "collection-remove-course" (or (la+ user-type)
+          "collection-remove-user" (or (la+ user-type)
                                        (is-child? (:collection-id args) user-id OWNER))
-        "collection-get-all-contents" (or (la+ user-type)
-                                          (is-child? (:collection-id args) user-id CRSE-STUD))
+          "collection-add-content" (or (la+ user-type)
+                                       (is-child? (:collection-id args) user-id OWNER))
+          "collection-remove-content" (or (la+ user-type)
+                                          (is-child? (:collection-id args) user-id OWNER))
+          "collection-add-course" (or (la+ user-type)
+                                      (is-child? (:collection-id args) user-id OWNER))
+          "collection-remove-course" (or (la+ user-type)
+                                         (is-child? (:collection-id args) user-id OWNER))
+          "collection-get-all-contents" (or (la+ user-type)
+                                            (is-child? (:collection-id args) user-id CRSE-STUD))
 
-        "collection-get-all-courses" (la+ user-type)
-        "collection-get-all-users" (la+ user-type)
+          "collection-get-all-courses" (la+ user-type)
+          "collection-get-all-users" (la+ user-type)
 
-        ; Content handlers
-        "content-create" (or (la+ user-type))
-        "content-get-by-id" (or (instr+ user-type)
-                                (is-child? (:content-id args) user-id CRSE-STUD))
-        "content-update" (or (la+ user-type)
-                             (is-child? (:content-id args) user-id TA))
-        "content-delete" (or (admin+ user-type))
-        "content-get-all-collections" (or (la+ user-type))
-        "content-get-all-files" (or (la+ user-type)
-                                    (is-child? (:content-id args) user-id CRSE-STUD))
-        "content-add-view" (or (la+ user-type
-                                (is-child? (:content-id args) user-id CRSE-STUD)))
-        "content-add-file" (or (la+ user-type)
+          ; Content handlers
+          "content-create" (or (la+ user-type))
+          "content-get-by-id" (or (instr+ user-type)
+                                  (is-child? (:content-id args) user-id CRSE-STUD))
+          "content-update" (or (la+ user-type)
                                (is-child? (:content-id args) user-id TA))
-        "content-remove-file" (or (la+ user-type)
-                                  (is-child? (:content-id args) user-id TA))
+          "content-delete" (or (admin+ user-type))
+          "content-get-all-collections" (or (la+ user-type))
+          "content-get-all-files" (or (la+ user-type)
+                                      (is-child? (:content-id args) user-id CRSE-STUD))
+          "content-add-view" (or (la+ user-type
+                                  (is-child? (:content-id args) user-id CRSE-STUD)))
+          "content-add-file" (or (la+ user-type)
+                                 (is-child? (:content-id args) user-id TA))
+          "content-remove-file" (or (la+ user-type)
+                                    (is-child? (:content-id args) user-id TA))
 
-        ; File handlers
-        "file-create" (or (admin+ user-type) false)
-        "file-get-by-id" (or (admin+ user-type) false)
-        "file-update" (or (admin+ user-type) false)
-        "file-delete" (or (admin+ user-type) false)
-        "file-get-all-contents" (or (admin+ user-type) false)
+          ; File handlers
+          "file-create" (or (admin+ user-type) false)
+          "file-get-by-id" (or (admin+ user-type) false)
+          "file-update" (or (admin+ user-type) false)
+          "file-delete" (or (admin+ user-type) false)
+          "file-get-all-contents" (or (admin+ user-type) false)
 
-        ; Course handlers
-        "course-create" (or (la+ user-type) false)
-        "course-get-by-id" (or (la+ user-type) false
-                               (is-child? (:course-id args) user-id CRSE-STUD))
-        "course-update" (or (la+ user-type) false)
-        "course-delete" (or (admin+ user-type) false)
-        "course-add-collection" (or (la+ user-type) false
-                                    (is-child? (:course-id args) user-id INSTR))
-        "course-remove-collection" (or (la+ user-type) false
-                                       (is-child? (:course-id args) user-id INSTR))
-        "course-get-all-collections" (or (la+ user-type) false
-                                         (is-child? (:course-id args) user-id CRSE-STUD))
-        "course-add-user" (or (la+ user-type) false
-                              (is-child? (:course-id args) user-id INSTR))
-        "course-remove-user" (or (la+ user-type) false
-                                 (is-child? (:course-id args) user-id INSTR))
-        "course-get-all-users" (or (la+ user-type) false
+          ; Course handlers
+          "course-create" (or (la+ user-type) false)
+          "course-get-by-id" (or (la+ user-type) false
+                                 (is-child? (:course-id args) user-id CRSE-STUD))
+          "course-update" (or (la+ user-type) false)
+          "course-delete" (or (admin+ user-type) false)
+          "course-add-collection" (or (la+ user-type) false
+                                      (is-child? (:course-id args) user-id INSTR))
+          "course-remove-collection" (or (la+ user-type) false
+                                         (is-child? (:course-id args) user-id INSTR))
+          "course-get-all-collections" (or (la+ user-type) false
+                                           (is-child? (:course-id args) user-id CRSE-STUD))
+          "course-add-user" (or (la+ user-type) false
+                                (is-child? (:course-id args) user-id INSTR))
+          "course-remove-user" (or (la+ user-type) false
                                    (is-child? (:course-id args) user-id INSTR))
+          "course-get-all-users" (or (la+ user-type) false
+                                     (is-child? (:course-id args) user-id INSTR))
 
-        ; Word handlers
-        "word-create" (or (admin+ user-type) false)
-        "word-get-by-id" (or (admin+ user-type) false)
-        "word-update" (or (admin+ user-type) false)
-        "word-delete" (or (admin+ user-type) false)
+          ; Word handlers
+          "word-create" (or (admin+ user-type) false)
+          "word-get-by-id" (or (admin+ user-type) false)
+          "word-update" (or (admin+ user-type) false)
+          "word-delete" (or (admin+ user-type) false)
 
-        ; Annotation handlers
-        "annotation-create" (or (admin+ user-type) false)
-        "annotation-get-by-id" (or (admin+ user-type) false)
-        "annotation-update" (or (admin+ user-type) false)
-        "annotation-delete" (or (admin+ user-type) false)
+          ; Annotation handlers
+          "annotation-create" (or (admin+ user-type) false)
+          "annotation-get-by-id" (or (admin+ user-type) false)
+          "annotation-update" (or (admin+ user-type) false)
+          "annotation-delete" (or (admin+ user-type) false)
 
 
-        false))))
+          false)))))
 
 (def forbidden-page
   (error-page {:status 401, :title "401 - Unauthorized",

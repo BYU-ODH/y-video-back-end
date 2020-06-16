@@ -1,3 +1,5 @@
+resources/public/static
+*.sh
 /target
 /lib
 /classes

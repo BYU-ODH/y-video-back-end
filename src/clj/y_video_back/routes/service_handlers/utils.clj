@@ -39,3 +39,30 @@
    :email (:email user)
    :roles [(:account-type user)]
    :lastLogin (:last-login user)})
+
+(defn coll-db-to-front
+  "Replace keywords with what the front end expects"
+  [coll]
+  {:id (:id coll)
+   :name (:collection-name coll)
+   :published (:published coll)
+   :archived (:archived coll)})
+
+(defn cont-db-to-front
+  "Replace keywords with what the front end expects"
+  [cont]
+  {:id (:id cont)
+   :name (:content-name cont)
+   :contentType (:content-type cont)
+   :requester (:requester-email cont)
+   :thumbnail (:thumbnail cont)
+   :isCopyrighted (:copyrighted cont)
+   :physicalCopyExists (:physical-copy-exists cont)
+   :fullVideo (:full-video cont)
+   :published (:published cont)
+   :allow-definitions (:allow-definitions cont)
+   :allow-notes (:allow-notes cont)
+   :allow-captions (:allow-captions cont)
+   :dateValidated (:date-validated cont)
+   :views (:views cont)
+   :metadata (:metadata cont)})

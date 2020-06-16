@@ -138,7 +138,7 @@
      {:swagger {:tags ["collections"]}}
 
      [""
-      {:get service-handlers/user-get-all-collections}]]  ;; This method is a place holder - it is used elsewhere
+      {:get service-handlers/user-get-all-collections-by-logged-in}]]  ;; This method is a place holder - it is used elsewhere
 
     ["/collection"
      {:swagger {:tags ["collection"]}}
@@ -240,4 +240,12 @@
     ["/search"
      {:swagger {:tags ["search"]}}
      [""
-      {:get service-handlers/search-by-term}]]])
+      {:get service-handlers/search-by-term}]]
+    ["/admin"
+     {:swagger {:tags ["admin"]}}
+     ["/user/{term}"
+      {:get service-handlers/search-by-user}]
+     ["/collection/{term}"
+      {:get service-handlers/search-by-collection}]
+     ["/content/{term}"
+      {:get service-handlers/search-by-content}]]])

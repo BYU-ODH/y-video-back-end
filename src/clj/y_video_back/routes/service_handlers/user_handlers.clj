@@ -33,7 +33,7 @@
   {:summary "Retrieves specified user"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
-   :responses {200 {:body fmodels/user}
+   :responses {200 {:body models/user}
                404 {:body {:message string?}}
                500 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
@@ -44,7 +44,7 @@
                     {:status 404
                      :body {:message "user not found"}}
                     {:status 200
-                     :body (utils/user-db-to-front user_result)}))))})
+                     :body user_result}))))})
 
 
 (def user-update
@@ -111,6 +111,21 @@
                     (if (= 0 (count collection_result))
                       {:status 404
                        :body {:message "no users found for given collection"}}
+                      {:status 200
+                       :body collection_result})))))})
+
+(def user-get-all-collections-by-logged-in
+  {:summary "Retrieves all collections for session user"
+   :parameters {:header {:session-id uuid?}}
+   :responses {200 {:body [(into models/collection {:account-role int? :user-id uuid?})]}}
+   :handler (fn [{{{:keys [session-id]} :header} :parameters}]
+              (if-not (ru/has-permission session-id "user-get-all-collections" 0)
+                ru/forbidden-page
+                (let [user_collections_result (user_collections_assoc/READ-COLLECTIONS-BY-USER (ru/token-to-user-id session-id))]
+                  (let [collection_result (map #(utils/remove-db-only %) user_collections_result)]
+                    (if (= 0 (count collection_result))
+                      {:status 404
+                       :body []}
                       {:status 200
                        :body collection_result})))))})
 
