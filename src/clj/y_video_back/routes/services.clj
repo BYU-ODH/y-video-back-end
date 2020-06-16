@@ -15,8 +15,8 @@
     [ring.util.http-response :as response]
     [clojure.java.io :as io]
     [y-video-back.routes.service_handlers.utils :as utils]
-    [y-video-back.routes.service_handlers.role_utils :as ru]))
-
+    [y-video-back.routes.service_handlers.role_utils :as ru]
+    [y-video-back.user-creator :as uc]))
 
 
 (defn service-routes []
@@ -57,6 +57,13 @@
              {:url "/api/swagger.json"
               :config {:validator-url nil}})}]]
 
+    ["/get-session-id/{username}"
+     {:get {:summary "gets session id for username"
+            :parameters {:path {:username string?}}
+            :responses {200 {:body {:session_id string?}}}
+            :handler (fn [{{{:keys [username]} :path} :parameters}]
+                       {:status 200
+                        :body {:session_id (str (uc/get-session-id username))}})}}]
     ["/ping"
      {:get (constantly (response/ok {:message "pong"}))}]
 

@@ -33,7 +33,7 @@
   {:summary "Retrieves specified user"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
-   :responses {200 {:body models/user}
+   :responses {200 {:body fmodels/user}
                404 {:body {:message string?}}
                500 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
@@ -44,7 +44,7 @@
                     {:status 404
                      :body {:message "user not found"}}
                     {:status 200
-                     :body user_result}))))})
+                     :body (utils/user-db-to-front user_result)}))))})
 
 
 (def user-update
@@ -81,21 +81,23 @@
 (def user-get-logged-in ;; Non-functional
   {:summary "Retrieves the current logged-in user"
    :parameters {:header {:session-id uuid?}}
-   :responses {200 {:body models/user}
+   :responses {200 {:body fmodels/user}
                      ;:header {:Access-Control-Allow-Origin "http://localhost:3000"}}
                404 {:body {:message string?}}
                500 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header} :parameters}]
               (if-not (ru/has-permission session-id "user-get-logged-in" 0)
                 ru/forbidden-page
-                (let [user-id (ru/token-to-user-id session-id)]
-                  (let [user_result (users/READ user-id)]
-                    (if (nil? user_result)
-                      {:status 404
-                       :body {:message "user not found"}}
-                      {:status 200
-                       :body user_result})))))})
-                       ;:header {"Access-Control-Allow-Origin" "*"}}))))})
+                (do
+                  (println (str "in user-get-logged-in with " session-id))
+                  (let [user-id (ru/token-to-user-id session-id)]
+                    (let [user_result (users/READ user-id)]
+                      (if (nil? user_result)
+                        {:status 404
+                         :body {:message "user not found"}}
+                        {:status 200
+                         :body (utils/user-db-to-front user_result)}))))))})
+                         ;:header {"Access-Control-Allow-Origin" "*"}}))))})
 
 
 (def user-get-all-collections ;; Non-functional
