@@ -3,6 +3,7 @@
 
 (def CREATE (partial db/CREATE :users))
 (def READ  (partial db/READ :users-undeleted))
+(def READ-BY-USERNAME (partial db/read-where-and :users [:username]))
 (def READ-ALL  (partial db/READ :users))
 (def UPDATE (partial db/UPDATE :users))
 (def DELETE (partial db/mark-deleted :users))

@@ -80,22 +80,22 @@
 
 (def user-get-logged-in ;; Non-functional
   {:summary "Retrieves the current logged-in user"
-   :parameters {:header {:session-id uuid?}
-                :path {:id uuid?}}
+   :parameters {:header {:session-id uuid?}}
    :responses {200 {:body models/user}
                      ;:header {:Access-Control-Allow-Origin "http://localhost:3000"}}
                404 {:body {:message string?}}
                500 {:body {:message string?}}}
-   :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
+   :handler (fn [{{{:keys [session-id]} :header} :parameters}]
               (if-not (ru/has-permission session-id "user-get-logged-in" 0)
                 ru/forbidden-page
-                (let [user_result (users/READ id)]
-                  (if (nil? user_result)
-                    {:status 404
-                     :body {:message "user not found"}}
-                    {:status 200
-                     :body (utils/user-db-to-front user_result)}))))})
-                     ;:header {"Access-Control-Allow-Origin" "*"}}))))})
+                (let [user-id (ru/token-to-user-id session-id)]
+                  (let [user_result (users/READ user-id)]
+                    (if (nil? user_result)
+                      {:status 404
+                       :body {:message "user not found"}}
+                      {:status 200
+                       :body user_result})))))})
+                       ;:header {"Access-Control-Allow-Origin" "*"}}))))})
 
 
 (def user-get-all-collections ;; Non-functional
@@ -121,13 +121,11 @@
    :handler (fn [{{{:keys [session-id]} :header} :parameters}]
               (if-not (ru/has-permission session-id "user-get-all-collections" 0)
                 ru/forbidden-page
-                (let [user_collections_result (user_collections_assoc/READ-COLLECTIONS-BY-USER (ru/token-to-user-id session-id))]
-                  (let [collection_result (map #(utils/remove-db-only %) user_collections_result)]
-                    (if (= 0 (count collection_result))
-                      {:status 404
-                       :body []}
-                      {:status 200
-                       :body collection_result})))))})
+                (let [user-id (ru/token-to-user-id session-id)]
+                  (let [user_collections_result (user_collections_assoc/READ-COLLECTIONS-BY-USER user-id)]
+                    (let [collection_result (map #(utils/remove-db-only %) user_collections_result)]
+                        {:status 200
+                         :body collection_result})))))})
 
 (def user-get-all-courses ;; Non-functional
   {:summary "Retrieves all courses for specified user"

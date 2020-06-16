@@ -137,6 +137,7 @@
       (parser/render-file
         template
         (assoc params
+          :session-id (:session-id request)
           :page template
           :csrf-token *anti-forgery-token*)))
     "text/html; charset=utf-8"))

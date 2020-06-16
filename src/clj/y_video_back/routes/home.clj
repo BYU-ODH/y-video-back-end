@@ -3,7 +3,8 @@
      [y-video-back.layout :as layout]
      [clojure.java.io :as io]
      [ring.util.http-response :as response]
-     [y-video-back.middleware :as middleware]))
+     [y-video-back.middleware :as middleware]
+     [y-video-back.user-creator :as uc]))
 
 
 
@@ -30,7 +31,9 @@
   (layout/render request "hello.html"))
 
 (defn index-page [request]
-  (layout/render request "index.html"))
+  (let [session-id (uc/get-session-id (:username request))]
+    (println (str "serving session-id from home.clj: " session-id))
+    (layout/render (into request {:session-id session-id}) "index.html")))
 
 (defn factor-home [request]
   (layout/render request "fear_no_factor.html"))
@@ -56,7 +59,7 @@
                        middleware/wrap-formats]}]
         (conj
          (for [path home-paths]
-           [path {:get home-page}])
+           [path {:get index-page}])
          ["/ping" {:get (constantly (response/ok {:message "pong"}))}]
          ["/ping_post" {:post (constantly (response/ok {:message "pong"}))}]
          ["/who-am-i" {:get (fn [request] {:status 200 :body {:username (:username request)}})}]
