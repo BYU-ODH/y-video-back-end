@@ -160,6 +160,14 @@
   ([id]
    (content-id-delete SESSION-ID-BYPASS id)))
 
+(defn content-id-add-view
+  "Adds a view to content"
+  ([session-id id]
+   (app (-> (request :post (str "/api/content/" id "/add-view"))
+            (header :session-id session-id))))
+  ([id]
+   (content-id-add-view SESSION-ID-BYPASS id)))
+
 (defn annotation-post
   "Create a annotation via app's post request"
   ([session-id annotation_without_id]

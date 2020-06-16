@@ -112,12 +112,14 @@
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
               (if-not (ru/has-permission session-id "content-add-view" {:content-id id})
                 ru/forbidden-page
-                (let [result "placeholder"]
-                  (if result
-                    {:status 200
-                     :body {:message "view successfully added"}}
+                (let [content-res (contents/READ id)]
+                  (if-not content-res
                     {:status 404
-                     :body {:message "requested content not found"}}))))})
+                     :body {:message "requested content not found"}}
+                    (do
+                      (contents/UPDATE id {:views (+ 1 (:views content-res))})
+                      {:status 200
+                       :body {:message "view successfully added"}})))))})
 
 (def content-add-file
   {:summary "Adds file to specified content"
