@@ -33,7 +33,7 @@
   {:summary "Retrieves specified user"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
-   :responses {200 {:body fmodels/user}
+   :responses {200 {:body models/user}
                404 {:body {:message string?}}
                500 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
@@ -44,7 +44,7 @@
                     {:status 404
                      :body {:message "user not found"}}
                     {:status 200
-                     :body (utils/user-db-to-front user_result)}))))})
+                     :body user_result}))))})
 
 
 (def user-update

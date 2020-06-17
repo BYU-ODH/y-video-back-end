@@ -238,7 +238,8 @@
   (testing "annotation read by ids (none)"
     (let [res (rp/annotation-get-by-ids (:id test-coll-one)
                                         (:id test-cont-thr))]
-      (is (= 404 (:status res))))
+      (is (= 200 (:status res)))
+      (is (= [] (m/decode-response-body res))))
 
     (testing "annotation READ")
     (let [res (rp/annotation-id-get (:id test-annotation-one))]
