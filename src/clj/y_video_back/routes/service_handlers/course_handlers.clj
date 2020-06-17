@@ -1,17 +1,17 @@
-(ns y-video-back.routes.service_handlers.course_handlers
+(ns y-video-back.routes.service-handlers.course-handlers
   (:require
    [y-video-back.db.courses :as courses]
-   [y-video-back.db.collections-courses-assoc :as collection_courses_assoc]
-   [y-video-back.db.user-courses-assoc :as user_courses_assoc]
+   [y-video-back.db.collections-courses-assoc :as collection-courses-assoc]
+   [y-video-back.db.user-courses-assoc :as user-courses-assoc]
    [y-video-back.models :as models]
    [y-video-back.model-specs :as sp]
-   [y-video-back.routes.service_handlers.utils :as utils]
-   [y-video-back.routes.service_handlers.role_utils :as ru]))
+   [y-video-back.routes.service-handlers.utils :as utils]
+   [y-video-back.routes.service-handlers.role-utils :as ru]))
 
 (def course-create ;; Non-functional
   {:summary "Creates a new course"
    :parameters {:header {:session-id uuid?}
-                :body models/course_without_id}
+                :body models/course-without-id}
    :responses {200 {:body {:message string?
                            :id string?}}
                409 {:body {:message string?}}}
@@ -74,7 +74,7 @@
 (def course-add-collection
   {:summary "Adds collection to specified course"
    :parameters {:header {:session-id uuid?}
-                :path {:id uuid?} :body {:collection_id uuid?}}
+                :path {:id uuid?} :body {:collection-id uuid?}}
    :responses {200 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
               (if-not (ru/has-permission session-id "course-add-collection" {:course-id id})
@@ -90,7 +90,7 @@
 (def course-remove-collection
   {:summary "Removes collection from specified course"
    :parameters {:header {:session-id uuid?}
-                :path {:id uuid?} :body {:collection_id uuid?}}
+                :path {:id uuid?} :body {:collection-id uuid?}}
    :responses {200 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
               (if-not (ru/has-permission session-id "course-remove-collection" {:course-id id})
@@ -110,13 +110,13 @@
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
               (if-not (ru/has-permission session-id "course-get-all-collections" {:course-id id})
                 ru/forbidden-page
-                (let [course_collections_result (collection_courses_assoc/READ-COLLECTIONS-BY-COURSE id)]
-                  (let [collection_result (map #(utils/remove-db-only %) course_collections_result)]
-                    (if (= 0 (count collection_result))
+                (let [course-collections-result (collection-courses-assoc/READ-COLLECTIONS-BY-COURSE id)]
+                  (let [collection-result (map #(utils/remove-db-only %) course-collections-result)]
+                    (if (= 0 (count collection-result))
                       {:status 404
                        :body {:message "no courses found for given collection"}}
                       {:status 200
-                       :body collection_result})))))})
+                       :body collection-result})))))})
 
 (def course-add-user
   {:summary "Adds user to specified course"
@@ -126,7 +126,7 @@
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
               (if-not (ru/has-permission session-id "course-add-user" {:course-id id})
                 ru/forbidden-page
-                (let [result (utils/get-id (user_courses_assoc/CREATE (into body {:course-id id})))]
+                (let [result (utils/get-id (user-courses-assoc/CREATE (into body {:course-id id})))]
                   (if (= nil result)
                     {:status 404
                      :body {:message "unable to add user"}}
@@ -137,12 +137,12 @@
 (def course-remove-user
   {:summary "Removes user from specified course"
    :parameters {:header {:session-id uuid?}
-                :path {:id uuid?} :body {:user_id uuid?}}
+                :path {:id uuid?} :body {:user-id uuid?}}
    :responses {200 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
               (if-not (ru/has-permission session-id "course-remove-user" {:course-id id})
                 ru/forbidden-page
-                (let [result (user_courses_assoc/DELETE-BY-IDS [id (:user_id body)])]
+                (let [result (user-courses-assoc/DELETE-BY-IDS [id (:user-id body)])]
                   (if (= 0 result)
                     {:status 404
                      :body {:message "unable to remove user"}}
@@ -157,10 +157,10 @@
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
               (if-not (ru/has-permission session-id "course-get-all-users" {:course-id id})
                 ru/forbidden-page
-                (let [user_courses_result (user_courses_assoc/READ-USERS-BY-COURSE id)]
-                  (let [user_result (map #(utils/remove-db-only %) user_courses_result)]
-                    (if (= 0 (count user_result))
+                (let [user-courses-result (user-courses-assoc/READ-USERS-BY-COURSE id)]
+                  (let [user-result (map #(utils/remove-db-only %) user-courses-result)]
+                    (if (= 0 (count user-result))
                       {:status 404
                        :body {:message "no users found for given course"}}
                       {:status 200
-                       :body user_result})))))})
+                       :body user-result})))))})

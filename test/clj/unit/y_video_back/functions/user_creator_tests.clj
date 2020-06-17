@@ -7,19 +7,19 @@
       [muuntaja.core :as m]
       [clojure.java.jdbc :as jdbc]
       [mount.core :as mount]
-      [y-video-back.utils.model_generator :as g]
-      [y-video-back.utils.route_proxy :as rp]
+      [y-video-back.utils.model-generator :as g]
+      [y-video-back.utils.route-proxy :as rp]
       [y-video-back.db.core :refer [*db*] :as db]
       [y-video-back.db.annotations :as annotations]
-      [y-video-back.db.collections-contents-assoc :as collection_contents_assoc]
+      [y-video-back.db.collections-contents-assoc :as collection-contents-assoc]
       [y-video-back.db.users-by-collection :as users-by-collection]
-      [y-video-back.db.collections-courses-assoc :as collection_courses_assoc]
+      [y-video-back.db.collections-courses-assoc :as collection-courses-assoc]
       [y-video-back.db.collections :as collections]
-      [y-video-back.db.content-files-assoc :as content_files_assoc]
+      [y-video-back.db.content-files-assoc :as content-files-assoc]
       [y-video-back.db.contents :as contents]
       [y-video-back.db.courses :as courses]
       [y-video-back.db.files :as files]
-      [y-video-back.db.user-collections-assoc :as user_collections_assoc]
+      [y-video-back.db.user-collections-assoc :as user-collections-assoc]
       [y-video-back.db.users :as users]
       [y-video-back.db.words :as words]
       [y-video-back.utils.utils :as ut]
@@ -36,9 +36,9 @@
     (f)))
 
 (tcore/basic-transaction-fixtures
-  (def test-user-one (ut/under-to-hyphen (users/CREATE (g/get_random_user_without_id))))
-  (def test-user-two (ut/under-to-hyphen (users/CREATE (g/get_random_user_without_id))))
-  (def test-user-thr (ut/under-to-hyphen (users/CREATE (g/get_random_user_without_id))))
+  (def test-user-one (ut/under-to-hyphen (users/CREATE (g/get-random-user-without-id))))
+  (def test-user-two (ut/under-to-hyphen (users/CREATE (g/get-random-user-without-id))))
+  (def test-user-thr (ut/under-to-hyphen (users/CREATE (g/get-random-user-without-id))))
   (mount.core/start #'y-video-back.handler/app))
 
 (deftest test-user-exists
@@ -52,7 +52,7 @@
 
 (deftest test-user-not-exists
   (testing "username already in db"
-    (let [res (uc/get-session-id "other_username!")]
+    (let [res (uc/get-session-id "other-username!")]
       (is (not (= (:id test-user-one) res)))
-      (let [res_two (uc/get-session-id "other_username!")]
-        (is (= res res_two))))))
+      (let [res-two (uc/get-session-id "other-username!")]
+        (is (= res res-two))))))

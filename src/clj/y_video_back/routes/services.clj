@@ -11,11 +11,11 @@
     [y-video-back.middleware.exception :as exception]
     [y-video-back.middleware :as middleware]
 ;    [y-video-back.dbaccess.access :as db-access]
-    [y-video-back.routes.service_handlers.handlers :as service-handlers]
+    [y-video-back.routes.service-handlers.handlers :as service-handlers]
     [ring.util.http-response :as response]
     [clojure.java.io :as io]
-    [y-video-back.routes.service_handlers.utils :as utils]
-    [y-video-back.routes.service_handlers.role_utils :as ru]
+    [y-video-back.routes.service-handlers.utils :as utils]
+    [y-video-back.routes.service-handlers.role-utils :as ru]
     [y-video-back.user-creator :as uc]))
 
 
@@ -60,10 +60,10 @@
     ["/get-session-id/{username}"
      {:get {:summary "gets session id for username"
             :parameters {:path {:username string?}}
-            :responses {200 {:body {:session_id string?}}}
+            :responses {200 {:body {:session-id string?}}}
             :handler (fn [{{{:keys [username]} :path} :parameters}]
                        {:status 200
-                        :body {:session_id (str (uc/get-session-id username))}})}}]
+                        :body {:session-id (str (uc/get-session-id username))}})}}]
     ["/ping"
      {:get (constantly (response/ok {:message "pong"}))}]
 

@@ -1,10 +1,10 @@
-(ns y-video-back.routes.service_handlers.utils
+(ns y-video-back.routes.service-handlers.utils
   (:require [y-video-back.layout :refer [error-page]]
             [y-video-back.db.core :as db]))
 (defn remove-db-only
   "Removes created, updated, and deleted fields from map"
-  [my_map]
-  (dissoc my_map :created :updated :deleted))
+  [my-map]
+  (dissoc my-map :created :updated :deleted))
 
 (defn add-namespace ; Can probably delete this function, not in use?
   "Converts all keywords to namespace-keywords"
@@ -23,8 +23,8 @@
       m)))
 
 (defn to-uuid
-  [text_in]
-  (java.util.UUID/fromString text_in))
+  [text-in]
+  (java.util.UUID/fromString text-in))
 
 (defn get-id
   [res]

@@ -27,26 +27,26 @@
 
 (defn remove-db-only
   "Removes created, updated, and deleted fields"
-  [my_map]
-  (dissoc my_map :created :updated :deleted))
+  [my-map]
+  (dissoc my-map :created :updated :deleted))
 
 (defn to-uuid
-  [text_in]
-  (java.util.UUID/fromString text_in))
+  [text-in]
+  (java.util.UUID/fromString text-in))
 
 (defn random-submap
-  "Returns a map containing n key-value pairs of map_in. min_take <= n <= max_take"
-  ([map_in]
-   (case (count map_in)
-     0 map_in
-     1 (random-submap map_in 0 1)
-     2 (random-submap map_in 1 2)
-     3 (random-submap map_in 2 3)
+  "Returns a map containing n key-value pairs of map-in. min-take <= n <= max-take"
+  ([map-in]
+   (case (count map-in)
+     0 map-in
+     1 (random-submap map-in 0 1)
+     2 (random-submap map-in 1 2)
+     3 (random-submap map-in 2 3)
      (random-submap
-       map_in
-       (max 2 (int (Math/floor (/ (count map_in) 3))))
-       (int (Math/ceil (* 2 (/ (count map_in) 3)))))))
-  ([map_in min_take max_take]
-   (let [shuffled_map (shuffle (seq map_in))
-         cutoff (+ min_take (rand-int (- (inc max_take) min_take)))]
-     (into {} (take cutoff shuffled_map)))))
+       map-in
+       (max 2 (int (Math/floor (/ (count map-in) 3))))
+       (int (Math/ceil (* 2 (/ (count map-in) 3)))))))
+  ([map-in min-take max-take]
+   (let [shuffled-map (shuffle (seq map-in))
+         cutoff (+ min-take (rand-int (- (inc max-take) min-take)))]
+     (into {} (take cutoff shuffled-map)))))

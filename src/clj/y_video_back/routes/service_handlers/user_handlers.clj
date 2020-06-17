@@ -1,19 +1,19 @@
-(ns y-video-back.routes.service_handlers.user_handlers
+(ns y-video-back.routes.service-handlers.user-handlers
   (:require
-   [y-video-back.db.user-collections-assoc :as user_collections_assoc]
-   [y-video-back.db.user-courses-assoc :as user_courses_assoc]
+   [y-video-back.db.user-collections-assoc :as user-collections-assoc]
+   [y-video-back.db.user-courses-assoc :as user-courses-assoc]
    [y-video-back.db.users :as users]
    [y-video-back.models :as models]
    [y-video-back.front-end-models :as fmodels]
    [y-video-back.model-specs :as sp]
-   [y-video-back.routes.service_handlers.utils :as utils]
-   [y-video-back.routes.service_handlers.role_utils :as ru]))
+   [y-video-back.routes.service-handlers.utils :as utils]
+   [y-video-back.routes.service-handlers.role-utils :as ru]))
 
 
 (def user-create
   {:summary "Creates a new user - FOR DEVELOPMENT ONLY"
    :parameters {:header {:session-id uuid?}
-                :body models/user_without_id}
+                :body models/user-without-id}
    :responses {200 {:body {:message string?
                            :id string?}}
                409 {:body {:message string?
@@ -39,12 +39,12 @@
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
               (if-not (ru/has-permission session-id "user-get-by-id" 0)
                 ru/forbidden-page
-                (let [user_result (users/READ id)]
-                  (if (nil? user_result)
+                (let [user-result (users/READ id)]
+                  (if (nil? user-result)
                     {:status 404
                      :body {:message "user not found"}}
                     {:status 200
-                     :body user_result}))))})
+                     :body user-result}))))})
 
 
 (def user-update
@@ -91,12 +91,12 @@
                 (do
                   (println (str "in user-get-logged-in with " session-id))
                   (let [user-id (ru/token-to-user-id session-id)]
-                    (let [user_result (users/READ user-id)]
-                      (if (nil? user_result)
+                    (let [user-result (users/READ user-id)]
+                      (if (nil? user-result)
                         {:status 404
                          :body {:message "user not found"}}
                         {:status 200
-                         :body (utils/user-db-to-front user_result)}))))))})
+                         :body (utils/user-db-to-front user-result)}))))))})
                          ;:header {"Access-Control-Allow-Origin" "*"}}))))})
 
 
@@ -108,13 +108,13 @@
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
               (if-not (ru/has-permission session-id "user-get-all-collections" 0)
                 ru/forbidden-page
-                (let [user_collections_result (user_collections_assoc/READ-COLLECTIONS-BY-USER id)]
-                  (let [collection_result (map #(utils/remove-db-only %) user_collections_result)]
-                    (if (= 0 (count collection_result))
+                (let [user-collections-result (user-collections-assoc/READ-COLLECTIONS-BY-USER id)]
+                  (let [collection-result (map #(utils/remove-db-only %) user-collections-result)]
+                    (if (= 0 (count collection-result))
                       {:status 404
                        :body {:message "no users found for given collection"}}
                       {:status 200
-                       :body collection_result})))))})
+                       :body collection-result})))))})
 
 (def user-get-all-collections-by-logged-in
   {:summary "Retrieves all collections for session user"
@@ -124,10 +124,10 @@
               (if-not (ru/has-permission session-id "user-get-all-collections" 0)
                 ru/forbidden-page
                 (let [user-id (ru/token-to-user-id session-id)]
-                  (let [user_collections_result (user_collections_assoc/READ-COLLECTIONS-BY-USER user-id)]
-                    (let [collection_result (map #(utils/remove-db-only %) user_collections_result)]
+                  (let [user-collections-result (user-collections-assoc/READ-COLLECTIONS-BY-USER user-id)]
+                    (let [collection-result (map #(utils/remove-db-only %) user-collections-result)]
                         {:status 200
-                         :body collection_result})))))})
+                         :body collection-result})))))})
 
 (def user-get-all-courses ;; Non-functional
   {:summary "Retrieves all courses for specified user"
@@ -137,13 +137,13 @@
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
               (if-not (ru/has-permission session-id "user-get-all-courses" 0)
                 ru/forbidden-page
-                (let [user_courses_result (user_courses_assoc/READ-COURSES-BY-USER id)]
-                  (let [course_result (map #(utils/remove-db-only %) user_courses_result)]
-                    (if (= 0 (count course_result))
+                (let [user-courses-result (user-courses-assoc/READ-COURSES-BY-USER id)]
+                  (let [course-result (map #(utils/remove-db-only %) user-courses-result)]
+                    (if (= 0 (count course-result))
                       {:status 404
                        :body {:message "no users found for given course"}}
                       {:status 200
-                       :body course_result})))))})
+                       :body course-result})))))})
 
 
 (def user-get-all-words

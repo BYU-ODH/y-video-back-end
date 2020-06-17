@@ -7,19 +7,19 @@
       [muuntaja.core :as m]
       [clojure.java.jdbc :as jdbc]
       [mount.core :as mount]
-      [y-video-back.utils.model_generator :as g]
-      [y-video-back.utils.route_proxy :as rp]
+      [y-video-back.utils.model-generator :as g]
+      [y-video-back.utils.route-proxy :as rp]
       [y-video-back.db.core :refer [*db*] :as db]
       [y-video-back.db.annotations :as annotations]
-      [y-video-back.db.collections-contents-assoc :as collection_contents_assoc]
+      [y-video-back.db.collections-contents-assoc :as collection-contents-assoc]
       [y-video-back.db.users-by-collection :as users-by-collection]
-      [y-video-back.db.collections-courses-assoc :as collection_courses_assoc]
+      [y-video-back.db.collections-courses-assoc :as collection-courses-assoc]
       [y-video-back.db.collections :as collections]
-      [y-video-back.db.content-files-assoc :as content_files_assoc]
+      [y-video-back.db.content-files-assoc :as content-files-assoc]
       [y-video-back.db.contents :as contents]
       [y-video-back.db.courses :as courses]
       [y-video-back.db.files :as files]
-      [y-video-back.db.user-collections-assoc :as user_collections_assoc]
+      [y-video-back.db.user-collections-assoc :as user-collections-assoc]
       [y-video-back.db.users :as users]
       [y-video-back.db.words :as words]
       [y-video-back.utils.utils :as ut]))
@@ -45,7 +45,7 @@
                                                         :account-name "Ron Weasley"
                                                         :account-type 1
                                                         :username "King-1-Weasley"})))
-  (def test-user-thr (ut/under-to-hyphen (users/CREATE {:email "insufferable_know_it_all@byu.edu"
+  (def test-user-thr (ut/under-to-hyphen (users/CREATE {:email "insufferable-know-it-all@byu.edu"
                                                         :last-login "today"
                                                         :account-name "Hermione Granger"
                                                         :account-type 0
@@ -92,7 +92,7 @@
                                                            :metadata "so meta"})))
   (def test-cont-thr (ut/under-to-hyphen (contents/CREATE {:content-name "Hogwarts: A History"
                                                            :content-type "book 2"
-                                                           :requester-email "insufferable_know_it_all@byu.edu"
+                                                           :requester-email "insufferable-know-it-all@byu.edu"
                                                            :thumbnail "thumbs"
                                                            :copyrighted false
                                                            :physical-copy-exists false
@@ -116,13 +116,13 @@
   (mount.core/start #'y-video-back.handler/app))
 
 (defn test-search-table
-  [table-key query_term expected_users]
-  (let [res (rp/search query_term)]
+  [table-key query-term expected-users]
+  (let [res (rp/search query-term)]
     (is (= 200 (:status res)))
     (if (= table-key :collections)
-      (is (= (into [] (map #(update (update (ut/remove-db-only %) :id str) :owner str) expected_users))
+      (is (= (into [] (map #(update (update (ut/remove-db-only %) :id str) :owner str) expected-users))
              (table-key (m/decode-response-body res))))
-      (is (= (into [] (map #(update (ut/remove-db-only %) :id str) expected_users))
+      (is (= (into [] (map #(update (ut/remove-db-only %) :id str) expected-users))
              (table-key (m/decode-response-body res)))))))
 
 (deftest test-search-users

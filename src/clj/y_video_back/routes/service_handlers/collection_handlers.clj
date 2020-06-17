@@ -1,21 +1,21 @@
-(ns y-video-back.routes.service_handlers.collection_handlers
+(ns y-video-back.routes.service-handlers.collection-handlers
   (:require
-   [y-video-back.db.collections-contents-assoc :as collection_contents_assoc]
+   [y-video-back.db.collections-contents-assoc :as collection-contents-assoc]
    [y-video-back.db.users-by-collection :as users-by-collection]
-   [y-video-back.db.collections-courses-assoc :as collection_courses_assoc]
-   [y-video-back.db.user-collections-assoc :as user_collections_assoc]
+   [y-video-back.db.collections-courses-assoc :as collection-courses-assoc]
+   [y-video-back.db.user-collections-assoc :as user-collections-assoc]
    [y-video-back.db.collections :as collections]
    [y-video-back.db.annotations :as annotations]
    [y-video-back.models :as models]
    [y-video-back.model-specs :as sp]
-   [y-video-back.routes.service_handlers.utils :as utils]
-   [y-video-back.routes.service_handlers.role_utils :as ru]))
+   [y-video-back.routes.service-handlers.utils :as utils]
+   [y-video-back.routes.service-handlers.role-utils :as ru]))
 
 
 (def collection-create ;; Non-functional
   {:summary "Creates a new collection with the given (temp) user as an owner"
    :parameters {:header {:session-id uuid?}
-                :body {:collection models/collection_without_id :user_id uuid?}}
+                :body {:collection models/collection-without-id :user-id uuid?}}
    :responses {200 {:body {:message string?
                            :id string?}}
                409 {:body {:message string?}}}
@@ -24,11 +24,11 @@
                 ru/forbidden-page
                 (try {:status 200
                       :body {:message "1 collection created"
-                             :id (let [collection_id (utils/get-id (collections/CREATE (:collection body)))]
-                                   (user_collections_assoc/CREATE {:user_id (:user_id body)
-                                                                   :collection_id (utils/to-uuid collection_id)
-                                                                   :account_role 0})
-                                   collection_id)}}
+                             :id (let [collection-id (utils/get-id (collections/CREATE (:collection body)))]
+                                   (user-collections-assoc/CREATE {:user-id (:user-id body)
+                                                                   :collection-id (utils/to-uuid collection-id)
+                                                                   :account-role 0})
+                                   collection-id)}}
                      (catch Exception e
                        {:status 409
                         :body {:message e}}))))})
@@ -87,7 +87,7 @@
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
               (if-not (ru/has-permission session-id "collection-add-user" {:collection-id id})
                 ru/forbidden-page
-                (let [result (utils/get-id (user_collections_assoc/CREATE (into body {:collection-id id})))]
+                (let [result (utils/get-id (user-collections-assoc/CREATE (into body {:collection-id id})))]
                   (if (= nil result)
                     {:status 404
                      :body {:message "unable to add user"}}
@@ -98,12 +98,12 @@
 (def collection-remove-user
   {:summary "Removes user from specified collection"
    :parameters {:header {:session-id uuid?}
-                :path {:id uuid?} :body {:user_id uuid?}}
+                :path {:id uuid?} :body {:user-id uuid?}}
    :responses {200 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
               (if-not (ru/has-permission session-id "collection-remove-user" {:collection-id id})
                 ru/forbidden-page
-                (let [result (user_collections_assoc/DELETE-BY-IDS [id (:user_id body)])]
+                (let [result (user-collections-assoc/DELETE-BY-IDS [id (:user-id body)])]
                   (if (= 0 result)
                     {:status 404
                      :body {:message "unable to remove user"}}
@@ -149,7 +149,7 @@
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
               (if-not (ru/has-permission session-id "collection-add-course" {:collection-id id})
                 ru/forbidden-page
-                (let [result (utils/get-id (collection_courses_assoc/CREATE (into body {:collection-id id})))]
+                (let [result (utils/get-id (collection-courses-assoc/CREATE (into body {:collection-id id})))]
                   (if (= nil result)
                     {:status 404
                      :body {:message "unable to add course"}}
@@ -165,7 +165,7 @@
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
               (if-not (ru/has-permission session-id "collection-remove-course" {:collection-id id})
                 ru/forbidden-page
-                (let [result (collection_courses_assoc/DELETE-BY-IDS [id (:course-id body)])]
+                (let [result (collection-courses-assoc/DELETE-BY-IDS [id (:course-id body)])]
                   (if (= 0 result)
                     {:status 404
                      :body {:message "unable to remove course"}}
@@ -181,13 +181,13 @@
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
               (if-not (ru/has-permission session-id "collection-get-all-contents" {:collection-id id})
                 ru/forbidden-page
-                (let [content_collections_result (annotations/READ-CONTENTS-BY-COLLECTION id)]
-                  (let [content_result (map #(utils/remove-db-only %) content_collections_result)]
-                    (if (= 0 (count content_result))
+                (let [content-collections-result (annotations/READ-CONTENTS-BY-COLLECTION id)]
+                  (let [content-result (map #(utils/remove-db-only %) content-collections-result)]
+                    (if (= 0 (count content-result))
                       {:status 404
                        :body {:message "no contents found for given collection"}}
                       {:status 200
-                       :body content_result})))))})
+                       :body content-result})))))})
 
 (def collection-get-all-courses ;; Non-functional
   {:summary "Retrieves all the courses for the specified collection"
@@ -197,13 +197,13 @@
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
               (if-not (ru/has-permission session-id "collection-get-all-courses" {:collection-id id})
                 ru/forbidden-page
-                (let [course_collections_result (collection_courses_assoc/READ-COURSES-BY-COLLECTION id)]
-                  (let [course_result (map #(utils/remove-db-only %) course_collections_result)]
-                    (if (= 0 (count course_result))
+                (let [course-collections-result (collection-courses-assoc/READ-COURSES-BY-COLLECTION id)]
+                  (let [course-result (map #(utils/remove-db-only %) course-collections-result)]
+                    (if (= 0 (count course-result))
                       {:status 404
                        :body {:message "no courses found for given collection"}}
                       {:status 200
-                       :body course_result})))))})
+                       :body course-result})))))})
 
 (def collection-get-all-users
   {:summary "Retrieves all users for the specified collection"
@@ -213,10 +213,10 @@
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
               (if-not (ru/has-permission session-id "collection-get-all-users" {:collection-id id})
                 ru/forbidden-page
-                (let [user_collections_result (user_collections_assoc/READ-USERS-BY-COLLECTION id)]
-                  (let [user_result (map #(utils/remove-db-only %) user_collections_result)]
-                    (if (= 0 (count user_result))
+                (let [user-collections-result (user-collections-assoc/READ-USERS-BY-COLLECTION id)]
+                  (let [user-result (map #(utils/remove-db-only %) user-collections-result)]
+                    (if (= 0 (count user-result))
                       {:status 404
                        :body {:message "no users found for given collection"}}
                       {:status 200
-                       :body user_result})))))})
+                       :body user-result})))))})

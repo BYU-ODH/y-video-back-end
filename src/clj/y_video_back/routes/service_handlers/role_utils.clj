@@ -1,10 +1,10 @@
-(ns y-video-back.routes.service_handlers.role_utils
+(ns y-video-back.routes.service-handlers.role-utils
   (:require [y-video-back.layout :refer [error-page]]
             [y-video-back.db.core :as db]
-            [y-video-back.routes.service_handlers.utils :as utils]
+            [y-video-back.routes.service-handlers.utils :as utils]
             [y-video-back.db.user-courses-assoc :as user-courses-assoc]
             [y-video-back.db.users :as users]
-            [y-video-back.routes.service_handlers.db-utils :as dbu]))
+            [y-video-back.routes.service-handlers.db-utils :as dbu]))
             ;[y-video-back.config :refer [env]]))
 
 ; User account types
@@ -33,7 +33,7 @@
 (defn get-user-role-coll
   "Returns user role for collection from DB"
   [user-id collection-id]
-  (let [user-role (db/read-where-and :user_collections_assoc
+  (let [user-role (db/read-where-and :user-collections-assoc
                                      [:user-id :collection-id]
                                      [user-id collection-id]
                                      [:account-role])]
@@ -195,4 +195,4 @@
 
 (def forbidden-page
   (error-page {:status 401, :title "401 - Unauthorized",
-               :image "anakin_sitting.jpg", :caption "It's unfair! How can you be on this website and not be an admin?!"}))
+               :image "anakin-sitting.jpg", :caption "It's unfair! How can you be on this website and not be an admin?!"}))

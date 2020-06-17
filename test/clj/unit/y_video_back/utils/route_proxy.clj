@@ -1,4 +1,4 @@
-(ns y-video-back.utils.route_proxy
+(ns y-video-back.utils.route-proxy
   (:require
     [clojure.test :refer :all]
     [ring.mock.request :refer :all]
@@ -17,12 +17,12 @@
 
 (defn user-post
   "Create a user via app's post request"
-  ([session-id user_without_id]
+  ([session-id user-without-id]
    (app (-> (request :post "/api/user")
             (header :session-id session-id)
-            (json-body user_without_id))))
-  ([user_without_id]
-   (user-post SESSION-ID-BYPASS user_without_id)))
+            (json-body user-without-id))))
+  ([user-without-id]
+   (user-post SESSION-ID-BYPASS user-without-id)))
 
 (defn user-id-get
   "Retrieves user via app's get (id) request"
@@ -34,12 +34,12 @@
 
 (defn user-id-patch
   "Updates user via app's patch (id) request"
-  ([session-id id new_user]
+  ([session-id id new-user]
    (app (-> (request :patch (str "/api/user/" id))
             (header :session-id session-id)
-            (json-body new_user))))
-  ([id new_user]
-   (user-id-patch SESSION-ID-BYPASS id new_user)))
+            (json-body new-user))))
+  ([id new-user]
+   (user-id-patch SESSION-ID-BYPASS id new-user)))
 
 (defn user-id-delete
   "Deletes user via app's delete (id) request"
@@ -59,12 +59,12 @@
 
 (defn word-post
   "Create a word via app's post request"
-  ([session-id word_without_id]
+  ([session-id word-without-id]
    (app (-> (request :post "/api/word")
             (header :session-id session-id)
-            (json-body word_without_id))))
-  ([word_without_id]
-   (word-post SESSION-ID-BYPASS word_without_id)))
+            (json-body word-without-id))))
+  ([word-without-id]
+   (word-post SESSION-ID-BYPASS word-without-id)))
 
 (defn word-id-get
   "Retrieves word via app's get (id) request"
@@ -76,12 +76,12 @@
 
 (defn word-id-patch
   "Updates word via app's patch (id) request"
-  ([session-id id new_word]
+  ([session-id id new-word]
    (app (-> (request :patch (str "/api/word/" id))
-            (json-body new_word)
+            (json-body new-word)
             (header :session-id session-id))))
-  ([id new_word]
-   (word-id-patch SESSION-ID-BYPASS id new_word)))
+  ([id new-word]
+   (word-id-patch SESSION-ID-BYPASS id new-word)))
 
 (defn word-id-delete
   "Deletes word via app's delete (id) request"
@@ -94,12 +94,12 @@
 
 (defn collection-post
   "Create a collection via app's post request"
-  ([session-id collection user_id]
+  ([session-id collection user-id]
    (app (-> (request :post "/api/collection")
             (header :session-id session-id)
-            (json-body {:collection collection :user_id user_id}))))
-  ([collection user_id]
-   (collection-post SESSION-ID-BYPASS collection user_id)))
+            (json-body {:collection collection :user-id user-id}))))
+  ([collection user-id]
+   (collection-post SESSION-ID-BYPASS collection user-id)))
 
 (defn collection-id-get
   "Retrieves collection via app's get (id) request"
@@ -111,12 +111,12 @@
 
 (defn collection-id-patch
   "Updates collection via app's patch (id) request"
-  ([session-id id new_collection]
+  ([session-id id new-collection]
    (app (-> (request :patch (str "/api/collection/" id))
             (header :session-id session-id)
-            (json-body new_collection))))
-  ([id new_collection]
-   (collection-id-patch SESSION-ID-BYPASS id new_collection)))
+            (json-body new-collection))))
+  ([id new-collection]
+   (collection-id-patch SESSION-ID-BYPASS id new-collection)))
 
 (defn collection-id-delete
   "Deletes collection via app's delete (id) request"
@@ -128,12 +128,12 @@
 
 (defn content-post
   "Create a content via app's post request"
-  ([session-id content_without_id]
+  ([session-id content-without-id]
    (app (-> (request :post "/api/content")
-            (json-body content_without_id)
+            (json-body content-without-id)
             (header :session-id session-id))))
-  ([content_without_id]
-   (content-post SESSION-ID-BYPASS content_without_id)))
+  ([content-without-id]
+   (content-post SESSION-ID-BYPASS content-without-id)))
 
 (defn content-id-get
   "Retrieves content via app's get (id) request"
@@ -145,12 +145,12 @@
 
 (defn content-id-patch
   "Updates content via app's patch (id) request"
-  ([session-id id new_content]
+  ([session-id id new-content]
    (app (-> (request :patch (str "/api/content/" id))
-            (json-body new_content)
+            (json-body new-content)
             (header :session-id session-id))))
-  ([id new_content]
-   (content-id-patch SESSION-ID-BYPASS id new_content)))
+  ([id new-content]
+   (content-id-patch SESSION-ID-BYPASS id new-content)))
 
 (defn content-id-delete
   "Deletes content via app's delete (id) request"
@@ -170,12 +170,12 @@
 
 (defn annotation-post
   "Create a annotation via app's post request"
-  ([session-id annotation_without_id]
+  ([session-id annotation-without-id]
    (app (-> (request :post "/api/annotation")
-            (json-body annotation_without_id)
+            (json-body annotation-without-id)
             (header :session-id session-id))))
-  ([annotation_without_id]
-   (annotation-post SESSION-ID-BYPASS annotation_without_id)))
+  ([annotation-without-id]
+   (annotation-post SESSION-ID-BYPASS annotation-without-id)))
 
 (defn annotation-id-get
   "Retrieves annotation via app's get (id) request"
@@ -187,12 +187,12 @@
 
 (defn annotation-id-patch
   "Updates annotation via app's patch (id) request"
-  ([session-id id new_annotation]
+  ([session-id id new-annotation]
    (app (-> (request :patch (str "/api/annotation/" id))
-            (json-body new_annotation)
+            (json-body new-annotation)
             (header :session-id session-id))))
-  ([id new_annotation]
-   (annotation-id-patch SESSION-ID-BYPASS id new_annotation)))
+  ([id new-annotation]
+   (annotation-id-patch SESSION-ID-BYPASS id new-annotation)))
 
 (defn annotation-id-delete
   "Deletes annotation via app's delete (id) request"
@@ -214,12 +214,12 @@
 
 (defn course-post
   "Create a course via app's post request"
-  ([session-id course_without_id]
+  ([session-id course-without-id]
    (app (-> (request :post "/api/course")
-            (json-body course_without_id)
+            (json-body course-without-id)
             (header :session-id session-id))))
-  ([course_without_id]
-   (course-post SESSION-ID-BYPASS course_without_id)))
+  ([course-without-id]
+   (course-post SESSION-ID-BYPASS course-without-id)))
 
 (defn course-id-get
   "Retrieves course via app's get (id) request"
@@ -231,12 +231,12 @@
 
 (defn course-id-patch
   "Updates course via app's patch (id) request"
-  ([session-id id new_course]
+  ([session-id id new-course]
    (app (-> (request :patch (str "/api/course/" id))
-            (json-body new_course)
+            (json-body new-course)
             (header :session-id session-id))))
-  ([id new_course]
-   (course-id-patch SESSION-ID-BYPASS id new_course)))
+  ([id new-course]
+   (course-id-patch SESSION-ID-BYPASS id new-course)))
 
 (defn course-id-delete
   "Deletes course via app's delete (id) request"
@@ -260,18 +260,18 @@
   ([session-id collection-id user-id]
    (app (-> (request :post (str "/api/collection/" collection-id "/remove-user"))
             (header :session-id session-id)
-            (json-body {:user_id user-id}))))
+            (json-body {:user-id user-id}))))
   ([collection-id user-id]
    (collection-id-remove-user SESSION-ID-BYPASS collection-id user-id)))
 
 (defn file-post
   "Create a file via app's post request"
-  ([session-id file_without_id]
+  ([session-id file-without-id]
    (app (-> (request :post "/api/file")
-            (json-body file_without_id)
+            (json-body file-without-id)
             (header :session-id session-id))))
-  ([file_without_id]
-   (file-post SESSION-ID-BYPASS file_without_id)))
+  ([file-without-id]
+   (file-post SESSION-ID-BYPASS file-without-id)))
 
 (defn file-id-get
   "Retrieves file via app's get (id) request"
@@ -283,12 +283,12 @@
 
 (defn file-id-patch
   "Updates file via app's patch (id) request"
-  ([session-id id new_file]
+  ([session-id id new-file]
    (app (-> (request :patch (str "/api/file/" id))
-            (json-body new_file)
+            (json-body new-file)
             (header :session-id session-id))))
-  ([id new_file]
-   (file-id-patch SESSION-ID-BYPASS id new_file)))
+  ([id new-file]
+   (file-id-patch SESSION-ID-BYPASS id new-file)))
 
 (defn file-id-delete
   "Deletes file via app's delete (id) request"
@@ -311,7 +311,7 @@
   "Connects user and course"
   ([session-id course-id user-id]
    (app (-> (request :post (str "/api/course/" course-id "/remove-user"))
-            (json-body {:user_id user-id})
+            (json-body {:user-id user-id})
             (header :session-id session-id))))
   ([course-id user-id]
    (course-id-remove-user SESSION-ID-BYPASS course-id user-id)))
@@ -461,9 +461,9 @@
    (file-id-contents SESSION-ID-BYPASS id)))
 
 (defn search
-  "Searches by query_term"
-  ([session-id query_term]
-   (app (-> (request :get (str "/api/search?query_term=" (java.net.URLEncoder/encode query_term)))
+  "Searches by query-term"
+  ([session-id query-term]
+   (app (-> (request :get (str "/api/search?query-term=" (java.net.URLEncoder/encode query-term)))
             (header :session-id session-id))))
-  ([query_term]
-   (search SESSION-ID-BYPASS query_term)))
+  ([query-term]
+   (search SESSION-ID-BYPASS query-term)))

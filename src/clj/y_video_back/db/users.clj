@@ -10,4 +10,4 @@
 (def CLONE (partial db/CLONE :users))
 (def PERMANENT-DELETE (partial db/DELETE :users))
 (def READ-WORDS (partial db/read-all-where :words-undeleted :user-id))
-(def READ-COLLECTIONS-BY-USER-VIA-COURSES (partial db/read-all-where :collections_by_users_via_courses :user_id))
+(def READ-COLLECTIONS-BY-USER-VIA-COURSES (partial db/read-all-where :collections-by-users-via-courses :user-id))

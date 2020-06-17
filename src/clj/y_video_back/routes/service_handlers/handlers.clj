@@ -1,14 +1,14 @@
-(ns y-video-back.routes.service_handlers.handlers
+(ns y-video-back.routes.service-handlers.handlers
   (:require
-   [y-video-back.routes.service_handlers.misc_handlers :as miscs]
-   [y-video-back.routes.service_handlers.user_handlers :as users]
-   [y-video-back.routes.service_handlers.collection_handlers :as collections]
-   [y-video-back.routes.service_handlers.content_handlers :as contents]
-   [y-video-back.routes.service_handlers.course_handlers :as courses]
-   [y-video-back.routes.service_handlers.file_handlers :as files]
-   [y-video-back.routes.service_handlers.annotation_handlers :as annotations]
-   [y-video-back.routes.service_handlers.word_handlers :as words]
-   [y-video-back.routes.service_handlers.admin_handlers :as admin]))
+   [y-video-back.routes.service-handlers.misc-handlers :as miscs]
+   [y-video-back.routes.service-handlers.user-handlers :as users]
+   [y-video-back.routes.service-handlers.collection-handlers :as collections]
+   [y-video-back.routes.service-handlers.content-handlers :as contents]
+   [y-video-back.routes.service-handlers.course-handlers :as courses]
+   [y-video-back.routes.service-handlers.file-handlers :as files]
+   [y-video-back.routes.service-handlers.annotation-handlers :as annotations]
+   [y-video-back.routes.service-handlers.word-handlers :as words]
+   [y-video-back.routes.service-handlers.admin-handlers :as admin]))
 
 
 ; Misc handlers

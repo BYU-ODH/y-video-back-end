@@ -8,4 +8,4 @@
 (def DELETE (partial db/mark-deleted :users-by-collection))
 (def CLONE (partial db/CLONE :users-by-collection))
 (def PERMANENT-DELETE (partial db/DELETE :users-by-collection))
-(def READ-BY-COLLECTION (partial db/read-all-where :users-by-collection :collection_id))
+(def READ-BY-COLLECTION (partial db/read-all-where :users-by-collection :collection-id))

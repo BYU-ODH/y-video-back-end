@@ -1,18 +1,18 @@
-(ns y-video-back.routes.service_handlers.content_handlers
+(ns y-video-back.routes.service-handlers.content-handlers
   (:require
-   [y-video-back.db.collections-contents-assoc :as collection_contents_assoc]
-   [y-video-back.db.content-files-assoc :as content_files_assoc]
+   [y-video-back.db.collections-contents-assoc :as collection-contents-assoc]
+   [y-video-back.db.content-files-assoc :as content-files-assoc]
    [y-video-back.db.contents :as contents]
    [y-video-back.models :as models]
    [y-video-back.model-specs :as sp]
-   [y-video-back.routes.service_handlers.utils :as utils]
-   [y-video-back.routes.service_handlers.role_utils :as ru]))
+   [y-video-back.routes.service-handlers.utils :as utils]
+   [y-video-back.routes.service-handlers.role-utils :as ru]))
 
 
 (def content-create ;; Non-functional
   {:summary "Creates new content"
    :parameters {:header {:session-id uuid?}
-                :body models/content_without_id}
+                :body models/content-without-id}
    :responses {200 {:body {:message string?
                            :id string?}}}
    :handler (fn [{{{:keys [session-id]} :header :keys [body]} :parameters}]
@@ -35,12 +35,12 @@
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
               (if-not (ru/has-permission session-id "content-get-by-id" {:content-id id})
                 ru/forbidden-page
-                (let [content_result (contents/READ id)]
-                  (if (= "" (:id content_result))
+                (let [content-result (contents/READ id)]
+                  (if (= "" (:id content-result))
                     {:status 404
                      :body {:message "requested content not found"}}
                     {:status 200
-                     :body content_result}))))})
+                     :body content-result}))))})
 
 (def content-update ;; Non-functional
   {:summary "Updates the specified content"
@@ -80,13 +80,13 @@
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
               (if-not (ru/has-permission session-id "content-get-all-collections" {:content-id id})
                 ru/forbidden-page
-                (let [content_collections_result (collection_contents_assoc/READ-COLLECTIONS-BY-CONTENT id)]
-                  (let [collection_result (map #(utils/remove-db-only %) content_collections_result)]
-                    (if (= 0 (count collection_result))
+                (let [content-collections-result (collection-contents-assoc/READ-COLLECTIONS-BY-CONTENT id)]
+                  (let [collection-result (map #(utils/remove-db-only %) content-collections-result)]
+                    (if (= 0 (count collection-result))
                       {:status 404
                        :body {:message "no contents found for given collection"}}
                       {:status 200
-                       :body collection_result})))))})
+                       :body collection-result})))))})
 
 (def content-get-all-files ;; Non-functional
   {:summary "Retrieves all the files for the specified content"
@@ -96,13 +96,13 @@
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
               (if-not (ru/has-permission session-id "content-get-all-files" {:content-id id})
                 ru/forbidden-page
-                (let [file_contents_result (content_files_assoc/READ-FILES-BY-CONTENT id)]
-                  (let [file_result (map #(utils/remove-db-only %) file_contents_result)]
-                    (if (= 0 (count file_result))
+                (let [file-contents-result (content-files-assoc/READ-FILES-BY-CONTENT id)]
+                  (let [file-result (map #(utils/remove-db-only %) file-contents-result)]
+                    (if (= 0 (count file-result))
                       {:status 404
                        :body {:message "no files found for given content"}}
                       {:status 200
-                       :body file_result})))))})
+                       :body file-result})))))})
 
 (def content-add-view ;; Non-functional
   {:summary "Adds 1 view to specified content"
@@ -129,7 +129,7 @@
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
               (if-not (ru/has-permission session-id "content-add-file" {:content-id id})
                 ru/forbidden-page
-                (let [result (utils/get-id (content_files_assoc/CREATE (into body {:content-id id})))]
+                (let [result (utils/get-id (content-files-assoc/CREATE (into body {:content-id id})))]
                   (if (= nil result)
                     {:status 404
                      :body {:message "unable to add file"}}
@@ -145,7 +145,7 @@
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
               (if-not (ru/has-permission session-id "content-remove-file" {:content-id id})
                 ru/forbidden-page
-                (let [result (content_files_assoc/DELETE-BY-IDS [id (:file-id body)])]
+                (let [result (content-files-assoc/DELETE-BY-IDS [id (:file-id body)])]
                   (if (= 0 result)
                     {:status 404
                      :body {:message "unable to remove file"}}

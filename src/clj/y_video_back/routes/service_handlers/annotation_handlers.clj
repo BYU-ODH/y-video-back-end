@@ -1,16 +1,16 @@
-(ns y-video-back.routes.service_handlers.annotation_handlers
+(ns y-video-back.routes.service-handlers.annotation-handlers
   (:require
    [y-video-back.db.annotations :as annotations]
    [y-video-back.models :as models]
    [y-video-back.model-specs :as sp]
-   [y-video-back.routes.service_handlers.utils :as utils]
-   [y-video-back.routes.service_handlers.role_utils :as ru]))
+   [y-video-back.routes.service-handlers.utils :as utils]
+   [y-video-back.routes.service-handlers.role-utils :as ru]))
 
 
 (def annotation-create ;; Non-functional
   {:summary "Creates new annotation"
    :parameters {:header {:session-id uuid?}
-                :body models/annotation_without_id}
+                :body models/annotation-without-id}
    :responses {200 {:body {:message string?
                            :id string?}}}
    :handler (fn [{{{:keys [session-id]} :header :keys [body]} :parameters}]
@@ -33,9 +33,9 @@
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
               (if-not (ru/has-permission session-id "annotation-get-by-id" 0)
                 ru/forbidden-page
-                (let [annotation_result (annotations/READ id)]
+                (let [annotation-result (annotations/READ id)]
                   {:status 200
-                   :body annotation_result})))})
+                   :body annotation-result})))})
 
 (def annotation-update ;; Non-functional
   {:summary "Updates the specified annotation"

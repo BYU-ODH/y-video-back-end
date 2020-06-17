@@ -1,4 +1,4 @@
-(ns y-video-back.utils.model_generator
+(ns y-video-back.utils.model-generator
   (:require
     [y-video-back.models :as models]))
 
@@ -12,7 +12,7 @@
     true
     false))
 
-(defn get_random_model
+(defn get-random-model
   "Generate a test user with random field values"
   [model]
   (into {} (map #(if (= (string? "") ((get % 1) ""))
@@ -28,75 +28,75 @@
 ; - - - - - - - - - MODEL GENERATORS - - - - - - - - ;
 
 
-(defn get_random_user_without_id
+(defn get-random-user-without-id
   []
-  (get_random_model models/user_without_id))
+  (get-random-model models/user-without-id))
 
-(defn get_random_word_without_id_or_user_id
+(defn get-random-word-without-id-or-user-id
   []
-  (get_random_model models/word_without_id_or_user_id))
+  (get-random-model models/word-without-id-or-user-id))
 
-(defn get_random_word_without_id
+(defn get-random-word-without-id
   ([]
-   (get_random_model models/word_without_id))
+   (get-random-model models/word-without-id))
   ([user-id]
-   (into (get_random_model models/word_without_id_or_user_id) {:user-id user-id})))
+   (into (get-random-model models/word-without-id-or-user-id) {:user-id user-id})))
 
-(defn get_random_word_without_id_or_user_id
+(defn get-random-word-without-id-or-user-id
   []
-  (get_random_model models/word_without_id_or_user_id))
+  (get-random-model models/word-without-id-or-user-id))
 
-(defn get_random_collection_without_id_or_owner
+(defn get-random-collection-without-id-or-owner
   []
-  (get_random_model models/collection_without_id_or_owner))
+  (get-random-model models/collection-without-id-or-owner))
 
-;(update (update (get_random_model models/collection_without_id) :archived #(and false %)) :published #(and false %)))
+;(update (update (get-random-model models/collection-without-id) :archived #(and false %)) :published #(and false %)))
 
-(defn get_random_course_without_id
+(defn get-random-course-without-id
   []
-  (get_random_model models/course_without_id))
+  (get-random-model models/course-without-id))
 
-(defn get_random_content_without_id
+(defn get-random-content-without-id
   []
-  (get_random_model models/content_without_id))
+  (get-random-model models/content-without-id))
 
-(defn get_random_file_without_id
+(defn get-random-file-without-id
   []
-  (get_random_model models/file_without_id))
+  (get-random-model models/file-without-id))
 
-(defn get_random_user_collections_assoc_without_id
+(defn get-random-user-collections-assoc-without-id
   ([]
-   (get_random_model models/user_collections_assoc_without_id))
+   (get-random-model models/user-collections-assoc-without-id))
   ([user-id collection-id]
-   (into (get_random_model models/user_collections_assoc_without_any_ids) {:user-id user-id :collection-id collection-id})))
+   (into (get-random-model models/user-collections-assoc-without-any-ids) {:user-id user-id :collection-id collection-id})))
 
-(defn get_random_user_courses_assoc_without_id
+(defn get-random-user-courses-assoc-without-id
   ([]
-   (get_random_model models/user_courses_assoc_without_id))
+   (get-random-model models/user-courses-assoc-without-id))
   ([user-id course-id]
-   (into (get_random_model models/user_courses_assoc_without_any_ids) {:user-id user-id :course-id course-id})))
+   (into (get-random-model models/user-courses-assoc-without-any-ids) {:user-id user-id :course-id course-id})))
 
 
-(defn get_random_collection_contents_assoc_without_id
+(defn get-random-collection-contents-assoc-without-id
   ([]
-   (get_random_model models/collection_contents_assoc_without_id))
+   (get-random-model models/collection-contents-assoc-without-id))
   ([collection-id content-id]
-   (into (get_random_model models/collection_contents_assoc_without_any_ids) {:collection-id collection-id :content-id content-id})))
+   (into (get-random-model models/collection-contents-assoc-without-any-ids) {:collection-id collection-id :content-id content-id})))
 
-(defn get_random_collection_courses_assoc_without_id
+(defn get-random-collection-courses-assoc-without-id
   ([]
-   (get_random_model models/collection_courses_assoc_without_id))
+   (get-random-model models/collection-courses-assoc-without-id))
   ([collection-id course-id]
-   (into (get_random_model models/collection_courses_assoc_without_any_ids) {:collection-id collection-id :course-id course-id})))
+   (into (get-random-model models/collection-courses-assoc-without-any-ids) {:collection-id collection-id :course-id course-id})))
 
-(defn get_random_content_files_assoc_without_id
+(defn get-random-content-files-assoc-without-id
   ([]
-   (get_random_model models/content_files_assoc_without_id))
+   (get-random-model models/content-files-assoc-without-id))
   ([content-id file-id]
-   (into (get_random_model models/content_files_assoc_without_any_ids) {:content-id content-id :file-id file-id})))
+   (into (get-random-model models/content-files-assoc-without-any-ids) {:content-id content-id :file-id file-id})))
 
-(defn get_random_annotation_without_id
+(defn get-random-annotation-without-id
   ([]
-   (get_random_model models/annotation_without_id))
+   (get-random-model models/annotation-without-id))
   ([collection-id content-id]
-   (into (get_random_model models/annotation_without_any_ids) {:collection-id collection-id :content-id content-id})))
+   (into (get-random-model models/annotation-without-any-ids) {:collection-id collection-id :content-id content-id})))

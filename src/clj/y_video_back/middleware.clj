@@ -15,7 +15,7 @@
             [y-video-back.middleware.formats :as formats]
             ;[muuntaja.middleware :refer [wrap-format wrap-params]]
             [ring-ttl-session.core :refer [ttl-memory-store]]
-            [y-video-back.routes.service_handlers.utils :as sh-utils]
+            [y-video-back.routes.service-handlers.utils :as sh-utils]
             [ring.middleware.cors :refer [wrap-cors]])
   (:import [javax.servlet ServletContext]))
 

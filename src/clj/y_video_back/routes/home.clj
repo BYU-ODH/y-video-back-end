@@ -36,7 +36,7 @@
     (layout/render (into request {:session-id session-id}) "index.html")))
 
 (defn factor-home [request]
-  (layout/render request "fear_no_factor.html"))
+  (layout/render request "fear-no-factor.html"))
 
 (defn factor-about [request]
   (layout/render request "about.html"))
@@ -61,7 +61,7 @@
          (for [path home-paths]
            [path {:get index-page}])
          ["/ping" {:get (constantly (response/ok {:message "pong"}))}]
-         ["/ping_post" {:post (constantly (response/ok {:message "pong"}))}]
+         ["/ping-post" {:post (constantly (response/ok {:message "pong"}))}]
          ["/who-am-i" {:get (fn [request] {:status 200 :body {:username (:username request)}})}]
          ["/hello" {:get hello-page}]
          ["/factoring" {:get factor-home}]

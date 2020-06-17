@@ -1,19 +1,19 @@
-(ns y-video-back.routes.service_handlers.word_handlers
+(ns y-video-back.routes.service-handlers.word-handlers
   (:require
    [y-video-back.db.words :as words]
    [y-video-back.models :as models]
    [y-video-back.model-specs :as sp]
-   [y-video-back.routes.service_handlers.utils :as utils]
-   [y-video-back.routes.service_handlers.role_utils :as ru]))
+   [y-video-back.routes.service-handlers.utils :as utils]
+   [y-video-back.routes.service-handlers.role-utils :as ru]))
 
 (def word-create
   {:summary "Creates a new word"
    :parameters {:header {:session-id uuid?}
-                :body models/word_without_id}
+                :body models/word-without-id}
    :responses {200 {:body {:message string?
                            :id string?}}
                409 {:body {:message string?}}}
-   :handler (fn [{{{:keys [session-id]} :header {:keys [user_id]} :path :keys [body]} :parameters}]
+   :handler (fn [{{{:keys [session-id]} :header {:keys [user-id]} :path :keys [body]} :parameters}]
               (if-not (ru/has-permission session-id "word-create" 0)
                 ru/forbidden-page
                 (try {:status 200
@@ -32,12 +32,12 @@
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
               (if-not (ru/has-permission session-id "word-get-by-id" 0)
                 ru/forbidden-page
-                (let [word_result (words/READ id)]
-                  (if (= "" (:id word_result))
+                (let [word-result (words/READ id)]
+                  (if (= "" (:id word-result))
                     {:status 404
                      :body {:message "requested word not found"}}
                     {:status 200
-                     :body word_result}))))})
+                     :body word-result}))))})
 
 (def word-update
   {:summary "Updates specified word"

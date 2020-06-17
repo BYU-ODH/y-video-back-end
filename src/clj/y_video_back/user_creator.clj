@@ -1,13 +1,13 @@
 (ns y-video-back.user-creator
   (:require
-   [y-video-back.db.user-collections-assoc :as user_collections_assoc]
-   [y-video-back.db.user-courses-assoc :as user_courses_assoc]
+   [y-video-back.db.user-collections-assoc :as user-collections-assoc]
+   [y-video-back.db.user-courses-assoc :as user-courses-assoc]
    [y-video-back.db.users :as users]
    [y-video-back.models :as models]
    [y-video-back.front-end-models :as fmodels]
    [y-video-back.model-specs :as sp]
-   [y-video-back.routes.service_handlers.utils :as utils]
-   [y-video-back.routes.service_handlers.role_utils :as ru]))
+   [y-video-back.routes.service-handlers.utils :as utils]
+   [y-video-back.routes.service-handlers.role-utils :as ru]))
 
 (defn get-session-id
   "Generates session id for user with given username. If user does not exist, first creates user."
