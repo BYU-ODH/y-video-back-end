@@ -37,6 +37,7 @@ CREATE TABLE collections (
    ,updated TIMESTAMP DEFAULT NULL
    ,created  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
    ,collection_name TEXT -- Because name is a reserved word
+   ,owner UUID REFERENCES users(id)
    ,published BOOLEAN
    ,archived BOOLEAN
 );
