@@ -84,12 +84,9 @@
   (def test-user-crse-fou (ut/under-to-hyphen (user_courses_assoc/CREATE {:user_id (:id test-user-fou)
                                                                           :course_id (:id test-crse-one)
                                                                           :account_role 2})))
-  (def test-coll-cont-one (ut/under-to-hyphen (collection_contents_assoc/CREATE {:collection_id (:id test-coll-one)
-                                                                                 :content_id (:id test-cont-one)})))
-  (def test-coll-cont-two (ut/under-to-hyphen (collection_contents_assoc/CREATE {:collection_id (:id test-coll-two)
-                                                                                 :content_id (:id test-cont-two)})))
-  (def test-coll-cont-thr (ut/under-to-hyphen (collection_contents_assoc/CREATE {:collection_id (:id test-coll-thr)
-                                                                                 :content_id (:id test-cont-thr)})))
+  (def test-annotation-one (ut/under-to-hyphen (annotations/CREATE (g/get_random_annotation_without_id (:id test-coll-one) (:id test-cont-one)))))
+  (def test-annotation-two (ut/under-to-hyphen (annotations/CREATE (g/get_random_annotation_without_id (:id test-coll-two) (:id test-cont-two)))))
+  (def test-annotation-thr (ut/under-to-hyphen (annotations/CREATE (g/get_random_annotation_without_id (:id test-coll-thr) (:id test-cont-thr)))))
   (def test-coll-crse-one (ut/under-to-hyphen (collection_courses_assoc/CREATE {:collection_id (:id test-coll-one)
                                                                                  :course_id (:id test-crse-one)})))
   (def test-coll-crse-two (ut/under-to-hyphen (collection_courses_assoc/CREATE {:collection_id (:id test-coll-two)
@@ -110,7 +107,7 @@
 
   (mount.core/start #'y-video-back.handler/app))
 
-(deftest get-all-child-ids
+(comment (deftest get-all-child-ids)
   (testing "get-all-child-ids test"
     ; TA for test-coll-two
     (user_collections_assoc/CREATE {:user_id (:id test-user-one)
@@ -130,7 +127,7 @@
                  (:id test-word-one)
                  (:id test-annotation-one)])
            (dbu/get-all-child-ids (:id test-user-one))))))
-(deftest get-all-child-ids-roles
+(comment (deftest get-all-child-ids-roles)
   (testing "get-all-child-ids with roles"
     ; TA for test-coll-two
     (user_collections_assoc/CREATE {:user_id (:id test-user-one)
@@ -209,19 +206,7 @@
 
 
 
-(deftest test-coll-content-assoc
-  (testing "connect collection and content"
-    (let [new_collection_content_assoc (g/get_random_collection_contents_assoc_without_id (:id test-coll-one) (:id test-cont-two))]
-      (let [res (rp/collection-id-add-content (:collection-id new_collection_content_assoc) (:content-id new_collection_content_assoc))]
-        (is (= 200 (:status res)))
-        (let [id (ut/to-uuid (:id (m/decode-response-body res)))]
-          (is (= (list (into new_collection_content_assoc {:id id}))
-                 (map ut/remove-db-only (collection_contents_assoc/READ-BY-IDS [(:collection-id new_collection_content_assoc) (:content-id new_collection_content_assoc)]))))))))
-  (testing "disconnect collection and content"
-    (let [res (rp/collection-id-remove-content (:id test-coll-one) (:id test-cont-one))]
-      (is (= 200 (:status res)))
-      (is (= '()
-             (collection_contents_assoc/READ-BY-IDS [(:id test-coll-one) (:id test-cont-one)])))))
+(deftest test-annotation
   (testing "find all collections by content"
     (let [res (rp/content-id-collections (:id test-cont-thr))]
       (is (= 200 (:status res)))

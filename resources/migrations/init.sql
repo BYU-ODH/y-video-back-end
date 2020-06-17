@@ -142,16 +142,7 @@ CREATE TABLE collection_courses_assoc (
 COMMENT ON TABLE collection_courses_assoc IS 'Many-to-many table connecting collections and courses';
 
 DROP TABLE IF EXISTS collection_contents_assoc CASCADE;
-CREATE TABLE collection_contents_assoc (
-   id UUID UNIQUE NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY
-   ,deleted TIMESTAMP DEFAULT NULL
-   ,updated TIMESTAMP DEFAULT NULL
-   ,created  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-   ,collection_id UUID REFERENCES collections(id)
-   ,content_id UUID REFERENCES contents(id)
-   , CONSTRAINT no_duplicate_content_collections UNIQUE (content_id, collection_id)
-);
-COMMENT ON TABLE collection_contents_assoc IS 'Many-to-many table connecting collections and contents';
+
 
 
 DROP TABLE IF EXISTS content_files_assoc CASCADE;
@@ -256,13 +247,13 @@ CREATE VIEW courses_by_user AS
 DROP VIEW IF EXISTS collections_by_content;
 CREATE VIEW collections_by_content AS
     SELECT collections_undeleted.*, cca.content_id
-    FROM collections_undeleted JOIN collection_contents_assoc_undeleted AS cca
+    FROM collections_undeleted JOIN annotations_undeleted AS cca
     ON collections_undeleted.id = cca.collection_id;
 
 DROP VIEW IF EXISTS contents_by_collection;
 CREATE VIEW contents_by_collection AS
     SELECT contents_undeleted.*, cca.collection_id
-    FROM contents_undeleted JOIN collection_contents_assoc_undeleted AS cca
+    FROM contents_undeleted JOIN annotations_undeleted AS cca
     ON contents_undeleted.id = cca.content_id;
 
 DROP VIEW IF EXISTS collections_by_course;

@@ -5,6 +5,7 @@
    [y-video-back.db.collections-courses-assoc :as collection_courses_assoc]
    [y-video-back.db.user-collections-assoc :as user_collections_assoc]
    [y-video-back.db.collections :as collections]
+   [y-video-back.db.annotations :as annotations]
    [y-video-back.models :as models]
    [y-video-back.model-specs :as sp]
    [y-video-back.routes.service_handlers.utils :as utils]
@@ -117,7 +118,7 @@
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
               (if-not (ru/has-permission session-id "collection-add-content" {:collection-id id})
                 ru/forbidden-page
-                (let [result (utils/get-id (collection_contents_assoc/CREATE (into body {:collection-id id})))]
+                (let [result (utils/get-id (annotations/CREATE (into body {:collection-id id})))]
                   (if (= nil result)
                     {:status 404
                      :body {:message "unable to add content"}}
@@ -133,7 +134,7 @@
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
               (if-not (ru/has-permission session-id "collection-remove-content" {:collection-id id})
                 ru/forbidden-page
-                (let [result (collection_contents_assoc/DELETE-BY-IDS [id (:content-id body)])]
+                (let [result (annotations/DELETE-BY-IDS [id (:content-id body)])]
                   (if (= 0 result)
                     {:status 404
                      :body {:message "unable to remove content"}}
@@ -180,7 +181,7 @@
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
               (if-not (ru/has-permission session-id "collection-get-all-contents" {:collection-id id})
                 ru/forbidden-page
-                (let [content_collections_result (collection_contents_assoc/READ-CONTENTS-BY-COLLECTION id)]
+                (let [content_collections_result (annotations/READ-CONTENTS-BY-COLLECTION id)]
                   (let [content_result (map #(utils/remove-db-only %) content_collections_result)]
                     (if (= 0 (count content_result))
                       {:status 404
