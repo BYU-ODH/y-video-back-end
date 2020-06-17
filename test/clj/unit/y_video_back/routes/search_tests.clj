@@ -52,13 +52,16 @@
                                                         :username "future-minister-1"})))
   (def test-coll-one (ut/under-to-hyphen (collections/CREATE {:collection-name "Quidditch Books"
                                                               :published true
-                                                              :archived false})))
+                                                              :archived false
+                                                              :owner (:id test-user-one)})))
   (def test-coll-two (ut/under-to-hyphen (collections/CREATE {:collection-name "Self-help Books"
                                                               :published true
-                                                              :archived true})))
+                                                              :archived true
+                                                              :owner (:id test-user-two)})))
   (def test-coll-thr (ut/under-to-hyphen (collections/CREATE {:collection-name "Non-fiction Books"
                                                               :published false
-                                                              :archived true})))
+                                                              :archived true
+                                                              :owner (:id test-user-thr)})))
   (def test-cont-one (ut/under-to-hyphen (contents/CREATE {:content-name "Quidditch Through the Ages"
                                                            :content-type "book 1"
                                                            :requester-email "im.a.what@gmail.com"
@@ -116,8 +119,11 @@
   [table-key query_term expected_users]
   (let [res (rp/search query_term)]
     (is (= 200 (:status res)))
-    (is (= (into [] (map #(update (ut/remove-db-only %) :id str) expected_users))
-           (table-key (m/decode-response-body res))))))
+    (if (= table-key :collections)
+      (is (= (into [] (map #(update (update (ut/remove-db-only %) :id str) :owner str) expected_users))
+             (table-key (m/decode-response-body res))))
+      (is (= (into [] (map #(update (ut/remove-db-only %) :id str) expected_users))
+             (table-key (m/decode-response-body res)))))))
 
 (deftest test-search-users
   (testing "all users email"

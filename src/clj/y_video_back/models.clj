@@ -39,11 +39,19 @@
 (def word
   (into word_without_id {:id uuid?}))
 
-(def collection_without_id
+(def collection_without_id_or_owner
   {:collection-name string? :published boolean? :archived boolean?})
+
+(def collection_without_id
+  (into collection_without_id_or_owner {:owner uuid?}))
 
 (def collection
   (into collection_without_id {:id uuid?}))
+
+(def collection_read_from_db
+  (-> collection_without_id_or_owner
+      (into {:id uuid?})
+      (into {:owner user})))
 
 (def course_without_id
   {:department string? :catalog-number string? :section-number string?})

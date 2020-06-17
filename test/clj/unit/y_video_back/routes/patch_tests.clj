@@ -43,9 +43,9 @@
   (def test-user-one (ut/under-to-hyphen (users/CREATE (g/get_random_user_without_id))))
   (def test-user-two (ut/under-to-hyphen (users/CREATE (g/get_random_user_without_id))))
   (def test-user-thr (ut/under-to-hyphen (users/CREATE (g/get_random_user_without_id))))
-  (def test-coll-one (ut/under-to-hyphen (collections/CREATE (g/get_random_collection_without_id))))
-  (def test-coll-two (ut/under-to-hyphen (collections/CREATE (g/get_random_collection_without_id))))
-  (def test-coll-thr (ut/under-to-hyphen (collections/CREATE (g/get_random_collection_without_id))))
+  (def test-coll-one (ut/under-to-hyphen (collections/CREATE (into (g/get_random_collection_without_id_or_owner) {:owner (:id test-user-one)}))))
+  (def test-coll-two (ut/under-to-hyphen (collections/CREATE (into (g/get_random_collection_without_id_or_owner) {:owner (:id test-user-two)}))))
+  (def test-coll-thr (ut/under-to-hyphen (collections/CREATE (into (g/get_random_collection_without_id_or_owner) {:owner (:id test-user-thr)}))))
   (def test-user-coll-one (ut/under-to-hyphen (user_collections_assoc/CREATE {:user_id (:id test-user-one)
                                                                               :collection_id (:id test-coll-one)
                                                                               :account_role 0})))
@@ -103,7 +103,7 @@
 
 (deftest test-coll-patch
   (testing "coll fields one at a time"
-    (let [new_coll (g/get_random_collection_without_id)
+    (let [new_coll (into (g/get_random_collection_without_id_or_owner) {:owner (:id test-user-one)})
           id (:id test-coll-one)]
       (is (= (ut/remove-db-only test-coll-one) (ut/remove-db-only (collections/READ id))))
       (doseq [val (seq new_coll)]
@@ -113,7 +113,7 @@
                 (is (= ((get val 0) new_coll) ((get val 0) (collections/READ id)))))])
       (is (= (into new_coll {:id id}) (ut/remove-db-only (collections/READ id))))))
   (testing "coll multiple fields at once"
-    (let [new_coll (g/get_random_collection_without_id)
+    (let [new_coll (into (g/get_random_collection_without_id_or_owner) {:owner (:id test-user-one)})
           id (:id test-coll-two)]
       (is (= (ut/remove-db-only test-coll-two) (ut/remove-db-only (collections/READ id))))
       (let [fields-to-change (ut/random-submap new_coll)]
@@ -122,7 +122,7 @@
         (is (= (ut/remove-db-only (merge test-coll-two fields-to-change))
                (ut/remove-db-only (collections/READ id))))))
     (testing "coll all fields at once"
-      (let [new_coll (g/get_random_collection_without_id)
+      (let [new_coll (into (g/get_random_collection_without_id_or_owner) {:owner (:id test-user-one)})
             id (:id test-coll-thr)]
         (is (= (ut/remove-db-only test-coll-thr) (ut/remove-db-only (collections/READ id))))
         (let [res (rp/collection-id-patch id new_coll)]

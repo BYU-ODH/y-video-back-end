@@ -38,9 +38,9 @@
   (def test-user-one (ut/under-to-hyphen (users/CREATE (g/get_random_user_without_id))))
   (def test-user-two (ut/under-to-hyphen (users/CREATE (g/get_random_user_without_id))))
   (def test-user-thr (ut/under-to-hyphen (users/CREATE (g/get_random_user_without_id))))
-  (def test-coll-one (ut/under-to-hyphen (collections/CREATE (g/get_random_collection_without_id))))
-  (def test-coll-two (ut/under-to-hyphen (collections/CREATE (g/get_random_collection_without_id))))
-  (def test-coll-thr (ut/under-to-hyphen (collections/CREATE (g/get_random_collection_without_id))))
+  (def test-coll-one (ut/under-to-hyphen (collections/CREATE (into (g/get_random_collection_without_id_or_owner) {:owner (:id test-user-one)}))))
+  (def test-coll-two (ut/under-to-hyphen (collections/CREATE (into (g/get_random_collection_without_id_or_owner) {:owner (:id test-user-two)}))))
+  (def test-coll-thr (ut/under-to-hyphen (collections/CREATE (into (g/get_random_collection_without_id_or_owner) {:owner (:id test-user-thr)}))))
   (def test-user-coll-one (ut/under-to-hyphen (user_collections_assoc/CREATE {:user_id (:id test-user-one)
                                                                               :collection_id (:id test-coll-one)
                                                                               :account_role 0})))
@@ -91,7 +91,7 @@
 
 (deftest test-coll
   (testing "coll CREATE"
-    (let [new_coll (g/get_random_collection_without_id)]
+    (let [new_coll (into (g/get_random_collection_without_id_or_owner) {:owner (:id test-user-one)})]
       (let [res (rp/collection-post new_coll (:id test-user-one))]
         (is (= 200 (:status res)))
         (let [id (ut/to-uuid (:id (m/decode-response-body res)))]
@@ -101,10 +101,12 @@
   (testing "coll READ"
     (let [res (rp/collection-id-get (:id test-coll-one))]
       (is (= 200 (:status res)))
-      (is (= (update (ut/remove-db-only test-coll-one) :id str)
+      (is (= (-> (ut/remove-db-only test-coll-one)
+                 (update :id str)
+                 (update :owner str))
              (ut/remove-db-only (m/decode-response-body res))))))
   (testing "coll UPDATE"
-    (let [new_coll (g/get_random_collection_without_id)]
+    (let [new_coll (into (g/get_random_collection_without_id_or_owner) {:owner (:id test-user-one)})]
       (let [res (rp/collection-id-patch (:id test-coll-one) new_coll)]
         (is (= 200 (:status res)))
         (is (= (into new_coll {:id (:id test-coll-one)}) (ut/remove-db-only (collections/READ (:id test-coll-one))))))))

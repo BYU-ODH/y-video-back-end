@@ -47,9 +47,9 @@
   (def test-user-two (ut/under-to-hyphen (users/CREATE (g/get_random_user_without_id))))
   (def test-user-thr (ut/under-to-hyphen (users/CREATE (g/get_random_user_without_id))))
   (def test-user-fou (ut/under-to-hyphen (users/CREATE (g/get_random_user_without_id))))
-  (def test-coll-one (ut/under-to-hyphen (collections/CREATE (g/get_random_collection_without_id))))
-  (def test-coll-two (ut/under-to-hyphen (collections/CREATE (g/get_random_collection_without_id))))
-  (def test-coll-thr (ut/under-to-hyphen (collections/CREATE (g/get_random_collection_without_id))))
+  (def test-coll-one (ut/under-to-hyphen (collections/CREATE (into (g/get_random_collection_without_id_or_owner) {:owner (:id test-user-one)}))))
+  (def test-coll-two (ut/under-to-hyphen (collections/CREATE (into (g/get_random_collection_without_id_or_owner) {:owner (:id test-user-two)}))))
+  (def test-coll-thr (ut/under-to-hyphen (collections/CREATE (into (g/get_random_collection_without_id_or_owner) {:owner (:id test-user-thr)}))))
   (def test-cont-one (ut/under-to-hyphen (contents/CREATE (g/get_random_content_without_id))))
   (def test-cont-two (ut/under-to-hyphen (contents/CREATE (g/get_random_content_without_id))))
   (def test-cont-thr (ut/under-to-hyphen (contents/CREATE (g/get_random_content_without_id))))
@@ -170,6 +170,7 @@
       (is (= 200 (:status res)))
       (is (= (-> test-coll-thr
                  (update :id str)
+                 (update :owner str)
                  (into {:user-id (str (:id test-user-thr)) :account-role 0})
                  (ut/remove-db-only)
                  (list))
@@ -226,6 +227,7 @@
       (is (= 200 (:status res)))
       (is (= (-> test-coll-thr
                  (update :id str)
+                 (update :owner str)
                  (into {:content-id (str (:id test-cont-thr))})
                  (ut/remove-db-only)
                  (list))
@@ -258,6 +260,7 @@
       (is (= 200 (:status res)))
       (is (= (-> test-coll-thr
                  (update :id str)
+                 (update :owner str)
                  (into {:course-id (str (:id test-crse-thr))})
                  (ut/remove-db-only)
                  (list))

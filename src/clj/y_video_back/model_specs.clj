@@ -29,10 +29,12 @@
 (s/def :collection/collection-name string?)
 (s/def :collection/published boolean?)
 (s/def :collection/archived boolean?)
+(s/def :collection/owner uuid?)
 (s/def ::collection
   (s/keys :opt-un [:collection/collection-name
                    :collection/published
-                   :collection/archived]))
+                   :collection/archived
+                   :collection/owner]))
 
 (s/def :content/requester-email string?)
 (s/def :content/physical-copy-exists boolean?)
