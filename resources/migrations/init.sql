@@ -99,6 +99,7 @@ CREATE TABLE annotations (
     ,content_id UUID REFERENCES contents(id)
     ,collection_id UUID REFERENCES collections(id)
     ,metadata TEXT
+    , CONSTRAINT no_duplicate_annotations UNIQUE (content_id, collection_id)
 );
 COMMENT ON TABLE annotations IS 'Contains annotations to be applied over contents';
 

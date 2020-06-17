@@ -221,22 +221,6 @@
                   (update :content-id str))]
              (map ut/remove-db-only (m/decode-response-body res))))))
 
-  (testing "annotation read by ids (multiple)"
-    (let [new-annotation (ut/under-to-hyphen (annotations/CREATE (g/get_random_annotation_without_id (:id test-coll-two) (:id test-cont-two))))]
-      (let [res (rp/annotation-get-by-ids (:collection-id test-annotation-two)
-                                          (:content-id test-annotation-two))]
-        (is (= 200 (:status res)))
-        (is (= [(-> test-annotation-two
-                    (ut/remove-db-only)
-                    (update :id str)
-                    (update :collection-id str)
-                    (update :content-id str))
-                (-> new-annotation
-                            (ut/remove-db-only)
-                            (update :id str)
-                            (update :collection-id str)
-                            (update :content-id str))]
-               (map ut/remove-db-only (m/decode-response-body res)))))))
   (testing "annotation read by ids (none)"
     (let [res (rp/annotation-get-by-ids (:id test-coll-one)
                                         (:id test-cont-thr))]
