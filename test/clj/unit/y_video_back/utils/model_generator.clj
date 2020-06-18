@@ -13,7 +13,7 @@
     false))
 
 (defn get-random-model
-  "Generate a test user with random field values"
+  "Generate a test model with random field values"
   [model]
   (into {} (map #(if (= (string? "") ((get % 1) ""))
                    [(get % 0) (rand-str 32)]
@@ -24,8 +24,20 @@
                        [(get % 0) (java.util.UUID/randomUUID)])))
                model)))
 
+(defn get-invalid-model
+  "Generate a test model with strings and bools flipped"
+  [model]
+  (into {} (map #(if (= (string? "") ((get % 1) ""))
+                   [(get % 0) (rand-int 1000)]
+                   (if (= (boolean? true) ((get % 1) true))
+                     [(get % 0) (java.util.UUID/randomUUID)]
+                     (if (= (int? true) ((get % 1) true))
+                       [(get % 0) (rand-str 32)]
+                       [(get % 0) (rand-bool)])))
+               model)))
 
-; - - - - - - - - - MODEL GENERATORS - - - - - - - - ;
+
+; - - - - - - - - - VALID MODEL GENERATORS - - - - - - - - ;
 
 
 (defn get-random-user-without-id
@@ -100,3 +112,9 @@
    (get-random-model models/annotation-without-id))
   ([collection-id content-id]
    (into (get-random-model models/annotation-without-any-ids) {:collection-id collection-id :content-id content-id})))
+
+; - - - - - - - - - INVALID MODEL GENERATORS - - - - - - - - ;
+
+(defn get-invalid-user-without-id
+  []
+  (get-invalid-model models/user-without-id))

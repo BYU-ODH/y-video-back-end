@@ -148,7 +148,6 @@
   [table-keyword valmap]
   (first (dbc! (csk/->snake_case_keyword table-keyword)
                (transform-keys csk/->snake_case_keyword valmap))))
-
 (defn READ
   "Get anything from table by id"
   [table-keyword &[id select-field-keys]]

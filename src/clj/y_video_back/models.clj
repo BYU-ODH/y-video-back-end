@@ -21,8 +21,11 @@
   {:echo string?})
 
 (def user-without-id
-  {:email string? :last-login string? :account-name string?
-   :account-type int? :username string?})
+  {:email string?
+   :last-login string?
+   :account-name string?
+   :account-type int?
+   :username string?})
 
 (def user
   (into user-without-id {:id uuid?}))
@@ -31,7 +34,9 @@
   (add-namespace "user" {:variable string?}))
 
 (def word-without-id-or-user-id
-  {:word string? :src-lang string? :dest-lang string?})
+  {:word string?
+   :src-lang string?
+   :dest-lang string?})
 
 (def word-without-id
   (into word-without-id-or-user-id {:user-id uuid?}))
@@ -40,7 +45,9 @@
   (into word-without-id {:id uuid?}))
 
 (def collection-without-id-or-owner
-  {:collection-name string? :published boolean? :archived boolean?})
+  {:collection-name string?
+   :published boolean?
+   :archived boolean?})
 
 (def collection-without-id
   (into collection-without-id-or-owner {:owner uuid?}))
@@ -54,17 +61,28 @@
       (into {:owner user})))
 
 (def course-without-id
-  {:department string? :catalog-number string? :section-number string?})
+  {:department string?
+   :catalog-number string?
+   :section-number string?})
 
 (def course
   (into course-without-id {:id uuid?}))
 
 (def content-without-id
-  {:content-name string? :content-type string? :requester-email string?
-   :thumbnail string? :copyrighted boolean? :physical-copy-exists boolean?
-   :full-video boolean? :published boolean? :allow-definitions boolean?
-   :allow-notes boolean? :allow-captions boolean? :date-validated string?
-   :views int? :metadata string?})
+  {:content-name string?
+   :content-type string?
+   :requester-email string?
+   :thumbnail string?
+   :copyrighted boolean?
+   :physical-copy-exists boolean?
+   :full-video boolean?
+   :published boolean?
+   :allow-definitions boolean?
+   :allow-notes boolean?
+   :allow-captions boolean?
+   :date-validated string?
+   :views int?
+   :metadata string?})
 
 (def content
   (into content-without-id {:id uuid?}))
@@ -79,7 +97,9 @@
   (into annotation-without-id {:id uuid?}))
 
 (def file-without-id
-  {:filepath string? :mime string? :metadata string?})
+  {:filepath string?
+   :mime string?
+   :metadata string?})
 
 (def file
   (into file-without-id {:id uuid?}))

@@ -16,13 +16,15 @@
    :handler (fn [{{{:keys [session-id]} :header :keys [body]} :parameters}]
               (if-not (ru/has-permission session-id "annotation-create" 0)
                 ru/forbidden-page
-                (try {:status 200
-                      :body {:message "1 annotation created"
-                             :id (utils/get-id (annotations/CREATE body))}}
-                     (catch Exception e
-                       {:status 409
-                        :body {:message "unable to create annotation, likely bad collection id"
-                               :error e}}))))})
+                (try
+                  (let [res (annotations/CREATE body)]
+                    {:status 200
+                     :body {:message "1 annotation created"
+                            :id (utils/get-id res)}})
+                  (catch Exception e
+                    {:status 409
+                     :body {:message "unable to create annotation, likely bad collection id"
+                            :error e}}))))})
 
 (def annotation-get-by-id
   {:summary "Retrieves specified annotation"
@@ -33,9 +35,12 @@
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
               (if-not (ru/has-permission session-id "annotation-get-by-id" 0)
                 ru/forbidden-page
-                (let [annotation-result (annotations/READ id)]
-                  {:status 200
-                   :body annotation-result})))})
+                (let [res (annotations/READ id)]
+                  (if (nil? res)
+                    {:status 404
+                     :body {:message "requested annotation not found"}}
+                    {:status 200
+                     :body res}))))})
 
 (def annotation-update ;; Non-functional
   {:summary "Updates the specified annotation"

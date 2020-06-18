@@ -20,12 +20,12 @@
    :handler (fn [{{{:keys [session-id]} :header {:keys [term]} :path} :parameters}]
               (if-not (ru/has-permission session-id "search-by-term" 0)
                 ru/forbidden-page
-                (let [user-result (map utils/remove-db-only
-                                       (db/read-all-pattern :users
-                                                            [:email :account-name :username]
-                                                            (str "%" term "%")))]
+                (let [res (map utils/remove-db-only
+                               (db/read-all-pattern :users
+                                                    [:email :account-name :username]
+                                                    (str "%" term "%")))]
                   {:status 200
-                   :body user-result})))})
+                   :body res})))})
 
 (def search-by-collection ;; Non-functional
   {:summary "Searches users, collections, contents, and courses by search term"
@@ -35,13 +35,12 @@
    :handler (fn [{{{:keys [session-id]} :header {:keys [term]} :path} :parameters}]
               (if-not (ru/has-permission session-id "search-by-term" 0)
                 ru/forbidden-page
-                (let [collection-result (map utils/remove-db-only
-                                             (db/read-all-pattern :collections
-                                                                  [:collection-name]
-                                                                  (str "%" term "%")))]
-                  (println collection-result)
+                (let [res (map utils/remove-db-only
+                               (db/read-all-pattern :collections
+                                                    [:collection-name]
+                                                    (str "%" term "%")))]
                   {:status 200
-                   :body collection-result})))})
+                   :body res})))})
 
 (def search-by-content
   {:summary "Searches users, collections, contents, and courses by search term"
@@ -51,10 +50,10 @@
    :handler (fn [{{{:keys [session-id]} :header {:keys [term]} :path} :parameters}]
               (if-not (ru/has-permission session-id "search-by-term" 0)
                 ru/forbidden-page
-                (let [content-result (map utils/remove-db-only
-                                          (db/read-all-pattern :contents
-                                                               [:content-name :content-type :requester-email
-                                                                :thumbnail]
-                                                               (str "%" term "%")))]
+                (let [res (map utils/remove-db-only
+                               (db/read-all-pattern :contents
+                                                    [:content-name :content-type :requester-email
+                                                     :thumbnail]
+                                                    (str "%" term "%")))]
                   {:status 200
-                   :body content-result})))})
+                   :body res})))})

@@ -16,18 +16,16 @@
                 :body models/user-without-id}
    :responses {200 {:body {:message string?
                            :id string?}}
-               409 {:body {:message string?
-                           :error string?}}}
+               500 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header :keys [body]} :parameters}]
               (if-not (ru/has-permission session-id "user-create" 0)
                 ru/forbidden-page
-                (try {:status 200
-                      :body {:message "1 user created"
-                             :id (utils/get-id (users/CREATE body))}}
-                     (catch Exception e
-                       {:status 409
-                        :body {:message "unable to create user, email likely taken"
-                               :error (.toString e)}}))))})
+                (if-not (= '() (users/READ-BY-EMAIL [(:email body)]))
+                  {:status 500
+                   :body {:message "email already taken"}}
+                  {:status 200
+                   :body {:message "1 user created"
+                          :id (utils/get-id (users/CREATE body))}})))})
 
 (def user-get-by-id
   {:summary "Retrieves specified user"
