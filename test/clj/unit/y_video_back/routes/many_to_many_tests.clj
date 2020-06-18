@@ -207,6 +207,23 @@
 
 
 (deftest test-annotation
+  (testing "add content to collection (i.e. connect via annotation)"
+    (let [res (rp/collection-id-add-content (:id test-coll-one) (:id test-cont-two))]
+      (is (= 200 (:status res)))
+      (let [ann-id (:id (m/decode-response-body res))]
+        (is (= {:id ann-id
+                :collection-id (:id test-coll-one)
+                :content-id (:id test-cont-two)
+                :metadata ""}
+               (-> (annotations/READ-BY-IDS [(:id test-coll-one) (:id test-cont-two)])
+                   (first)
+                   (ut/remove-db-only)
+                   (update :id str)))))))
+  (testing "remove content from collection (i.e. delete annotation)"
+    (let [res (rp/collection-id-remove-content (:id test-coll-two) (:id test-cont-two))]
+      (is (= 200 (:status res)))
+      (is (= '()
+             (annotations/READ-BY-IDS [(:id test-coll-two) (:id test-cont-two)])))))
   (testing "find all collections by content"
     (let [res (rp/content-id-collections (:id test-cont-thr))]
       (is (= 200 (:status res)))
