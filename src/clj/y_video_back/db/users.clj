@@ -12,3 +12,4 @@
 (def PERMANENT-DELETE (partial db/DELETE :users))
 (def READ-WORDS (partial db/read-all-where :words-undeleted :user-id))
 (def READ-COLLECTIONS-BY-USER-VIA-COURSES (partial db/read-all-where :collections-by-users-via-courses :user-id))
+(defn EXISTS? [id] (not (nil? (db/READ :users-undeleted id))))

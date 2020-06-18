@@ -71,3 +71,48 @@
   (testing "add duplicated user"
     (let [res (rp/user-post test-user-one)]
       (is (= 500 (:status res))))))
+
+(deftest user-id-get
+  (testing "read nonexistent user"
+    (let [res (rp/user-id-get (java.util.UUID/randomUUID))]
+      (is (= 404 (:status res))))))
+
+(deftest user-id-patch
+  (testing "update nonexistent user"
+    (let [res (rp/user-id-patch (java.util.UUID/randomUUID) (g/get-random-user-without-id))]
+      (is (= 404 (:status res))))))
+
+(deftest user-id-delete
+  (testing "delete nonexistent user"
+    (let [res (rp/user-id-delete (java.util.UUID/randomUUID))]
+      (is (= 404 (:status res))))))
+
+(deftest user-id-get-all-collections
+  (testing "get all collections for nonexistent user"
+    (let [res (rp/user-id-collections (java.util.UUID/randomUUID))]
+      (is (= 404 (:status res)))))
+  (testing "get all collections for user with no collections"
+    (let [new-user (users/CREATE (g/get-random-user-without-id))
+          res (rp/user-id-collections (:id new-user))]
+      (is (= 200 (:status res)))
+      (is (= [] (m/decode-response-body res))))))
+
+(deftest user-id-get-all-courses
+  (testing "get all courses for nonexistent user"
+    (let [res (rp/user-id-courses (java.util.UUID/randomUUID))]
+      (is (= 404 (:status res)))))
+  (testing "get all courses for user with no courses"
+    (let [new-user (users/CREATE (g/get-random-user-without-id))
+          res (rp/user-id-courses (:id new-user))]
+      (is (= 200 (:status res)))
+      (is (= [] (m/decode-response-body res))))))
+
+(deftest user-id-get-all-words
+  (testing "get all words for nonexistent user"
+    (let [res (rp/user-id-get-words (java.util.UUID/randomUUID))]
+      (is (= 404 (:status res)))))
+  (testing "get all words for user with no words"
+    (let [new-user (users/CREATE (g/get-random-user-without-id))
+          res (rp/user-id-get-words (:id new-user))]
+      (is (= 200 (:status res)))
+      (is (= [] (m/decode-response-body res))))))

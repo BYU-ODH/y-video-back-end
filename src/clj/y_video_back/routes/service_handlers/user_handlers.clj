@@ -32,8 +32,7 @@
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
    :responses {200 {:body models/user}
-               404 {:body {:message string?}}
-               500 {:body {:message string?}}}
+               404 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
               (if-not (ru/has-permission session-id "user-get-by-id" 0)
                 ru/forbidden-page
@@ -49,12 +48,13 @@
   {:summary "Updates specified user"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?} :body ::sp/user}
-   :responses {200 {:body {:message string?}}}
+   :responses {200 {:body {:message string?}}
+               404 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
               (if-not (ru/has-permission session-id "user-update" 0)
                 ru/forbidden-page
                 (let [result (users/UPDATE id body)]
-                  (if (= 0 result)
+                  (if (nil? result)
                     {:status 404
                      :body {:message "requested user not found"}}
                     {:status 200
@@ -64,12 +64,13 @@
   {:summary "Deletes specified user"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
-   :responses {200 {:body {:message string?}}}
+   :responses {200 {:body {:message string?}}
+               404 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
               (if-not (ru/has-permission session-id "user-delete" 0)
                 ru/forbidden-page
                 (let [result (users/DELETE id)]
-                  (if (= 0 result)
+                  (if (nil? result)
                     {:status 404
                      :body {:message "requested user not found"}}
                     {:status 200
@@ -102,17 +103,18 @@
   {:summary "Retrieves all collections for specified user"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
-   :responses {200 {:body [(into models/collection {:account-role int? :user-id uuid?})]}}
+   :responses {200 {:body [(into models/collection {:account-role int? :user-id uuid?})]}
+               404 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
               (if-not (ru/has-permission session-id "user-get-all-collections" 0)
                 ru/forbidden-page
-                (let [user-collections-result (user-collections-assoc/READ-COLLECTIONS-BY-USER id)]
-                  (let [collection-result (map #(utils/remove-db-only %) user-collections-result)]
-                    (if (= 0 (count collection-result))
-                      {:status 404
-                       :body {:message "no users found for given collection"}}
-                      {:status 200
-                       :body collection-result})))))})
+                (if-not (users/EXISTS? id)
+                  {:status 404
+                   :body {:message "user not found"}}
+                  (let [user-collections-result (user-collections-assoc/READ-COLLECTIONS-BY-USER id)]
+                    (let [collection-result (map #(utils/remove-db-only %) user-collections-result)]
+                        {:status 200
+                         :body collection-result})))))})
 
 (def user-get-all-collections-by-logged-in
   {:summary "Retrieves all collections for session user"
@@ -131,27 +133,33 @@
   {:summary "Retrieves all courses for specified user"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
-   :responses {200 {:body [(into models/course {:account-role int? :user-id uuid?})]}}
+   :responses {200 {:body [(into models/course {:account-role int? :user-id uuid?})]}
+               404 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
               (if-not (ru/has-permission session-id "user-get-all-courses" 0)
                 ru/forbidden-page
-                (let [user-courses-result (user-courses-assoc/READ-COURSES-BY-USER id)]
-                  (let [course-result (map #(utils/remove-db-only %) user-courses-result)]
-                    (if (= 0 (count course-result))
-                      {:status 404
-                       :body {:message "no users found for given course"}}
-                      {:status 200
-                       :body course-result})))))})
+                (if-not (users/EXISTS? id)
+                  {:status 404
+                   :body {:message "user not found"}}
+                  (let [user-courses-result (user-courses-assoc/READ-COURSES-BY-USER id)]
+                    (let [course-result (map #(utils/remove-db-only %) user-courses-result)]
+                        {:status 200
+                         :body course-result})))))})
 
 
 (def user-get-all-words
   {:summary "Retrieves all words under specified user"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
-   :responses {200 {:body [models/word]}}
+   :responses {200 {:body [models/word]}
+               404 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
               (if-not (ru/has-permission session-id "user-get-all-words" 0)
                 ru/forbidden-page
-                (let [res (users/READ-WORDS id)]
-                  {:status 200
-                   :body res})))})
+                (if-not (users/EXISTS? id)
+                  {:status 404
+                   :body {:message "user not found"}}
+                  (let [user-words-result (users/READ-WORDS id)]
+                    (let [word-result (map #(utils/remove-db-only %) user-words-result)]
+                        {:status 200
+                         :body word-result})))))})
