@@ -92,12 +92,12 @@
 (deftest test-coll
   (testing "coll CREATE"
     (let [new-coll (into (g/get-random-collection-without-id-or-owner) {:owner (:id test-user-one)})]
-      (let [res (rp/collection-post new-coll (:id test-user-one))]
+      (let [res (rp/collection-post new-coll)]
         (is (= 200 (:status res)))
         (let [id (ut/to-uuid (:id (m/decode-response-body res)))]
-          (is (= (into new-coll {:id id}) (ut/remove-db-only (collections/READ id))))
-          (is (= (list {:user-id (:id test-user-one) :account-role 0 :collection-id id})
-                 (map #(ut/remove-db-only (dissoc % :id)) (user-collections-assoc/READ-BY-COLLECTION id))))))))
+          (is (= (into new-coll {:id id}) (ut/remove-db-only (collections/READ id))))))))
+          ;(is (= (list {:user-id (:id test-user-one) :account-role 0 :collection-id id})
+          ;       (map #(ut/remove-db-only (dissoc % :id)) (user-collections-assoc/READ-BY-COLLECTION id))))))))
   (testing "coll READ"
     (let [res (rp/collection-id-get (:id test-coll-one))]
       (is (= 200 (:status res)))
@@ -110,6 +110,31 @@
       (let [res (rp/collection-id-patch (:id test-coll-one) new-coll)]
         (is (= 200 (:status res)))
         (is (= (into new-coll {:id (:id test-coll-one)}) (ut/remove-db-only (collections/READ (:id test-coll-one))))))))
+  (testing "update collection to self"
+    (let [coll-one (into (g/get-random-collection-without-id-no-owner)
+                         {:owner (:id test-user-one)})
+          coll-one-res (collections/CREATE coll-one)
+          res (rp/collection-id-patch (:id coll-one-res) coll-one)]
+      (is (= 200 (:status res)))))
+  (testing "update collection name and owner to own name and owner"
+    (let [coll-one (into (g/get-random-collection-without-id-no-owner)
+                         {:owner (:id test-user-one)})
+          coll-one-res (collections/CREATE coll-one)
+          res (rp/collection-id-patch (:id coll-one-res) {:collection-name (:collection-name coll-one)
+                                                          :owner (:owner coll-one)})]
+      (is (= 200 (:status res)))))
+  (testing "update collection owner to own owner"
+    (let [coll-one (into (g/get-random-collection-without-id-no-owner)
+                         {:owner (:id test-user-one)})
+          coll-one-res (collections/CREATE coll-one)
+          res (rp/collection-id-patch (:id coll-one-res) {:owner (:owner coll-one)})]
+      (is (= 200 (:status res)))))
+  (testing "update collection name to own name"
+    (let [coll-one (into (g/get-random-collection-without-id-no-owner)
+                         {:owner (:id test-user-one)})
+          coll-one-res (collections/CREATE coll-one)
+          res (rp/collection-id-patch (:id coll-one-res) {:collection-name (:collection-name coll-one)})]
+      (is (= 200 (:status res)))))
   (testing "coll DELETE"
     (let [res (rp/collection-id-delete (:id test-coll-two))]
       (is (= 200 (:status res)))

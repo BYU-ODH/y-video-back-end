@@ -62,7 +62,15 @@
   []
   (get-random-model models/collection-without-id-or-owner))
 
-;(update (update (get-random-model models/collection-without-id) :archived #(and false %)) :published #(and false %)))
+(defn get-random-collection-without-id
+  ([owner-id]
+   (into (get-random-collection-without-id-or-owner) {:owner owner-id}))
+  ([]
+   (get-random-collection-without-id (java.util.UUID/randomUUID))))
+
+(defn get-random-collection-without-id-no-owner
+  []
+  (into (get-random-collection-without-id-or-owner) {:owner nil}))
 
 (defn get-random-course-without-id
   []

@@ -5,6 +5,8 @@
    [y-video-back.db.collections-courses-assoc :as collection-courses-assoc]
    [y-video-back.db.user-collections-assoc :as user-collections-assoc]
    [y-video-back.db.collections :as collections]
+   [y-video-back.db.users :as users]
+   [y-video-back.db.contents :as contents]
    [y-video-back.db.annotations :as annotations]
    [y-video-back.models :as models]
    [y-video-back.model-specs :as sp]
@@ -15,23 +17,23 @@
 (def collection-create ;; Non-functional
   {:summary "Creates a new collection with the given (temp) user as an owner"
    :parameters {:header {:session-id uuid?}
-                :body {:collection models/collection-without-id :user-id uuid?}}
+                :body models/collection-without-id}
    :responses {200 {:body {:message string?
                            :id string?}}
-               409 {:body {:message string?}}}
+               500 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header :keys [body]} :parameters}]
               (if-not (ru/has-permission session-id "collection-create" 0)
                 ru/forbidden-page
-                (try {:status 200
-                      :body {:message "1 collection created"
-                             :id (let [collection-id (utils/get-id (collections/CREATE (:collection body)))]
-                                   (user-collections-assoc/CREATE {:user-id (:user-id body)
-                                                                   :collection-id (utils/to-uuid collection-id)
-                                                                   :account-role 0})
-                                   collection-id)}}
-                     (catch Exception e
-                       {:status 409
-                        :body {:message e}}))))})
+                (if (not (users/EXISTS? (:owner body)))
+                  {:status 500
+                   :body {:message "user (owner) not found, unable to create collection"}}
+                  (if (collections/EXISTS-NAME-OWNER? (:collection-name body)
+                                                      (:owner body))
+                    {:status 500
+                     :body {:message "collection name / owner combination already in use, unable to create collection"}}
+                    {:status 200
+                     :body {:message "1 collection created"
+                            :id (utils/get-id (collections/CREATE body))}}))))})
 
 (def collection-get-by-id ;; Not tested
   {:summary "Retrieves specified collection"
@@ -57,12 +59,28 @@
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
               (if-not (ru/has-permission session-id "collection-update" {:collection-id id})
                 ru/forbidden-page
-                (let [result (collections/UPDATE id body)]
-                  (if (nil? result)
-                    {:status 404
-                     :body {:message "requested collection not found"}}
-                    {:status 200
-                     :body {:message (str 1 " collections updated")}}))))})
+                (if-not (collections/EXISTS? id)
+                  {:status 404
+                   :body {:message "collection not found"}}
+                  (let [current-collection (collections/READ id)
+                        proposed-collection (merge current-collection body)
+                        same-name-collection (first (collections/READ-ALL-BY-NAME-OWNER [(:collection-name proposed-collection)
+                                                                                         (:owner proposed-collection)]))]
+                    ; If there is a name-owner collision and the collision is not with self (i.e. collection being changed)
+                    (if (and (not (nil? same-name-collection))
+                             (not (= (:id current-collection)
+                                     (:id same-name-collection))))
+                      {:status 500
+                       :body {:message "unable to update collection, name-owner pair likely in use"}}
+                      (if-not (users/EXISTS? (:owner proposed-collection))
+                        {:status 500
+                         :body {:message "user (owner) not found, unable to create collection"}}
+                        (let [result (collections/UPDATE id body)]
+                          (if (nil? result)
+                            {:status 500
+                             :body {:message "unable to update collection"}}
+                            {:status 200
+                             :body {:message (str 1 " collections updated")}}))))))))})
 
 (def collection-delete ;; Non-functional
   {:summary "Deletes the specified collection"
@@ -73,7 +91,7 @@
               (if-not (ru/has-permission session-id "collection-delete" 0)
                 ru/forbidden-page
                 (let [result (collections/DELETE id)]
-                  (if (= 0 result)
+                  (if (nil? result)
                     {:status 404
                      :body {:message "requested collection not found"}}
                     {:status 200
@@ -87,13 +105,22 @@
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
               (if-not (ru/has-permission session-id "collection-add-user" {:collection-id id})
                 ru/forbidden-page
-                (let [result (utils/get-id (user-collections-assoc/CREATE (into body {:collection-id id})))]
-                  (if (= nil result)
-                    {:status 404
-                     :body {:message "unable to add user"}}
-                    {:status 200
-                     :body {:message (str 1 " users added to collection")
-                            :id result}}))))})
+                (if (not (collections/EXISTS? id))
+                  {:status 404
+                   :body {:message "collection not found"}}
+                  (if (not (users/EXISTS? (:user-id body)))
+                    {:status 500
+                     :body {:message "user not found"}}
+                    (if (user-collections-assoc/EXISTS-COLL-USER? id (:user-id body))
+                      {:status 500
+                       :body {:message "user already connected to collection"}}
+                      (let [result (utils/get-id (user-collections-assoc/CREATE (into body {:collection-id id})))]
+                        (if (nil? result)
+                          {:status 500
+                           :body {:message "unable to add user"}}
+                          {:status 200
+                           :body {:message (str 1 " users added to collection")
+                                  :id result}})))))))})
 
 (def collection-remove-user
   {:summary "Removes user from specified collection"
@@ -103,12 +130,21 @@
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
               (if-not (ru/has-permission session-id "collection-remove-user" {:collection-id id})
                 ru/forbidden-page
-                (let [result (user-collections-assoc/DELETE-BY-IDS [id (:user-id body)])]
-                  (if (= 0 result)
-                    {:status 404
-                     :body {:message "unable to remove user"}}
-                    {:status 200
-                     :body {:message (str result " users removed from collection")}}))))})
+                (if (not (collections/EXISTS? id))
+                  {:status 404
+                   :body {:message "collection not found"}}
+                  (if (not (users/EXISTS? (:user-id body)))
+                    {:status 500
+                     :body {:message "user not found"}}
+                    (if-not (user-collections-assoc/EXISTS-COLL-USER? id (:user-id body))
+                      {:status 500
+                       :body {:message "user not connected to collection"}}
+                      (let [result (user-collections-assoc/DELETE-BY-IDS [id (:user-id body)])]
+                        (if (= 0 result)
+                          {:status 500
+                           :body {:message "unable to remove user"}}
+                          {:status 200
+                           :body {:message (str result " users removed from collection")}})))))))})
 
 (def collection-add-content
   {:summary "Adds content to specified collection"
@@ -118,13 +154,24 @@
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
               (if-not (ru/has-permission session-id "collection-add-content" {:collection-id id})
                 ru/forbidden-page
-                (let [result (utils/get-id (annotations/CREATE (into body {:collection-id id})))]
-                  (if (= nil result)
-                    {:status 404
-                     :body {:message "unable to add content"}}
-                    {:status 200
-                     :body {:message (str 1 " contents added to collection")
-                            :id result}}))))})
+                (if (not (collections/EXISTS? id))
+                  {:status 404
+                   :body {:message "collection not found"}}
+                  (if (not (contents/EXISTS? (:content-id body)))
+                    {:status 500
+                     :body {:message "content not found"}}
+                    (if (annotations/EXISTS-COLL-CONT? id (:content-id body))
+                      {:status 500
+                       :body {:message "content already connected to collection"}}
+                      (let [result (utils/get-id (annotations/CREATE {:collection-id id
+                                                                      :content-id (:content-id body)
+                                                                      :metadata ""}))]
+                        (if (= nil result)
+                          {:status 500
+                           :body {:message "unable to add content"}}
+                          {:status 200
+                           :body {:message (str 1 " contents added to collection")
+                                  :id result}})))))))})
 
 (def collection-remove-content
   {:summary "Removes content from specified collection"
@@ -134,12 +181,21 @@
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
               (if-not (ru/has-permission session-id "collection-remove-content" {:collection-id id})
                 ru/forbidden-page
-                (let [result (annotations/DELETE-BY-IDS [id (:content-id body)])]
-                  (if (= 0 result)
-                    {:status 404
-                     :body {:message "unable to remove content"}}
-                    {:status 200
-                     :body {:message (str result " contents removed from collection")}}))))})
+                (if (not (collections/EXISTS? id))
+                  {:status 404
+                   :body {:message "collection not found"}}
+                  (if (not (contents/EXISTS? (:content-id body)))
+                    {:status 500
+                     :body {:message "content not found"}}
+                    (if-not (annotations/EXISTS-COLL-CONT? id (:content-id body))
+                      {:status 500
+                       :body {:message "content not connected to collection"}}
+                      (let [result (annotations/DELETE-BY-IDS [id (:content-id body)])]
+                        (if (= 0 result)
+                          {:status 404
+                           :body {:message "unable to remove content"}}
+                          {:status 200
+                           :body {:message (str result " contents removed from collection")}})))))))})
 
 (def collection-add-course
   {:summary "Adds course to specified collection"

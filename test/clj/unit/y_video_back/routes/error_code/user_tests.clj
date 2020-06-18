@@ -35,41 +35,13 @@
     (f)))
 
 (tcore/basic-transaction-fixtures
-  (def test-user-one (ut/under-to-hyphen (users/CREATE (g/get-random-user-without-id))))
-  (def test-user-two (ut/under-to-hyphen (users/CREATE (g/get-random-user-without-id))))
-  (def test-user-thr (ut/under-to-hyphen (users/CREATE (g/get-random-user-without-id))))
-  (def test-coll-one (ut/under-to-hyphen (collections/CREATE (into (g/get-random-collection-without-id-or-owner) {:owner (:id test-user-one)}))))
-  (def test-coll-two (ut/under-to-hyphen (collections/CREATE (into (g/get-random-collection-without-id-or-owner) {:owner (:id test-user-two)}))))
-  (def test-coll-thr (ut/under-to-hyphen (collections/CREATE (into (g/get-random-collection-without-id-or-owner) {:owner (:id test-user-thr)}))))
-  (def test-user-coll-one (ut/under-to-hyphen (user-collections-assoc/CREATE {:user-id (:id test-user-one)
-                                                                              :collection-id (:id test-coll-one)
-                                                                              :account-role 0})))
-  (def test-user-coll-two (ut/under-to-hyphen (user-collections-assoc/CREATE {:user-id (:id test-user-two)
-                                                                              :collection-id (:id test-coll-two)
-                                                                              :account-role 0})))
-  (def test-user-coll-thr (ut/under-to-hyphen (user-collections-assoc/CREATE {:user-id (:id test-user-thr)
-                                                                              :collection-id (:id test-coll-thr)
-                                                                              :account-role 0})))
-  (def test-cont-one (ut/under-to-hyphen (contents/CREATE (g/get-random-content-without-id))))
-  (def test-cont-two (ut/under-to-hyphen (contents/CREATE (g/get-random-content-without-id))))
-  (def test-cont-thr (ut/under-to-hyphen (contents/CREATE (g/get-random-content-without-id))))
-  (def test-crse-one (ut/under-to-hyphen (courses/CREATE (g/get-random-course-without-id))))
-  (def test-crse-two (ut/under-to-hyphen (courses/CREATE (g/get-random-course-without-id))))
-  (def test-crse-thr (ut/under-to-hyphen (courses/CREATE (g/get-random-course-without-id))))
-  (def test-file-one (ut/under-to-hyphen (files/CREATE (g/get-random-file-without-id))))
-  (def test-file-two (ut/under-to-hyphen (files/CREATE (g/get-random-file-without-id))))
-  (def test-file-thr (ut/under-to-hyphen (files/CREATE (g/get-random-file-without-id))))
-  (def test-word-one (ut/under-to-hyphen (words/CREATE (g/get-random-word-without-id (:id test-user-one)))))
-  (def test-word-two (ut/under-to-hyphen (words/CREATE (g/get-random-word-without-id (:id test-user-two)))))
-  (def test-word-thr (ut/under-to-hyphen (words/CREATE (g/get-random-word-without-id (:id test-user-thr)))))
-  (def test-annotation-one (ut/under-to-hyphen (annotations/CREATE (g/get-random-annotation-without-id (:id test-coll-one) (:id test-cont-one)))))
-  (def test-annotation-two (ut/under-to-hyphen (annotations/CREATE (g/get-random-annotation-without-id (:id test-coll-two) (:id test-cont-two)))))
-  (def test-annotation-thr (ut/under-to-hyphen (annotations/CREATE (g/get-random-annotation-without-id (:id test-coll-thr) (:id test-cont-thr)))))
   (mount.core/start #'y-video-back.handler/app))
 
 (deftest user-post
   (testing "add duplicated user"
-    (let [res (rp/user-post test-user-one)]
+    (let [new-user (g/get-random-user-without-id)
+          add-user-res (users/CREATE new-user)
+          res (rp/user-post new-user)]
       (is (= 500 (:status res))))))
 
 (deftest user-id-get
@@ -81,6 +53,8 @@
   (testing "update nonexistent user"
     (let [res (rp/user-id-patch (java.util.UUID/randomUUID) (g/get-random-user-without-id))]
       (is (= 404 (:status res))))))
+
+; Need to add user update to same email, incl. update self to same email
 
 (deftest user-id-delete
   (testing "delete nonexistent user"

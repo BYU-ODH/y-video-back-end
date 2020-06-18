@@ -8,3 +8,4 @@
 (def DELETE (partial db/mark-deleted :contents))
 (def CLONE (partial db/CLONE :contents))
 (def PERMANENT-DELETE (partial db/DELETE :contents))
+(defn EXISTS? [id] (not (nil? (db/READ :contents-undeleted id))))

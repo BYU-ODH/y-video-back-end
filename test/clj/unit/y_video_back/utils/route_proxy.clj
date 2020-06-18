@@ -94,12 +94,12 @@
 
 (defn collection-post
   "Create a collection via app's post request"
-  ([session-id collection user-id]
+  ([session-id collection]
    (app (-> (request :post "/api/collection")
             (header :session-id session-id)
-            (json-body {:collection collection :user-id user-id}))))
-  ([collection user-id]
-   (collection-post SESSION-ID-BYPASS collection user-id)))
+            (json-body collection))))
+  ([collection]
+   (collection-post SESSION-ID-BYPASS collection)))
 
 (defn collection-id-get
   "Retrieves collection via app's get (id) request"
