@@ -1,6 +1,7 @@
 (ns y-video-back.routes.service-handlers.word-handlers
   (:require
    [y-video-back.db.words :as words]
+   [y-video-back.db.users :as users]
    [y-video-back.models :as models]
    [y-video-back.model-specs :as sp]
    [y-video-back.routes.service-handlers.utils :as utils]
@@ -16,12 +17,15 @@
    :handler (fn [{{{:keys [session-id]} :header {:keys [user-id]} :path :keys [body]} :parameters}]
               (if-not (ru/has-permission session-id "word-create" 0)
                 ru/forbidden-page
-                (try {:status 200
-                      :body {:message "1 word created"
-                             :id (utils/get-id (words/CREATE body))}}
-                     (catch Exception e
-                       {:status 409
-                        :body {:message e}}))))})
+                (if-not (users/EXISTS? (:user-id body))
+                  {:status 500
+                   :body {:message "user not found"}}
+                  (if (words/EXISTS-BY-FIELDS? (:user-id body) (:word body) (:src-lang body) (:dest-lang body))
+                    {:status 500
+                     :body {:message "word already exists"}}
+                    {:status 200
+                     :body {:message "1 word created"
+                            :id (utils/get-id (words/CREATE body))}}))))})
 
 (def word-get-by-id
   {:summary "Retrieves specified word"
@@ -33,7 +37,7 @@
               (if-not (ru/has-permission session-id "word-get-by-id" 0)
                 ru/forbidden-page
                 (let [word-result (words/READ id)]
-                  (if (= "" (:id word-result))
+                  (if (nil? word-result)
                     {:status 404
                      :body {:message "requested word not found"}}
                     {:status 200
@@ -47,12 +51,30 @@
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
               (if-not (ru/has-permission session-id "word-update" 0)
                 ru/forbidden-page
-                (let [result (words/UPDATE id body)]
-                  (if (= 0 result)
-                    {:status 404
-                     :body {:message "requested word not found"}}
-                    {:status 200
-                     :body {:message (str result " words updated")}}))))})
+                (if-not (words/EXISTS? id)
+                  {:status 404
+                   :body {:message "word not found"}}
+                  (let [current-word (words/READ id)
+                        proposed-word (merge current-word body)
+                        same-name-word (first (words/READ-ALL-BY-FIELDS [(:user-id proposed-word)
+                                                                         (:word proposed-word)
+                                                                         (:src-lang proposed-word)
+                                                                         (:dest-lang proposed-word)]))]
+                    ; If there is a collision and the collision is not with self (i.e. word being changed)
+                    (if (and (not (nil? same-name-word))
+                             (not (= (:id current-word)
+                                     (:id same-name-word))))
+                      {:status 500
+                       :body {:message "unable to update word, identical word likely exists"}}
+                      (if-not (users/EXISTS? (:user-id proposed-word))
+                        {:status 500
+                         :body {:message "user not found"}}
+                        (let [result (words/UPDATE id body)]
+                          (if (= 0 result)
+                            {:status 500
+                             :body {:message "unable to update word"}}
+                            {:status 200
+                             :body {:message (str result " words updated")}}))))))))})
 
 (def word-delete
   {:summary "Deletes specified word"
@@ -63,7 +85,7 @@
               (if-not (ru/has-permission session-id "word-delete" 0)
                 ru/forbidden-page
                 (let [result (words/DELETE id)]
-                  (if (= 0 result)
+                  (if (nil? result)
                     {:status 404
                      :body {:message "requested word not found"}}
                     {:status 200

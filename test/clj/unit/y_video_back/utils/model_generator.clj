@@ -50,7 +50,7 @@
 
 (defn get-random-word-without-id
   ([]
-   (get-random-model models/word-without-id))
+   (into (get-random-model models/word-without-id-or-user-id) {:user-id (java.util.UUID/randomUUID)}))
   ([user-id]
    (into (get-random-model models/word-without-id-or-user-id) {:user-id user-id})))
 

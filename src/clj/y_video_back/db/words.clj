@@ -8,3 +8,6 @@
 (def DELETE (partial db/mark-deleted :words))
 (def CLONE (partial db/CLONE :words))
 (def PERMANENT-DELETE (partial db/DELETE :words))
+(defn EXISTS? [id] (not (nil? (db/READ :words-undeleted id))))
+(defn EXISTS-BY-FIELDS? [user-id word src-lang dest-lang] (not (empty? (db/read-where-and :words-undeleted [:user-id :word :src-lang :dest-lang] [user-id word src-lang dest-lang]))))
+(def READ-ALL-BY-FIELDS (partial db/read-where-and :words-undeleted [:user-id :word :src-lang :dest-lang]))

@@ -26,6 +26,7 @@ CREATE TABLE words (
    ,word TEXT
    ,src_lang TEXT
    ,dest_lang TEXT
+   , CONSTRAINT no_duplicate_user_words UNIQUE (user_id, word, src_lang, dest_lang)
 );
 COMMENT ON TABLE words IS 'Vocab words with source and destination language codes';
 
