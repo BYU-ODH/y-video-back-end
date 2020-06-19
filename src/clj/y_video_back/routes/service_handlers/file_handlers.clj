@@ -12,7 +12,8 @@
    :parameters {:header {:session-id uuid?}
                 :body models/file-without-id}
    :responses {200 {:body {:message string?
-                           :id string?}}}
+                           :id string?}}
+               500 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header :keys [body]} :parameters}]
               (if-not (ru/has-permission session-id "file-create" 0)
                 ru/forbidden-page
@@ -45,7 +46,9 @@
   {:summary "Updates specified file"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?} :body ::sp/file}
-   :responses {200 {:body {:message string?}}}
+   :responses {200 {:body {:message string?}}
+               404 {:body {:message string?}}
+               500 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
               (if-not (ru/has-permission session-id "file-update" 0)
                 ru/forbidden-page
@@ -72,7 +75,8 @@
   {:summary "Deletes specified file"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
-   :responses {200 {:body {:message string?}}}
+   :responses {200 {:body {:message string?}}
+               404 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
               (if-not (ru/has-permission session-id "file-delete" 0)
                 ru/forbidden-page
@@ -88,7 +92,8 @@
   {:summary "Retrieves all contents for specified file"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
-   :responses {200 {:body [(into models/content {:file-id uuid?})]}}
+   :responses {200 {:body [(into models/content {:file-id uuid?})]}
+               404 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
               (if-not (ru/has-permission session-id "file-get-all-contents" 0)
                 ru/forbidden-page

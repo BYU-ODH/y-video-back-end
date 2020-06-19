@@ -15,7 +15,7 @@
                 :body models/course-without-id}
    :responses {200 {:body {:message string?
                            :id string?}}
-               409 {:body {:message string?}}}
+               500 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header :keys [body]} :parameters}]
               (if-not (ru/has-permission session-id "course-create" 0)
                 ru/forbidden-page
@@ -46,7 +46,9 @@
   {:summary "Updates the specified course"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?} :body ::sp/course}
-   :responses {200 {:body {:message string?}}}
+   :responses {200 {:body {:message string?}}
+               404 {:body {:message string?}}
+               500 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
               (if-not (ru/has-permission session-id "course-update" {:course-id id})
                 ru/forbidden-page
@@ -75,7 +77,8 @@
   {:summary "Deletes the specified course"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
-   :responses {200 {:body {:message string?}}}
+   :responses {200 {:body {:message string?}}
+               404 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
               (if-not (ru/has-permission session-id "course-delete" {:course-id id})
                 ru/forbidden-page
@@ -90,7 +93,9 @@
   {:summary "Adds user to specified course"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?} :body {:user-id uuid? :account-role int?}}
-   :responses {200 {:body {:message string? :id string?}}}
+   :responses {200 {:body {:message string? :id string?}}
+               404 {:body {:message string?}}
+               500 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
               (if-not (ru/has-permission session-id "course-add-user" {:course-id id})
                 ru/forbidden-page
@@ -115,7 +120,9 @@
   {:summary "Removes user from specified course"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?} :body {:user-id uuid?}}
-   :responses {200 {:body {:message string?}}}
+   :responses {200 {:body {:message string?}}
+               404 {:body {:message string?}}
+               500 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
               (if-not (ru/has-permission session-id "course-remove-user" {:course-id id})
                 ru/forbidden-page
@@ -139,7 +146,8 @@
   {:summary "Retrieves all users for the specified course"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
-   :responses {200 {:body [(into models/user {:account-role int? :course-id uuid?})]}}
+   :responses {200 {:body [(into models/user {:account-role int? :course-id uuid?})]}
+               404 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
               (if-not (ru/has-permission session-id "course-get-all-users" {:course-id id})
                 ru/forbidden-page
@@ -155,7 +163,8 @@
   {:summary "Retrieves all collections for specified course"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
-   :responses {200 {:body [(into models/collection {:course-id uuid?})]}}
+   :responses {200 {:body [(into models/collection {:course-id uuid?})]}
+               404 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
               (if-not (ru/has-permission session-id "course-get-all-collections" {:course-id id})
                 ru/forbidden-page

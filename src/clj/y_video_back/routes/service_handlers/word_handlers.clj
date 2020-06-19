@@ -13,7 +13,7 @@
                 :body models/word-without-id}
    :responses {200 {:body {:message string?
                            :id string?}}
-               409 {:body {:message string?}}}
+               500 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header {:keys [user-id]} :path :keys [body]} :parameters}]
               (if-not (ru/has-permission session-id "word-create" 0)
                 ru/forbidden-page
@@ -47,7 +47,9 @@
   {:summary "Updates specified word"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?} :body ::sp/word}
-   :responses {200 {:body {:message string?}}}
+   :responses {200 {:body {:message string?}}
+               404 {:body {:message string?}}
+               500 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
               (if-not (ru/has-permission session-id "word-update" 0)
                 ru/forbidden-page
@@ -80,7 +82,8 @@
   {:summary "Deletes specified word"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
-   :responses {200 {:body {:message string?}}}
+   :responses {200 {:body {:message string?}}
+               404 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
               (if-not (ru/has-permission session-id "word-delete" 0)
                 ru/forbidden-page
