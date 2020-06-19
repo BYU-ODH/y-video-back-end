@@ -13,3 +13,4 @@
 (def READ-CONTENTS-BY-COLLECTION (partial db/read-all-where :contents-by-collection :collection-id))
 (def READ-COLLECTIONS-BY-CONTENT (partial db/read-all-where :collections-by-content :content-id))
 (defn EXISTS-COLL-CONT? [collection-id content-id] (not (empty? (db/read-where-and :annotations-undeleted [:collection-id :content-id] [collection-id content-id]))))
+(defn EXISTS? [id] (not (nil? (db/READ :annotations-undeleted id))))

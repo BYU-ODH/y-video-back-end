@@ -1,6 +1,8 @@
 (ns y-video-back.routes.service-handlers.annotation-handlers
   (:require
    [y-video-back.db.annotations :as annotations]
+   [y-video-back.db.collections :as collections]
+   [y-video-back.db.contents :as contents]
    [y-video-back.models :as models]
    [y-video-back.model-specs :as sp]
    [y-video-back.routes.service-handlers.utils :as utils]
@@ -16,15 +18,19 @@
    :handler (fn [{{{:keys [session-id]} :header :keys [body]} :parameters}]
               (if-not (ru/has-permission session-id "annotation-create" 0)
                 ru/forbidden-page
-                (try
-                  (let [res (annotations/CREATE body)]
-                    {:status 200
-                     :body {:message "1 annotation created"
-                            :id (utils/get-id res)}})
-                  (catch Exception e
-                    {:status 409
-                     :body {:message "unable to create annotation, likely bad collection id"
-                            :error e}}))))})
+                (if-not (collections/EXISTS? (:collection-id body))
+                  {:status 500
+                   :body {:message "collection not found"}}
+                  (if-not (contents/EXISTS? (:content-id body))
+                    {:status 500
+                     :body {:message "content not found"}}
+                    (if (annotations/EXISTS-COLL-CONT? (:collection-id body) (:content-id body))
+                      {:status 500
+                       :body {:message "annotation connecting collection and content already exists"}}
+                      (let [res (annotations/CREATE body)]
+                        {:status 200
+                         :body {:message "1 annotation created"
+                                :id (utils/get-id res)}}))))))})
 
 (def annotation-get-by-id
   {:summary "Retrieves specified annotation"
@@ -50,9 +56,28 @@
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
               (if-not (ru/has-permission session-id "annotation-update" 0)
                 ru/forbidden-page
-                (let [result (annotations/UPDATE id body)]
-                  {:status 200
-                   :body {:message (str result " annotations updated")}})))})
+                (if-not (annotations/EXISTS? id)
+                  {:status 404
+                   :body {:message "annotation not found"}}
+                  (let [current-annotation (annotations/READ id)
+                        proposed-annotation (merge current-annotation body)
+                        same-name-annotation (first (annotations/READ-BY-IDS [(:collection-id proposed-annotation)
+                                                                              (:content-id proposed-annotation)]))]
+                    ; If there is a collision and the collision is not with self (i.e. annotation being changed)
+                    (if (and (not (nil? same-name-annotation))
+                             (not (= (:id current-annotation)
+                                     (:id same-name-annotation))))
+                      {:status 500
+                       :body {:message "unable to update annotation, annotation between content and collection likely already exists"}}
+                      (if-not (collections/EXISTS? (:collection-id proposed-annotation))
+                        {:status 500
+                         :body {:message "collection not found"}}
+                        (if-not (contents/EXISTS? (:content-id proposed-annotation))
+                          {:status 500
+                           :body {:message "content not found"}}
+                          (let [result (annotations/UPDATE id body)]
+                            {:status 200
+                             :body {:message (str result " annotations updated")}}))))))))})
 
 (def annotation-delete ;; Non-functional
   {:summary "Deletes the specified annotation"
@@ -63,8 +88,11 @@
               (if-not (ru/has-permission session-id "annotation-delete" 0)
                 ru/forbidden-page
                 (let [result (annotations/DELETE id)]
-                  {:status 200
-                   :body {:message (str result " annotations deleted")}})))})
+                  (if (nil? result)
+                    {:status 404
+                     :body {:message "annotation not found"}}
+                    {:status 200
+                     :body {:message (str result " annotations deleted")}}))))})
 
 (def annotation-get-by-collection-and-content
   {:summary "Gets annotations by collection and content ids"
@@ -75,7 +103,16 @@
    :handler (fn [{{{:keys [session-id]} :header :keys [body]} :parameters}]
               (if-not (ru/has-permission session-id "annotation-create" 0)
                 ru/forbidden-page
-                (let [res (annotations/READ-BY-IDS [(:collection-id body)
-                                                    (:content-id body)])]
-                  {:status 200
-                   :body res})))})
+                (if-not (collections/EXISTS? (:collection-id body))
+                  {:status 500
+                   :body {:message "collection not found"}}
+                  (if-not (contents/EXISTS? (:content-id body))
+                    {:status 500
+                     :body {:message "content not found"}}
+                    (let [res (annotations/READ-BY-IDS [(:collection-id body)
+                                                        (:content-id body)])]
+                      (if (= 0 (count res))
+                        {:status 404
+                         :body {:message "annotation not found"}}
+                        {:status 200
+                         :body res}))))))})

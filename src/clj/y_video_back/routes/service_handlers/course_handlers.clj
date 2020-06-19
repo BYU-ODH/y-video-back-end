@@ -58,7 +58,7 @@
                         same-name-course (first (courses/READ-ALL-BY-DEP-CAT-SEC [(:department proposed-course)
                                                                                   (:catalog-number proposed-course)
                                                                                   (:section-number proposed-course)]))]
-                    ; If there is a name-owner collision and the collision is not with self (i.e. course being changed)
+                    ; If there is a collision and the collision is not with self (i.e. course being changed)
                     (if (and (not (nil? same-name-course))
                              (not (= (:id current-course)
                                      (:id same-name-course))))
@@ -66,8 +66,8 @@
                        :body {:message "unable to update course, department / catalog / section combination likely in use"}}
                       (let [result (courses/UPDATE id body)]
                         (if (= 0 result)
-                          {:status 404
-                           :body {:message "requested course not found"}}
+                          {:status 500
+                           :body {:message "unable to update course"}}
                           {:status 200
                            :body {:message (str result " courses updated")}})))))))})
 

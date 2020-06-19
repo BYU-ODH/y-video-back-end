@@ -274,7 +274,7 @@
         (is (= 200 (:status res)))
         (let [id (ut/to-uuid (:id (m/decode-response-body res)))]
           (is (= (into new-annotation {:id id}) (ut/remove-db-only (annotations/READ id))))))))
-  (testing "annotation read by ids (one)"
+  (testing "annotation read by ids"
     (let [res (rp/annotation-get-by-ids (:collection-id test-annotation-one)
                                         (:content-id test-annotation-one))]
       (is (= 200 (:status res)))
@@ -283,13 +283,7 @@
                   (update :id str)
                   (update :collection-id str)
                   (update :content-id str))]
-             (map ut/remove-db-only (m/decode-response-body res))))))
-
-  (testing "annotation read by ids (none)"
-    (let [res (rp/annotation-get-by-ids (:id test-coll-one)
-                                        (:id test-cont-thr))]
-      (is (= 200 (:status res)))
-      (is (= [] (m/decode-response-body res))))
+             (map ut/remove-db-only (m/decode-response-body res)))))
 
     (testing "annotation READ")
     (let [res (rp/annotation-id-get (:id test-annotation-one))]
