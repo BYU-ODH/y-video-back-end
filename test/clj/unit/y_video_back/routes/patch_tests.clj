@@ -242,7 +242,34 @@
         (let [res (rp/file-id-patch id new-file)]
           (is (= 200 (:status res))))
         (is (= (ut/remove-db-only (merge test-file-thr new-file))
-               (ut/remove-db-only (files/READ id))))))))
+               (ut/remove-db-only (files/READ id)))))))
+  (testing "file to self (each field)"
+    (let [new-file (g/get-random-file-without-id)
+          new-file-res (files/CREATE new-file)
+          id (:id new-file-res)]
+      (doseq [val (seq new-file)]
+             [(do
+                (let [res (rp/file-id-patch id {(get val 0) (get val 1)})]
+                  (is (= 200 (:status res))))
+                (is (= ((get val 0) new-file) ((get val 0) (files/READ id)))))])
+      (is (= (into new-file {:id id}) (ut/remove-db-only (files/READ id))))))
+  (testing "file to self (some fields)"
+    (let [new-file (g/get-random-file-without-id)
+          new-file-res (files/CREATE new-file)
+          id (:id new-file-res)]
+      (let [fields-to-change (ut/random-submap new-file)]
+        (let [res (rp/file-id-patch id fields-to-change)]
+          (is (= 200 (:status res))))
+        (is (= (ut/remove-db-only (into (merge new-file fields-to-change) {:id id}))
+               (ut/remove-db-only (files/READ id)))))))
+  (testing "file to self (all field)"
+      (let [new-file (g/get-random-file-without-id)
+            new-file-res (files/CREATE new-file)
+            id (:id new-file-res)]
+        (let [res (rp/file-id-patch id new-file)]
+          (is (= 200 (:status res))))
+        (is (= (ut/remove-db-only (into new-file {:id id}))
+               (ut/remove-db-only (files/READ id)))))))
 
 (deftest test-word-patch
   (testing "word fields one at a time"

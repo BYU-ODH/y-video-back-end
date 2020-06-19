@@ -9,3 +9,5 @@
 (def CLONE (partial db/CLONE :files))
 (def PERMANENT-DELETE (partial db/DELETE :files))
 (defn EXISTS? [id] (not (nil? (db/READ :files-undeleted id))))
+(defn EXISTS-FILEPATH? [filepath] (not (empty? (db/read-where-and :files-undeleted [:filepath] [filepath]))))
+(def READ-ALL-BY-FILEPATH (partial db/read-where-and :files-undeleted [:filepath]))

@@ -89,6 +89,7 @@ CREATE TABLE files (
    ,filepath TEXT
    ,mime TEXT
    ,metadata TEXT
+   , CONSTRAINT no_duplicate_filepaths UNIQUE (filepath)
 );
 COMMENT ON TABLE files IS 'Files represent media (i.e. videos) with path to file and metadata';
 

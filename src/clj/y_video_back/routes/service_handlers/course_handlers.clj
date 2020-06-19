@@ -21,7 +21,7 @@
                 ru/forbidden-page
                   (if (courses/EXISTS-DEP-CAT-SEC? (:department body) (:catalog-number body) (:section-number body))
                     {:status 500
-                     :body {:message "department / catalog number / section number combination already in use, unable to create collection"}}
+                     :body {:message "department / catalog number / section number combination already in use, unable to create course"}}
                     {:status 200
                      :body {:message "1 course created"
                             :id (utils/get-id (courses/CREATE body))}})))})
