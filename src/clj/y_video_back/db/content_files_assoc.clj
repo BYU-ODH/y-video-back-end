@@ -12,3 +12,4 @@
 (def DELETE-BY-IDS "[column-vals]\ncolumn-vals must be a content containing content-id then file-id." (partial db/delete-where-and :content-files-assoc-undeleted [:content-id :file-id]))
 (def READ-FILES-BY-CONTENT (partial db/read-all-where :files-by-content :content-id))
 (def READ-CONTENTS-BY-FILE (partial db/read-all-where :contents-by-file :file-id))
+(defn EXISTS-CONT-FILE? [content-id file-id] (not (empty? (db/read-where-and :content-files-assoc-undeleted [:content-id :file-id] [content-id file-id]))))

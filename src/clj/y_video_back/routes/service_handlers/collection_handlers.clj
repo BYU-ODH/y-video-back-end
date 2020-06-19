@@ -230,7 +230,7 @@
                        :body {:message "course already connected to collection"}}
                       (let [result (utils/get-id (collection-courses-assoc/CREATE (into body {:collection-id id})))]
                         (if (= nil result)
-                          {:status 404
+                          {:status 500
                            :body {:message "unable to add course"}}
                           {:status 200
                            :body {:message (str 1 " courses added to collection")

@@ -9,3 +9,5 @@
 (def CLONE (partial db/CLONE :contents))
 (def PERMANENT-DELETE (partial db/DELETE :contents))
 (defn EXISTS? [id] (not (nil? (db/READ :contents-undeleted id))))
+(defn NAME-TAKEN? [content-name] (not (empty? (db/read-where-and :contents-undeleted [:content-name] [content-name]))))
+(def READ-ALL-BY-NAME (partial db/read-where-and :contents-undeleted [:content-name]))

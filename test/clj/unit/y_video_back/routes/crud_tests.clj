@@ -147,12 +147,47 @@
         (is (= 200 (:status res)))
         (let [id (ut/to-uuid (:id (m/decode-response-body res)))]
           (is (= (into new-cont {:id id}) (ut/remove-db-only (contents/READ id))))))))
+  (testing "cont CREATE duplicate content"
+    (let [new-cont (g/get-random-content-without-id)]
+      (let [res (rp/content-post new-cont)
+            res-dup (rp/content-post new-cont)]
+        (is (= 200 (:status res)))
+        (let [id (ut/to-uuid (:id (m/decode-response-body res)))]
+          (is (= (into new-cont {:id id}) (ut/remove-db-only (contents/READ id)))))
+        (is (= 200 (:status res-dup)))
+        (let [id (ut/to-uuid (:id (m/decode-response-body res-dup)))]
+          (is (= (into new-cont {:id id}) (ut/remove-db-only (contents/READ id))))))))
   (testing "cont READ"
     (let [res (rp/content-id-get (:id test-cont-one))]
       (is (= 200 (:status res)))
       (is (= (update (ut/remove-db-only test-cont-one) :id str)
              (ut/remove-db-only (m/decode-response-body res))))))
   (testing "cont UPDATE"
+    (let [new-cont (g/get-random-content-without-id)]
+      (let [res (rp/content-id-patch (:id test-cont-one) new-cont)]
+        (is (= 200 (:status res)))
+        (is (= (into new-cont {:id (:id test-cont-one)}) (ut/remove-db-only (contents/READ (:id test-cont-one))))))))
+  (testing "update content to taken name (all fields)"
+    (let [cont-one (g/get-random-content-without-id)
+          cont-two (g/get-random-content-without-id)
+          cont-one-res (contents/CREATE cont-one)
+          cont-two-res (contents/CREATE cont-two)
+          res (rp/content-id-patch (:id cont-two-res) cont-one)]
+      (is (= 200 (:status res)))
+      (is (= (into cont-one {:id (:id cont-two-res)}) (ut/remove-db-only (contents/READ (:id cont-two-res)))))))
+  (testing "update content to taken name (name only)"
+    (let [cont-one (g/get-random-content-without-id)
+          cont-two (g/get-random-content-without-id)
+          cont-one-res (contents/CREATE cont-one)
+          cont-two-res (contents/CREATE cont-two)
+          res (rp/content-id-patch (:id cont-two-res) {:content-name (:content-name cont-one)})]
+      (is (= 200 (:status res)))
+      (is (= (-> cont-two
+               (into {:id (:id cont-two-res)})
+               (dissoc :content-name)
+               (into {:content-name (:content-name cont-one)}))
+             (ut/remove-db-only (contents/READ (:id cont-two-res)))))))
+  (testing "cont UPDATE to self"
     (let [new-cont (g/get-random-content-without-id)]
       (let [res (rp/content-id-patch (:id test-cont-one) new-cont)]
         (is (= 200 (:status res)))
