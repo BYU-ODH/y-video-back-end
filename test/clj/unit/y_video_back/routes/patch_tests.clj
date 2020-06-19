@@ -2,6 +2,7 @@
 ;; 1) update fields one at a time
 ;; 2) update some, but not all, fields at once
 ;; 3) update all fields at once
+;; 1-3 for updating to self as well
 
 (ns y-video-back.routes.patch-tests
   (:require
@@ -178,15 +179,41 @@
         (let [res (rp/course-id-patch id fields-to-change)]
           (is (= 200 (:status res))))
         (is (= (ut/remove-db-only (merge test-crse-two fields-to-change))
-               (ut/remove-db-only (courses/READ id))))))
-    (testing "crse all fields at once"
-      (let [new-crse (g/get-random-course-without-id)
-            id (:id test-crse-thr)]
-        (is (= (ut/remove-db-only test-crse-thr) (ut/remove-db-only (courses/READ id))))
-        (let [res (rp/course-id-patch id new-crse)]
+               (ut/remove-db-only (courses/READ id)))))))
+  (testing "crse all fields at once"
+    (let [new-crse (g/get-random-course-without-id)
+          id (:id test-crse-thr)]
+      (is (= (ut/remove-db-only test-crse-thr) (ut/remove-db-only (courses/READ id))))
+      (let [res (rp/course-id-patch id new-crse)]
+        (is (= 200 (:status res))))
+      (is (= (ut/remove-db-only (merge test-crse-thr new-crse))
+             (ut/remove-db-only (courses/READ id))))))
+  (testing "update course to self (all fields)"
+    (let [crse-one (into (g/get-random-course-without-id))
+          crse-one-res (courses/CREATE crse-one)
+          res (rp/course-id-patch (:id crse-one-res) crse-one)]
+      (is (= 200 (:status res)))
+      (is (= (into crse-one {:id (:id crse-one-res)}) (ut/remove-db-only (courses/READ (:id crse-one-res)))))))
+  (testing "update course to self (multiple fields)"
+    (let [new-crse (g/get-random-course-without-id)
+          crse-one-res (courses/CREATE new-crse)
+          id (:id crse-one-res)]
+      (let [fields-to-change (ut/random-submap new-crse)]
+        (let [res (rp/course-id-patch id fields-to-change)]
           (is (= 200 (:status res))))
-        (is (= (ut/remove-db-only (merge test-crse-thr new-crse))
-               (ut/remove-db-only (courses/READ id))))))))
+        (is (= (ut/remove-db-only (merge (into new-crse {:id id}) fields-to-change))
+               (ut/remove-db-only (courses/READ id)))))))
+  (testing "update course to self (one field at a time)"
+    (let [new-crse (g/get-random-course-without-id)
+          crse-one-res (courses/CREATE new-crse)
+          id (:id crse-one-res)]
+      (doseq [val (seq new-crse)]
+             [(do
+                (let [res (rp/course-id-patch id {(get val 0) (get val 1)})]
+                  (is (= 200 (:status res))))
+                (is (= ((get val 0) new-crse) ((get val 0) (courses/READ id)))))])
+      (is (= (into new-crse {:id id}) (ut/remove-db-only (courses/READ id)))))))
+
 
 (deftest test-file-patch
   (testing "file fields one at a time"

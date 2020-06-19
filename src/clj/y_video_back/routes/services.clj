@@ -182,10 +182,10 @@
       {:get service-handlers/course-get-by-id
        :patch service-handlers/course-update
        :delete service-handlers/course-delete}]
-     ["/{id}/add-collection"
-      {:post service-handlers/course-add-collection}]
-     ["/{id}/remove-collection"
-      {:post service-handlers/course-remove-collection}]
+     ;["/{id}/add-collection"
+     ; {:post service-handlers/course-add-collection}]
+     ;["/{id}/remove-collection"
+     ; {:post service-handlers/course-remove-collection}]
      ["/{id}/collections"
       {:get service-handlers/course-get-all-collections}]
      ["/{id}/add-user"

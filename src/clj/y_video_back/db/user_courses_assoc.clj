@@ -13,3 +13,4 @@
 (def DELETE-BY-IDS "[column-vals]\ncolumn-vals must be a course containing course-id then user-id." (partial db/delete-where-and :user-courses-assoc-undeleted [:course-id :user-id]))
 (def READ-USERS-BY-COURSE (partial db/read-all-where :users-by-course :course-id))
 (def READ-COURSES-BY-USER (partial db/read-all-where :courses-by-user :user-id))
+(defn EXISTS-CRSE-USER? [course-id user-id] (not (empty? (db/read-where-and :user-courses-assoc-undeleted [:course-id :user-id] [course-id user-id]))))

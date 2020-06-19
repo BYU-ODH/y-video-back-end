@@ -9,3 +9,5 @@
 (def CLONE (partial db/CLONE :courses))
 (def PERMANENT-DELETE (partial db/DELETE :courses))
 (defn EXISTS? [id] (not (nil? (db/READ :courses-undeleted id))))
+(defn EXISTS-DEP-CAT-SEC? [department catalog-number section-number] (not (empty? (db/read-where-and :courses-undeleted [:department :catalog-number :section-number] [department catalog-number section-number]))))
+(def READ-ALL-BY-DEP-CAT-SEC (partial db/read-where-and :courses-undeleted [:department :catalog-number :section-number]))

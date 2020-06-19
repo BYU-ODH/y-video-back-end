@@ -53,6 +53,7 @@ CREATE TABLE courses (
    ,department TEXT -- should this be a foreign key?
    ,catalog_number TEXT
    ,section_number TEXT
+   , CONSTRAINT no_duplicate_courses UNIQUE (department, catalog_number, section_number)
 );
 COMMENT ON TABLE courses IS 'Courses (or classes) at BYU';
 

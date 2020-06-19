@@ -115,26 +115,30 @@
                          {:owner (:id test-user-one)})
           coll-one-res (collections/CREATE coll-one)
           res (rp/collection-id-patch (:id coll-one-res) coll-one)]
-      (is (= 200 (:status res)))))
+      (is (= 200 (:status res)))
+      (is (= (into coll-one {:id (:id coll-one-res)}) (ut/remove-db-only (collections/READ (:id coll-one-res)))))))
   (testing "update collection name and owner to own name and owner"
     (let [coll-one (into (g/get-random-collection-without-id-no-owner)
                          {:owner (:id test-user-one)})
           coll-one-res (collections/CREATE coll-one)
           res (rp/collection-id-patch (:id coll-one-res) {:collection-name (:collection-name coll-one)
                                                           :owner (:owner coll-one)})]
-      (is (= 200 (:status res)))))
+      (is (= 200 (:status res)))
+      (is (= (into coll-one {:id (:id coll-one-res)}) (ut/remove-db-only (collections/READ (:id coll-one-res)))))))
   (testing "update collection owner to own owner"
     (let [coll-one (into (g/get-random-collection-without-id-no-owner)
                          {:owner (:id test-user-one)})
           coll-one-res (collections/CREATE coll-one)
           res (rp/collection-id-patch (:id coll-one-res) {:owner (:owner coll-one)})]
-      (is (= 200 (:status res)))))
+      (is (= 200 (:status res)))
+      (is (= (into coll-one {:id (:id coll-one-res)}) (ut/remove-db-only (collections/READ (:id coll-one-res)))))))
   (testing "update collection name to own name"
     (let [coll-one (into (g/get-random-collection-without-id-no-owner)
                          {:owner (:id test-user-one)})
           coll-one-res (collections/CREATE coll-one)
           res (rp/collection-id-patch (:id coll-one-res) {:collection-name (:collection-name coll-one)})]
-      (is (= 200 (:status res)))))
+      (is (= 200 (:status res)))
+      (is (= (into coll-one {:id (:id coll-one-res)}) (ut/remove-db-only (collections/READ (:id coll-one-res)))))))
   (testing "coll DELETE"
     (let [res (rp/collection-id-delete (:id test-coll-two))]
       (is (= 200 (:status res)))

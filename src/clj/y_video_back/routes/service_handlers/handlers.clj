@@ -65,8 +65,6 @@
 (def course-get-by-id courses/course-get-by-id)
 (def course-update courses/course-update)
 (def course-delete courses/course-delete)
-(def course-add-collection courses/course-add-collection)
-(def course-remove-collection courses/course-remove-collection)
 (def course-get-all-collections courses/course-get-all-collections)
 (def course-add-user courses/course-add-user)
 (def course-remove-user courses/course-remove-user)
