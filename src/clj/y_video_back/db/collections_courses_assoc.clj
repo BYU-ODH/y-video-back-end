@@ -12,3 +12,4 @@
 (def DELETE-BY-IDS "[column-vals]\ncolumn-vals must be a collection containing collection-id then course-id." (partial db/delete-where-and :collection-courses-assoc-undeleted [:collection-id :course-id]))
 (def READ-COURSES-BY-COLLECTION (partial db/read-all-where :courses-by-collection :collection-id))
 (def READ-COLLECTIONS-BY-COURSE (partial db/read-all-where :collections-by-course :course-id))
+(defn EXISTS-COLL-CRSE? [collection-id course-id] (not (empty? (db/read-where-and :collection-courses-assoc-undeleted [:collection-id :course-id] [collection-id course-id]))))

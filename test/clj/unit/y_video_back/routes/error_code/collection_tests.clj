@@ -39,6 +39,7 @@
   (def test-user-two (ut/under-to-hyphen (users/CREATE (g/get-random-user-without-id))))
   (def test-coll-one (ut/under-to-hyphen (collections/CREATE (into (g/get-random-collection-without-id-or-owner) {:owner (:id test-user-one)}))))
   (def test-cont-one (ut/under-to-hyphen (contents/CREATE (g/get-random-content-without-id))))
+  (def test-crse-one (ut/under-to-hyphen (courses/CREATE (g/get-random-course-without-id))))
   (mount.core/start #'y-video-back.handler/app))
 
 (deftest collection-post
@@ -169,3 +170,65 @@
     (let [new-content (contents/CREATE (g/get-random-content-without-id))
           res (rp/collection-id-remove-content (:id test-coll-one) (:id new-content))]
       (is (= 500 (:status res))))))
+
+(deftest collection-add-course
+  (testing "add nonexistent course to collection"
+    (let [res (rp/collection-id-add-course (:id test-coll-one) (java.util.UUID/randomUUID))]
+      (is (= 500 (:status res)))))
+  (testing "add course to nonexistent collection"
+    (let [res (rp/collection-id-add-course (java.util.UUID/randomUUID) (:id test-crse-one))]
+      (is (= 404 (:status res)))))
+  (testing "add course to collection, already connected"
+    (let [new-course (courses/CREATE (g/get-random-course-without-id))
+          add-course-res (collection-courses-assoc/CREATE {:course-id (:id new-course)
+                                                           :collection-id (:id test-coll-one)})
+          res (rp/collection-id-add-course (:id test-coll-one) (:id new-course))]
+      (is (= 500 (:status res))))))
+
+(deftest collection-remove-course
+  (testing "remove nonexistent course from collection"
+    (let [res (rp/collection-id-remove-course (:id test-coll-one) (java.util.UUID/randomUUID))]
+      (is (= 500 (:status res)))))
+  (testing "remove course from nonexistent collection"
+    (let [res (rp/collection-id-remove-course (java.util.UUID/randomUUID) (:id test-crse-one))]
+      (is (= 404 (:status res)))))
+  (testing "remove course from collection, not connected"
+    (let [new-course (courses/CREATE (g/get-random-course-without-id))
+          res (rp/collection-id-remove-course (:id test-coll-one) (:id new-course))]
+      (is (= 500 (:status res))))))
+
+(deftest collection-contents
+  (testing "read contents for nonexistent collection"
+    (let [res (rp/collection-id-contents (java.util.UUID/randomUUID))]
+      (is (= 404 (:status res)))))
+  (testing "read contents for collection without contents"
+    (let [new-collection (into (g/get-random-collection-without-id-no-owner)
+                               {:owner (:id test-user-one)})
+          add-coll-res (collections/CREATE new-collection)
+          res (rp/collection-id-contents (:id add-coll-res))]
+      (is (= 200 (:status res)))
+      (is (= '() (m/decode-response-body res))))))
+
+(deftest collection-courses
+  (testing "read courses for nonexistent collection"
+    (let [res (rp/collection-id-courses (java.util.UUID/randomUUID))]
+      (is (= 404 (:status res)))))
+  (testing "read courses for collection without courses"
+    (let [new-collection (into (g/get-random-collection-without-id-no-owner)
+                               {:owner (:id test-user-one)})
+          add-coll-res (collections/CREATE new-collection)
+          res (rp/collection-id-courses (:id add-coll-res))]
+      (is (= 200 (:status res)))
+      (is (= '() (m/decode-response-body res))))))
+
+(deftest collection-users
+  (testing "read users for nonexistent collection"
+    (let [res (rp/collection-id-users (java.util.UUID/randomUUID))]
+      (is (= 404 (:status res)))))
+  (testing "read users for collection without users"
+    (let [new-collection (into (g/get-random-collection-without-id-no-owner)
+                               {:owner (:id test-user-one)})
+          add-coll-res (collections/CREATE new-collection)
+          res (rp/collection-id-users (:id add-coll-res))]
+      (is (= 200 (:status res)))
+      (is (= '() (m/decode-response-body res))))))

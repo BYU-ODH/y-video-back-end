@@ -7,6 +7,7 @@
    [y-video-back.db.collections :as collections]
    [y-video-back.db.users :as users]
    [y-video-back.db.contents :as contents]
+   [y-video-back.db.courses :as courses]
    [y-video-back.db.annotations :as annotations]
    [y-video-back.models :as models]
    [y-video-back.model-specs :as sp]
@@ -55,7 +56,9 @@
   {:summary "Updates the specified collection"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?} :body ::sp/collection}
-   :responses {200 {:body {:message string?}}}
+   :responses {200 {:body {:message string?}}
+               404 (:body {:message string?})
+               500 (:body {:message string?})}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
               (if-not (ru/has-permission session-id "collection-update" {:collection-id id})
                 ru/forbidden-page
@@ -86,7 +89,8 @@
   {:summary "Deletes the specified collection"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
-   :responses {200 {:body {:message string?}}}
+   :responses {200 {:body {:message string?}}
+               404 (:body {:message string?})}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
               (if-not (ru/has-permission session-id "collection-delete" 0)
                 ru/forbidden-page
@@ -101,7 +105,9 @@
   {:summary "Adds user to specified collection"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?} :body {:user-id uuid? :account-role int?}}
-   :responses {200 {:body {:message string? :id string?}}}
+   :responses {200 {:body {:message string? :id string?}}
+               404 (:body {:message string?})
+               500 (:body {:message string?})}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
               (if-not (ru/has-permission session-id "collection-add-user" {:collection-id id})
                 ru/forbidden-page
@@ -126,7 +132,9 @@
   {:summary "Removes user from specified collection"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?} :body {:user-id uuid?}}
-   :responses {200 {:body {:message string?}}}
+   :responses {200 {:body {:message string?}}
+               404 (:body {:message string?})
+               500 (:body {:message string?})}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
               (if-not (ru/has-permission session-id "collection-remove-user" {:collection-id id})
                 ru/forbidden-page
@@ -150,7 +158,9 @@
   {:summary "Adds content to specified collection"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?} :body {:content-id uuid?}}
-   :responses {200 {:body {:message string? :id string?}}}
+   :responses {200 {:body {:message string? :id string?}}
+               404 (:body {:message string?})
+               500 (:body {:message string?})}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
               (if-not (ru/has-permission session-id "collection-add-content" {:collection-id id})
                 ru/forbidden-page
@@ -177,7 +187,9 @@
   {:summary "Removes content from specified collection"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?} :body {:content-id uuid?}}
-   :responses {200 {:body {:message string?}}}
+   :responses {200 {:body {:message string?}}
+               404 (:body {:message string?})
+               500 (:body {:message string?})}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
               (if-not (ru/has-permission session-id "collection-remove-content" {:collection-id id})
                 ru/forbidden-page
@@ -201,47 +213,70 @@
   {:summary "Adds course to specified collection"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?} :body {:course-id uuid?}}
-   :responses {200 {:body {:message string? :id string?}}}
+   :responses {200 {:body {:message string? :id string?}}
+               404 (:body {:message string?})
+               500 (:body {:message string?})}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
               (if-not (ru/has-permission session-id "collection-add-course" {:collection-id id})
                 ru/forbidden-page
-                (let [result (utils/get-id (collection-courses-assoc/CREATE (into body {:collection-id id})))]
-                  (if (= nil result)
-                    {:status 404
-                     :body {:message "unable to add course"}}
-                    {:status 200
-                     :body {:message (str 1 " courses added to collection")
-                            :id result}}))))})
+                (if (not (collections/EXISTS? id))
+                  {:status 404
+                   :body {:message "collection not found"}}
+                  (if (not (courses/EXISTS? (:course-id body)))
+                    {:status 500
+                     :body {:message "course not found"}}
+                    (if (collection-courses-assoc/EXISTS-COLL-CRSE? id (:course-id body))
+                      {:status 500
+                       :body {:message "course already connected to collection"}}
+                      (let [result (utils/get-id (collection-courses-assoc/CREATE (into body {:collection-id id})))]
+                        (if (= nil result)
+                          {:status 404
+                           :body {:message "unable to add course"}}
+                          {:status 200
+                           :body {:message (str 1 " courses added to collection")
+                                  :id result}})))))))})
 
 (def collection-remove-course
   {:summary "Removes course from specified collection"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?} :body {:course-id uuid?}}
-   :responses {200 {:body {:message string?}}}
+   :responses {200 {:body {:message string?}}
+               404 (:body {:message string?})
+               500 (:body {:message string?})}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
               (if-not (ru/has-permission session-id "collection-remove-course" {:collection-id id})
                 ru/forbidden-page
-                (let [result (collection-courses-assoc/DELETE-BY-IDS [id (:course-id body)])]
-                  (if (= 0 result)
-                    {:status 404
-                     :body {:message "unable to remove course"}}
-                    {:status 200
-                     :body {:message (str result " courses removed from collection")}}))))})
+                (if (not (collections/EXISTS? id))
+                  {:status 404
+                   :body {:message "collection not found"}}
+                  (if (not (courses/EXISTS? (:course-id body)))
+                    {:status 500
+                     :body {:message "course not found"}}
+                    (if-not (collection-courses-assoc/EXISTS-COLL-CRSE? id (:course-id body))
+                      {:status 500
+                       :body {:message "course not connected to collection"}}
+                      (let [result (collection-courses-assoc/DELETE-BY-IDS [id (:course-id body)])]
+                        (if (= 0 result)
+                          {:status 404
+                           :body {:message "unable to remove course"}}
+                          {:status 200
+                           :body {:message (str result " courses removed from collection")}})))))))})
 
 
 (def collection-get-all-contents ;; Non-functional
   {:summary "Retrieves all the contents for the specified collection"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
-   :responses {200 {:body [(into models/content {:collection-id uuid?})]}}
+   :responses {200 {:body [(into models/content {:collection-id uuid?})]}
+               404 (:body {:message string?})}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
               (if-not (ru/has-permission session-id "collection-get-all-contents" {:collection-id id})
                 ru/forbidden-page
-                (let [content-collections-result (annotations/READ-CONTENTS-BY-COLLECTION id)]
-                  (let [content-result (map #(utils/remove-db-only %) content-collections-result)]
-                    (if (= 0 (count content-result))
-                      {:status 404
-                       :body {:message "no contents found for given collection"}}
+                (if (not (collections/EXISTS? id))
+                  {:status 404
+                   :body {:message "collection not found"}}
+                  (let [content-collections-result (annotations/READ-CONTENTS-BY-COLLECTION id)]
+                    (let [content-result (map #(utils/remove-db-only %) content-collections-result)]
                       {:status 200
                        :body content-result})))))})
 
@@ -249,15 +284,16 @@
   {:summary "Retrieves all the courses for the specified collection"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
-   :responses {200 {:body [(into models/course {:collection-id uuid?})]}}
+   :responses {200 {:body [(into models/course {:collection-id uuid?})]}
+               404 (:body {:message string?})}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
               (if-not (ru/has-permission session-id "collection-get-all-courses" {:collection-id id})
                 ru/forbidden-page
-                (let [course-collections-result (collection-courses-assoc/READ-COURSES-BY-COLLECTION id)]
-                  (let [course-result (map #(utils/remove-db-only %) course-collections-result)]
-                    (if (= 0 (count course-result))
-                      {:status 404
-                       :body {:message "no courses found for given collection"}}
+                (if (not (collections/EXISTS? id))
+                  {:status 404
+                   :body {:message "collection not found"}}
+                  (let [course-collections-result (collection-courses-assoc/READ-COURSES-BY-COLLECTION id)]
+                    (let [course-result (map #(utils/remove-db-only %) course-collections-result)]
                       {:status 200
                        :body course-result})))))})
 
@@ -265,14 +301,15 @@
   {:summary "Retrieves all users for the specified collection"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
-   :responses {200 {:body [(into models/user {:account-role int? :collection-id uuid?})]}}
+   :responses {200 {:body [(into models/user {:account-role int? :collection-id uuid?})]}
+               404 (:body {:message string?})}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
               (if-not (ru/has-permission session-id "collection-get-all-users" {:collection-id id})
                 ru/forbidden-page
-                (let [user-collections-result (user-collections-assoc/READ-USERS-BY-COLLECTION id)]
-                  (let [user-result (map #(utils/remove-db-only %) user-collections-result)]
-                    (if (= 0 (count user-result))
-                      {:status 404
-                       :body {:message "no users found for given collection"}}
+                (if (not (collections/EXISTS? id))
+                  {:status 404
+                   :body {:message "collection not found"}}
+                  (let [user-collections-result (user-collections-assoc/READ-USERS-BY-COLLECTION id)]
+                    (let [user-result (map #(utils/remove-db-only %) user-collections-result)]
                       {:status 200
                        :body user-result})))))})
