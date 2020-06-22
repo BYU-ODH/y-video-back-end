@@ -100,7 +100,34 @@
         (let [res (rp/user-id-patch id new-user)]
           (is (= 200 (:status res))))
         (is (= (ut/remove-db-only (merge test-user-thr new-user))
-               (ut/remove-db-only (users/READ id))))))))
+               (ut/remove-db-only (users/READ id)))))))
+  (testing "user to self, one field at a time"
+    (let [new-user (ut/under-to-hyphen (g/get-random-user-without-id))
+          add-user (users/CREATE new-user)
+          id (:id add-user)]
+      (doseq [val (seq new-user)]
+             [(do
+                (let [res (rp/user-id-patch id {(get val 0) (get val 1)})]
+                  (is (= 200 (:status res))))
+                (is (= ((get val 0) new-user) ((get val 0) (users/READ id)))))])
+      (is (= (into new-user {:id id}) (ut/remove-db-only (users/READ id))))))
+  (testing "user to self, multiple fields at once"
+    (let [new-user (g/get-random-user-without-id)
+          add-user (users/CREATE new-user)
+          id (:id add-user)]
+      (let [fields-to-change (ut/random-submap new-user)]
+        (let [res (rp/user-id-patch id fields-to-change)]
+          (is (= 200 (:status res))))
+        (is (= (ut/remove-db-only (merge new-user fields-to-change {:id id}))
+               (ut/remove-db-only (users/READ id)))))))
+  (testing "user to self, all fields at once"
+    (let [new-user (g/get-random-user-without-id)
+          add-user (users/CREATE new-user)
+          id (:id add-user)]
+      (let [res (rp/user-id-patch id new-user)]
+        (is (= 200 (:status res))))
+      (is (= (ut/remove-db-only (merge new-user new-user {:id id}))
+             (ut/remove-db-only (users/READ id)))))))
 
 (deftest test-coll-patch
   (testing "coll fields one at a time"
