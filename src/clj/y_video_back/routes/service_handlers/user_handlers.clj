@@ -80,23 +80,23 @@
 (def user-get-logged-in ;; Non-functional
   {:summary "Retrieves the current logged-in user"
    :parameters {:header {:session-id uuid?}}
-   :responses {200 {:body fmodels/user}
+   :responses {200 {:body models/user}
                      ;:header {:Access-Control-Allow-Origin "http://localhost:3000"}}
                404 {:body {:message string?}}
                500 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header} :parameters}]
               (if-not (ru/has-permission session-id "user-get-logged-in" 0)
                 ru/forbidden-page
-                (do
-                  (println (str "in user-get-logged-in with " session-id))
-                  (let [user-id (ru/token-to-user-id session-id)]
+                (let [user-id (ru/token-to-user-id session-id)]
+                  (if-not (users/EXISTS? user-id)
+                    {:status 404
+                     :body {:message "user not found"}}
                     (let [user-result (users/READ user-id)]
                       (if (nil? user-result)
-                        {:status 404
-                         :body {:message "user not found"}}
+                        {:status 500
+                         :body {:message "user not found, not sure why"}}
                         {:status 200
-                         :body (utils/user-db-to-front user-result)}))))))})
-                         ;:header {"Access-Control-Allow-Origin" "*"}}))))})
+                         :body user-result}))))))})
 
 
 (def user-get-all-collections ;; Non-functional
@@ -119,15 +119,24 @@
 (def user-get-all-collections-by-logged-in
   {:summary "Retrieves all collections for session user"
    :parameters {:header {:session-id uuid?}}
-   :responses {200 {:body [(into models/collection {:account-role int? :user-id uuid?})]}}
+   :responses {200 {:body [(into models/collection {:account-role int? :user-id uuid?})]}
+               404 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header} :parameters}]
               (if-not (ru/has-permission session-id "user-get-all-collections" 0)
                 ru/forbidden-page
                 (let [user-id (ru/token-to-user-id session-id)]
-                  (let [user-collections-result (user-collections-assoc/READ-COLLECTIONS-BY-USER user-id)]
-                    (let [collection-result (map #(utils/remove-db-only %) user-collections-result)]
-                        {:status 200
-                         :body collection-result})))))})
+                  (if-not (users/EXISTS? user-id)
+                    {:status 404
+                     :body {:message "user not found"}}
+                    (let [user-collections-result (user-collections-assoc/READ-COLLECTIONS-BY-USER user-id)
+                          user-courses-result (users/READ-COLLECTIONS-BY-USER-VIA-COURSES user-id)]
+                      (let [courses-result (map #(-> %
+                                                     (utils/remove-db-only)
+                                                     (assoc :account-role 2))
+                                                user-courses-result)
+                            collections-result (map #(utils/remove-db-only %) user-collections-result)]
+                          {:status 200
+                           :body (concat courses-result collections-result)}))))))})
 
 (def user-get-all-courses ;; Non-functional
   {:summary "Retrieves all courses for specified user"

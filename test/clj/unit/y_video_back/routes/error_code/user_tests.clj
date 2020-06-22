@@ -90,3 +90,13 @@
           res (rp/user-id-get-words (:id new-user))]
       (is (= 200 (:status res)))
       (is (= [] (m/decode-response-body res))))))
+
+(deftest user-get-collections-logged-in
+  (testing "invalid session-id"
+    (let [res (rp/collections-by-logged-in (java.util.UUID/randomUUID))]
+      (is (= 404 (:status res))))))
+
+(deftest user-get-logged-in
+  (testing "invalid session-id"
+    (let [res (rp/get-current-user (java.util.UUID/randomUUID))]
+      (is (= 404 (:status res))))))

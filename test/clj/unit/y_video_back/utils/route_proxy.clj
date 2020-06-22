@@ -467,3 +467,15 @@
             (header :session-id session-id))))
   ([query-term]
    (search SESSION-ID-BYPASS query-term)))
+
+(defn collections-by-logged-in
+  "Retrieves all collections for current user (by session id)"
+  [session-id]
+  (app (-> (request :get (str "/api/collections"))
+           (header :session-id session-id))))
+
+(defn get-current-user
+  "Retrieves current user (by session-id)"
+  [session-id]
+  (app (-> (request :get (str "/api/user"))
+           (header :session-id session-id))))
