@@ -22,5 +22,5 @@
                                            :email (str username "@byu.edu")
                                            :last-login "today"
                                            :account-type 0
-                                           :account-name "Ed"})] ; Replace with api to get user info
+                                           :account-name (str "Mr. " username)})] ; Replace with api to get user info
         (:id user-create-res)))))
