@@ -92,15 +92,15 @@
         (let [res (rp/user-id-patch id fields-to-change)]
           (is (= 200 (:status res))))
         (is (= (ut/remove-db-only (merge test-user-two fields-to-change))
-               (ut/remove-db-only (users/READ id))))))
-    (testing "user all fields at once"
-      (let [new-user (g/get-random-user-without-id)
-            id (:id test-user-thr)]
-        (is (= (ut/remove-db-only test-user-thr) (ut/remove-db-only (users/READ id))))
-        (let [res (rp/user-id-patch id new-user)]
-          (is (= 200 (:status res))))
-        (is (= (ut/remove-db-only (merge test-user-thr new-user))
                (ut/remove-db-only (users/READ id)))))))
+  (testing "user all fields at once"
+    (let [new-user (g/get-random-user-without-id)
+          id (:id test-user-thr)]
+      (is (= (ut/remove-db-only test-user-thr) (ut/remove-db-only (users/READ id))))
+      (let [res (rp/user-id-patch id new-user)]
+        (is (= 200 (:status res))))
+      (is (= (ut/remove-db-only (merge test-user-thr new-user))
+             (ut/remove-db-only (users/READ id))))))
   (testing "user to self, one field at a time"
     (let [new-user (ut/under-to-hyphen (g/get-random-user-without-id))
           add-user (users/CREATE new-user)
@@ -126,7 +126,7 @@
           id (:id add-user)]
       (let [res (rp/user-id-patch id new-user)]
         (is (= 200 (:status res))))
-      (is (= (ut/remove-db-only (merge new-user new-user {:id id}))
+      (is (= (ut/remove-db-only (merge new-user {:id id}))
              (ut/remove-db-only (users/READ id)))))))
 
 (deftest test-coll-patch
@@ -148,15 +148,42 @@
         (let [res (rp/collection-id-patch id fields-to-change)]
           (is (= 200 (:status res))))
         (is (= (ut/remove-db-only (merge test-coll-two fields-to-change))
-               (ut/remove-db-only (collections/READ id))))))
-    (testing "coll all fields at once"
-      (let [new-coll (into (g/get-random-collection-without-id-or-owner) {:owner (:id test-user-one)})
-            id (:id test-coll-thr)]
-        (is (= (ut/remove-db-only test-coll-thr) (ut/remove-db-only (collections/READ id))))
-        (let [res (rp/collection-id-patch id new-coll)]
+               (ut/remove-db-only (collections/READ id)))))))
+  (testing "coll all fields at once"
+    (let [new-coll (into (g/get-random-collection-without-id-or-owner) {:owner (:id test-user-one)})
+          id (:id test-coll-thr)]
+      (is (= (ut/remove-db-only test-coll-thr) (ut/remove-db-only (collections/READ id))))
+      (let [res (rp/collection-id-patch id new-coll)]
+        (is (= 200 (:status res))))
+      (is (= (ut/remove-db-only (merge test-coll-thr new-coll))
+             (ut/remove-db-only (collections/READ id))))))
+  (testing "coll to self, fields one at a time"
+    (let [new-coll (into (g/get-random-collection-without-id-or-owner) {:owner (:id test-user-one)})
+          add-coll (collections/CREATE new-coll)
+          id (:id add-coll)]
+      (doseq [val (seq new-coll)]
+             [(do
+                (let [res (rp/collection-id-patch id {(get val 0) (get val 1)})]
+                  (is (= 200 (:status res))))
+                (is (= ((get val 0) new-coll) ((get val 0) (collections/READ id)))))])
+      (is (= (into new-coll {:id id}) (ut/remove-db-only (collections/READ id))))))
+  (testing "coll to self, multiple fields at once"
+    (let [new-coll (into (g/get-random-collection-without-id-or-owner) {:owner (:id test-user-one)})
+          add-coll (collections/CREATE new-coll)
+          id (:id add-coll)]
+      (let [fields-to-change (ut/random-submap new-coll)]
+        (let [res (rp/collection-id-patch id fields-to-change)]
           (is (= 200 (:status res))))
-        (is (= (ut/remove-db-only (merge test-coll-thr new-coll))
-               (ut/remove-db-only (collections/READ id))))))))
+        (is (= (ut/remove-db-only (merge new-coll fields-to-change {:id id}))
+               (ut/remove-db-only (collections/READ id)))))))
+  (testing "coll to self, all fields at once"
+    (let [new-coll (into (g/get-random-collection-without-id-or-owner) {:owner (:id test-user-one)})
+          add-coll (collections/CREATE new-coll)
+          id (:id add-coll)]
+      (let [res (rp/collection-id-patch id new-coll)]
+        (is (= 200 (:status res))))
+      (is (= (ut/remove-db-only (merge new-coll {:id id}))
+             (ut/remove-db-only (collections/READ id)))))))
 
 (deftest test-cont-patch
   (testing "cont fields one at a time"
@@ -177,15 +204,42 @@
         (let [res (rp/content-id-patch id fields-to-change)]
           (is (= 200 (:status res))))
         (is (= (ut/remove-db-only (merge test-cont-two fields-to-change))
-               (ut/remove-db-only (contents/READ id))))))
-    (testing "cont all fields at once"
-      (let [new-cont (g/get-random-content-without-id)
-            id (:id test-cont-thr)]
-        (is (= (ut/remove-db-only test-cont-thr) (ut/remove-db-only (contents/READ id))))
-        (let [res (rp/content-id-patch id new-cont)]
+               (ut/remove-db-only (contents/READ id)))))))
+  (testing "cont all fields at once"
+    (let [new-cont (g/get-random-content-without-id)
+          id (:id test-cont-thr)]
+      (is (= (ut/remove-db-only test-cont-thr) (ut/remove-db-only (contents/READ id))))
+      (let [res (rp/content-id-patch id new-cont)]
+        (is (= 200 (:status res))))
+      (is (= (ut/remove-db-only (merge test-cont-thr new-cont))
+             (ut/remove-db-only (contents/READ id))))))
+  (testing "cont to self, fields one at a time"
+    (let [new-cont (g/get-random-content-without-id)
+          add-cont (contents/CREATE new-cont)
+          id (:id add-cont)]
+      (doseq [val (seq new-cont)]
+             [(do
+                (let [res (rp/content-id-patch id {(get val 0) (get val 1)})]
+                  (is (= 200 (:status res))))
+                (is (= ((get val 0) new-cont) ((get val 0) (contents/READ id)))))])
+      (is (= (into new-cont {:id id}) (ut/remove-db-only (contents/READ id))))))
+  (testing "cont to self, multiple fields at once"
+    (let [new-cont (g/get-random-content-without-id)
+          add-cont (contents/CREATE new-cont)
+          id (:id add-cont)]
+      (let [fields-to-change (ut/random-submap new-cont)]
+        (let [res (rp/content-id-patch id fields-to-change)]
           (is (= 200 (:status res))))
-        (is (= (ut/remove-db-only (merge test-cont-thr new-cont))
-               (ut/remove-db-only (contents/READ id))))))))
+        (is (= (ut/remove-db-only (merge new-cont fields-to-change {:id id}))
+               (ut/remove-db-only (contents/READ id)))))))
+  (testing "cont to self, all fields at once"
+    (let [new-cont (g/get-random-content-without-id)
+          add-cont (contents/CREATE new-cont)
+          id (:id add-cont)]
+      (let [res (rp/content-id-patch id new-cont)]
+        (is (= 200 (:status res))))
+      (is (= (ut/remove-db-only (merge new-cont {:id id}))
+             (ut/remove-db-only (contents/READ id)))))))
 
 (deftest test-crse-patch
   (testing "crse fields one at a time"
@@ -261,15 +315,15 @@
         (let [res (rp/file-id-patch id fields-to-change)]
           (is (= 200 (:status res))))
         (is (= (ut/remove-db-only (merge test-file-two fields-to-change))
-               (ut/remove-db-only (files/READ id))))))
-    (testing "file all fields at once"
-      (let [new-file (g/get-random-file-without-id)
-            id (:id test-file-thr)]
-        (is (= (ut/remove-db-only test-file-thr) (ut/remove-db-only (files/READ id))))
-        (let [res (rp/file-id-patch id new-file)]
-          (is (= 200 (:status res))))
-        (is (= (ut/remove-db-only (merge test-file-thr new-file))
                (ut/remove-db-only (files/READ id)))))))
+  (testing "file all fields at once"
+    (let [new-file (g/get-random-file-without-id)
+          id (:id test-file-thr)]
+      (is (= (ut/remove-db-only test-file-thr) (ut/remove-db-only (files/READ id))))
+      (let [res (rp/file-id-patch id new-file)]
+        (is (= 200 (:status res))))
+      (is (= (ut/remove-db-only (merge test-file-thr new-file))
+             (ut/remove-db-only (files/READ id))))))
   (testing "file to self (each field)"
     (let [new-file (g/get-random-file-without-id)
           new-file-res (files/CREATE new-file)
@@ -317,15 +371,42 @@
         (let [res (rp/word-id-patch id fields-to-change)]
           (is (= 200 (:status res))))
         (is (= (ut/remove-db-only (merge test-word-two fields-to-change))
-               (ut/remove-db-only (words/READ id))))))
-    (testing "word all fields at once"
-      (let [new-word (g/get-random-word-without-id (:id test-user-thr))
-            id (:id test-word-thr)]
-        (is (= (ut/remove-db-only test-word-thr) (ut/remove-db-only (words/READ id))))
-        (let [res (rp/word-id-patch id new-word)]
+               (ut/remove-db-only (words/READ id)))))))
+  (testing "word all fields at once"
+    (let [new-word (g/get-random-word-without-id (:id test-user-thr))
+          id (:id test-word-thr)]
+      (is (= (ut/remove-db-only test-word-thr) (ut/remove-db-only (words/READ id))))
+      (let [res (rp/word-id-patch id new-word)]
+        (is (= 200 (:status res))))
+      (is (= (ut/remove-db-only (merge test-word-thr new-word))
+             (ut/remove-db-only (words/READ id))))))
+  (testing "word fields one at a time"
+    (let [new-word (g/get-random-word-without-id (:id test-user-one))
+          add-word (words/CREATE new-word)
+          id (:id add-word)]
+      (doseq [val (seq new-word)]
+             [(do
+                (let [res (rp/word-id-patch id {(get val 0) (get val 1)})]
+                  (is (= 200 (:status res))))
+                (is (= ((get val 0) new-word) ((get val 0) (words/READ id)))))])
+      (is (= (into new-word {:id id}) (ut/remove-db-only (words/READ id))))))
+  (testing "word multiple fields at once"
+    (let [new-word (g/get-random-word-without-id (:id test-user-two))
+          add-word (words/CREATE new-word)
+          id (:id add-word)]
+      (let [fields-to-change (ut/random-submap new-word)]
+        (let [res (rp/word-id-patch id fields-to-change)]
           (is (= 200 (:status res))))
-        (is (= (ut/remove-db-only (merge test-word-thr new-word))
-               (ut/remove-db-only (words/READ id))))))))
+        (is (= (ut/remove-db-only (merge new-word fields-to-change {:id id}))
+               (ut/remove-db-only (words/READ id)))))))
+  (testing "word all fields at once"
+    (let [new-word (g/get-random-word-without-id (:id test-user-thr))
+          add-word (words/CREATE new-word)
+          id (:id add-word)]
+      (let [res (rp/word-id-patch id new-word)]
+        (is (= 200 (:status res))))
+      (is (= (ut/remove-db-only (merge new-word {:id id}))
+             (ut/remove-db-only (words/READ id)))))))
 
 (deftest test-annotation-patch
   (testing "annotation fields one at a time"
@@ -346,12 +427,39 @@
         (let [res (rp/annotation-id-patch id fields-to-change)]
           (is (= 200 (:status res))))
         (is (= (ut/remove-db-only (merge test-annotation-two fields-to-change))
-               (ut/remove-db-only (annotations/READ id))))))
-    (testing "annotation all fields at once"
-      (let [new-annotation (g/get-random-annotation-without-id (:id test-coll-thr) (:id test-cont-thr))
-            id (:id test-annotation-thr)]
-        (is (= (ut/remove-db-only test-annotation-thr) (ut/remove-db-only (annotations/READ id))))
-        (let [res (rp/annotation-id-patch id new-annotation)]
+               (ut/remove-db-only (annotations/READ id)))))))
+  (testing "annotation all fields at once"
+    (let [new-annotation (g/get-random-annotation-without-id (:id test-coll-thr) (:id test-cont-thr))
+          id (:id test-annotation-thr)]
+      (is (= (ut/remove-db-only test-annotation-thr) (ut/remove-db-only (annotations/READ id))))
+      (let [res (rp/annotation-id-patch id new-annotation)]
+        (is (= 200 (:status res))))
+      (is (= (ut/remove-db-only (merge test-annotation-thr new-annotation))
+             (ut/remove-db-only (annotations/READ id))))))
+  (testing "annotation fields one at a time"
+    (let [new-annotation (g/get-random-annotation-without-id (:id (collections/CREATE (g/get-random-collection-without-id (:id test-user-one)))) (:id test-cont-thr))
+          add-ann (annotations/CREATE new-annotation)
+          id (:id add-ann)]
+      (doseq [val (seq (dissoc new-annotation :content-id :collection-id))]
+             [(do
+                (let [res (rp/annotation-id-patch id {(get val 0) (get val 1)})]
+                  (is (= 200 (:status res))))
+                (is (= ((get val 0) new-annotation) ((get val 0) (annotations/READ id)))))])
+      (is (= (into new-annotation {:id id}) (ut/remove-db-only (annotations/READ id))))))
+  (testing "annotation multiple fields at once"
+    (let [new-annotation (g/get-random-annotation-without-id (:id (collections/CREATE (g/get-random-collection-without-id (:id test-user-one)))) (:id test-cont-thr))
+          add-ann (annotations/CREATE new-annotation)
+          id (:id add-ann)]
+      (let [fields-to-change (ut/random-submap new-annotation)]
+        (let [res (rp/annotation-id-patch id fields-to-change)]
           (is (= 200 (:status res))))
-        (is (= (ut/remove-db-only (merge test-annotation-thr new-annotation))
-               (ut/remove-db-only (annotations/READ id))))))))
+        (is (= (ut/remove-db-only (merge new-annotation fields-to-change {:id id}))
+               (ut/remove-db-only (annotations/READ id)))))))
+  (testing "annotation all fields at once"
+    (let [new-annotation (g/get-random-annotation-without-id (:id (collections/CREATE (g/get-random-collection-without-id (:id test-user-one)))) (:id test-cont-thr))
+          add-ann (annotations/CREATE new-annotation)
+          id (:id add-ann)]
+      (let [res (rp/annotation-id-patch id new-annotation)]
+        (is (= 200 (:status res))))
+      (is (= (ut/remove-db-only (merge new-annotation {:id id}))
+             (ut/remove-db-only (annotations/READ id)))))))

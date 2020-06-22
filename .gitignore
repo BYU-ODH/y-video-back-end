@@ -19,3 +19,4 @@ profiles.clj
 notes.txt
 todo.txt
 *.swp
+config.py
