@@ -175,7 +175,11 @@
   (testing "no users username"
     (test-search-table :users
                        "buckbeak"
-                       [])))
+                       []))
+  (testing "only a space"
+    (test-search-table :users
+                       " "
+                       [test-user-one test-user-two test-user-thr])))
 (deftest test-search-collections
   (testing "all colls name"
     (test-search-table :collections
@@ -188,7 +192,11 @@
   (testing "no colls name"
     (test-search-table :collections
                        "Movies"
-                       [])))
+                       []))
+  (testing "only a space"
+    (test-search-table :collections
+                       " "
+                       [test-coll-one test-coll-two test-coll-thr])))
 (deftest test-search-contents
   (testing "all conts name"
     (test-search-table :contents
@@ -225,4 +233,8 @@
   (testing "no conts requester-email"
     (test-search-table :contents
                        "@gmail@com"
-                       [])))
+                       []))
+  (testing "only a space"
+    (test-search-table :contents
+                       " "
+                       [test-cont-one test-cont-two test-cont-thr])))
