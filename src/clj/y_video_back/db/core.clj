@@ -181,7 +181,7 @@
              :from [table-keyword]}
       (> (count column-keywords) 0) (assoc :where (into [:and] (map #(vector := %1 %2) column-keywords column-vals)))
       true sql/format
-      ;;true (spy)
+      ;true (spy) ; <-- prints sql code just before it's executed
       true dbr)))
 
 (defn read-where-or
