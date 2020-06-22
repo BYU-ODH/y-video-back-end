@@ -479,3 +479,27 @@
   [session-id]
   (app (-> (request :get (str "/api/user"))
            (header :session-id session-id))))
+
+(defn search-by-user
+  "Search user table by term"
+  ([session-id term]
+   (app (-> (request :get (str "/api/admin/user/" (java.net.URLEncoder/encode term)))
+            (header :session-id session-id))))
+  ([term]
+   (search-by-user SESSION-ID-BYPASS term)))
+
+(defn search-by-collection
+  "Search collection table by term"
+  ([session-id term]
+   (app (-> (request :get (str "/api/admin/collection/" (java.net.URLEncoder/encode term)))
+            (header :session-id session-id))))
+  ([term]
+   (search-by-collection SESSION-ID-BYPASS term)))
+
+(defn search-by-content
+  "Search content table by term"
+  ([session-id term]
+   (app (-> (request :get (str "/api/admin/content/" (java.net.URLEncoder/encode term)))
+            (header :session-id session-id))))
+  ([term]
+   (search-by-content SESSION-ID-BYPASS term)))

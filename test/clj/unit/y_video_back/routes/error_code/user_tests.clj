@@ -54,8 +54,6 @@
     (let [res (rp/user-id-patch (java.util.UUID/randomUUID) (g/get-random-user-without-id))]
       (is (= 404 (:status res))))))
 
-; Need to add user update to same email, incl. update self to same email
-
 (deftest user-id-delete
   (testing "delete nonexistent user"
     (let [res (rp/user-id-delete (java.util.UUID/randomUUID))]

@@ -246,8 +246,8 @@
 
     ["/search"
      {:swagger {:tags ["search"]}}
-     [""
-      {:get service-handlers/search-by-term}]]
+     [""]]
+      ;{:get service-handlers/search-by-term}]] ; Searches all tables at once
     ["/admin"
      {:swagger {:tags ["admin"]}}
      ["/user/{term}"

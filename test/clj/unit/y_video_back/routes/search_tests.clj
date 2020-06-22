@@ -115,15 +115,29 @@
                                                           :section-number "001"})))
   (mount.core/start #'y-video-back.handler/app))
 
+; For testing master search route - may add that feature in future
+;(defn test-search-table
+;  [table-key query-term expected-users]
+;  (let [res (rp/search query-term)]
+;    (is (= 200 (:status res)))
+;    (if (= table-key :collections)
+;      (is (= (into [] (map #(update (update (ut/remove-db-only %) :id str) :owner str) expected-users))
+;             (table-key (m/decode-response-body res))
+;      (is (= (into [] (map #(update (ut/remove-db-only %) :id str) expected-users))
+;             (table-key (m/decode-response-body res))))
+
 (defn test-search-table
-  [table-key query-term expected-users]
-  (let [res (rp/search query-term)]
+  [table-key query-term expected-res]
+  (let [res (case table-key
+              :users (rp/search-by-user query-term)
+              :collections (rp/search-by-collection query-term)
+              :contents (rp/search-by-content query-term))]
     (is (= 200 (:status res)))
     (if (= table-key :collections)
-      (is (= (into [] (map #(update (update (ut/remove-db-only %) :id str) :owner str) expected-users))
-             (table-key (m/decode-response-body res))))
-      (is (= (into [] (map #(update (ut/remove-db-only %) :id str) expected-users))
-             (table-key (m/decode-response-body res)))))))
+      (is (= (into [] (map #(update (update (ut/remove-db-only %) :id str) :owner str) expected-res))
+             (m/decode-response-body res)))
+      (is (= (into [] (map #(update (ut/remove-db-only %) :id str) expected-res))
+             (m/decode-response-body res))))))
 
 (deftest test-search-users
   (testing "all users email"
