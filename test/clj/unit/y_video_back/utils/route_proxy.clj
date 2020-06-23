@@ -483,7 +483,7 @@
 (defn login-current-user
   "Retrieves current user (by session-id)"
   [username]
-  (app (-> (request :post (str "/api/get-session-id/" username)))))
+  (app (-> (request :get (str "/api/get-session-id/" username)))))
 
 
 (defn search-by-user

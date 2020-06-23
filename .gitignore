@@ -21,3 +21,5 @@ todo.txt
 *.swp
 config.py
 api_config.txt
+perfect_api.json
+Clojure REPL

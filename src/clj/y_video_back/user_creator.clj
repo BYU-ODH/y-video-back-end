@@ -1,5 +1,6 @@
 (ns y-video-back.user-creator
   (:require
+    [y-video-back.config :refer [env]]
     [y-video-back.db.user-collections-assoc :as user-collections-assoc]
     [y-video-back.db.user-courses-assoc :as user-courses-assoc]
     [y-video-back.db.users :as users]
@@ -47,22 +48,26 @@
 ; (maybe beginning of each term?)
 (defn create-user
   "Creates user with data from BYU api"
-  [username])
+  [username]
+  (let [url "https://api.byu.edu/token"
+        auth [(:CONSUMER_KEY env) (:CONSUMER_SECRET env)]
+        tokenRes (client/post url {:body "grant_type=client_credentials" :basic-auth auth})]
+    (println "tokenRes " tokenRes)))
 
 
 (defn get-session-id
   "Generates session id for user with given username. If user does not exist, first creates user."
   [username]
   (let [user-res (users/READ-BY-USERNAME [username])]
-    ;(println "getting session id - - - - - - - - - - - ")
-    ;(println username)
-    ;(println user-res)
-    (if-not (= 0 (count user-res))
-      (:id (first user-res))
-      (let [user-create-res (users/CREATE {:username username
-                                           :email (str username "@byu.edu")
-                                           :last-login "today"
-                                           :account-type 0
-                                           :account-name (str "Mr. " username)})] ; Replace with api to get user info
-        (get-current-sem)
-        (:id user-create-res)))))
+      ;(println "getting session id - - - - - - - - - - - ")
+      ;(println username)
+      ;(println user-res)
+      (if-not (= 0 (count user-res))
+        (:id (first user-res))
+        (let [user-create-res (users/CREATE {:username username
+                                             :email (str username "@byu.edu")
+                                             :last-login "today"
+                                             :account-type 0
+                                             :account-name (str "Mr. " username)})] ; Replace with api to get user info
+          (get-current-sem)
+          (:id user-create-res)))))
