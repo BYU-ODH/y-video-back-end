@@ -1,4 +1,4 @@
-(ns y-video-back.routes.search-tests
+(ns y-video-back.routes.create-user-on-login
     (:require
       [clojure.test :refer :all]
       [ring.mock.request :refer :all]
@@ -39,4 +39,5 @@
 
 (deftest create-user-on-login
   (testing "create user from empty db"
-    (is (= '() (users/READ-BY-USERNAME "bagginses")))))
+    (is (= '() (users/READ-BY-USERNAME "bagginses")))
+    (rp/login-current-user "bagginses")))
