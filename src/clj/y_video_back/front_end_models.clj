@@ -61,14 +61,14 @@
 (def resource
   (into resource-without-id {:id uuid?}))
 
-(def annotation-without-any-ids
+(def content-without-any-ids
   {:metadata string?})
 
-(def annotation-without-id
-  (into annotation-without-any-ids {:resource-id uuid? :collection-id uuid?}))
+(def content-without-id
+  (into content-without-any-ids {:resource-id uuid? :collection-id uuid?}))
 
-(def annotation
-  (into annotation-without-id {:id uuid?}))
+(def content
+  (into content-without-id {:id uuid?}))
 
 (def file-without-id
   {:filepath string? :mime string? :metadata string?})

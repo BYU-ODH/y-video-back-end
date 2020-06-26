@@ -185,10 +185,10 @@
           "word-delete" (or (admin+ user-type) false)
 
           ; Annotation handlers
-          "annotation-create" (or (admin+ user-type) false)
-          "annotation-get-by-id" (or (admin+ user-type) false)
-          "annotation-update" (or (admin+ user-type) false)
-          "annotation-delete" (or (admin+ user-type) false)
+          "content-create" (or (admin+ user-type) false)
+          "content-get-by-id" (or (admin+ user-type) false)
+          "content-update" (or (admin+ user-type) false)
+          "content-delete" (or (admin+ user-type) false)
 
 
           false)))))

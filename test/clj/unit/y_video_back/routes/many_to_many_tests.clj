@@ -16,7 +16,7 @@
       [y-video-back.utils.model-generator :as g]
       [y-video-back.utils.route-proxy :as rp]
       [y-video-back.db.core :refer [*db*] :as db]
-      [y-video-back.db.annotations :as annotations]
+      [y-video-back.db.contents :as contents]
       [y-video-back.db.users-by-collection :as users-by-collection]
       [y-video-back.db.collections-courses-assoc :as collection-courses-assoc]
       [y-video-back.db.collections :as collections]
@@ -83,9 +83,9 @@
   (def test-user-crse-fou (ut/under-to-hyphen (user-courses-assoc/CREATE {:user-id (:id test-user-fou)
                                                                           :course-id (:id test-crse-one)
                                                                           :account-role 2})))
-  (def test-annotation-one (ut/under-to-hyphen (annotations/CREATE (g/get-random-annotation-without-id (:id test-coll-one) (:id test-cont-one)))))
-  (def test-annotation-two (ut/under-to-hyphen (annotations/CREATE (g/get-random-annotation-without-id (:id test-coll-two) (:id test-cont-two)))))
-  (def test-annotation-thr (ut/under-to-hyphen (annotations/CREATE (g/get-random-annotation-without-id (:id test-coll-thr) (:id test-cont-thr)))))
+  (def test-content-one (ut/under-to-hyphen (contents/CREATE (g/get-random-content-without-id (:id test-coll-one) (:id test-cont-one)))))
+  (def test-content-two (ut/under-to-hyphen (contents/CREATE (g/get-random-content-without-id (:id test-coll-two) (:id test-cont-two)))))
+  (def test-content-thr (ut/under-to-hyphen (contents/CREATE (g/get-random-content-without-id (:id test-coll-thr) (:id test-cont-thr)))))
   (def test-coll-crse-one (ut/under-to-hyphen (collection-courses-assoc/CREATE {:collection-id (:id test-coll-one)
                                                                                  :course-id (:id test-crse-one)})))
   (def test-coll-crse-two (ut/under-to-hyphen (collection-courses-assoc/CREATE {:collection-id (:id test-coll-two)
@@ -113,7 +113,7 @@
                                     :collection-id (:id test-coll-two)
                                     :account-role 1})
     ()
-    (def test-annotation-one (ut/under-to-hyphen (annotations/CREATE (g/get-random-annotation-without-id (:id test-coll-one) (:id test-cont-one)))))
+    (def test-content-one (ut/under-to-hyphen (contents/CREATE (g/get-random-content-without-id (:id test-coll-one) (:id test-cont-one)))))
 
     (is (= (set [(:id test-user-one)
                  (:id test-crse-one)
@@ -124,7 +124,7 @@
                  (:id test-cont-two)
                  (:id test-file-two)
                  (:id test-word-one)
-                 (:id test-annotation-one)])
+                 (:id test-content-one)])
            (dbu/get-all-child-ids (:id test-user-one))))))
 (comment (deftest get-all-child-ids-roles)
   (testing "get-all-child-ids with roles"
@@ -132,7 +132,7 @@
     (user-collections-assoc/CREATE {:user-id (:id test-user-one)
                                     :collection-id (:id test-coll-two)
                                     :account-role 1})
-    (def test-annotation-one (ut/under-to-hyphen (annotations/CREATE (g/get-random-annotation-without-id (:id test-coll-one) (:id test-cont-one)))))
+    (def test-content-one (ut/under-to-hyphen (contents/CREATE (g/get-random-content-without-id (:id test-coll-one) (:id test-cont-one)))))
 
     (is (= (set [(:id test-user-fou)
                  (:id test-crse-one)])
@@ -205,8 +205,8 @@
 
 
 
-(deftest test-annotation
-  (testing "add resource to collection (i.e. connect via annotation)"
+(deftest test-content
+  (testing "add resource to collection (i.e. connect via content)"
     (let [res (rp/collection-id-add-resource (:id test-coll-one) (:id test-cont-two))]
       (is (= 200 (:status res)))
       (let [ann-id (:id (m/decode-response-body res))]
@@ -214,15 +214,15 @@
                 :collection-id (:id test-coll-one)
                 :resource-id (:id test-cont-two)
                 :metadata ""}
-               (-> (annotations/READ-BY-IDS [(:id test-coll-one) (:id test-cont-two)])
+               (-> (contents/READ-BY-IDS [(:id test-coll-one) (:id test-cont-two)])
                    (first)
                    (ut/remove-db-only)
                    (update :id str)))))))
-  (testing "remove resource from collection (i.e. delete annotation)"
+  (testing "remove resource from collection (i.e. delete content)"
     (let [res (rp/collection-id-remove-resource (:id test-coll-two) (:id test-cont-two))]
       (is (= 200 (:status res)))
       (is (= '()
-             (annotations/READ-BY-IDS [(:id test-coll-two) (:id test-cont-two)])))))
+             (contents/READ-BY-IDS [(:id test-coll-two) (:id test-cont-two)])))))
   (testing "find all collections by resource"
     (let [res (rp/resource-id-collections (:id test-cont-thr))]
       (is (= 200 (:status res)))

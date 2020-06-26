@@ -1,6 +1,6 @@
-(ns y-video-back.routes.service-handlers.annotation-handlers
+(ns y-video-back.routes.service-handlers.content-handlers
   (:require
-   [y-video-back.db.annotations :as annotations]
+   [y-video-back.db.contents :as contents]
    [y-video-back.db.collections :as collections]
    [y-video-back.db.resources :as resources]
    [y-video-back.models :as models]
@@ -9,15 +9,15 @@
    [y-video-back.routes.service-handlers.role-utils :as ru]))
 
 
-(def annotation-create ;; Non-functional
-  {:summary "Creates new annotation"
+(def content-create ;; Non-functional
+  {:summary "Creates new content"
    :parameters {:header {:session-id uuid?}
-                :body models/annotation-without-id}
+                :body models/content-without-id}
    :responses {200 {:body {:message string?
                            :id string?}}
                500 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header :keys [body]} :parameters}]
-              (if-not (ru/has-permission session-id "annotation-create" 0)
+              (if-not (ru/has-permission session-id "content-create" 0)
                 ru/forbidden-page
                 (if-not (collections/EXISTS? (:collection-id body))
                   {:status 500
@@ -25,89 +25,89 @@
                   (if-not (resources/EXISTS? (:resource-id body))
                     {:status 500
                      :body {:message "resource not found"}}
-                    (if (annotations/EXISTS-COLL-CONT? (:collection-id body) (:resource-id body))
+                    (if (contents/EXISTS-COLL-CONT? (:collection-id body) (:resource-id body))
                       {:status 500
-                       :body {:message "annotation connecting collection and resource already exists"}}
-                      (let [res (annotations/CREATE body)]
+                       :body {:message "content connecting collection and resource already exists"}}
+                      (let [res (contents/CREATE body)]
                         {:status 200
-                         :body {:message "1 annotation created"
+                         :body {:message "1 content created"
                                 :id (utils/get-id res)}}))))))})
 
-(def annotation-get-by-id
-  {:summary "Retrieves specified annotation"
+(def content-get-by-id
+  {:summary "Retrieves specified content"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
-   :responses {200 {:body models/annotation}
+   :responses {200 {:body models/content}
                404 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
-              (if-not (ru/has-permission session-id "annotation-get-by-id" 0)
+              (if-not (ru/has-permission session-id "content-get-by-id" 0)
                 ru/forbidden-page
-                (let [res (annotations/READ id)]
+                (let [res (contents/READ id)]
                   (if (nil? res)
                     {:status 404
-                     :body {:message "requested annotation not found"}}
+                     :body {:message "requested content not found"}}
                     {:status 200
                      :body res}))))})
 
-(def annotation-update ;; Non-functional
-  {:summary "Updates the specified annotation"
+(def content-update ;; Non-functional
+  {:summary "Updates the specified content"
    :parameters {:header {:session-id uuid?}
-                :path {:id uuid?} :body ::sp/annotation}
+                :path {:id uuid?} :body ::sp/content}
    :responses {200 {:body {:message string?}}
                404 {:body {:message string?}}
                500 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
-              (if-not (ru/has-permission session-id "annotation-update" 0)
+              (if-not (ru/has-permission session-id "content-update" 0)
                 ru/forbidden-page
-                (if-not (annotations/EXISTS? id)
+                (if-not (contents/EXISTS? id)
                   {:status 404
-                   :body {:message "annotation not found"}}
-                  (let [current-annotation (annotations/READ id)
-                        proposed-annotation (merge current-annotation body)
-                        same-name-annotation (first (annotations/READ-BY-IDS [(:collection-id proposed-annotation)
-                                                                              (:resource-id proposed-annotation)]))]
-                    ; If there is a collision and the collision is not with self (i.e. annotation being changed)
-                    (if (and (not (nil? same-name-annotation))
-                             (not (= (:id current-annotation)
-                                     (:id same-name-annotation))))
+                   :body {:message "content not found"}}
+                  (let [current-content (contents/READ id)
+                        proposed-content (merge current-content body)
+                        same-name-content (first (contents/READ-BY-IDS [(:collection-id proposed-content)
+                                                                              (:resource-id proposed-content)]))]
+                    ; If there is a collision and the collision is not with self (i.e. content being changed)
+                    (if (and (not (nil? same-name-content))
+                             (not (= (:id current-content)
+                                     (:id same-name-content))))
                       {:status 500
-                       :body {:message "unable to update annotation, annotation between resource and collection likely already exists"}}
-                      (if-not (collections/EXISTS? (:collection-id proposed-annotation))
+                       :body {:message "unable to update content, content between resource and collection likely already exists"}}
+                      (if-not (collections/EXISTS? (:collection-id proposed-content))
                         {:status 500
                          :body {:message "collection not found"}}
-                        (if-not (resources/EXISTS? (:resource-id proposed-annotation))
+                        (if-not (resources/EXISTS? (:resource-id proposed-content))
                           {:status 500
                            :body {:message "resource not found"}}
-                          (let [result (annotations/UPDATE id body)]
+                          (let [result (contents/UPDATE id body)]
                             {:status 200
-                             :body {:message (str result " annotations updated")}}))))))))})
+                             :body {:message (str result " contents updated")}}))))))))})
 
-(def annotation-delete ;; Non-functional
-  {:summary "Deletes the specified annotation"
+(def content-delete ;; Non-functional
+  {:summary "Deletes the specified content"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
    :responses {200 {:body {:message string?}}
                404 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
-              (if-not (ru/has-permission session-id "annotation-delete" 0)
+              (if-not (ru/has-permission session-id "content-delete" 0)
                 ru/forbidden-page
-                (let [result (annotations/DELETE id)]
+                (let [result (contents/DELETE id)]
                   (if (nil? result)
                     {:status 404
-                     :body {:message "annotation not found"}}
+                     :body {:message "content not found"}}
                     {:status 200
-                     :body {:message (str result " annotations deleted")}}))))})
+                     :body {:message (str result " contents deleted")}}))))})
 
-(def annotation-get-by-collection-and-resource
-  {:summary "Gets annotations by collection and resource ids"
+(def content-get-by-collection-and-resource
+  {:summary "Gets contents by collection and resource ids"
    :parameters {:header {:session-id uuid?}
                 :body {:collection-id uuid?
                        :resource-id uuid?}}
-   :responses {200 {:body [models/annotation]}
+   :responses {200 {:body [models/content]}
                404 {:body {:message string?}}
                500 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header :keys [body]} :parameters}]
-              (if-not (ru/has-permission session-id "annotation-create" 0)
+              (if-not (ru/has-permission session-id "content-create" 0)
                 ru/forbidden-page
                 (if-not (collections/EXISTS? (:collection-id body))
                   {:status 500
@@ -115,10 +115,10 @@
                   (if-not (resources/EXISTS? (:resource-id body))
                     {:status 500
                      :body {:message "resource not found"}}
-                    (let [res (annotations/READ-BY-IDS [(:collection-id body)
+                    (let [res (contents/READ-BY-IDS [(:collection-id body)
                                                         (:resource-id body)])]
                       (if (= 0 (count res))
                         {:status 404
-                         :body {:message "annotation not found"}}
+                         :body {:message "content not found"}}
                         {:status 200
                          :body res}))))))})

@@ -168,49 +168,49 @@
   ([id]
    (resource-id-add-view SESSION-ID-BYPASS id)))
 
-(defn annotation-post
-  "Create a annotation via app's post request"
-  ([session-id annotation-without-id]
-   (app (-> (request :post "/api/annotation")
-            (json-body annotation-without-id)
+(defn content-post
+  "Create a content via app's post request"
+  ([session-id content-without-id]
+   (app (-> (request :post "/api/content")
+            (json-body content-without-id)
             (header :session-id session-id))))
-  ([annotation-without-id]
-   (annotation-post SESSION-ID-BYPASS annotation-without-id)))
+  ([content-without-id]
+   (content-post SESSION-ID-BYPASS content-without-id)))
 
-(defn annotation-id-get
-  "Retrieves annotation via app's get (id) request"
+(defn content-id-get
+  "Retrieves content via app's get (id) request"
   ([session-id id]
-   (app (-> (request :get (str "/api/annotation/" id))
+   (app (-> (request :get (str "/api/content/" id))
             (header :session-id session-id))))
   ([id]
-   (annotation-id-get SESSION-ID-BYPASS id)))
+   (content-id-get SESSION-ID-BYPASS id)))
 
-(defn annotation-id-patch
-  "Updates annotation via app's patch (id) request"
-  ([session-id id new-annotation]
-   (app (-> (request :patch (str "/api/annotation/" id))
-            (json-body new-annotation)
+(defn content-id-patch
+  "Updates content via app's patch (id) request"
+  ([session-id id new-content]
+   (app (-> (request :patch (str "/api/content/" id))
+            (json-body new-content)
             (header :session-id session-id))))
-  ([id new-annotation]
-   (annotation-id-patch SESSION-ID-BYPASS id new-annotation)))
+  ([id new-content]
+   (content-id-patch SESSION-ID-BYPASS id new-content)))
 
-(defn annotation-id-delete
-  "Deletes annotation via app's delete (id) request"
+(defn content-id-delete
+  "Deletes content via app's delete (id) request"
   ([session-id id]
-   (app (-> (request :delete (str "/api/annotation/" id))
+   (app (-> (request :delete (str "/api/content/" id))
             (header :session-id session-id))))
   ([id]
-   (annotation-id-delete SESSION-ID-BYPASS id)))
+   (content-id-delete SESSION-ID-BYPASS id)))
 
-(defn annotation-get-by-ids
-  "Reads all annotations by collection and resource ids"
+(defn content-get-by-ids
+  "Reads all contents by collection and resource ids"
   ([session-id collection-id resource-id]
-   (app (-> (request :get "/api/annotation")
+   (app (-> (request :get "/api/content")
             (header :session-id session-id)
             (json-body {:collection-id collection-id
                         :resource-id resource-id}))))
   ([collection-id resource-id]
-   (annotation-get-by-ids SESSION-ID-BYPASS collection-id resource-id)))
+   (content-get-by-ids SESSION-ID-BYPASS collection-id resource-id)))
 
 (defn course-post
   "Create a course via app's post request"

@@ -7,7 +7,7 @@
    [y-video-back.db.users :as users]
    [y-video-back.db.resources :as resources]
    [y-video-back.db.courses :as courses]
-   [y-video-back.db.annotations :as annotations]
+   [y-video-back.db.contents :as contents]
    [y-video-back.models :as models]
    [y-video-back.model-specs :as sp]
    [y-video-back.routes.service-handlers.utils :as utils]
@@ -169,10 +169,10 @@
                   (if (not (resources/EXISTS? (:resource-id body)))
                     {:status 500
                      :body {:message "resource not found"}}
-                    (if (annotations/EXISTS-COLL-CONT? id (:resource-id body))
+                    (if (contents/EXISTS-COLL-CONT? id (:resource-id body))
                       {:status 500
                        :body {:message "resource already connected to collection"}}
-                      (let [result (utils/get-id (annotations/CREATE {:collection-id id
+                      (let [result (utils/get-id (contents/CREATE {:collection-id id
                                                                       :resource-id (:resource-id body)
                                                                       :metadata ""}))]
                         (if (= nil result)
@@ -198,10 +198,10 @@
                   (if (not (resources/EXISTS? (:resource-id body)))
                     {:status 500
                      :body {:message "resource not found"}}
-                    (if-not (annotations/EXISTS-COLL-CONT? id (:resource-id body))
+                    (if-not (contents/EXISTS-COLL-CONT? id (:resource-id body))
                       {:status 500
                        :body {:message "resource not connected to collection"}}
-                      (let [result (annotations/DELETE-BY-IDS [id (:resource-id body)])]
+                      (let [result (contents/DELETE-BY-IDS [id (:resource-id body)])]
                         (if (= 0 result)
                           {:status 404
                            :body {:message "unable to remove resource"}}
@@ -274,7 +274,7 @@
                 (if (not (collections/EXISTS? id))
                   {:status 404
                    :body {:message "collection not found"}}
-                  (let [resource-collections-result (annotations/READ-CONTENTS-BY-COLLECTION id)]
+                  (let [resource-collections-result (contents/READ-CONTENTS-BY-COLLECTION id)]
                     (let [resource-result (map #(utils/remove-db-only %) resource-collections-result)]
                       {:status 200
                        :body resource-result})))))})

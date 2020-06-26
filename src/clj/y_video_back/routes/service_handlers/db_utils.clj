@@ -4,7 +4,7 @@
    ;[y-video-back.model-specs :as sp]
    ;[y-video-back.routes.service-handlers.utils :as utils]
    ;[y-video-back.routes.service-handlers.role-utils :as ru]
-   [y-video-back.db.annotations :as annotations]
+   [y-video-back.db.contents :as contents]
    [y-video-back.db.users-by-collection :as users-by-collection]
    [y-video-back.db.collections-courses-assoc :as collection-courses-assoc]
    [y-video-back.db.collections :as collections]
@@ -43,7 +43,7 @@
                                             (collection-courses-assoc/READ-COLLECTIONS-BY-COURSE arg1)))
                                        all-courses))))
                                all-dir-collections)]
-         (let [all-annotations (clojure.core/flatten
+         (let [all-contents (clojure.core/flatten
                                  (map
                                    (fn [arg1]
                                      (map
@@ -69,7 +69,7 @@
                                  (users/READ-WORDS user-id))]
                  (-> (set [user-id])
                      (into all-collections)
-                     (into all-annotations)
+                     (into all-contents)
                      (into all-courses)
                      (into all-resources)
                      (into all-files)

@@ -10,7 +10,7 @@
       [y-video-back.utils.model-generator :as g]
       [y-video-back.utils.route-proxy :as rp]
       [y-video-back.db.core :refer [*db*] :as db]
-      [y-video-back.db.annotations :as annotations]
+      [y-video-back.db.contents :as contents]
       [y-video-back.db.users-by-collection :as users-by-collection]
       [y-video-back.db.collections-courses-assoc :as collection-courses-assoc]
       [y-video-back.db.collections :as collections]

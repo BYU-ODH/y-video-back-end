@@ -6,7 +6,7 @@
    [y-video-back.routes.service-handlers.resource-handlers :as resources]
    [y-video-back.routes.service-handlers.course-handlers :as courses]
    [y-video-back.routes.service-handlers.file-handlers :as files]
-   [y-video-back.routes.service-handlers.annotation-handlers :as annotations]
+   [y-video-back.routes.service-handlers.content-handlers :as contents]
    [y-video-back.routes.service-handlers.word-handlers :as words]
    [y-video-back.routes.service-handlers.admin-handlers :as admin]))
 
@@ -77,11 +77,11 @@
 (def word-delete words/word-delete)
 
 ; Annotation handlers
-(def annotation-create annotations/annotation-create)
-(def annotation-get-by-id annotations/annotation-get-by-id)
-(def annotation-update annotations/annotation-update)
-(def annotation-delete annotations/annotation-delete)
-(def annotation-get-by-collection-and-resource annotations/annotation-get-by-collection-and-resource)
+(def content-create contents/content-create)
+(def content-get-by-id contents/content-get-by-id)
+(def content-update contents/content-update)
+(def content-delete contents/content-delete)
+(def content-get-by-collection-and-resource contents/content-get-by-collection-and-resource)
 
 ; Admin handlers
 (def search-by-user admin/search-by-user)

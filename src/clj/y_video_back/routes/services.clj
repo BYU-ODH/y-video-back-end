@@ -217,16 +217,16 @@
      ["/{id}/collections"
       {:get service-handlers/resource-get-all-collections}]]
 
-    ["/annotation"
-     {:swagger {:tags ["annotation"]}}
+    ["/content"
+     {:swagger {:tags ["content"]}}
      [""
-      {:post service-handlers/annotation-create
-       :get service-handlers/annotation-get-by-collection-and-resource}]
+      {:post service-handlers/content-create
+       :get service-handlers/content-get-by-collection-and-resource}]
 
      ["/{id}"
-      {:get service-handlers/annotation-get-by-id
-       :patch service-handlers/annotation-update
-       :delete service-handlers/annotation-delete}]]
+      {:get service-handlers/content-get-by-id
+       :patch service-handlers/content-update
+       :delete service-handlers/content-delete}]]
 
     ["/file"
      {:swagger {:tags ["file"]}}

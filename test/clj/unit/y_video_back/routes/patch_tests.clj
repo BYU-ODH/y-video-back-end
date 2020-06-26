@@ -16,7 +16,7 @@
     [y-video-back.utils.model-generator :as g]
     [y-video-back.utils.route-proxy :as rp]
     [y-video-back.db.core :refer [*db*] :as db]
-    [y-video-back.db.annotations :as annotations]
+    [y-video-back.db.contents :as contents]
     [y-video-back.db.users-by-collection :as users-by-collection]
     [y-video-back.db.collections-courses-assoc :as collection-courses-assoc]
     [y-video-back.db.collections :as collections]
@@ -67,9 +67,9 @@
   (def test-word-one (ut/under-to-hyphen (words/CREATE (g/get-random-word-without-id (:id test-user-one)))))
   (def test-word-two (ut/under-to-hyphen (words/CREATE (g/get-random-word-without-id (:id test-user-two)))))
   (def test-word-thr (ut/under-to-hyphen (words/CREATE (g/get-random-word-without-id (:id test-user-thr)))))
-  (def test-annotation-one (ut/under-to-hyphen (annotations/CREATE (g/get-random-annotation-without-id (:id test-coll-one) (:id test-cont-one)))))
-  (def test-annotation-two (ut/under-to-hyphen (annotations/CREATE (g/get-random-annotation-without-id (:id test-coll-two) (:id test-cont-two)))))
-  (def test-annotation-thr (ut/under-to-hyphen (annotations/CREATE (g/get-random-annotation-without-id (:id test-coll-thr) (:id test-cont-thr)))))
+  (def test-content-one (ut/under-to-hyphen (contents/CREATE (g/get-random-content-without-id (:id test-coll-one) (:id test-cont-one)))))
+  (def test-content-two (ut/under-to-hyphen (contents/CREATE (g/get-random-content-without-id (:id test-coll-two) (:id test-cont-two)))))
+  (def test-content-thr (ut/under-to-hyphen (contents/CREATE (g/get-random-content-without-id (:id test-coll-thr) (:id test-cont-thr)))))
   (mount.core/start #'y-video-back.handler/app))
 
 (deftest test-user-patch
@@ -407,58 +407,58 @@
       (is (= (ut/remove-db-only (merge new-word {:id id}))
              (ut/remove-db-only (words/READ id)))))))
 
-(deftest test-annotation-patch
-  (testing "annotation fields one at a time"
-    (let [new-annotation (g/get-random-annotation-without-id (:id test-coll-one) (:id test-cont-one))
-          id (:id test-annotation-one)]
-      (is (= (ut/remove-db-only test-annotation-one) (ut/remove-db-only (annotations/READ id))))
-      (doseq [val (seq (dissoc new-annotation :resource-id :collection-id))]
+(deftest test-content-patch
+  (testing "content fields one at a time"
+    (let [new-content (g/get-random-content-without-id (:id test-coll-one) (:id test-cont-one))
+          id (:id test-content-one)]
+      (is (= (ut/remove-db-only test-content-one) (ut/remove-db-only (contents/READ id))))
+      (doseq [val (seq (dissoc new-content :resource-id :collection-id))]
              [(do
-                (let [res (rp/annotation-id-patch id {(get val 0) (get val 1)})]
+                (let [res (rp/content-id-patch id {(get val 0) (get val 1)})]
                   (is (= 200 (:status res))))
-                (is (= ((get val 0) new-annotation) ((get val 0) (annotations/READ id)))))])
-      (is (= (into new-annotation {:id id}) (ut/remove-db-only (annotations/READ id))))))
-  (testing "annotation multiple fields at once"
-    (let [new-annotation (g/get-random-annotation-without-id (:id test-coll-two) (:id test-cont-two))
-          id (:id test-annotation-two)]
-      (is (= (ut/remove-db-only test-annotation-two) (ut/remove-db-only (annotations/READ id))))
-      (let [fields-to-change (ut/random-submap new-annotation)]
-        (let [res (rp/annotation-id-patch id fields-to-change)]
+                (is (= ((get val 0) new-content) ((get val 0) (contents/READ id)))))])
+      (is (= (into new-content {:id id}) (ut/remove-db-only (contents/READ id))))))
+  (testing "content multiple fields at once"
+    (let [new-content (g/get-random-content-without-id (:id test-coll-two) (:id test-cont-two))
+          id (:id test-content-two)]
+      (is (= (ut/remove-db-only test-content-two) (ut/remove-db-only (contents/READ id))))
+      (let [fields-to-change (ut/random-submap new-content)]
+        (let [res (rp/content-id-patch id fields-to-change)]
           (is (= 200 (:status res))))
-        (is (= (ut/remove-db-only (merge test-annotation-two fields-to-change))
-               (ut/remove-db-only (annotations/READ id)))))))
-  (testing "annotation all fields at once"
-    (let [new-annotation (g/get-random-annotation-without-id (:id test-coll-thr) (:id test-cont-thr))
-          id (:id test-annotation-thr)]
-      (is (= (ut/remove-db-only test-annotation-thr) (ut/remove-db-only (annotations/READ id))))
-      (let [res (rp/annotation-id-patch id new-annotation)]
+        (is (= (ut/remove-db-only (merge test-content-two fields-to-change))
+               (ut/remove-db-only (contents/READ id)))))))
+  (testing "content all fields at once"
+    (let [new-content (g/get-random-content-without-id (:id test-coll-thr) (:id test-cont-thr))
+          id (:id test-content-thr)]
+      (is (= (ut/remove-db-only test-content-thr) (ut/remove-db-only (contents/READ id))))
+      (let [res (rp/content-id-patch id new-content)]
         (is (= 200 (:status res))))
-      (is (= (ut/remove-db-only (merge test-annotation-thr new-annotation))
-             (ut/remove-db-only (annotations/READ id))))))
-  (testing "annotation fields one at a time"
-    (let [new-annotation (g/get-random-annotation-without-id (:id (collections/CREATE (g/get-random-collection-without-id (:id test-user-one)))) (:id test-cont-thr))
-          add-ann (annotations/CREATE new-annotation)
+      (is (= (ut/remove-db-only (merge test-content-thr new-content))
+             (ut/remove-db-only (contents/READ id))))))
+  (testing "content fields one at a time"
+    (let [new-content (g/get-random-content-without-id (:id (collections/CREATE (g/get-random-collection-without-id (:id test-user-one)))) (:id test-cont-thr))
+          add-ann (contents/CREATE new-content)
           id (:id add-ann)]
-      (doseq [val (seq (dissoc new-annotation :resource-id :collection-id))]
+      (doseq [val (seq (dissoc new-content :resource-id :collection-id))]
              [(do
-                (let [res (rp/annotation-id-patch id {(get val 0) (get val 1)})]
+                (let [res (rp/content-id-patch id {(get val 0) (get val 1)})]
                   (is (= 200 (:status res))))
-                (is (= ((get val 0) new-annotation) ((get val 0) (annotations/READ id)))))])
-      (is (= (into new-annotation {:id id}) (ut/remove-db-only (annotations/READ id))))))
-  (testing "annotation multiple fields at once"
-    (let [new-annotation (g/get-random-annotation-without-id (:id (collections/CREATE (g/get-random-collection-without-id (:id test-user-one)))) (:id test-cont-thr))
-          add-ann (annotations/CREATE new-annotation)
+                (is (= ((get val 0) new-content) ((get val 0) (contents/READ id)))))])
+      (is (= (into new-content {:id id}) (ut/remove-db-only (contents/READ id))))))
+  (testing "content multiple fields at once"
+    (let [new-content (g/get-random-content-without-id (:id (collections/CREATE (g/get-random-collection-without-id (:id test-user-one)))) (:id test-cont-thr))
+          add-ann (contents/CREATE new-content)
           id (:id add-ann)]
-      (let [fields-to-change (ut/random-submap new-annotation)]
-        (let [res (rp/annotation-id-patch id fields-to-change)]
+      (let [fields-to-change (ut/random-submap new-content)]
+        (let [res (rp/content-id-patch id fields-to-change)]
           (is (= 200 (:status res))))
-        (is (= (ut/remove-db-only (merge new-annotation fields-to-change {:id id}))
-               (ut/remove-db-only (annotations/READ id)))))))
-  (testing "annotation all fields at once"
-    (let [new-annotation (g/get-random-annotation-without-id (:id (collections/CREATE (g/get-random-collection-without-id (:id test-user-one)))) (:id test-cont-thr))
-          add-ann (annotations/CREATE new-annotation)
+        (is (= (ut/remove-db-only (merge new-content fields-to-change {:id id}))
+               (ut/remove-db-only (contents/READ id)))))))
+  (testing "content all fields at once"
+    (let [new-content (g/get-random-content-without-id (:id (collections/CREATE (g/get-random-collection-without-id (:id test-user-one)))) (:id test-cont-thr))
+          add-ann (contents/CREATE new-content)
           id (:id add-ann)]
-      (let [res (rp/annotation-id-patch id new-annotation)]
+      (let [res (rp/content-id-patch id new-content)]
         (is (= 200 (:status res))))
-      (is (= (ut/remove-db-only (merge new-annotation {:id id}))
-             (ut/remove-db-only (annotations/READ id)))))))
+      (is (= (ut/remove-db-only (merge new-content {:id id}))
+             (ut/remove-db-only (contents/READ id)))))))

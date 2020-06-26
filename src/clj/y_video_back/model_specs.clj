@@ -66,13 +66,13 @@
                    :resource/full-video
                    :resource/thumbnail]))
 
-(s/def :annotation/metadata string?)
-(s/def :annotation/resource-id uuid?)
-(s/def :annotation/collection-id uuid?)
-(s/def ::annotation
-  (s/keys :opt-un [:annotation/metadata
-                   :annotation/resource-id
-                   :annotation/collection-id]))
+(s/def :content/metadata string?)
+(s/def :content/resource-id uuid?)
+(s/def :content/collection-id uuid?)
+(s/def ::content
+  (s/keys :opt-un [:content/metadata
+                   :content/resource-id
+                   :content/collection-id]))
 
 (s/def :file/filepath string?)
 (s/def :file/mime string?)

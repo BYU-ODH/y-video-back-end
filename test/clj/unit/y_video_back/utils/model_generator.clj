@@ -115,11 +115,11 @@
   ([resource-id file-id]
    (into (get-random-model models/resource-files-assoc-without-any-ids) {:resource-id resource-id :file-id file-id})))
 
-(defn get-random-annotation-without-id
+(defn get-random-content-without-id
   ([]
-   (get-random-model models/annotation-without-id))
+   (get-random-model models/content-without-id))
   ([collection-id resource-id]
-   (into (get-random-model models/annotation-without-any-ids) {:collection-id collection-id :resource-id resource-id})))
+   (into (get-random-model models/content-without-any-ids) {:collection-id collection-id :resource-id resource-id})))
 
 ; - - - - - - - - - INVALID MODEL GENERATORS - - - - - - - - ;
 

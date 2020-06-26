@@ -8,7 +8,7 @@
 (def DELETE (partial db/mark-deleted :collections))
 (def CLONE (partial db/CLONE :collections))
 (def PERMANENT-DELETE (partial db/DELETE :collections))
-(def READ-ANNOTATIONS (partial db/read-all-where :annotations :collection-id))
+(def READ-ANNOTATIONS (partial db/read-all-where :contents :collection-id))
 (def READ-ALL-BY-NAME-OWNER (partial db/read-where-and :collections-undeleted [:collection-name :owner]))
 (defn EXISTS? [id] (not (nil? (db/READ :collections-undeleted id))))
 (defn EXISTS-NAME-OWNER? [name owner] (not (empty? (db/read-where-and :collections-undeleted [:collection-name :owner] [name owner]))))
