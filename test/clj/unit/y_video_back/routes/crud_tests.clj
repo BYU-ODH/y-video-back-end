@@ -11,12 +11,11 @@
       [y-video-back.utils.route-proxy :as rp]
       [y-video-back.db.core :refer [*db*] :as db]
       [y-video-back.db.annotations :as annotations]
-      [y-video-back.db.collections-contents-assoc :as collection-contents-assoc]
       [y-video-back.db.users-by-collection :as users-by-collection]
       [y-video-back.db.collections-courses-assoc :as collection-courses-assoc]
       [y-video-back.db.collections :as collections]
-      [y-video-back.db.content-files-assoc :as content-files-assoc]
-      [y-video-back.db.contents :as contents]
+      [y-video-back.db.resource-files-assoc :as resource-files-assoc]
+      [y-video-back.db.resources :as resources]
       [y-video-back.db.courses :as courses]
       [y-video-back.db.files :as files]
       [y-video-back.db.user-collections-assoc :as user-collections-assoc]
@@ -50,9 +49,9 @@
   (def test-user-coll-thr (ut/under-to-hyphen (user-collections-assoc/CREATE {:user-id (:id test-user-thr)
                                                                               :collection-id (:id test-coll-thr)
                                                                               :account-role 0})))
-  (def test-cont-one (ut/under-to-hyphen (contents/CREATE (g/get-random-content-without-id))))
-  (def test-cont-two (ut/under-to-hyphen (contents/CREATE (g/get-random-content-without-id))))
-  (def test-cont-thr (ut/under-to-hyphen (contents/CREATE (g/get-random-content-without-id))))
+  (def test-cont-one (ut/under-to-hyphen (resources/CREATE (g/get-random-resource-without-id))))
+  (def test-cont-two (ut/under-to-hyphen (resources/CREATE (g/get-random-resource-without-id))))
+  (def test-cont-thr (ut/under-to-hyphen (resources/CREATE (g/get-random-resource-without-id))))
   (def test-crse-one (ut/under-to-hyphen (courses/CREATE (g/get-random-course-without-id))))
   (def test-crse-two (ut/under-to-hyphen (courses/CREATE (g/get-random-course-without-id))))
   (def test-crse-thr (ut/under-to-hyphen (courses/CREATE (g/get-random-course-without-id))))
@@ -146,60 +145,60 @@
 
 (deftest test-cont
   (testing "cont CREATE"
-    (let [new-cont (g/get-random-content-without-id)]
-      (let [res (rp/content-post new-cont)]
+    (let [new-cont (g/get-random-resource-without-id)]
+      (let [res (rp/resource-post new-cont)]
         (is (= 200 (:status res)))
         (let [id (ut/to-uuid (:id (m/decode-response-body res)))]
-          (is (= (into new-cont {:id id}) (ut/remove-db-only (contents/READ id))))))))
-  (testing "cont CREATE duplicate content"
-    (let [new-cont (g/get-random-content-without-id)]
-      (let [res (rp/content-post new-cont)
-            res-dup (rp/content-post new-cont)]
+          (is (= (into new-cont {:id id}) (ut/remove-db-only (resources/READ id))))))))
+  (testing "cont CREATE duplicate resource"
+    (let [new-cont (g/get-random-resource-without-id)]
+      (let [res (rp/resource-post new-cont)
+            res-dup (rp/resource-post new-cont)]
         (is (= 200 (:status res)))
         (let [id (ut/to-uuid (:id (m/decode-response-body res)))]
-          (is (= (into new-cont {:id id}) (ut/remove-db-only (contents/READ id)))))
+          (is (= (into new-cont {:id id}) (ut/remove-db-only (resources/READ id)))))
         (is (= 200 (:status res-dup)))
         (let [id (ut/to-uuid (:id (m/decode-response-body res-dup)))]
-          (is (= (into new-cont {:id id}) (ut/remove-db-only (contents/READ id))))))))
+          (is (= (into new-cont {:id id}) (ut/remove-db-only (resources/READ id))))))))
   (testing "cont READ"
-    (let [res (rp/content-id-get (:id test-cont-one))]
+    (let [res (rp/resource-id-get (:id test-cont-one))]
       (is (= 200 (:status res)))
       (is (= (update (ut/remove-db-only test-cont-one) :id str)
              (ut/remove-db-only (m/decode-response-body res))))))
   (testing "cont UPDATE"
-    (let [new-cont (g/get-random-content-without-id)]
-      (let [res (rp/content-id-patch (:id test-cont-one) new-cont)]
+    (let [new-cont (g/get-random-resource-without-id)]
+      (let [res (rp/resource-id-patch (:id test-cont-one) new-cont)]
         (is (= 200 (:status res)))
-        (is (= (into new-cont {:id (:id test-cont-one)}) (ut/remove-db-only (contents/READ (:id test-cont-one))))))))
-  (testing "update content to taken name (all fields)"
-    (let [cont-one (g/get-random-content-without-id)
-          cont-two (g/get-random-content-without-id)
-          cont-one-res (contents/CREATE cont-one)
-          cont-two-res (contents/CREATE cont-two)
-          res (rp/content-id-patch (:id cont-two-res) cont-one)]
+        (is (= (into new-cont {:id (:id test-cont-one)}) (ut/remove-db-only (resources/READ (:id test-cont-one))))))))
+  (testing "update resource to taken name (all fields)"
+    (let [cont-one (g/get-random-resource-without-id)
+          cont-two (g/get-random-resource-without-id)
+          cont-one-res (resources/CREATE cont-one)
+          cont-two-res (resources/CREATE cont-two)
+          res (rp/resource-id-patch (:id cont-two-res) cont-one)]
       (is (= 200 (:status res)))
-      (is (= (into cont-one {:id (:id cont-two-res)}) (ut/remove-db-only (contents/READ (:id cont-two-res)))))))
-  (testing "update content to taken name (name only)"
-    (let [cont-one (g/get-random-content-without-id)
-          cont-two (g/get-random-content-without-id)
-          cont-one-res (contents/CREATE cont-one)
-          cont-two-res (contents/CREATE cont-two)
-          res (rp/content-id-patch (:id cont-two-res) {:content-name (:content-name cont-one)})]
+      (is (= (into cont-one {:id (:id cont-two-res)}) (ut/remove-db-only (resources/READ (:id cont-two-res)))))))
+  (testing "update resource to taken name (name only)"
+    (let [cont-one (g/get-random-resource-without-id)
+          cont-two (g/get-random-resource-without-id)
+          cont-one-res (resources/CREATE cont-one)
+          cont-two-res (resources/CREATE cont-two)
+          res (rp/resource-id-patch (:id cont-two-res) {:resource-name (:resource-name cont-one)})]
       (is (= 200 (:status res)))
       (is (= (-> cont-two
                (into {:id (:id cont-two-res)})
-               (dissoc :content-name)
-               (into {:content-name (:content-name cont-one)}))
-             (ut/remove-db-only (contents/READ (:id cont-two-res)))))))
+               (dissoc :resource-name)
+               (into {:resource-name (:resource-name cont-one)}))
+             (ut/remove-db-only (resources/READ (:id cont-two-res)))))))
   (testing "cont UPDATE to self"
-    (let [new-cont (g/get-random-content-without-id)]
-      (let [res (rp/content-id-patch (:id test-cont-one) new-cont)]
+    (let [new-cont (g/get-random-resource-without-id)]
+      (let [res (rp/resource-id-patch (:id test-cont-one) new-cont)]
         (is (= 200 (:status res)))
-        (is (= (into new-cont {:id (:id test-cont-one)}) (ut/remove-db-only (contents/READ (:id test-cont-one))))))))
+        (is (= (into new-cont {:id (:id test-cont-one)}) (ut/remove-db-only (resources/READ (:id test-cont-one))))))))
   (testing "cont DELETE"
-    (let [res (rp/content-id-delete (:id test-cont-two))]
+    (let [res (rp/resource-id-delete (:id test-cont-two))]
       (is (= 200 (:status res)))
-      (is (= nil (contents/READ (:id test-cont-two)))))))
+      (is (= nil (resources/READ (:id test-cont-two)))))))
 
 (deftest test-crse
   (testing "crse CREATE"
@@ -276,13 +275,13 @@
           (is (= (into new-annotation {:id id}) (ut/remove-db-only (annotations/READ id))))))))
   (testing "annotation read by ids"
     (let [res (rp/annotation-get-by-ids (:collection-id test-annotation-one)
-                                        (:content-id test-annotation-one))]
+                                        (:resource-id test-annotation-one))]
       (is (= 200 (:status res)))
       (is (= [(-> test-annotation-one
                   (ut/remove-db-only)
                   (update :id str)
                   (update :collection-id str)
-                  (update :content-id str))]
+                  (update :resource-id str))]
              (map ut/remove-db-only (m/decode-response-body res)))))
 
     (testing "annotation READ")
@@ -292,10 +291,10 @@
                  (ut/remove-db-only)
                  (update :id str)
                  (update :collection-id str)
-                 (update :content-id str))
+                 (update :resource-id str))
              (ut/remove-db-only (m/decode-response-body res))))))
   (testing "annotation UPDATE"
-    (let [new-annotation (g/get-random-annotation-without-id (:collection-id test-annotation-one) (:content-id test-annotation-one))]
+    (let [new-annotation (g/get-random-annotation-without-id (:collection-id test-annotation-one) (:resource-id test-annotation-one))]
       (let [res (rp/annotation-id-patch (:id test-annotation-one) new-annotation)]
         (is (= 200 (:status res)))
         (is (= (into new-annotation {:id (:id test-annotation-one)}) (ut/remove-db-only (annotations/READ (:id test-annotation-one))))))))

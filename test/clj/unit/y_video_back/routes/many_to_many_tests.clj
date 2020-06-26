@@ -17,12 +17,11 @@
       [y-video-back.utils.route-proxy :as rp]
       [y-video-back.db.core :refer [*db*] :as db]
       [y-video-back.db.annotations :as annotations]
-      [y-video-back.db.collections-contents-assoc :as collection-contents-assoc]
       [y-video-back.db.users-by-collection :as users-by-collection]
       [y-video-back.db.collections-courses-assoc :as collection-courses-assoc]
       [y-video-back.db.collections :as collections]
-      [y-video-back.db.content-files-assoc :as content-files-assoc]
-      [y-video-back.db.contents :as contents]
+      [y-video-back.db.resource-files-assoc :as resource-files-assoc]
+      [y-video-back.db.resources :as resources]
       [y-video-back.db.courses :as courses]
       [y-video-back.db.files :as files]
       [y-video-back.db.user-collections-assoc :as user-collections-assoc]
@@ -50,9 +49,9 @@
   (def test-coll-one (ut/under-to-hyphen (collections/CREATE (into (g/get-random-collection-without-id-or-owner) {:owner (:id test-user-one)}))))
   (def test-coll-two (ut/under-to-hyphen (collections/CREATE (into (g/get-random-collection-without-id-or-owner) {:owner (:id test-user-two)}))))
   (def test-coll-thr (ut/under-to-hyphen (collections/CREATE (into (g/get-random-collection-without-id-or-owner) {:owner (:id test-user-thr)}))))
-  (def test-cont-one (ut/under-to-hyphen (contents/CREATE (g/get-random-content-without-id))))
-  (def test-cont-two (ut/under-to-hyphen (contents/CREATE (g/get-random-content-without-id))))
-  (def test-cont-thr (ut/under-to-hyphen (contents/CREATE (g/get-random-content-without-id))))
+  (def test-cont-one (ut/under-to-hyphen (resources/CREATE (g/get-random-resource-without-id))))
+  (def test-cont-two (ut/under-to-hyphen (resources/CREATE (g/get-random-resource-without-id))))
+  (def test-cont-thr (ut/under-to-hyphen (resources/CREATE (g/get-random-resource-without-id))))
   (def test-crse-one (ut/under-to-hyphen (courses/CREATE (g/get-random-course-without-id))))
   (def test-crse-two (ut/under-to-hyphen (courses/CREATE (g/get-random-course-without-id))))
   (def test-crse-thr (ut/under-to-hyphen (courses/CREATE (g/get-random-course-without-id))))
@@ -94,11 +93,11 @@
   (def test-coll-crse-thr (ut/under-to-hyphen (collection-courses-assoc/CREATE {:collection-id (:id test-coll-thr)
                                                                                  :course-id (:id test-crse-thr)})))
 
-  (def test-cont-file-one (ut/under-to-hyphen (content-files-assoc/CREATE {:content-id (:id test-cont-one)
+  (def test-cont-file-one (ut/under-to-hyphen (resource-files-assoc/CREATE {:resource-id (:id test-cont-one)
                                                                            :file-id (:id test-file-one)})))
-  (def test-cont-file-two (ut/under-to-hyphen (content-files-assoc/CREATE {:content-id (:id test-cont-two)
+  (def test-cont-file-two (ut/under-to-hyphen (resource-files-assoc/CREATE {:resource-id (:id test-cont-two)
                                                                            :file-id (:id test-file-two)})))
-  (def test-cont-file-thr (ut/under-to-hyphen (content-files-assoc/CREATE {:content-id (:id test-cont-thr)
+  (def test-cont-file-thr (ut/under-to-hyphen (resource-files-assoc/CREATE {:resource-id (:id test-cont-thr)
                                                                            :file-id (:id test-file-thr)})))
 
 
@@ -207,35 +206,35 @@
 
 
 (deftest test-annotation
-  (testing "add content to collection (i.e. connect via annotation)"
-    (let [res (rp/collection-id-add-content (:id test-coll-one) (:id test-cont-two))]
+  (testing "add resource to collection (i.e. connect via annotation)"
+    (let [res (rp/collection-id-add-resource (:id test-coll-one) (:id test-cont-two))]
       (is (= 200 (:status res)))
       (let [ann-id (:id (m/decode-response-body res))]
         (is (= {:id ann-id
                 :collection-id (:id test-coll-one)
-                :content-id (:id test-cont-two)
+                :resource-id (:id test-cont-two)
                 :metadata ""}
                (-> (annotations/READ-BY-IDS [(:id test-coll-one) (:id test-cont-two)])
                    (first)
                    (ut/remove-db-only)
                    (update :id str)))))))
-  (testing "remove content from collection (i.e. delete annotation)"
-    (let [res (rp/collection-id-remove-content (:id test-coll-two) (:id test-cont-two))]
+  (testing "remove resource from collection (i.e. delete annotation)"
+    (let [res (rp/collection-id-remove-resource (:id test-coll-two) (:id test-cont-two))]
       (is (= 200 (:status res)))
       (is (= '()
              (annotations/READ-BY-IDS [(:id test-coll-two) (:id test-cont-two)])))))
-  (testing "find all collections by content"
-    (let [res (rp/content-id-collections (:id test-cont-thr))]
+  (testing "find all collections by resource"
+    (let [res (rp/resource-id-collections (:id test-cont-thr))]
       (is (= 200 (:status res)))
       (is (= (-> test-coll-thr
                  (update :id str)
                  (update :owner str)
-                 (into {:content-id (str (:id test-cont-thr))})
+                 (into {:resource-id (str (:id test-cont-thr))})
                  (ut/remove-db-only)
                  (list))
              (map ut/remove-db-only (m/decode-response-body res))))))
-  (testing "find all contents by collection"
-    (let [res (rp/collection-id-contents (:id test-coll-thr))]
+  (testing "find all resources by collection"
+    (let [res (rp/collection-id-resources (:id test-coll-thr))]
       (is (= 200 (:status res)))
       (is (= (-> test-cont-thr
                  (update :id str)
@@ -278,20 +277,20 @@
              (map ut/remove-db-only (m/decode-response-body res)))))))
 
 (deftest test-cont-file-assoc
-  (testing "connect content and file"
-    (let [new-content-file-assoc (g/get-random-content-files-assoc-without-id (:id test-cont-one) (:id test-file-two))]
-      (let [res (rp/content-id-add-file (:content-id new-content-file-assoc) (:file-id new-content-file-assoc))]
+  (testing "connect resource and file"
+    (let [new-resource-file-assoc (g/get-random-resource-files-assoc-without-id (:id test-cont-one) (:id test-file-two))]
+      (let [res (rp/resource-id-add-file (:resource-id new-resource-file-assoc) (:file-id new-resource-file-assoc))]
         (is (= 200 (:status res)))
         (let [id (ut/to-uuid (:id (m/decode-response-body res)))]
-          (is (= (list (into new-content-file-assoc {:id id}))
-                 (map ut/remove-db-only (content-files-assoc/READ-BY-IDS [(:content-id new-content-file-assoc) (:file-id new-content-file-assoc)])))))))
-    (testing "disconnect content and file")
-    (let [res (rp/content-id-remove-file (:id test-cont-one) (:id test-file-one))]
+          (is (= (list (into new-resource-file-assoc {:id id}))
+                 (map ut/remove-db-only (resource-files-assoc/READ-BY-IDS [(:resource-id new-resource-file-assoc) (:file-id new-resource-file-assoc)])))))))
+    (testing "disconnect resource and file")
+    (let [res (rp/resource-id-remove-file (:id test-cont-one) (:id test-file-one))]
       (is (= 200 (:status res)))
       (is (= '()
-             (content-files-assoc/READ-BY-IDS [(:id test-cont-one) (:id test-file-one)])))))
-  (testing "find all contents by file"
-    (let [res (rp/file-id-contents (:id test-file-thr))]
+             (resource-files-assoc/READ-BY-IDS [(:id test-cont-one) (:id test-file-one)])))))
+  (testing "find all resources by file"
+    (let [res (rp/file-id-resources (:id test-file-thr))]
       (is (= 200 (:status res)))
       (is (= (-> test-cont-thr
                  (update :id str)
@@ -299,12 +298,12 @@
                  (ut/remove-db-only)
                  (list))
              (map ut/remove-db-only (m/decode-response-body res))))))
-  (testing "find all files by content"
-    (let [res (rp/content-id-files (:id test-cont-thr))]
+  (testing "find all files by resource"
+    (let [res (rp/resource-id-files (:id test-cont-thr))]
       (is (= 200 (:status res)))
       (is (= (-> test-file-thr
                  (update :id str)
-                 (into {:content-id (str (:id test-cont-thr))})
+                 (into {:resource-id (str (:id test-cont-thr))})
                  (ut/remove-db-only)
                  (list))
              (map ut/remove-db-only (m/decode-response-body res)))))))

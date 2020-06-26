@@ -15,8 +15,8 @@
     [y-video-back.db.users-by-collection :as users-by-collection]
     [y-video-back.db.collections-courses-assoc :as collection-courses-assoc]
     [y-video-back.db.collections :as collections]
-    [y-video-back.db.content-files-assoc :as content-files-assoc]
-    [y-video-back.db.contents :as contents]
+    [y-video-back.db.resource-files-assoc :as resource-files-assoc]
+    [y-video-back.db.resources :as resources]
     [y-video-back.db.courses :as courses]
     [y-video-back.db.files :as files]
     [y-video-back.db.user-collections-assoc :as user-collections-assoc]
@@ -75,7 +75,7 @@
                                      :username "s3"}))
     (def test-coll-one (ut/under-to-hyphen (collections/CREATE (g/get-random-collection-without-id))))
     (def test-crse-one (ut/under-to-hyphen (courses/CREATE (g/get-random-course-without-id))))
-    (def test-cont-one (ut/under-to-hyphen (contents/CREATE (g/get-random-content-without-id))))
+    (def test-cont-one (ut/under-to-hyphen (resources/CREATE (g/get-random-resource-without-id))))
     (def test-file-one (ut/under-to-hyphen (files/CREATE (g/get-random-file-without-id))))
     (def test-user-crse-one (ut/under-to-hyphen (user-courses-assoc/CREATE {:user-id (:id user-stud-stud)
                                                                             :course-id (:id test-crse-one)
@@ -91,10 +91,10 @@
                                                                                 :account-role 1}))) ; TA for collection
     (def test-coll-crse-one (ut/under-to-hyphen (collection-courses-assoc/CREATE {:collection-id (:id test-coll-one)
                                                                                   :course-id (:id test-crse-one)})))
-    (def test-coll-cont-one (ut/under-to-hyphen (collection-contents-assoc/CREATE {:collection-id (:id test-coll-one)
-                                                                                   :content-id (:id test-cont-one)})))
-    (def test-cont-file-one (ut/under-to-hyphen (content-files-assoc/CREATE {:content-id (:id test-cont-one)
-                                                                             :file-id (:id test-file-one)})))
+    (def test-coll-cont-one (ut/under-to-hyphen (collection-contents-assoc/CREATE {:collection-id (:id test-coll-one)}
+                                                                                   :resource-id (:id test-cont-one))))
+    (def test-cont-file-one (ut/under-to-hyphen (resource-files-assoc/CREATE {:resource-id (:id test-cont-one)}
+                                                                             :file-id (:id test-file-one))))
     (mount.core/start #'y-video-back.handler/app))
 
   ; (no|with) connection -> (not) connected via many-to-many table

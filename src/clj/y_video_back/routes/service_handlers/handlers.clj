@@ -3,7 +3,7 @@
    [y-video-back.routes.service-handlers.misc-handlers :as miscs]
    [y-video-back.routes.service-handlers.user-handlers :as users]
    [y-video-back.routes.service-handlers.collection-handlers :as collections]
-   [y-video-back.routes.service-handlers.content-handlers :as contents]
+   [y-video-back.routes.service-handlers.resource-handlers :as resources]
    [y-video-back.routes.service-handlers.course-handlers :as courses]
    [y-video-back.routes.service-handlers.file-handlers :as files]
    [y-video-back.routes.service-handlers.annotation-handlers :as annotations]
@@ -34,31 +34,31 @@
 (def collection-delete collections/collection-delete)
 (def collection-add-user collections/collection-add-user)
 (def collection-remove-user collections/collection-remove-user)
-(def collection-add-content collections/collection-add-content)
-(def collection-remove-content collections/collection-remove-content)
+(def collection-add-resource collections/collection-add-resource)
+(def collection-remove-resource collections/collection-remove-resource)
 (def collection-add-course collections/collection-add-course)
 (def collection-remove-course collections/collection-remove-course)
-(def collection-get-all-contents collections/collection-get-all-contents)
+(def collection-get-all-resources collections/collection-get-all-resources)
 (def collection-get-all-courses collections/collection-get-all-courses)
 (def collection-get-all-users collections/collection-get-all-users)
 
 ; Content handlers
-(def content-create contents/content-create)
-(def content-get-by-id contents/content-get-by-id)
-(def content-update contents/content-update)
-(def content-delete contents/content-delete)
-(def content-get-all-collections contents/content-get-all-collections)
-(def content-get-all-files contents/content-get-all-files)
-(def content-add-view contents/content-add-view)
-(def content-add-file contents/content-add-file)
-(def content-remove-file contents/content-remove-file)
+(def resource-create resources/resource-create)
+(def resource-get-by-id resources/resource-get-by-id)
+(def resource-update resources/resource-update)
+(def resource-delete resources/resource-delete)
+(def resource-get-all-collections resources/resource-get-all-collections)
+(def resource-get-all-files resources/resource-get-all-files)
+(def resource-add-view resources/resource-add-view)
+(def resource-add-file resources/resource-add-file)
+(def resource-remove-file resources/resource-remove-file)
 
 ; File handlers
 (def file-create files/file-create)
 (def file-get-by-id files/file-get-by-id)
 (def file-update files/file-update)
 (def file-delete files/file-delete)
-(def file-get-all-contents files/file-get-all-contents)
+(def file-get-all-resources files/file-get-all-resources)
 
 ; Course handlers
 (def course-create courses/course-create)
@@ -81,9 +81,9 @@
 (def annotation-get-by-id annotations/annotation-get-by-id)
 (def annotation-update annotations/annotation-update)
 (def annotation-delete annotations/annotation-delete)
-(def annotation-get-by-collection-and-content annotations/annotation-get-by-collection-and-content)
+(def annotation-get-by-collection-and-resource annotations/annotation-get-by-collection-and-resource)
 
 ; Admin handlers
 (def search-by-user admin/search-by-user)
 (def search-by-collection admin/search-by-collection)
-(def search-by-content admin/search-by-content)
+(def search-by-resource admin/search-by-resource)

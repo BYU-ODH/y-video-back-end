@@ -27,7 +27,7 @@
      :middleware [middleware/wrap-api
                   ;; query-params & form-params
                   parameters/parameters-middleware
-                  ;; content-negotiation
+                  ;; resource-negotiation
                   muuntaja/format-negotiate-middleware
                   ;; encoding response body
                   muuntaja/format-response-middleware
@@ -159,16 +159,16 @@
       {:post service-handlers/collection-add-user}]
      ["/{id}/remove-user"
       {:post service-handlers/collection-remove-user}]
-     ["/{id}/add-content"
-      {:post service-handlers/collection-add-content}]
-     ["/{id}/remove-content"
-      {:post service-handlers/collection-remove-content}]
+     ["/{id}/add-resource"
+      {:post service-handlers/collection-add-resource}]
+     ["/{id}/remove-resource"
+      {:post service-handlers/collection-remove-resource}]
      ["/{id}/add-course"
       {:post service-handlers/collection-add-course}]
      ["/{id}/remove-course"
       {:post service-handlers/collection-remove-course}]
-     ["/{id}/contents"
-      {:get service-handlers/collection-get-all-contents}]
+     ["/{id}/resources"
+      {:get service-handlers/collection-get-all-resources}]
      ["/{id}/courses"
       {:get service-handlers/collection-get-all-courses}]
      ["/{id}/users"
@@ -195,33 +195,33 @@
      ["/{id}/users"
       {:get service-handlers/course-get-all-users}]]
 
-    ["/content"
-     {:swagger {:tags ["content"]}}
+    ["/resource"
+     {:swagger {:tags ["resource"]}}
      [""
-      {:post service-handlers/content-create}]
+      {:post service-handlers/resource-create}]
 
      ["/{id}"
-      {:get service-handlers/content-get-by-id
-       :patch service-handlers/content-update
-       :delete service-handlers/content-delete}]
+      {:get service-handlers/resource-get-by-id
+       :patch service-handlers/resource-update
+       :delete service-handlers/resource-delete}]
      ;["/{id}/connect-file"
-     ; {:post service-handlers/content-connect-file}]
+     ; {:post service-handlers/resource-connect-file}]
      ["/{id}/files"
-      {:get service-handlers/content-get-all-files}]
+      {:get service-handlers/resource-get-all-files}]
      ["/{id}/add-view"
-      {:post service-handlers/content-add-view}]
+      {:post service-handlers/resource-add-view}]
      ["/{id}/add-file"
-      {:post service-handlers/content-add-file}]
+      {:post service-handlers/resource-add-file}]
      ["/{id}/remove-file"
-      {:post service-handlers/content-remove-file}]
+      {:post service-handlers/resource-remove-file}]
      ["/{id}/collections"
-      {:get service-handlers/content-get-all-collections}]]
+      {:get service-handlers/resource-get-all-collections}]]
 
     ["/annotation"
      {:swagger {:tags ["annotation"]}}
      [""
       {:post service-handlers/annotation-create
-       :get service-handlers/annotation-get-by-collection-and-content}]
+       :get service-handlers/annotation-get-by-collection-and-resource}]
 
      ["/{id}"
       {:get service-handlers/annotation-get-by-id
@@ -236,8 +236,8 @@
       {:get service-handlers/file-get-by-id
        :patch service-handlers/file-update
        :delete service-handlers/file-delete}]
-     ["/{id}/contents"
-      {:get service-handlers/file-get-all-contents}]]
+     ["/{id}/resources"
+      {:get service-handlers/file-get-all-resources}]]
 
     ;["/connect-collection-and-course"
     ; {:swagger {:tags ["connect"]}}
@@ -254,5 +254,5 @@
       {:get service-handlers/search-by-user}]
      ["/collection/{term}"
       {:get service-handlers/search-by-collection}]
-     ["/content/{term}"
-      {:get service-handlers/search-by-content}]]])
+     ["/resource/{term}"
+      {:get service-handlers/search-by-resource}]]])

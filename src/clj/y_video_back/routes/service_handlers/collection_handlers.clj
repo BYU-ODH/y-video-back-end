@@ -1,12 +1,11 @@
 (ns y-video-back.routes.service-handlers.collection-handlers
   (:require
-   [y-video-back.db.collections-contents-assoc :as collection-contents-assoc]
    [y-video-back.db.users-by-collection :as users-by-collection]
    [y-video-back.db.collections-courses-assoc :as collection-courses-assoc]
    [y-video-back.db.user-collections-assoc :as user-collections-assoc]
    [y-video-back.db.collections :as collections]
    [y-video-back.db.users :as users]
-   [y-video-back.db.contents :as contents]
+   [y-video-back.db.resources :as resources]
    [y-video-back.db.courses :as courses]
    [y-video-back.db.annotations :as annotations]
    [y-video-back.models :as models]
@@ -154,60 +153,60 @@
                           {:status 200
                            :body {:message (str result " users removed from collection")}})))))))})
 
-(def collection-add-content
-  {:summary "Adds content to specified collection"
+(def collection-add-resource
+  {:summary "Adds resource to specified collection"
    :parameters {:header {:session-id uuid?}
-                :path {:id uuid?} :body {:content-id uuid?}}
+                :path {:id uuid?} :body {:resource-id uuid?}}
    :responses {200 {:body {:message string? :id string?}}
                404 (:body {:message string?})
                500 (:body {:message string?})}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
-              (if-not (ru/has-permission session-id "collection-add-content" {:collection-id id})
+              (if-not (ru/has-permission session-id "collection-add-resource" {:collection-id id})
                 ru/forbidden-page
                 (if (not (collections/EXISTS? id))
                   {:status 404
                    :body {:message "collection not found"}}
-                  (if (not (contents/EXISTS? (:content-id body)))
+                  (if (not (resources/EXISTS? (:resource-id body)))
                     {:status 500
-                     :body {:message "content not found"}}
-                    (if (annotations/EXISTS-COLL-CONT? id (:content-id body))
+                     :body {:message "resource not found"}}
+                    (if (annotations/EXISTS-COLL-CONT? id (:resource-id body))
                       {:status 500
-                       :body {:message "content already connected to collection"}}
+                       :body {:message "resource already connected to collection"}}
                       (let [result (utils/get-id (annotations/CREATE {:collection-id id
-                                                                      :content-id (:content-id body)
+                                                                      :resource-id (:resource-id body)
                                                                       :metadata ""}))]
                         (if (= nil result)
                           {:status 500
-                           :body {:message "unable to add content"}}
+                           :body {:message "unable to add resource"}}
                           {:status 200
-                           :body {:message (str 1 " contents added to collection")
+                           :body {:message (str 1 " resources added to collection")
                                   :id result}})))))))})
 
-(def collection-remove-content
-  {:summary "Removes content from specified collection"
+(def collection-remove-resource
+  {:summary "Removes resource from specified collection"
    :parameters {:header {:session-id uuid?}
-                :path {:id uuid?} :body {:content-id uuid?}}
+                :path {:id uuid?} :body {:resource-id uuid?}}
    :responses {200 {:body {:message string?}}
                404 (:body {:message string?})
                500 (:body {:message string?})}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
-              (if-not (ru/has-permission session-id "collection-remove-content" {:collection-id id})
+              (if-not (ru/has-permission session-id "collection-remove-resource" {:collection-id id})
                 ru/forbidden-page
                 (if (not (collections/EXISTS? id))
                   {:status 404
                    :body {:message "collection not found"}}
-                  (if (not (contents/EXISTS? (:content-id body)))
+                  (if (not (resources/EXISTS? (:resource-id body)))
                     {:status 500
-                     :body {:message "content not found"}}
-                    (if-not (annotations/EXISTS-COLL-CONT? id (:content-id body))
+                     :body {:message "resource not found"}}
+                    (if-not (annotations/EXISTS-COLL-CONT? id (:resource-id body))
                       {:status 500
-                       :body {:message "content not connected to collection"}}
-                      (let [result (annotations/DELETE-BY-IDS [id (:content-id body)])]
+                       :body {:message "resource not connected to collection"}}
+                      (let [result (annotations/DELETE-BY-IDS [id (:resource-id body)])]
                         (if (= 0 result)
                           {:status 404
-                           :body {:message "unable to remove content"}}
+                           :body {:message "unable to remove resource"}}
                           {:status 200
-                           :body {:message (str result " contents removed from collection")}})))))))})
+                           :body {:message (str result " resources removed from collection")}})))))))})
 
 (def collection-add-course
   {:summary "Adds course to specified collection"
@@ -263,22 +262,22 @@
                            :body {:message (str result " courses removed from collection")}})))))))})
 
 
-(def collection-get-all-contents ;; Non-functional
-  {:summary "Retrieves all the contents for the specified collection"
+(def collection-get-all-resources ;; Non-functional
+  {:summary "Retrieves all the resources for the specified collection"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
-   :responses {200 {:body [(into models/content {:collection-id uuid?})]}
+   :responses {200 {:body [(into models/resource {:collection-id uuid?})]}
                404 (:body {:message string?})}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
-              (if-not (ru/has-permission session-id "collection-get-all-contents" {:collection-id id})
+              (if-not (ru/has-permission session-id "collection-get-all-resources" {:collection-id id})
                 ru/forbidden-page
                 (if (not (collections/EXISTS? id))
                   {:status 404
                    :body {:message "collection not found"}}
-                  (let [content-collections-result (annotations/READ-CONTENTS-BY-COLLECTION id)]
-                    (let [content-result (map #(utils/remove-db-only %) content-collections-result)]
+                  (let [resource-collections-result (annotations/READ-CONTENTS-BY-COLLECTION id)]
+                    (let [resource-result (map #(utils/remove-db-only %) resource-collections-result)]
                       {:status 200
-                       :body content-result})))))})
+                       :body resource-result})))))})
 
 (def collection-get-all-courses ;; Non-functional
   {:summary "Retrieves all the courses for the specified collection"

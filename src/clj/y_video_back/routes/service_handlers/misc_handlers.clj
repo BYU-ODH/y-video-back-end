@@ -35,14 +35,14 @@
                 {:status 200
                  :body {:message "placeholder"}}))})
 
-;; Searches across users, collections, contents, and courses
+;; Searches across users, collections, resources, and courses
 (def search-by-term ;; Non-functional
-  {:summary "Searches users, collections, contents, and courses by search term"
+  {:summary "Searches users, collections, resources, and courses by search term"
    :parameters {:header {:session-id uuid?}
                 :query {:query-term string?}}
    :responses {200 {:body {:users [models/user]
                            :collections [models/collection]
-                           :contents [models/content]
+                           :resources [models/resource]
                            :courses [models/course]}}}
    :handler (fn [{{{:keys [session-id]} :header {:keys [query-term]} :query} :parameters}]
               (if-not (ru/has-permission session-id "search-by-term" 0)
@@ -55,9 +55,9 @@
                                                 (db/read-all-pattern :collections
                                                                      [:collection-name]
                                                                      (str "%" query-term "%")))
-                      content-result (map utils/remove-db-only
-                                          (db/read-all-pattern :contents
-                                                               [:content-name :content-type :requester-email
+                      resource-result (map utils/remove-db-only
+                                          (db/read-all-pattern :resources
+                                                               [:resource-name :resource-type :requester-email
                                                                 :thumbnail]
                                                                (str "%" query-term "%")))
                       course-result (map utils/remove-db-only
@@ -67,5 +67,5 @@
                   {:status 200
                    :body {:users user-result
                           :collections collection-result
-                          :contents content-result
+                          :resources resource-result
                           :courses course-result}})))})

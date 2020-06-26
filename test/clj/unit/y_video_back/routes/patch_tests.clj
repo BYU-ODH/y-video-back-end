@@ -17,12 +17,11 @@
     [y-video-back.utils.route-proxy :as rp]
     [y-video-back.db.core :refer [*db*] :as db]
     [y-video-back.db.annotations :as annotations]
-    [y-video-back.db.collections-contents-assoc :as collection-contents-assoc]
     [y-video-back.db.users-by-collection :as users-by-collection]
     [y-video-back.db.collections-courses-assoc :as collection-courses-assoc]
     [y-video-back.db.collections :as collections]
-    [y-video-back.db.content-files-assoc :as content-files-assoc]
-    [y-video-back.db.contents :as contents]
+    [y-video-back.db.resource-files-assoc :as resource-files-assoc]
+    [y-video-back.db.resources :as resources]
     [y-video-back.db.courses :as courses]
     [y-video-back.db.files :as files]
     [y-video-back.db.user-collections-assoc :as user-collections-assoc]
@@ -56,9 +55,9 @@
   (def test-user-coll-thr (ut/under-to-hyphen (user-collections-assoc/CREATE {:user-id (:id test-user-thr)
                                                                               :collection-id (:id test-coll-thr)
                                                                               :account-role 0})))
-  (def test-cont-one (ut/under-to-hyphen (contents/CREATE (g/get-random-content-without-id))))
-  (def test-cont-two (ut/under-to-hyphen (contents/CREATE (g/get-random-content-without-id))))
-  (def test-cont-thr (ut/under-to-hyphen (contents/CREATE (g/get-random-content-without-id))))
+  (def test-cont-one (ut/under-to-hyphen (resources/CREATE (g/get-random-resource-without-id))))
+  (def test-cont-two (ut/under-to-hyphen (resources/CREATE (g/get-random-resource-without-id))))
+  (def test-cont-thr (ut/under-to-hyphen (resources/CREATE (g/get-random-resource-without-id))))
   (def test-crse-one (ut/under-to-hyphen (courses/CREATE (g/get-random-course-without-id))))
   (def test-crse-two (ut/under-to-hyphen (courses/CREATE (g/get-random-course-without-id))))
   (def test-crse-thr (ut/under-to-hyphen (courses/CREATE (g/get-random-course-without-id))))
@@ -187,59 +186,59 @@
 
 (deftest test-cont-patch
   (testing "cont fields one at a time"
-    (let [new-cont (g/get-random-content-without-id)
+    (let [new-cont (g/get-random-resource-without-id)
           id (:id test-cont-one)]
-      (is (= (ut/remove-db-only test-cont-one) (ut/remove-db-only (contents/READ id))))
+      (is (= (ut/remove-db-only test-cont-one) (ut/remove-db-only (resources/READ id))))
       (doseq [val (seq new-cont)]
              [(do
-                (let [res (rp/content-id-patch id {(get val 0) (get val 1)})]
+                (let [res (rp/resource-id-patch id {(get val 0) (get val 1)})]
                   (is (= 200 (:status res))))
-                (is (= ((get val 0) new-cont) ((get val 0) (contents/READ id)))))])
-      (is (= (into new-cont {:id id}) (ut/remove-db-only (contents/READ id))))))
+                (is (= ((get val 0) new-cont) ((get val 0) (resources/READ id)))))])
+      (is (= (into new-cont {:id id}) (ut/remove-db-only (resources/READ id))))))
   (testing "cont multiple fields at once"
-    (let [new-cont (g/get-random-content-without-id)
+    (let [new-cont (g/get-random-resource-without-id)
           id (:id test-cont-two)]
-      (is (= (ut/remove-db-only test-cont-two) (ut/remove-db-only (contents/READ id))))
+      (is (= (ut/remove-db-only test-cont-two) (ut/remove-db-only (resources/READ id))))
       (let [fields-to-change (ut/random-submap new-cont)]
-        (let [res (rp/content-id-patch id fields-to-change)]
+        (let [res (rp/resource-id-patch id fields-to-change)]
           (is (= 200 (:status res))))
         (is (= (ut/remove-db-only (merge test-cont-two fields-to-change))
-               (ut/remove-db-only (contents/READ id)))))))
+               (ut/remove-db-only (resources/READ id)))))))
   (testing "cont all fields at once"
-    (let [new-cont (g/get-random-content-without-id)
+    (let [new-cont (g/get-random-resource-without-id)
           id (:id test-cont-thr)]
-      (is (= (ut/remove-db-only test-cont-thr) (ut/remove-db-only (contents/READ id))))
-      (let [res (rp/content-id-patch id new-cont)]
+      (is (= (ut/remove-db-only test-cont-thr) (ut/remove-db-only (resources/READ id))))
+      (let [res (rp/resource-id-patch id new-cont)]
         (is (= 200 (:status res))))
       (is (= (ut/remove-db-only (merge test-cont-thr new-cont))
-             (ut/remove-db-only (contents/READ id))))))
+             (ut/remove-db-only (resources/READ id))))))
   (testing "cont to self, fields one at a time"
-    (let [new-cont (g/get-random-content-without-id)
-          add-cont (contents/CREATE new-cont)
+    (let [new-cont (g/get-random-resource-without-id)
+          add-cont (resources/CREATE new-cont)
           id (:id add-cont)]
       (doseq [val (seq new-cont)]
              [(do
-                (let [res (rp/content-id-patch id {(get val 0) (get val 1)})]
+                (let [res (rp/resource-id-patch id {(get val 0) (get val 1)})]
                   (is (= 200 (:status res))))
-                (is (= ((get val 0) new-cont) ((get val 0) (contents/READ id)))))])
-      (is (= (into new-cont {:id id}) (ut/remove-db-only (contents/READ id))))))
+                (is (= ((get val 0) new-cont) ((get val 0) (resources/READ id)))))])
+      (is (= (into new-cont {:id id}) (ut/remove-db-only (resources/READ id))))))
   (testing "cont to self, multiple fields at once"
-    (let [new-cont (g/get-random-content-without-id)
-          add-cont (contents/CREATE new-cont)
+    (let [new-cont (g/get-random-resource-without-id)
+          add-cont (resources/CREATE new-cont)
           id (:id add-cont)]
       (let [fields-to-change (ut/random-submap new-cont)]
-        (let [res (rp/content-id-patch id fields-to-change)]
+        (let [res (rp/resource-id-patch id fields-to-change)]
           (is (= 200 (:status res))))
         (is (= (ut/remove-db-only (merge new-cont fields-to-change {:id id}))
-               (ut/remove-db-only (contents/READ id)))))))
+               (ut/remove-db-only (resources/READ id)))))))
   (testing "cont to self, all fields at once"
-    (let [new-cont (g/get-random-content-without-id)
-          add-cont (contents/CREATE new-cont)
+    (let [new-cont (g/get-random-resource-without-id)
+          add-cont (resources/CREATE new-cont)
           id (:id add-cont)]
-      (let [res (rp/content-id-patch id new-cont)]
+      (let [res (rp/resource-id-patch id new-cont)]
         (is (= 200 (:status res))))
       (is (= (ut/remove-db-only (merge new-cont {:id id}))
-             (ut/remove-db-only (contents/READ id)))))))
+             (ut/remove-db-only (resources/READ id)))))))
 
 (deftest test-crse-patch
   (testing "crse fields one at a time"
@@ -413,7 +412,7 @@
     (let [new-annotation (g/get-random-annotation-without-id (:id test-coll-one) (:id test-cont-one))
           id (:id test-annotation-one)]
       (is (= (ut/remove-db-only test-annotation-one) (ut/remove-db-only (annotations/READ id))))
-      (doseq [val (seq (dissoc new-annotation :content-id :collection-id))]
+      (doseq [val (seq (dissoc new-annotation :resource-id :collection-id))]
              [(do
                 (let [res (rp/annotation-id-patch id {(get val 0) (get val 1)})]
                   (is (= 200 (:status res))))
@@ -440,7 +439,7 @@
     (let [new-annotation (g/get-random-annotation-without-id (:id (collections/CREATE (g/get-random-collection-without-id (:id test-user-one)))) (:id test-cont-thr))
           add-ann (annotations/CREATE new-annotation)
           id (:id add-ann)]
-      (doseq [val (seq (dissoc new-annotation :content-id :collection-id))]
+      (doseq [val (seq (dissoc new-annotation :resource-id :collection-id))]
              [(do
                 (let [res (rp/annotation-id-patch id {(get val 0) (get val 1)})]
                   (is (= 200 (:status res))))

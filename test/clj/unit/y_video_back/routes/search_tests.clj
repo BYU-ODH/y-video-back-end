@@ -11,12 +11,11 @@
       [y-video-back.utils.route-proxy :as rp]
       [y-video-back.db.core :refer [*db*] :as db]
       [y-video-back.db.annotations :as annotations]
-      [y-video-back.db.collections-contents-assoc :as collection-contents-assoc]
       [y-video-back.db.users-by-collection :as users-by-collection]
       [y-video-back.db.collections-courses-assoc :as collection-courses-assoc]
       [y-video-back.db.collections :as collections]
-      [y-video-back.db.content-files-assoc :as content-files-assoc]
-      [y-video-back.db.contents :as contents]
+      [y-video-back.db.resource-files-assoc :as resource-files-assoc]
+      [y-video-back.db.resources :as resources]
       [y-video-back.db.courses :as courses]
       [y-video-back.db.files :as files]
       [y-video-back.db.user-collections-assoc :as user-collections-assoc]
@@ -62,8 +61,8 @@
                                                               :published false
                                                               :archived true
                                                               :owner (:id test-user-thr)})))
-  (def test-cont-one (ut/under-to-hyphen (contents/CREATE {:content-name "Quidditch Through the Ages"
-                                                           :content-type "book 1"
+  (def test-cont-one (ut/under-to-hyphen (resources/CREATE {:resource-name "Quidditch Through the Ages"
+                                                           :resource-type "book 1"
                                                            :requester-email "im.a.what@gmail.com"
                                                            :thumbnail "thumbs"
                                                            :copyrighted true
@@ -76,8 +75,8 @@
                                                            :date-validated "a while ago"
                                                            :views 0
                                                            :metadata "so meta"})))
-  (def test-cont-two (ut/under-to-hyphen (contents/CREATE {:content-name "Twelve Fail-Safe Ways to Charm Witches"
-                                                           :content-type "book 2"
+  (def test-cont-two (ut/under-to-hyphen (resources/CREATE {:resource-name "Twelve Fail-Safe Ways to Charm Witches"
+                                                           :resource-type "book 2"
                                                            :requester-email "another-weasley@gmail.com"
                                                            :thumbnail "thumbs"
                                                            :copyrighted false
@@ -90,8 +89,8 @@
                                                            :date-validated "recently"
                                                            :views 0
                                                            :metadata "so meta"})))
-  (def test-cont-thr (ut/under-to-hyphen (contents/CREATE {:content-name "Hogwarts: A History"
-                                                           :content-type "book 2"
+  (def test-cont-thr (ut/under-to-hyphen (resources/CREATE {:resource-name "Hogwarts: A History"
+                                                           :resource-type "book 2"
                                                            :requester-email "insufferable-know-it-all@byu.edu"
                                                            :thumbnail "thumbs"
                                                            :copyrighted false
@@ -131,7 +130,7 @@
   (let [res (case table-key
               :users (rp/search-by-user query-term)
               :collections (rp/search-by-collection query-term)
-              :contents (rp/search-by-content query-term))]
+              :resources (rp/search-by-resource query-term))]
     (is (= 200 (:status res)))
     (if (= table-key :collections)
       (is (= (into [] (map #(update (update (ut/remove-db-only %) :id str) :owner str) expected-res))
@@ -197,44 +196,44 @@
     (test-search-table :collections
                        " "
                        [test-coll-one test-coll-two test-coll-thr])))
-(deftest test-search-contents
+(deftest test-search-resources
   (testing "all conts name"
-    (test-search-table :contents
+    (test-search-table :resources
                        "i"
                        [test-cont-one test-cont-two test-cont-thr]))
   (testing "one cont name"
-    (test-search-table :contents
+    (test-search-table :resources
                        "elve"
                        [test-cont-two]))
   (testing "no conts name"
-    (test-search-table :contents
+    (test-search-table :resources
                        "Fantastic Beasts"
                        []))
   (testing "all conts type"
-    (test-search-table :contents
+    (test-search-table :resources
                        "book"
                        [test-cont-one test-cont-two test-cont-thr]))
   (testing "one cont type"
-    (test-search-table :contents
+    (test-search-table :resources
                        "1"
                        [test-cont-one]))
   (testing "no conts type"
-    (test-search-table :contents
+    (test-search-table :resources
                        " movie "
                        []))
   (testing "all conts requester-email"
-    (test-search-table :contents
+    (test-search-table :resources
                        "l"
                        [test-cont-one test-cont-two test-cont-thr]))
   (testing "one cont requester-email"
-    (test-search-table :contents
+    (test-search-table :resources
                        "what"
                        [test-cont-one]))
   (testing "no conts requester-email"
-    (test-search-table :contents
+    (test-search-table :resources
                        "@gmail@com"
                        []))
   (testing "only a space"
-    (test-search-table :contents
+    (test-search-table :resources
                        " "
                        [test-cont-one test-cont-two test-cont-thr])))

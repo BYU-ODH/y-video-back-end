@@ -5,12 +5,11 @@
    ;[y-video-back.routes.service-handlers.utils :as utils]
    ;[y-video-back.routes.service-handlers.role-utils :as ru]
    [y-video-back.db.annotations :as annotations]
-   [y-video-back.db.collections-contents-assoc :as collection-contents-assoc]
    [y-video-back.db.users-by-collection :as users-by-collection]
    [y-video-back.db.collections-courses-assoc :as collection-courses-assoc]
    [y-video-back.db.collections :as collections]
-   [y-video-back.db.content-files-assoc :as content-files-assoc]
-   [y-video-back.db.contents :as contents]
+   [y-video-back.db.resource-files-assoc :as resource-files-assoc]
+   [y-video-back.db.resources :as resources]
    [y-video-back.db.courses :as courses]
    [y-video-back.db.files :as files]
    [y-video-back.db.user-collections-assoc :as user-collections-assoc]
@@ -51,20 +50,20 @@
                                        #(:id %)
                                        (collections/READ-ANNOTATIONS arg1)))
                                    all-collections))]
-           (let [all-contents (clojure.core/flatten
+           (let [all-resources (clojure.core/flatten
                                 (map
                                   (fn [arg1]
                                     (map
-                                      #(:id %)
-                                      (collection-contents-assoc/READ-CONTENTS-BY-COLLECTION arg1)))
+                                      #(:id %)))
+                                      ;(collection-resources-assoc/READ-CONTENTS-BY-COLLECTION arg1)))
                                   all-collections))]
              (let [all-files (clojure.core/flatten
                                (map
                                  (fn [arg1]
                                    (map
                                      #(:id %)
-                                     (content-files-assoc/READ-FILES-BY-CONTENT arg1)))
-                                 all-contents))]
+                                     (resource-files-assoc/READ-FILES-BY-CONTENT arg1)))
+                                 all-resources))]
                (let [all-words (map
                                  #(:id %)
                                  (users/READ-WORDS user-id))]
@@ -72,6 +71,6 @@
                      (into all-collections)
                      (into all-annotations)
                      (into all-courses)
-                     (into all-contents)
+                     (into all-resources)
                      (into all-files)
                      (into all-words)))))))))))

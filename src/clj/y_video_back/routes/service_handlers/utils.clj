@@ -52,8 +52,8 @@
   "Replace keywords with what the front end expects"
   [cont]
   {:id (:id cont)
-   :name (:content-name cont)
-   :contentType (:content-type cont)
+   :name (:resource-name cont)
+   :resourceType (:resource-type cont)
    :requester (:requester-email cont)
    :thumbnail (:thumbnail cont)
    :isCopyrighted (:copyrighted cont)

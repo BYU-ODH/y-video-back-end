@@ -58,14 +58,14 @@ CREATE TABLE courses (
 );
 COMMENT ON TABLE courses IS 'Courses (or classes) at BYU';
 
-DROP TABLE IF EXISTS contents CASCADE;
-CREATE TABLE contents (
+DROP TABLE IF EXISTS resources CASCADE;
+CREATE TABLE resources (
    id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY
    ,deleted TIMESTAMP DEFAULT NULL
    ,updated TIMESTAMP DEFAULT NULL
    ,created  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-   ,content_name TEXT
-   ,content_type TEXT -- type is a reserved word
+   ,resource_name TEXT
+   ,resource_type TEXT -- type is a reserved word
    ,requester_email TEXT
    ,thumbnail TEXT
    ,copyrighted BOOLEAN
@@ -79,7 +79,7 @@ CREATE TABLE contents (
    ,views INTEGER
    ,metadata TEXT
 );
-COMMENT ON TABLE contents IS 'Contained within collections, hold media in files table';
+COMMENT ON TABLE resources IS 'Referenced by contents, hold media in files table';
 
 DROP TABLE IF EXISTS files CASCADE;
 CREATE TABLE files (
@@ -94,18 +94,22 @@ CREATE TABLE files (
 );
 COMMENT ON TABLE files IS 'Files represent media (i.e. videos) with path to file and metadata';
 
-DROP TABLE IF EXISTS annotations CASCADE;
-CREATE TABLE annotations (
+DROP TABLE IF EXISTS contents CASCADE;
+CREATE TABLE contents (
     id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY
     ,deleted TIMESTAMP DEFAULT NULL
     ,updated TIMESTAMP DEFAULT NULL
     ,created  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    ,content_id UUID REFERENCES contents(id)
+    ,title TEXT
+    ,content_type TEXT
+    ,url TEXT
+    ,description TEXT
+    ,tags TEXT
+    ,annotations TEXT
+    ,resource_id UUID REFERENCES resources(id)
     ,collection_id UUID REFERENCES collections(id)
-    ,metadata TEXT
-    , CONSTRAINT no_duplicate_annotations UNIQUE (content_id, collection_id)
 );
-COMMENT ON TABLE annotations IS 'Contains annotations to be applied over contents';
+COMMENT ON TABLE contents IS 'Contains contents to be applied over resources';
 
 DROP TABLE IF EXISTS user_collections_assoc CASCADE;
 CREATE TABLE user_collections_assoc (
@@ -146,21 +150,22 @@ CREATE TABLE collection_courses_assoc (
 );
 COMMENT ON TABLE collection_courses_assoc IS 'Many-to-many table connecting collections and courses';
 
-DROP TABLE IF EXISTS collection_contents_assoc CASCADE;
+DROP TABLE IF EXISTS collection_resources_assoc CASCADE;
 
 
 
 DROP TABLE IF EXISTS content_files_assoc CASCADE;
-CREATE TABLE content_files_assoc (
+DROP TABLE IF EXISTS resource_files_assoc CASCADE;
+CREATE TABLE resource_files_assoc (
    id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY
    ,deleted TIMESTAMP DEFAULT NULL
    ,updated TIMESTAMP DEFAULT NULL
    ,created  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-   ,content_id UUID REFERENCES contents(id)
+   ,resource_id UUID REFERENCES resources(id)
    ,file_id UUID REFERENCES files(id)
-   , CONSTRAINT no_duplicate_content_files UNIQUE (content_id, file_id)
+   , CONSTRAINT no_duplicate_resource_files UNIQUE (resource_id, file_id)
 );
-COMMENT ON TABLE content_files_assoc IS 'Many-to-many table connecting contents and files';
+COMMENT ON TABLE resource_files_assoc IS 'Many-to-many table connecting resources and files';
 
 -------------------------------
 -- Auto-update updated --
@@ -250,16 +255,38 @@ CREATE VIEW courses_by_user AS
 
 
 DROP VIEW IF EXISTS collections_by_content;
+/*
 CREATE VIEW collections_by_content AS
     SELECT collections_undeleted.*, cca.content_id
-    FROM collections_undeleted JOIN annotations_undeleted AS cca
+    FROM collections_undeleted JOIN contents_undeleted AS cca
     ON collections_undeleted.id = cca.collection_id;
+*/
 
 DROP VIEW IF EXISTS contents_by_collection;
-CREATE VIEW contents_by_collection AS
-    SELECT contents_undeleted.*, cca.collection_id
-    FROM contents_undeleted JOIN annotations_undeleted AS cca
-    ON contents_undeleted.id = cca.content_id;
+DROP TABLE IF EXISTS contents CASCADE;
+DROP VIEW IF EXISTS contents;
+/*
+CREATE VIEW contents AS
+    SELECT scu.content_name,
+           scu.content_type,
+           scu.requester_email,
+           scu.thumbnail,
+           scu.copyrighted,
+           scu.physical_copy_exists,
+           scu.full_video,
+           scu.published,
+           scu.allow_definitions,
+           scu.allow_notes,
+           scu.allow_captions,
+           scu.date_validated,
+           scu.views,
+           scu.metadata AS resource_metadata,
+           annt.collection_id,
+           annt.content_id AS resource_id,
+           annt.id
+    FROM resources_undeleted AS scu JOIN contents_undeleted AS annt
+    ON scu.id = annt.content_id;
+*/
 
 DROP VIEW IF EXISTS collections_by_course;
 CREATE VIEW collections_by_course AS
@@ -273,17 +300,17 @@ CREATE VIEW courses_by_collection AS
     FROM courses_undeleted JOIN collection_courses_assoc_undeleted AS cca
     ON courses_undeleted.id = cca.course_id;
 
-DROP VIEW IF EXISTS contents_by_file;
-CREATE VIEW contents_by_file AS
-    SELECT contents_undeleted.*, cca.file_id
-    FROM contents_undeleted JOIN content_files_assoc_undeleted AS cca
-    ON contents_undeleted.id = cca.content_id;
+DROP VIEW IF EXISTS resources_by_file;
+CREATE VIEW resources_by_file AS
+    SELECT resources_undeleted.*, rfa.file_id
+    FROM resources_undeleted JOIN resource_files_assoc_undeleted AS rfa
+    ON resources_undeleted.id = rfa.resource_id;
 
-DROP VIEW IF EXISTS files_by_content;
-CREATE VIEW files_by_content AS
-    SELECT files_undeleted.*, cca.content_id
-    FROM files_undeleted JOIN content_files_assoc_undeleted AS cca
-    ON files_undeleted.id = cca.file_id;
+DROP VIEW IF EXISTS files_by_resource;
+CREATE VIEW files_by_resource AS
+    SELECT files_undeleted.*, rfa.resource_id
+    FROM files_undeleted JOIN resource_files_assoc_undeleted AS rfa
+    ON files_undeleted.id = rfa.file_id;
 
 DROP VIEW IF EXISTS collections_by_users_via_courses;
 CREATE VIEW collections_by_users_via_courses AS

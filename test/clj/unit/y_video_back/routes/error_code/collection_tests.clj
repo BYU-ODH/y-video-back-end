@@ -11,12 +11,11 @@
       [y-video-back.utils.route-proxy :as rp]
       [y-video-back.db.core :refer [*db*] :as db]
       [y-video-back.db.annotations :as annotations]
-      [y-video-back.db.collections-contents-assoc :as collection-contents-assoc]
       [y-video-back.db.users-by-collection :as users-by-collection]
       [y-video-back.db.collections-courses-assoc :as collection-courses-assoc]
       [y-video-back.db.collections :as collections]
-      [y-video-back.db.content-files-assoc :as content-files-assoc]
-      [y-video-back.db.contents :as contents]
+      [y-video-back.db.resource-files-assoc :as resource-files-assoc]
+      [y-video-back.db.resources :as resources]
       [y-video-back.db.courses :as courses]
       [y-video-back.db.files :as files]
       [y-video-back.db.user-collections-assoc :as user-collections-assoc]
@@ -38,7 +37,7 @@
   (def test-user-one (ut/under-to-hyphen (users/CREATE (g/get-random-user-without-id))))
   (def test-user-two (ut/under-to-hyphen (users/CREATE (g/get-random-user-without-id))))
   (def test-coll-one (ut/under-to-hyphen (collections/CREATE (into (g/get-random-collection-without-id-or-owner) {:owner (:id test-user-one)}))))
-  (def test-cont-one (ut/under-to-hyphen (contents/CREATE (g/get-random-content-without-id))))
+  (def test-cont-one (ut/under-to-hyphen (resources/CREATE (g/get-random-resource-without-id))))
   (def test-crse-one (ut/under-to-hyphen (courses/CREATE (g/get-random-course-without-id))))
   (mount.core/start #'y-video-back.handler/app))
 
@@ -145,30 +144,30 @@
       (is (= 500 (:status res))))))
 
 
-(deftest collection-add-content
-  (testing "add nonexistent content to collection"
-    (let [res (rp/collection-id-add-content (:id test-coll-one) (java.util.UUID/randomUUID))]
+(deftest collection-add-resource
+  (testing "add nonexistent resource to collection"
+    (let [res (rp/collection-id-add-resource (:id test-coll-one) (java.util.UUID/randomUUID))]
       (is (= 500 (:status res)))))
-  (testing "add content to nonexistent collection"
-    (let [res (rp/collection-id-add-content (java.util.UUID/randomUUID) (:id test-cont-one))]
+  (testing "add resource to nonexistent collection"
+    (let [res (rp/collection-id-add-resource (java.util.UUID/randomUUID) (:id test-cont-one))]
       (is (= 404 (:status res)))))
-  (testing "add content to collection, already connected"
-    (let [new-content (contents/CREATE (g/get-random-content-without-id))
-          add-content-res (annotations/CREATE {:content-id (:id new-content)
+  (testing "add resource to collection, already connected"
+    (let [new-resource (resources/CREATE (g/get-random-resource-without-id))
+          add-resource-res (annotations/CREATE {:resource-id (:id new-resource)
                                                :collection-id (:id test-coll-one)})
-          res (rp/collection-id-add-content (:id test-coll-one) (:id new-content))]
+          res (rp/collection-id-add-resource (:id test-coll-one) (:id new-resource))]
       (is (= 500 (:status res))))))
 
-(deftest collection-remove-content
-  (testing "remove nonexistent content from collection"
-    (let [res (rp/collection-id-remove-content (:id test-coll-one) (java.util.UUID/randomUUID))]
+(deftest collection-remove-resource
+  (testing "remove nonexistent resource from collection"
+    (let [res (rp/collection-id-remove-resource (:id test-coll-one) (java.util.UUID/randomUUID))]
       (is (= 500 (:status res)))))
-  (testing "remove content from nonexistent collection"
-    (let [res (rp/collection-id-remove-content (java.util.UUID/randomUUID) (:id test-cont-one))]
+  (testing "remove resource from nonexistent collection"
+    (let [res (rp/collection-id-remove-resource (java.util.UUID/randomUUID) (:id test-cont-one))]
       (is (= 404 (:status res)))))
-  (testing "remove content from collection, not connected"
-    (let [new-content (contents/CREATE (g/get-random-content-without-id))
-          res (rp/collection-id-remove-content (:id test-coll-one) (:id new-content))]
+  (testing "remove resource from collection, not connected"
+    (let [new-resource (resources/CREATE (g/get-random-resource-without-id))
+          res (rp/collection-id-remove-resource (:id test-coll-one) (:id new-resource))]
       (is (= 500 (:status res))))))
 
 (deftest collection-add-course
@@ -197,15 +196,15 @@
           res (rp/collection-id-remove-course (:id test-coll-one) (:id new-course))]
       (is (= 500 (:status res))))))
 
-(deftest collection-contents
-  (testing "read contents for nonexistent collection"
-    (let [res (rp/collection-id-contents (java.util.UUID/randomUUID))]
+(deftest collection-resources
+  (testing "read resources for nonexistent collection"
+    (let [res (rp/collection-id-resources (java.util.UUID/randomUUID))]
       (is (= 404 (:status res)))))
-  (testing "read contents for collection without contents"
+  (testing "read resources for collection without resources"
     (let [new-collection (into (g/get-random-collection-without-id-no-owner)
                                {:owner (:id test-user-one)})
           add-coll-res (collections/CREATE new-collection)
-          res (rp/collection-id-contents (:id add-coll-res))]
+          res (rp/collection-id-resources (:id add-coll-res))]
       (is (= 200 (:status res)))
       (is (= '() (m/decode-response-body res))))))
 

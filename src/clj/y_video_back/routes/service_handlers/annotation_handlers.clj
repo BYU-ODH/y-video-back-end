@@ -2,7 +2,7 @@
   (:require
    [y-video-back.db.annotations :as annotations]
    [y-video-back.db.collections :as collections]
-   [y-video-back.db.contents :as contents]
+   [y-video-back.db.resources :as resources]
    [y-video-back.models :as models]
    [y-video-back.model-specs :as sp]
    [y-video-back.routes.service-handlers.utils :as utils]
@@ -22,12 +22,12 @@
                 (if-not (collections/EXISTS? (:collection-id body))
                   {:status 500
                    :body {:message "collection not found"}}
-                  (if-not (contents/EXISTS? (:content-id body))
+                  (if-not (resources/EXISTS? (:resource-id body))
                     {:status 500
-                     :body {:message "content not found"}}
-                    (if (annotations/EXISTS-COLL-CONT? (:collection-id body) (:content-id body))
+                     :body {:message "resource not found"}}
+                    (if (annotations/EXISTS-COLL-CONT? (:collection-id body) (:resource-id body))
                       {:status 500
-                       :body {:message "annotation connecting collection and content already exists"}}
+                       :body {:message "annotation connecting collection and resource already exists"}}
                       (let [res (annotations/CREATE body)]
                         {:status 200
                          :body {:message "1 annotation created"
@@ -65,19 +65,19 @@
                   (let [current-annotation (annotations/READ id)
                         proposed-annotation (merge current-annotation body)
                         same-name-annotation (first (annotations/READ-BY-IDS [(:collection-id proposed-annotation)
-                                                                              (:content-id proposed-annotation)]))]
+                                                                              (:resource-id proposed-annotation)]))]
                     ; If there is a collision and the collision is not with self (i.e. annotation being changed)
                     (if (and (not (nil? same-name-annotation))
                              (not (= (:id current-annotation)
                                      (:id same-name-annotation))))
                       {:status 500
-                       :body {:message "unable to update annotation, annotation between content and collection likely already exists"}}
+                       :body {:message "unable to update annotation, annotation between resource and collection likely already exists"}}
                       (if-not (collections/EXISTS? (:collection-id proposed-annotation))
                         {:status 500
                          :body {:message "collection not found"}}
-                        (if-not (contents/EXISTS? (:content-id proposed-annotation))
+                        (if-not (resources/EXISTS? (:resource-id proposed-annotation))
                           {:status 500
-                           :body {:message "content not found"}}
+                           :body {:message "resource not found"}}
                           (let [result (annotations/UPDATE id body)]
                             {:status 200
                              :body {:message (str result " annotations updated")}}))))))))})
@@ -98,11 +98,11 @@
                     {:status 200
                      :body {:message (str result " annotations deleted")}}))))})
 
-(def annotation-get-by-collection-and-content
-  {:summary "Gets annotations by collection and content ids"
+(def annotation-get-by-collection-and-resource
+  {:summary "Gets annotations by collection and resource ids"
    :parameters {:header {:session-id uuid?}
                 :body {:collection-id uuid?
-                       :content-id uuid?}}
+                       :resource-id uuid?}}
    :responses {200 {:body [models/annotation]}
                404 {:body {:message string?}}
                500 {:body {:message string?}}}
@@ -112,11 +112,11 @@
                 (if-not (collections/EXISTS? (:collection-id body))
                   {:status 500
                    :body {:message "collection not found"}}
-                  (if-not (contents/EXISTS? (:content-id body))
+                  (if-not (resources/EXISTS? (:resource-id body))
                     {:status 500
-                     :body {:message "content not found"}}
+                     :body {:message "resource not found"}}
                     (let [res (annotations/READ-BY-IDS [(:collection-id body)
-                                                        (:content-id body)])]
+                                                        (:resource-id body)])]
                       (if (= 0 (count res))
                         {:status 404
                          :body {:message "annotation not found"}}

@@ -1,7 +1,7 @@
 (ns y-video-back.routes.service-handlers.file-handlers
   (:require
    [y-video-back.db.files :as files]
-   [y-video-back.db.content-files-assoc :as content-files-assoc]
+   [y-video-back.db.resource-files-assoc :as resource-files-assoc]
    [y-video-back.models :as models]
    [y-video-back.model-specs :as sp]
    [y-video-back.routes.service-handlers.utils :as utils]
@@ -88,19 +88,19 @@
                      :body {:message (str result " files deleted")}}))))})
 
 
-(def file-get-all-contents ;; Non-functional
-  {:summary "Retrieves all contents for specified file"
+(def file-get-all-resources ;; Non-functional
+  {:summary "Retrieves all resources for specified file"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
-   :responses {200 {:body [(into models/content {:file-id uuid?})]}
+   :responses {200 {:body [(into models/resource {:file-id uuid?})]}
                404 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
-              (if-not (ru/has-permission session-id "file-get-all-contents" 0)
+              (if-not (ru/has-permission session-id "file-get-all-resources" 0)
                 ru/forbidden-page
                 (if-not (files/EXISTS? id)
                   {:status 404
                    :body {:message "course not found"}}
-                  (let [file-contents-result (content-files-assoc/READ-CONTENTS-BY-FILE id)]
-                    (let [content-result (map #(utils/remove-db-only %) file-contents-result)]
+                  (let [file-resources-result (resource-files-assoc/READ-CONTENTS-BY-FILE id)]
+                    (let [resource-result (map #(utils/remove-db-only %) file-resources-result)]
                       {:status 200
-                       :body content-result})))))})
+                       :body resource-result})))))})

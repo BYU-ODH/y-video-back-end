@@ -11,12 +11,11 @@
       [y-video-back.utils.route-proxy :as rp]
       [y-video-back.db.core :refer [*db*] :as db]
       [y-video-back.db.annotations :as annotations]
-      [y-video-back.db.collections-contents-assoc :as collection-contents-assoc]
       [y-video-back.db.users-by-collection :as users-by-collection]
       [y-video-back.db.collections-courses-assoc :as collection-courses-assoc]
       [y-video-back.db.collections :as collections]
-      [y-video-back.db.content-files-assoc :as content-files-assoc]
-      [y-video-back.db.contents :as contents]
+      [y-video-back.db.resource-files-assoc :as resource-files-assoc]
+      [y-video-back.db.resources :as resources]
       [y-video-back.db.courses :as courses]
       [y-video-back.db.files :as files]
       [y-video-back.db.user-collections-assoc :as user-collections-assoc]
@@ -39,11 +38,11 @@
   ;(def test-user-one (ut/under-to-hyphen (users/CREATE (g/get-random-user-without-id))))
   ;(def test-user-two (ut/under-to-hyphen (users/CREATE (g/get-random-user-without-id))))
   ;(def test-coll-one (ut/under-to-hyphen (collections/CREATE (into (g/get-random-collection-without-id-or-owner) {:owner (:id test-user-one)}))))
-  ;(def test-cont-one (ut/under-to-hyphen (contents/CREATE (g/get-random-content-without-id))))
+  ;(def test-cont-one (ut/under-to-hyphen (resources/CREATE (g/get-random-resource-without-id))))
   ;(def test-crse-one (ut/under-to-hyphen (courses/CREATE (g/get-random-course-without-id))))
   (def test-user-one (ut/under-to-hyphen (users/CREATE (g/get-random-user-without-id))))
   (def test-coll-one (ut/under-to-hyphen (collections/CREATE (into (g/get-random-collection-without-id-or-owner) {:owner (:id test-user-one)}))))
-  (def test-cont-one (ut/under-to-hyphen (contents/CREATE (g/get-random-content-without-id))))
+  (def test-cont-one (ut/under-to-hyphen (resources/CREATE (g/get-random-resource-without-id))))
   (def test-crse-one (ut/under-to-hyphen (courses/CREATE (g/get-random-course-without-id))))
   (def test-file-one (ut/under-to-hyphen (files/CREATE (g/get-random-file-without-id))))
   (mount.core/start #'y-video-back.handler/app))
@@ -84,12 +83,12 @@
     (let [res (rp/file-id-delete (java.util.UUID/randomUUID))]
       (is (= 404 (:status res))))))
 
-(deftest file-get-all-contents
-  (testing "get all contents for nonexistent file"
-    (let [res (rp/file-id-contents (java.util.UUID/randomUUID))]
+(deftest file-get-all-resources
+  (testing "get all resources for nonexistent file"
+    (let [res (rp/file-id-resources (java.util.UUID/randomUUID))]
       (is (= 404 (:status res)))))
-  (testing "get all contents for file with no contents"
+  (testing "get all resources for file with no resources"
     (let [new-file (files/CREATE (g/get-random-file-without-id))
-          res (rp/file-id-contents (:id new-file))]
+          res (rp/file-id-resources (:id new-file))]
       (is (= 200 (:status res)))
       (is (= '() (m/decode-response-body res))))))

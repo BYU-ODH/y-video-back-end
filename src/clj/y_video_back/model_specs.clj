@@ -36,42 +36,42 @@
                    :collection/archived
                    :collection/owner]))
 
-(s/def :content/requester-email string?)
-(s/def :content/physical-copy-exists boolean?)
-(s/def :content/allow-definitions boolean?)
-(s/def :content/content-type string?)
-(s/def :content/content-name string?)
-(s/def :content/date-validated string?)
-(s/def :content/allow-notes boolean?)
-(s/def :content/views int?)
-(s/def :content/copyrighted boolean?)
-(s/def :content/published boolean?)
-(s/def :content/metadata string?)
-(s/def :content/allow-captions boolean?)
-(s/def :content/full-video boolean?)
-(s/def :content/thumbnail string?)
-(s/def ::content
-  (s/keys :opt-un [:content/requester-email
-                   :content/physical-copy-exists
-                   :content/allow-definitions
-                   :content/content-type
-                   :content/content-name
-                   :content/date-validated
-                   :content/allow-notes
-                   :content/views
-                   :content/copyrighted
-                   :content/published
-                   :content/metadata
-                   :content/allow-captions
-                   :content/full-video
-                   :content/thumbnail]))
+(s/def :resource/requester-email string?)
+(s/def :resource/physical-copy-exists boolean?)
+(s/def :resource/allow-definitions boolean?)
+(s/def :resource/resource-type string?)
+(s/def :resource/resource-name string?)
+(s/def :resource/date-validated string?)
+(s/def :resource/allow-notes boolean?)
+(s/def :resource/views int?)
+(s/def :resource/copyrighted boolean?)
+(s/def :resource/published boolean?)
+(s/def :resource/metadata string?)
+(s/def :resource/allow-captions boolean?)
+(s/def :resource/full-video boolean?)
+(s/def :resource/thumbnail string?)
+(s/def ::resource
+  (s/keys :opt-un [:resource/requester-email
+                   :resource/physical-copy-exists
+                   :resource/allow-definitions
+                   :resource/resource-type
+                   :resource/resource-name
+                   :resource/date-validated
+                   :resource/allow-notes
+                   :resource/views
+                   :resource/copyrighted
+                   :resource/published
+                   :resource/metadata
+                   :resource/allow-captions
+                   :resource/full-video
+                   :resource/thumbnail]))
 
 (s/def :annotation/metadata string?)
-(s/def :annotation/content-id uuid?)
+(s/def :annotation/resource-id uuid?)
 (s/def :annotation/collection-id uuid?)
 (s/def ::annotation
   (s/keys :opt-un [:annotation/metadata
-                   :annotation/content-id
+                   :annotation/resource-id
                    :annotation/collection-id]))
 
 (s/def :file/filepath string?)

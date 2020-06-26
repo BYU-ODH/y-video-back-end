@@ -126,47 +126,47 @@
   ([id]
    (collection-id-delete SESSION-ID-BYPASS id)))
 
-(defn content-post
-  "Create a content via app's post request"
-  ([session-id content-without-id]
-   (app (-> (request :post "/api/content")
-            (json-body content-without-id)
+(defn resource-post
+  "Create a resource via app's post request"
+  ([session-id resource-without-id]
+   (app (-> (request :post "/api/resource")
+            (json-body resource-without-id)
             (header :session-id session-id))))
-  ([content-without-id]
-   (content-post SESSION-ID-BYPASS content-without-id)))
+  ([resource-without-id]
+   (resource-post SESSION-ID-BYPASS resource-without-id)))
 
-(defn content-id-get
-  "Retrieves content via app's get (id) request"
+(defn resource-id-get
+  "Retrieves resource via app's get (id) request"
   ([session-id id]
-   (app (-> (request :get (str "/api/content/" id))
+   (app (-> (request :get (str "/api/resource/" id))
             (header :session-id session-id))))
   ([id]
-   (content-id-get SESSION-ID-BYPASS id)))
+   (resource-id-get SESSION-ID-BYPASS id)))
 
-(defn content-id-patch
-  "Updates content via app's patch (id) request"
-  ([session-id id new-content]
-   (app (-> (request :patch (str "/api/content/" id))
-            (json-body new-content)
+(defn resource-id-patch
+  "Updates resource via app's patch (id) request"
+  ([session-id id new-resource]
+   (app (-> (request :patch (str "/api/resource/" id))
+            (json-body new-resource)
             (header :session-id session-id))))
-  ([id new-content]
-   (content-id-patch SESSION-ID-BYPASS id new-content)))
+  ([id new-resource]
+   (resource-id-patch SESSION-ID-BYPASS id new-resource)))
 
-(defn content-id-delete
-  "Deletes content via app's delete (id) request"
+(defn resource-id-delete
+  "Deletes resource via app's delete (id) request"
   ([session-id id]
-   (app (-> (request :delete (str "/api/content/" id))
+   (app (-> (request :delete (str "/api/resource/" id))
             (header :session-id session-id))))
   ([id]
-   (content-id-delete SESSION-ID-BYPASS id)))
+   (resource-id-delete SESSION-ID-BYPASS id)))
 
-(defn content-id-add-view
-  "Adds a view to content"
+(defn resource-id-add-view
+  "Adds a view to resource"
   ([session-id id]
-   (app (-> (request :post (str "/api/content/" id "/add-view"))
+   (app (-> (request :post (str "/api/resource/" id "/add-view"))
             (header :session-id session-id))))
   ([id]
-   (content-id-add-view SESSION-ID-BYPASS id)))
+   (resource-id-add-view SESSION-ID-BYPASS id)))
 
 (defn annotation-post
   "Create a annotation via app's post request"
@@ -203,14 +203,14 @@
    (annotation-id-delete SESSION-ID-BYPASS id)))
 
 (defn annotation-get-by-ids
-  "Reads all annotations by collection and content ids"
-  ([session-id collection-id content-id]
+  "Reads all annotations by collection and resource ids"
+  ([session-id collection-id resource-id]
    (app (-> (request :get "/api/annotation")
             (header :session-id session-id)
             (json-body {:collection-id collection-id
-                        :content-id content-id}))))
-  ([collection-id content-id]
-   (annotation-get-by-ids SESSION-ID-BYPASS collection-id content-id)))
+                        :resource-id resource-id}))))
+  ([collection-id resource-id]
+   (annotation-get-by-ids SESSION-ID-BYPASS collection-id resource-id)))
 
 (defn course-post
   "Create a course via app's post request"
@@ -349,39 +349,39 @@
   ([id]
    (user-id-collections SESSION-ID-BYPASS id)))
 
-(defn collection-id-add-content
-  "Connects content and collection"
-  ([session-id collection-id content-id]
-   (app (-> (request :post (str "/api/collection/" collection-id "/add-content"))
+(defn collection-id-add-resource
+  "Connects resource and collection"
+  ([session-id collection-id resource-id]
+   (app (-> (request :post (str "/api/collection/" collection-id "/add-resource"))
             (header :session-id session-id)
-            (json-body {:content-id content-id}))))
-  ([collection-id content-id]
-   (collection-id-add-content SESSION-ID-BYPASS collection-id content-id)))
+            (json-body {:resource-id resource-id}))))
+  ([collection-id resource-id]
+   (collection-id-add-resource SESSION-ID-BYPASS collection-id resource-id)))
 
-(defn collection-id-remove-content
-  "Connects content and collection"
-  ([session-id collection-id content-id]
-   (app (-> (request :post (str "/api/collection/" collection-id "/remove-content"))
+(defn collection-id-remove-resource
+  "Connects resource and collection"
+  ([session-id collection-id resource-id]
+   (app (-> (request :post (str "/api/collection/" collection-id "/remove-resource"))
             (header :session-id session-id)
-            (json-body {:content-id content-id}))))
-  ([collection-id content-id]
-   (collection-id-remove-content SESSION-ID-BYPASS collection-id content-id)))
+            (json-body {:resource-id resource-id}))))
+  ([collection-id resource-id]
+   (collection-id-remove-resource SESSION-ID-BYPASS collection-id resource-id)))
 
-(defn collection-id-contents
-  "Reads all contents connected to collection"
+(defn collection-id-resources
+  "Reads all resources connected to collection"
   ([session-id id]
-   (app (-> (request :get (str "/api/collection/" id "/contents"))
+   (app (-> (request :get (str "/api/collection/" id "/resources"))
             (header :session-id session-id))))
   ([id]
-   (collection-id-contents SESSION-ID-BYPASS id)))
+   (collection-id-resources SESSION-ID-BYPASS id)))
 
-(defn content-id-collections
-  "Reads all collections connected to content"
+(defn resource-id-collections
+  "Reads all collections connected to resource"
   ([session-id id]
-   (app (-> (request :get (str "/api/content/" id "/collections"))
+   (app (-> (request :get (str "/api/resource/" id "/collections"))
             (header :session-id session-id))))
   ([id]
-   (content-id-collections SESSION-ID-BYPASS id)))
+   (resource-id-collections SESSION-ID-BYPASS id)))
 
 (defn collection-id-add-course
   "Connects course and collection"
@@ -426,39 +426,39 @@
   ([id]
    (course-id-collections SESSION-ID-BYPASS id)))
 
-(defn content-id-add-file
-  "Connects file and content"
-  ([session-id content-id file-id]
-   (app (-> (request :post (str "/api/content/" content-id "/add-file"))
+(defn resource-id-add-file
+  "Connects file and resource"
+  ([session-id resource-id file-id]
+   (app (-> (request :post (str "/api/resource/" resource-id "/add-file"))
             (json-body {:file-id file-id})
             (header :session-id session-id))))
-  ([content-id file-id]
-   (content-id-add-file SESSION-ID-BYPASS content-id file-id)))
+  ([resource-id file-id]
+   (resource-id-add-file SESSION-ID-BYPASS resource-id file-id)))
 
-(defn content-id-remove-file
-  "Connects file and content"
-  ([session-id content-id file-id]
-   (app (-> (request :post (str "/api/content/" content-id "/remove-file"))
+(defn resource-id-remove-file
+  "Connects file and resource"
+  ([session-id resource-id file-id]
+   (app (-> (request :post (str "/api/resource/" resource-id "/remove-file"))
             (json-body {:file-id file-id})
             (header :session-id session-id))))
-  ([content-id file-id]
-   (content-id-remove-file SESSION-ID-BYPASS content-id file-id)))
+  ([resource-id file-id]
+   (resource-id-remove-file SESSION-ID-BYPASS resource-id file-id)))
 
-(defn content-id-files
-  "Reads all files connected to content"
+(defn resource-id-files
+  "Reads all files connected to resource"
   ([session-id id]
-   (app (-> (request :get (str "/api/content/" id "/files"))
+   (app (-> (request :get (str "/api/resource/" id "/files"))
             (header :session-id session-id))))
   ([id]
-   (content-id-files SESSION-ID-BYPASS id)))
+   (resource-id-files SESSION-ID-BYPASS id)))
 
-(defn file-id-contents
-  "Reads all contents connected to file"
+(defn file-id-resources
+  "Reads all resources connected to file"
   ([session-id id]
-   (app (-> (request :get (str "/api/file/" id "/contents"))
+   (app (-> (request :get (str "/api/file/" id "/resources"))
             (header :session-id session-id))))
   ([id]
-   (file-id-contents SESSION-ID-BYPASS id)))
+   (file-id-resources SESSION-ID-BYPASS id)))
 
 (defn search
   "Searches by query-term"
@@ -502,10 +502,10 @@
   ([term]
    (search-by-collection SESSION-ID-BYPASS term)))
 
-(defn search-by-content
-  "Search content table by term"
+(defn search-by-resource
+  "Search resource table by term"
   ([session-id term]
-   (app (-> (request :get (str "/api/admin/content/" (java.net.URLEncoder/encode term)))
+   (app (-> (request :get (str "/api/admin/resource/" (java.net.URLEncoder/encode term)))
             (header :session-id session-id))))
   ([term]
-   (search-by-content SESSION-ID-BYPASS term)))
+   (search-by-resource SESSION-ID-BYPASS term)))

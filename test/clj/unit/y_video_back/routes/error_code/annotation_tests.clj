@@ -11,12 +11,11 @@
       [y-video-back.utils.route-proxy :as rp]
       [y-video-back.db.core :refer [*db*] :as db]
       [y-video-back.db.annotations :as annotations]
-      [y-video-back.db.collections-contents-assoc :as collection-contents-assoc]
       [y-video-back.db.users-by-collection :as users-by-collection]
       [y-video-back.db.collections-courses-assoc :as collection-courses-assoc]
       [y-video-back.db.collections :as collections]
-      [y-video-back.db.content-files-assoc :as content-files-assoc]
-      [y-video-back.db.contents :as contents]
+      [y-video-back.db.resource-files-assoc :as resource-files-assoc]
+      [y-video-back.db.resources :as resources]
       [y-video-back.db.courses :as courses]
       [y-video-back.db.files :as files]
       [y-video-back.db.user-collections-assoc :as user-collections-assoc]
@@ -38,17 +37,17 @@
   (def test-user-one (ut/under-to-hyphen (users/CREATE (g/get-random-user-without-id))))
   (def test-user-two (ut/under-to-hyphen (users/CREATE (g/get-random-user-without-id))))
   (def test-coll-one (ut/under-to-hyphen (collections/CREATE (into (g/get-random-collection-without-id-or-owner) {:owner (:id test-user-one)}))))
-  (def test-cont-one (ut/under-to-hyphen (contents/CREATE (g/get-random-content-without-id))))
+  (def test-cont-one (ut/under-to-hyphen (resources/CREATE (g/get-random-resource-without-id))))
   (def test-annotation-one (ut/under-to-hyphen (annotations/CREATE (g/get-random-annotation-without-id (:id test-coll-one) (:id test-cont-one)))))
   (def test-crse-one (ut/under-to-hyphen (courses/CREATE (g/get-random-course-without-id))))
   (mount.core/start #'y-video-back.handler/app))
 
 (defn get-new-annotation
-  "Returns new annotation, with connected collection, content, and user created in db. Annotation is not added to db."
+  "Returns new annotation, with connected collection, resource, and user created in db. Annotation is not added to db."
   []
   (let [new-user (users/CREATE (g/get-random-user-without-id))
         new-coll (collections/CREATE (into (g/get-random-collection-without-id) {:owner (:id new-user)}))
-        new-cont (contents/CREATE (g/get-random-content-without-id))]
+        new-cont (resources/CREATE (g/get-random-resource-without-id))]
     (g/get-random-annotation-without-id (:id new-coll) (:id new-cont))))
 
 (deftest annotation-post
@@ -61,16 +60,16 @@
     (let [new-annotation (get-new-annotation)
           res (rp/annotation-post (into (dissoc new-annotation :collection-id) {:collection-id (java.util.UUID/randomUUID)}))]
       (is (= 500 (:status res)))))
-  (testing "add annotation with nonexistent content"
+  (testing "add annotation with nonexistent resource"
     (let [new-annotation (get-new-annotation)
-          res (rp/annotation-post (into (dissoc new-annotation :content-id) {:content-id (java.util.UUID/randomUUID)}))]
+          res (rp/annotation-post (into (dissoc new-annotation :resource-id) {:resource-id (java.util.UUID/randomUUID)}))]
       (is (= 500 (:status res)))))
-  (testing "add annotation with nonexistent collection and content"
+  (testing "add annotation with nonexistent collection and resource"
     (let [new-annotation (get-new-annotation)
           res (rp/annotation-post (-> new-annotation
-                                      (dissoc :collection-id :content-id)
+                                      (dissoc :collection-id :resource-id)
                                       (into {:collection-id (java.util.UUID/randomUUID)})
-                                      (into {:content-id (java.util.UUID/randomUUID)})))]
+                                      (into {:resource-id (java.util.UUID/randomUUID)})))]
       (is (= 500 (:status res))))))
 
 (deftest annotation-id-get
@@ -86,38 +85,38 @@
     (let [add-annt (annotations/CREATE (get-new-annotation))
           res (rp/annotation-id-patch (:id add-annt) {:collection-id (java.util.UUID/randomUUID)})]
       (is (= 500 (:status res)))))
-  (testing "update annotation to nonexistent content"
+  (testing "update annotation to nonexistent resource"
     (let [add-annt (annotations/CREATE (get-new-annotation))
-          res (rp/annotation-id-patch (:id add-annt) {:content-id (java.util.UUID/randomUUID)})]
+          res (rp/annotation-id-patch (:id add-annt) {:resource-id (java.util.UUID/randomUUID)})]
       (is (= 500 (:status res)))))
-  (testing "update annotation to nonexistent collection and content"
+  (testing "update annotation to nonexistent collection and resource"
     (let [add-annt (annotations/CREATE (get-new-annotation))
           res (rp/annotation-id-patch (:id add-annt) {:collection-id (java.util.UUID/randomUUID)
-                                                      :content-id (java.util.UUID/randomUUID)})]
+                                                      :resource-id (java.util.UUID/randomUUID)})]
       (is (= 500 (:status res)))))
-  (testing "update annotation to taken collection-content (all fields)"
+  (testing "update annotation to taken collection-resource (all fields)"
     (let [annt-one (get-new-annotation)
           annt-two (get-new-annotation)
           add-annt-one (annotations/CREATE annt-one)
           add-annt-two (annotations/CREATE annt-two)
           res (rp/annotation-id-patch (:id add-annt-two) annt-one)]
       (is (= 500 (:status res)))))
-  (testing "update annotation to taken collection-content (collection)"
+  (testing "update annotation to taken collection-resource (collection)"
     (let [annt-one (get-new-annotation)
           annt-two (get-new-annotation)
           add-annt-one (annotations/CREATE annt-one)
           add-annt-two (annotations/CREATE annt-two)
-          res-setup (rp/annotation-id-patch (:id add-annt-two) {:content-id (:content-id annt-one)})
+          res-setup (rp/annotation-id-patch (:id add-annt-two) {:resource-id (:resource-id annt-one)})
           res (rp/annotation-id-patch (:id add-annt-two) {:collection-id (:collection-id annt-one)})]
       (is (= 200 (:status res-setup)))
       (is (= 500 (:status res)))))
-  (testing "update annotation to taken collection-content (content)"
+  (testing "update annotation to taken collection-resource (resource)"
     (let [annt-one (get-new-annotation)
           annt-two (get-new-annotation)
           add-annt-one (annotations/CREATE annt-one)
           add-annt-two (annotations/CREATE annt-two)
           res-setup (rp/annotation-id-patch (:id add-annt-two) {:collection-id (:collection-id annt-one)})
-          res (rp/annotation-id-patch (:id add-annt-two) {:content-id (:content-id annt-one)})]
+          res (rp/annotation-id-patch (:id add-annt-two) {:resource-id (:resource-id annt-one)})]
       (is (= 200 (:status res-setup)))
       (is (= 500 (:status res))))))
 
@@ -126,21 +125,21 @@
     (let [res (rp/annotation-id-delete (java.util.UUID/randomUUID))]
       (is (= 404 (:status res))))))
 
-(deftest annotation-get-by-collection-and-content
+(deftest annotation-get-by-collection-and-resource
   (testing "find by valid ids, but no annotation"
     (let [new-user (users/CREATE (g/get-random-user-without-id))
           new-coll (collections/CREATE (into (g/get-random-collection-without-id) {:owner (:id new-user)}))
-          new-cont (contents/CREATE (g/get-random-content-without-id))
+          new-cont (resources/CREATE (g/get-random-resource-without-id))
           res (rp/annotation-get-by-ids (:id new-coll) (:id new-cont))]
       (is (= 404 (:status res)))))
   (testing "find by invalid ids"
     (let [res (rp/annotation-get-by-ids (java.util.UUID/randomUUID) (java.util.UUID/randomUUID))]
       (is (= 500 (:status res)))))
   (testing "find by invalid collection id"
-    (let [new-cont (contents/CREATE (g/get-random-content-without-id))
+    (let [new-cont (resources/CREATE (g/get-random-resource-without-id))
           res (rp/annotation-get-by-ids (java.util.UUID/randomUUID) (:id new-cont))]
       (is (= 500 (:status res)))))
-  (testing "find by invalid content id"
+  (testing "find by invalid resource id"
     (let [new-user (users/CREATE (g/get-random-user-without-id))
           new-coll (collections/CREATE (into (g/get-random-collection-without-id) {:owner (:id new-user)}))
           res (rp/annotation-get-by-ids (:id new-coll) (java.util.UUID/randomUUID))]

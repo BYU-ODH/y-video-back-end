@@ -68,9 +68,9 @@
 (def course
   (into course-without-id {:id uuid?}))
 
-(def content-without-id
-  {:content-name string?
-   :content-type string?
+(def resource-without-id
+  {:resource-name string?
+   :resource-type string?
    :requester-email string?
    :thumbnail string?
    :copyrighted boolean?
@@ -84,14 +84,14 @@
    :views int?
    :metadata string?})
 
-(def content
-  (into content-without-id {:id uuid?}))
+(def resource
+  (into resource-without-id {:id uuid?}))
 
 (def annotation-without-any-ids
   {:metadata string?})
 
 (def annotation-without-id
-  (into annotation-without-any-ids {:content-id uuid? :collection-id uuid?}))
+  (into annotation-without-any-ids {:resource-id uuid? :collection-id uuid?}))
 
 (def annotation
   (into annotation-without-id {:id uuid?}))
@@ -123,14 +123,14 @@
   (into user-courses-assoc-without-id {:id uuid?}))
 
 
-(def collection-contents-assoc-without-any-ids
+(def collection-resources-assoc-without-any-ids
   {})
 
-(def collection-contents-assoc-without-id
-  (into collection-contents-assoc-without-any-ids {:collection-id uuid? :content-id uuid?}))
+(def collection-resources-assoc-without-id
+  (into collection-resources-assoc-without-any-ids {:collection-id uuid? :resource-id uuid?}))
 
-(def collection-contents-assoc
-  (into collection-contents-assoc-without-id {:id uuid?}))
+(def collection-resources-assoc
+  (into collection-resources-assoc-without-id {:id uuid?}))
 
 (def collection-courses-assoc-without-any-ids
   {})
@@ -141,11 +141,11 @@
 (def collection-courses-assoc
   (into collection-courses-assoc-without-id {:id uuid?}))
 
-(def content-files-assoc-without-any-ids
+(def resource-files-assoc-without-any-ids
   {})
 
-(def content-files-assoc-without-id
-  (into content-files-assoc-without-any-ids {:content-id uuid? :file-id uuid?}))
+(def resource-files-assoc-without-id
+  (into resource-files-assoc-without-any-ids {:resource-id uuid? :file-id uuid?}))
 
-(def content-files-assoc
-  (into content-files-assoc-without-id {:id uuid?}))
+(def resource-files-assoc
+  (into resource-files-assoc-without-id {:id uuid?}))
