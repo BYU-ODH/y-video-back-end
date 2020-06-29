@@ -81,8 +81,10 @@
   (get-random-model models/resource-without-id))
 
 (defn get-random-file-without-id
-  []
-  (get-random-model models/file-without-id))
+  ([]
+   (get-random-model models/file-without-id))
+  ([resource-id]
+   (into (get-random-model models/file-without-any-ids) {:resource-id resource-id})))
 
 (defn get-random-user-collections-assoc-without-id
   ([]
@@ -97,11 +99,11 @@
    (into (get-random-model models/user-courses-assoc-without-any-ids) {:user-id user-id :course-id course-id})))
 
 
-(defn get-random-collection-resources-assoc-without-id
-  ([]
-   (get-random-model models/collection-resources-assoc-without-id))
-  ([collection-id resource-id]
-   (into (get-random-model models/collection-resources-assoc-without-any-ids) {:collection-id collection-id :resource-id resource-id})))
+;(defn get-random-collection-resources-assoc-without-id
+;  ([]
+;   (get-random-model models/collection-resources-assoc-without-id))
+;  ([collection-id resource-id]
+;   (into (get-random-model models/collection-resources-assoc-without-any-ids) {:collection-id collection-id :resource-id resource-id})))
 
 (defn get-random-collection-courses-assoc-without-id
   ([]
@@ -109,16 +111,11 @@
   ([collection-id course-id]
    (into (get-random-model models/collection-courses-assoc-without-any-ids) {:collection-id collection-id :course-id course-id})))
 
-(defn get-random-resource-files-assoc-without-id
-  ([]
-   (get-random-model models/resource-files-assoc-without-id))
-  ([resource-id file-id]
-   (into (get-random-model models/resource-files-assoc-without-any-ids) {:resource-id resource-id :file-id file-id})))
-
 (defn get-random-content-without-id
   ([]
    (get-random-model models/content-without-id))
   ([collection-id resource-id]
+   (println "DEBUG: resource-id is of type " (type resource-id) " ; " resource-id)
    (into (get-random-model models/content-without-any-ids) {:collection-id collection-id :resource-id resource-id})))
 
 ; - - - - - - - - - INVALID MODEL GENERATORS - - - - - - - - ;

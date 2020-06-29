@@ -17,6 +17,18 @@
                 "")))
       m)))
 
+(defn to-uuid
+  [text-in]
+  (java.util.UUID/fromString text-in))
+
+
+(defn nuuid?
+  "Returns true if val is uuid or nil"
+  [val]
+  (or (nil? val)
+      (uuid? val)
+      (uuid? (to-uuid val))))
+
 (def echo-patch
   {:echo string?})
 
@@ -72,34 +84,47 @@
   {:resource-name string?
    :resource-type string?
    :requester-email string?
-   :thumbnail string?
    :copyrighted boolean?
    :physical-copy-exists boolean?
    :full-video boolean?
    :published boolean?
-   :allow-definitions boolean?
-   :allow-notes boolean?
-   :allow-captions boolean?
    :date-validated string?
    :views int?
+   :all-file-versions string?
    :metadata string?})
 
 (def resource
   (into resource-without-id {:id uuid?}))
 
 (def content-without-any-ids
-  {:metadata string?})
+  {:title string?
+   :content-type string?
+   :url string?
+   :description string?
+   :tags string?
+   :annotations string?
+   :thumbnail string?
+   :allow-definitions boolean?
+   :allow-notes boolean?
+   :allow-captions boolean?
+   :views integer?
+   :file-version string?})
 
 (def content-without-id
-  (into content-without-any-ids {:resource-id uuid? :collection-id uuid?}))
+  (into content-without-any-ids {:resource-id uuid?
+                                 :collection-id uuid?}))
 
 (def content
   (into content-without-id {:id uuid?}))
 
-(def file-without-id
+(def file-without-any-ids
   {:filepath string?
+   :file-version string?
    :mime string?
    :metadata string?})
+
+(def file-without-id
+  (into file-without-any-ids {:resource-id uuid?}))
 
 (def file
   (into file-without-id {:id uuid?}))
@@ -123,14 +148,14 @@
   (into user-courses-assoc-without-id {:id uuid?}))
 
 
-(def collection-resources-assoc-without-any-ids
-  {})
+;(def collection-resources-assoc-without-any-ids
+;  {})
 
-(def collection-resources-assoc-without-id
-  (into collection-resources-assoc-without-any-ids {:collection-id uuid? :resource-id uuid?}))
+;(def collection-resources-assoc-without-id
+;  (into collection-resources-assoc-without-any-ids {:collection-id uuid? :resource-id uuid?}))
 
-(def collection-resources-assoc
-  (into collection-resources-assoc-without-id {:id uuid?}))
+;(def collection-resources-assoc
+;  (into collection-resources-assoc-without-id {:id uuid?}))
 
 (def collection-courses-assoc-without-any-ids
   {})
@@ -141,11 +166,11 @@
 (def collection-courses-assoc
   (into collection-courses-assoc-without-id {:id uuid?}))
 
-(def resource-files-assoc-without-any-ids
-  {})
+;(def resource-files-assoc-without-any-ids
+;  {})
 
-(def resource-files-assoc-without-id
-  (into resource-files-assoc-without-any-ids {:resource-id uuid? :file-id uuid?}))
+;(def resource-files-assoc-without-id
+;  (into resource-files-assoc-without-any-ids {:resource-id uuid? :file-id uuid?}))
 
-(def resource-files-assoc
-  (into resource-files-assoc-without-id {:id uuid?}))
+;(def resource-files-assoc
+;  (into resource-files-assoc-without-id {:id uuid?}))

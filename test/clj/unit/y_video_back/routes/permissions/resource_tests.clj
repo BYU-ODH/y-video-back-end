@@ -15,7 +15,6 @@
     [y-video-back.db.users-by-collection :as users-by-collection]
     [y-video-back.db.collections-courses-assoc :as collection-courses-assoc]
     [y-video-back.db.collections :as collections]
-    [y-video-back.db.resource-files-assoc :as resource-files-assoc]
     [y-video-back.db.resources :as resources]
     [y-video-back.db.courses :as courses]
     [y-video-back.db.files :as files]
@@ -93,8 +92,6 @@
                                                                                   :course-id (:id test-crse-one)})))
     (def test-coll-cont-one (ut/under-to-hyphen (collection-contents-assoc/CREATE {:collection-id (:id test-coll-one)
                                                                                    :resource-id (:id test-cont-one)})))
-    (def test-cont-file-one (ut/under-to-hyphen (resource-files-assoc/CREATE {:resource-id (:id test-cont-one)
-                                                                             :file-id (:id test-file-one)})))
     (mount.core/start #'y-video-back.handler/app))
 
   ; (no|with) connection -> (not) connected via many-to-many table
@@ -257,109 +254,6 @@
         (is (= 200 (:status res))))))
 
   ; Add a view to resource
-  ; Connect resource and file
-  (deftest resource-add-file
-    (testing "student add file, no connection"
-      (let [new-file (ut/under-to-hyphen (files/CREATE (g/get-random-file-without-id)))]
-        (let [res (rp/resource-id-add-file (:id user-stud-na)
-                                          (:id test-cont-one)
-                                          (:id new-file))]
-          (is (= 401 (:status res))))))
-    (testing "instructor add file, no connection"
-      (let [new-file (ut/under-to-hyphen (files/CREATE (g/get-random-file-without-id)))]
-        (let [res (rp/resource-id-add-file (:id user-instr-na)
-                                          (:id test-cont-one)
-                                          (:id new-file))]
-          (is (= 401 (:status res))))))
-    (testing "lab assistant add file, no connection"
-      (let [new-file (ut/under-to-hyphen (files/CREATE (g/get-random-file-without-id)))]
-        (let [res (rp/resource-id-add-file (:id user-la)
-                                          (:id test-cont-one)
-                                          (:id new-file))]
-          (is (= 200 (:status res))))))
-    (testing "admin add file, no connection"
-      (let [new-file (ut/under-to-hyphen (files/CREATE (g/get-random-file-without-id)))]
-        (let [res (rp/resource-id-add-file (:id user-admin)
-                                          (:id test-cont-one)
-                                          (:id new-file))]
-          (is (= 200 (:status res))))))
-    (testing "student add file, with connection (student)"
-      (let [new-file (ut/under-to-hyphen (files/CREATE (g/get-random-file-without-id)))]
-        (let [res (rp/resource-id-add-file (:id user-stud-stud)
-                                          (:id test-cont-one)
-                                          (:id new-file))]
-          (is (= 401 (:status res))))))
-    (testing "student add file, with connection (TA)"
-      (let [new-file (ut/under-to-hyphen (files/CREATE (g/get-random-file-without-id)))]
-        (let [res (rp/resource-id-add-file (:id user-stud-ta)
-                                          (:id test-cont-one)
-                                          (:id new-file))]
-          (is (= 200 (:status res))))))
-    (testing "instructor add file, with connection (owner?)"
-      (let [new-file (ut/under-to-hyphen (files/CREATE (g/get-random-file-without-id)))]
-        (let [res (rp/resource-id-add-file (:id user-instr-c1)
-                                          (:id test-cont-one)
-                                          (:id new-file))]
-          (is (= 200 (:status res)))))))
-
-  ; Disconnect resource and file
-  (deftest resource-remove-file
-    (testing "student remove file, no connection"
-      (let [new-file (ut/under-to-hyphen (files/CREATE (g/get-random-file-without-id)))]
-        (resource-files-assoc/CREATE {:resource-id (:id test-cont-one)
-                                     :file-id (:id new-file)})
-        (let [res (rp/resource-id-remove-file (:id user-stud-na)
-                                             (:id test-cont-one)
-                                             (:id new-file))]
-          (is (= 401 (:status res))))))
-    (testing "instructor remove file, no connection"
-      (let [new-file (ut/under-to-hyphen (files/CREATE (g/get-random-file-without-id)))]
-        (resource-files-assoc/CREATE {:resource-id (:id test-cont-one)
-                                     :file-id (:id new-file)})
-        (let [res (rp/resource-id-remove-file (:id user-instr-na)
-                                             (:id test-cont-one)
-                                             (:id new-file))]
-          (is (= 401 (:status res))))))
-    (testing "lab assistant remove file, no connection"
-      (let [new-file (ut/under-to-hyphen (files/CREATE (g/get-random-file-without-id)))]
-        (resource-files-assoc/CREATE {:resource-id (:id test-cont-one)
-                                     :file-id (:id new-file)})
-        (let [res (rp/resource-id-remove-file (:id user-la)
-                                             (:id test-cont-one)
-                                             (:id new-file))]
-          (is (= 200 (:status res))))))
-    (testing "admin remove file, no connection"
-      (let [new-file (ut/under-to-hyphen (files/CREATE (g/get-random-file-without-id)))]
-        (resource-files-assoc/CREATE {:resource-id (:id test-cont-one)
-                                     :file-id (:id new-file)})
-        (let [res (rp/resource-id-remove-file (:id user-admin)
-                                             (:id test-cont-one)
-                                             (:id new-file))]
-          (is (= 200 (:status res))))))
-    (testing "student remove file, with connection (student)"
-      (let [new-file (ut/under-to-hyphen (files/CREATE (g/get-random-file-without-id)))]
-        (resource-files-assoc/CREATE {:resource-id (:id test-cont-one)
-                                     :file-id (:id new-file)})
-        (let [res (rp/resource-id-remove-file (:id user-stud-stud)
-                                             (:id test-cont-one)
-                                             (:id new-file))]
-          (is (= 401 (:status res))))))
-    (testing "student remove file, with connection (TA)"
-      (let [new-file (ut/under-to-hyphen (files/CREATE (g/get-random-file-without-id)))]
-        (resource-files-assoc/CREATE {:resource-id (:id test-cont-one)
-                                     :file-id (:id new-file)})
-        (let [res (rp/resource-id-remove-file (:id user-stud-ta)
-                                             (:id test-cont-one)
-                                             (:id new-file))]
-          (is (= 200 (:status res))))))
-    (testing "instructor remove file, with connection (owner)"
-      (let [new-file (ut/under-to-hyphen (files/CREATE (g/get-random-file-without-id)))]
-        (resource-files-assoc/CREATE {:resource-id (:id test-cont-one)
-                                     :file-id (:id new-file)})
-        (let [res (rp/resource-id-remove-file (:id user-instr-c1)
-                                             (:id test-cont-one)
-                                             (:id new-file))]
-          (is (= 200 (:status res)))))))
 
   ; Retrieve all collections for resource
   (deftest resource-get-all-collections

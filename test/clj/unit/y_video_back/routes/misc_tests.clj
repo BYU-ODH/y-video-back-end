@@ -14,7 +14,6 @@
       [y-video-back.db.users-by-collection :as users-by-collection]
       [y-video-back.db.collections-courses-assoc :as collection-courses-assoc]
       [y-video-back.db.collections :as collections]
-      [y-video-back.db.resource-files-assoc :as resource-files-assoc]
       [y-video-back.db.resources :as resources]
       [y-video-back.db.courses :as courses]
       [y-video-back.db.files :as files]
@@ -43,15 +42,15 @@
   (def test-coll-one (ut/under-to-hyphen (collections/CREATE (into (g/get-random-collection-without-id-or-owner) {:owner (:id test-user-one)}))))
   (def test-coll-two (ut/under-to-hyphen (collections/CREATE (into (g/get-random-collection-without-id-or-owner) {:owner (:id test-user-two)}))))
   (def test-coll-thr (ut/under-to-hyphen (collections/CREATE (into (g/get-random-collection-without-id-or-owner) {:owner (:id test-user-thr)}))))
-  (def test-cont-one (ut/under-to-hyphen (resources/CREATE (g/get-random-resource-without-id))))
-  (def test-cont-two (ut/under-to-hyphen (resources/CREATE (g/get-random-resource-without-id))))
-  (def test-cont-thr (ut/under-to-hyphen (resources/CREATE (g/get-random-resource-without-id))))
+  (def test-rsrc-one (ut/under-to-hyphen (resources/CREATE (g/get-random-resource-without-id))))
+  (def test-rsrc-two (ut/under-to-hyphen (resources/CREATE (g/get-random-resource-without-id))))
+  (def test-rsrc-thr (ut/under-to-hyphen (resources/CREATE (g/get-random-resource-without-id))))
   (def test-crse-one (ut/under-to-hyphen (courses/CREATE (g/get-random-course-without-id))))
   (def test-crse-two (ut/under-to-hyphen (courses/CREATE (g/get-random-course-without-id))))
   (def test-crse-thr (ut/under-to-hyphen (courses/CREATE (g/get-random-course-without-id))))
-  (def test-file-one (ut/under-to-hyphen (files/CREATE (g/get-random-file-without-id))))
-  (def test-file-two (ut/under-to-hyphen (files/CREATE (g/get-random-file-without-id))))
-  (def test-file-thr (ut/under-to-hyphen (files/CREATE (g/get-random-file-without-id))))
+  (def test-file-one (ut/under-to-hyphen (files/CREATE (g/get-random-file-without-id (:id test-rsrc-one)))))
+  (def test-file-two (ut/under-to-hyphen (files/CREATE (g/get-random-file-without-id (:id test-rsrc-two)))))
+  (def test-file-thr (ut/under-to-hyphen (files/CREATE (g/get-random-file-without-id (:id test-rsrc-thr)))))
   (def test-word-one (ut/under-to-hyphen (words/CREATE (g/get-random-word-without-id (:id test-user-one)))))
   (def test-word-two (ut/under-to-hyphen (words/CREATE (g/get-random-word-without-id (:id test-user-two)))))
   (def test-word-thr (ut/under-to-hyphen (words/CREATE (g/get-random-word-without-id (:id test-user-thr)))))
@@ -77,9 +76,9 @@
   (def test-user-crse-fou (ut/under-to-hyphen (user-courses-assoc/CREATE {:user-id (:id test-user-fou)
                                                                           :course-id (:id test-crse-one)
                                                                           :account-role 2})))
-  (def test-content-one (ut/under-to-hyphen (contents/CREATE (g/get-random-content-without-id (:id test-coll-one) (:id test-cont-one)))))
-  (def test-content-two (ut/under-to-hyphen (contents/CREATE (g/get-random-content-without-id (:id test-coll-two) (:id test-cont-two)))))
-  (def test-content-thr (ut/under-to-hyphen (contents/CREATE (g/get-random-content-without-id (:id test-coll-thr) (:id test-cont-thr)))))
+  (def test-content-one (ut/under-to-hyphen (contents/CREATE (g/get-random-content-without-id (:id test-coll-one) (:id test-rsrc-one)))))
+  (def test-content-two (ut/under-to-hyphen (contents/CREATE (g/get-random-content-without-id (:id test-coll-two) (:id test-rsrc-two)))))
+  (def test-content-thr (ut/under-to-hyphen (contents/CREATE (g/get-random-content-without-id (:id test-coll-thr) (:id test-rsrc-thr)))))
   (def test-coll-crse-one (ut/under-to-hyphen (collection-courses-assoc/CREATE {:collection-id (:id test-coll-one)
                                                                                  :course-id (:id test-crse-one)})))
   (def test-coll-crse-two (ut/under-to-hyphen (collection-courses-assoc/CREATE {:collection-id (:id test-coll-two)
@@ -87,22 +86,13 @@
   (def test-coll-crse-thr (ut/under-to-hyphen (collection-courses-assoc/CREATE {:collection-id (:id test-coll-thr)
                                                                                  :course-id (:id test-crse-thr)})))
 
-  (def test-cont-file-one (ut/under-to-hyphen (resource-files-assoc/CREATE {:resource-id (:id test-cont-one)
-                                                                           :file-id (:id test-file-one)})))
-  (def test-cont-file-two (ut/under-to-hyphen (resource-files-assoc/CREATE {:resource-id (:id test-cont-two)
-                                                                           :file-id (:id test-file-two)})))
-  (def test-cont-file-thr (ut/under-to-hyphen (resource-files-assoc/CREATE {:resource-id (:id test-cont-thr)
-                                                                           :file-id (:id test-file-thr)})))
-
-
-
 
 
   (mount.core/start #'y-video-back.handler/app))
 
 (deftest test-resource-add-view
   (testing "resource add view"
-    (let [res (rp/resource-id-add-view (:id test-cont-one))]
+    (let [res (rp/resource-id-add-view (:id test-rsrc-one))]
       (is (= 200 (:status res)))
-      (let [new-resource (resources/READ (:id test-cont-one))]
-        (is (= (+ 1 (:views test-cont-one)) (:views new-resource)))))))
+      (let [new-resource (resources/READ (:id test-rsrc-one))]
+        (is (= (+ 1 (:views test-rsrc-one)) (:views new-resource)))))))

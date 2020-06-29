@@ -11,3 +11,4 @@
 (defn EXISTS? [id] (not (nil? (db/READ :resources-undeleted id))))
 (defn NAME-TAKEN? [resource-name] (not (empty? (db/read-where-and :resources-undeleted [:resource-name] [resource-name]))))
 (def READ-ALL-BY-NAME (partial db/read-where-and :resources-undeleted [:resource-name]))
+(def COLLECTIONS-BY-RESOURCE (partial db/read-all-where :collections-by-resource :resource-id))

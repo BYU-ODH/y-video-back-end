@@ -14,7 +14,6 @@
       [y-video-back.db.users-by-collection :as users-by-collection]
       [y-video-back.db.collections-courses-assoc :as collection-courses-assoc]
       [y-video-back.db.collections :as collections]
-      [y-video-back.db.resource-files-assoc :as resource-files-assoc]
       [y-video-back.db.resources :as resources]
       [y-video-back.db.courses :as courses]
       [y-video-back.db.files :as files]
@@ -45,7 +44,6 @@
   (def test-coll-one (ut/under-to-hyphen (collections/CREATE (into (g/get-random-collection-without-id-or-owner) {:owner (:id test-user-one)}))))
   (def test-cont-one (ut/under-to-hyphen (resources/CREATE (g/get-random-resource-without-id))))
   (def test-crse-one (ut/under-to-hyphen (courses/CREATE (g/get-random-course-without-id))))
-  (def test-file-one (ut/under-to-hyphen (files/CREATE (g/get-random-file-without-id))))
   (mount.core/start #'y-video-back.handler/app))
 
 (deftest word-post

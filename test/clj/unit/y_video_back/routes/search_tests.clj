@@ -14,7 +14,6 @@
       [y-video-back.db.users-by-collection :as users-by-collection]
       [y-video-back.db.collections-courses-assoc :as collection-courses-assoc]
       [y-video-back.db.collections :as collections]
-      [y-video-back.db.resource-files-assoc :as resource-files-assoc]
       [y-video-back.db.resources :as resources]
       [y-video-back.db.courses :as courses]
       [y-video-back.db.files :as files]
@@ -61,48 +60,39 @@
                                                               :published false
                                                               :archived true
                                                               :owner (:id test-user-thr)})))
-  (def test-cont-one (ut/under-to-hyphen (resources/CREATE {:resource-name "Quidditch Through the Ages"
-                                                           :resource-type "book 1"
-                                                           :requester-email "im.a.what@gmail.com"
-                                                           :thumbnail "thumbs"
-                                                           :copyrighted true
-                                                           :physical-copy-exists false
-                                                           :full-video true
-                                                           :published false
-                                                           :allow-definitions true
-                                                           :allow-notes false
-                                                           :allow-captions false
-                                                           :date-validated "a while ago"
-                                                           :views 0
-                                                           :metadata "so meta"})))
-  (def test-cont-two (ut/under-to-hyphen (resources/CREATE {:resource-name "Twelve Fail-Safe Ways to Charm Witches"
-                                                           :resource-type "book 2"
-                                                           :requester-email "another-weasley@gmail.com"
-                                                           :thumbnail "thumbs"
-                                                           :copyrighted false
-                                                           :physical-copy-exists true
-                                                           :full-video false
-                                                           :published true
-                                                           :allow-definitions false
-                                                           :allow-notes false
-                                                           :allow-captions true
-                                                           :date-validated "recently"
-                                                           :views 0
-                                                           :metadata "so meta"})))
-  (def test-cont-thr (ut/under-to-hyphen (resources/CREATE {:resource-name "Hogwarts: A History"
-                                                           :resource-type "book 2"
-                                                           :requester-email "insufferable-know-it-all@byu.edu"
-                                                           :thumbnail "thumbs"
-                                                           :copyrighted false
-                                                           :physical-copy-exists false
-                                                           :full-video false
-                                                           :published false
-                                                           :allow-definitions false
-                                                           :allow-notes false
-                                                           :allow-captions false
-                                                           :date-validated "every day"
-                                                           :views 0
-                                                           :metadata "so meta"})))
+  (def test-rsrc-one (ut/under-to-hyphen (resources/CREATE {:resource-name "Quidditch Through the Ages"
+                                                            :resource-type "book 1"
+                                                            :requester-email "im.a.what@gmail.com"
+                                                            :copyrighted true
+                                                            :physical-copy-exists false
+                                                            :full-video true
+                                                            :published false
+                                                            :date-validated "a while ago"
+                                                            :views 0
+                                                            :all_file_versions "[book]"
+                                                            :metadata "so meta"})))
+  (def test-rsrc-two (ut/under-to-hyphen (resources/CREATE {:resource-name "Twelve Fail-Safe Ways to Charm Witches"
+                                                            :resource-type "book 2"
+                                                            :requester-email "another-weasley@gmail.com"
+                                                            :copyrighted false
+                                                            :physical-copy-exists true
+                                                            :full-video false
+                                                            :published true
+                                                            :date-validated "recently"
+                                                            :views 0
+                                                            :all_file_versions "[book]"
+                                                            :metadata "so meta"})))
+  (def test-rsrc-thr (ut/under-to-hyphen (resources/CREATE {:resource-name "Hogwarts: A History"
+                                                            :resource-type "book 2"
+                                                            :requester-email "insufferable-know-it-all@byu.edu"
+                                                            :copyrighted false
+                                                            :physical-copy-exists false
+                                                            :full-video false
+                                                            :published false
+                                                            :date-validated "every day"
+                                                            :views 0
+                                                            :all_file_versions "[book]"
+                                                            :metadata "so meta"})))
   (def test-crse-one (ut/under-to-hyphen (courses/CREATE {:department "Transfiguration"
                                                           :catalog-number "ClockAndMap 101"
                                                           :section-number "001"})))
@@ -200,11 +190,11 @@
   (testing "all conts name"
     (test-search-table :resources
                        "i"
-                       [test-cont-one test-cont-two test-cont-thr]))
+                       [test-rsrc-one test-rsrc-two test-rsrc-thr]))
   (testing "one cont name"
     (test-search-table :resources
                        "elve"
-                       [test-cont-two]))
+                       [test-rsrc-two]))
   (testing "no conts name"
     (test-search-table :resources
                        "Fantastic Beasts"
@@ -212,11 +202,11 @@
   (testing "all conts type"
     (test-search-table :resources
                        "book"
-                       [test-cont-one test-cont-two test-cont-thr]))
+                       [test-rsrc-one test-rsrc-two test-rsrc-thr]))
   (testing "one cont type"
     (test-search-table :resources
                        "1"
-                       [test-cont-one]))
+                       [test-rsrc-one]))
   (testing "no conts type"
     (test-search-table :resources
                        " movie "
@@ -224,11 +214,11 @@
   (testing "all conts requester-email"
     (test-search-table :resources
                        "l"
-                       [test-cont-one test-cont-two test-cont-thr]))
+                       [test-rsrc-one test-rsrc-two test-rsrc-thr]))
   (testing "one cont requester-email"
     (test-search-table :resources
                        "what"
-                       [test-cont-one]))
+                       [test-rsrc-one]))
   (testing "no conts requester-email"
     (test-search-table :resources
                        "@gmail@com"
@@ -236,4 +226,4 @@
   (testing "only a space"
     (test-search-table :resources
                        " "
-                       [test-cont-one test-cont-two test-cont-thr])))
+                       [test-rsrc-one test-rsrc-two test-rsrc-thr])))

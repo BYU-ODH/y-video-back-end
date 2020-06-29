@@ -34,11 +34,9 @@
 (def collection-delete collections/collection-delete)
 (def collection-add-user collections/collection-add-user)
 (def collection-remove-user collections/collection-remove-user)
-(def collection-add-resource collections/collection-add-resource)
-(def collection-remove-resource collections/collection-remove-resource)
 (def collection-add-course collections/collection-add-course)
 (def collection-remove-course collections/collection-remove-course)
-(def collection-get-all-resources collections/collection-get-all-resources)
+(def collection-get-all-contents collections/collection-get-all-contents)
 (def collection-get-all-courses collections/collection-get-all-courses)
 (def collection-get-all-users collections/collection-get-all-users)
 
@@ -48,17 +46,15 @@
 (def resource-update resources/resource-update)
 (def resource-delete resources/resource-delete)
 (def resource-get-all-collections resources/resource-get-all-collections)
+(def resource-get-all-contents resources/resource-get-all-contents)
 (def resource-get-all-files resources/resource-get-all-files)
 (def resource-add-view resources/resource-add-view)
-(def resource-add-file resources/resource-add-file)
-(def resource-remove-file resources/resource-remove-file)
 
 ; File handlers
 (def file-create files/file-create)
 (def file-get-by-id files/file-get-by-id)
 (def file-update files/file-update)
 (def file-delete files/file-delete)
-(def file-get-all-resources files/file-get-all-resources)
 
 ; Course handlers
 (def course-create courses/course-create)
@@ -81,7 +77,7 @@
 (def content-get-by-id contents/content-get-by-id)
 (def content-update contents/content-update)
 (def content-delete contents/content-delete)
-(def content-get-by-collection-and-resource contents/content-get-by-collection-and-resource)
+(def content-add-view contents/content-add-view)
 
 ; Admin handlers
 (def search-by-user admin/search-by-user)

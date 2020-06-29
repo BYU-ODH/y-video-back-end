@@ -34,6 +34,9 @@
   [text-in]
   (java.util.UUID/fromString text-in))
 
+(def nil-uuid
+  (to-uuid "00000000-0000-0000-0000-000000000000"))
+
 (defn random-submap
   "Returns a map containing n key-value pairs of map-in. min-take <= n <= max-take"
   ([map-in]

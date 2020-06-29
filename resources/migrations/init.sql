@@ -1,4 +1,6 @@
--- This DB implements UUID ids on every table, constraints for composite keys, soft-deletes and "updated" for data audit
+-- This DB implements UUID ids on every table, constraints for composite keys, soft-deletes and 'updated' for data audit
+
+DROP TABLE IF EXISTS annotations CASCADE;
 
 -- DROP EXTENSION IF EXISTS pgcrypto CASCADE;
 -- CREATE EXTENSION pgcrypto;
@@ -67,16 +69,13 @@ CREATE TABLE resources (
    ,resource_name TEXT
    ,resource_type TEXT -- type is a reserved word
    ,requester_email TEXT
-   ,thumbnail TEXT
    ,copyrighted BOOLEAN
    ,physical_copy_exists BOOLEAN
    ,full_video BOOLEAN
    ,published BOOLEAN
-   ,allow_definitions BOOLEAN
-   ,allow_notes BOOLEAN
-   ,allow_captions BOOLEAN
    ,date_validated TEXT
    ,views INTEGER
+   ,all_file_versions TEXT
    ,metadata TEXT
 );
 COMMENT ON TABLE resources IS 'Referenced by contents, hold media in files table';
@@ -87,7 +86,9 @@ CREATE TABLE files (
    ,deleted TIMESTAMP DEFAULT NULL
    ,updated TIMESTAMP DEFAULT NULL
    ,created  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+   ,resource_id UUID REFERENCES resources(id)
    ,filepath TEXT
+   ,file_version TEXT
    ,mime TEXT
    ,metadata TEXT
    , CONSTRAINT no_duplicate_filepaths UNIQUE (filepath)
@@ -106,6 +107,12 @@ CREATE TABLE contents (
     ,description TEXT
     ,tags TEXT
     ,annotations TEXT
+    ,thumbnail TEXT
+    ,allow_definitions BOOLEAN
+    ,allow_notes BOOLEAN
+    ,allow_captions BOOLEAN
+    ,views INTEGER
+    ,file_version TEXT
     ,resource_id UUID REFERENCES resources(id)
     ,collection_id UUID REFERENCES collections(id)
 );
@@ -156,7 +163,7 @@ DROP TABLE IF EXISTS collection_resources_assoc CASCADE;
 
 DROP TABLE IF EXISTS content_files_assoc CASCADE;
 DROP TABLE IF EXISTS resource_files_assoc CASCADE;
-CREATE TABLE resource_files_assoc (
+/*CREATE TABLE resource_files_assoc (
    id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY
    ,deleted TIMESTAMP DEFAULT NULL
    ,updated TIMESTAMP DEFAULT NULL
@@ -166,7 +173,7 @@ CREATE TABLE resource_files_assoc (
    , CONSTRAINT no_duplicate_resource_files UNIQUE (resource_id, file_id)
 );
 COMMENT ON TABLE resource_files_assoc IS 'Many-to-many table connecting resources and files';
-
+*/
 -------------------------------
 -- Auto-update updated --
 -------------------------------
@@ -262,9 +269,7 @@ CREATE VIEW collections_by_content AS
     ON collections_undeleted.id = cca.collection_id;
 */
 
-DROP VIEW IF EXISTS contents_by_collection;
-DROP TABLE IF EXISTS contents CASCADE;
-DROP VIEW IF EXISTS contents;
+
 /*
 CREATE VIEW contents AS
     SELECT scu.content_name,
@@ -300,18 +305,20 @@ CREATE VIEW courses_by_collection AS
     FROM courses_undeleted JOIN collection_courses_assoc_undeleted AS cca
     ON courses_undeleted.id = cca.course_id;
 
+/*
 DROP VIEW IF EXISTS resources_by_file;
 CREATE VIEW resources_by_file AS
     SELECT resources_undeleted.*, rfa.file_id
     FROM resources_undeleted JOIN resource_files_assoc_undeleted AS rfa
     ON resources_undeleted.id = rfa.resource_id;
-
+*/
+/*
 DROP VIEW IF EXISTS files_by_resource;
 CREATE VIEW files_by_resource AS
     SELECT files_undeleted.*, rfa.resource_id
     FROM files_undeleted JOIN resource_files_assoc_undeleted AS rfa
     ON files_undeleted.id = rfa.file_id;
-
+*/
 DROP VIEW IF EXISTS collections_by_users_via_courses;
 CREATE VIEW collections_by_users_via_courses AS
     SELECT collections_undeleted.*, uca.user_id
@@ -322,3 +329,18 @@ CREATE VIEW collections_by_users_via_courses AS
     ON uca.course_id = cca.course_id
     JOIN collections_undeleted
     ON cca.collection_id = collections_undeleted.id;
+
+DROP VIEW IF EXISTS collections_by_resource;
+CREATE VIEW collections_by_resource AS
+    SELECT collections_undeleted.*, resources_undeleted.id AS resource_id
+    FROM collections_undeleted
+    JOIN contents_undeleted
+    ON collections_undeleted.id = contents_undeleted.collection_id
+    JOIN resources_undeleted ON contents_undeleted.resource_id = resources_undeleted.id;
+
+--------------------------------------------------
+-- Set up resource placeholder for online media --
+--------------------------------------------------
+
+INSERT INTO resources (id, resource_name, resource_type, requester_email, copyrighted, physical_copy_exists, full_video, published, date_validated, views, all_file_versions, metadata)
+VALUES ('00000000-0000-0000-0000-000000000000', 'online-media', 'online-media', '', true, false, true, true, '', 0, '', '');

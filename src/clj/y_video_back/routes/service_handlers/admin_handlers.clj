@@ -55,8 +55,7 @@
                 (let [term (java.net.URLDecoder/decode term)
                       res (map utils/remove-db-only
                                (db/read-all-pattern :resources
-                                                    [:resource-name :resource-type :requester-email
-                                                     :thumbnail]
+                                                    [:resource-name :resource-type :requester-email]
                                                     (str "%" term "%")))]
                   {:status 200
                    :body res})))})

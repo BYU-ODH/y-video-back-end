@@ -15,7 +15,6 @@
     [y-video-back.db.users-by-collection :as users-by-collection]
     [y-video-back.db.collections-courses-assoc :as collection-courses-assoc]
     [y-video-back.db.collections :as collections]
-    [y-video-back.db.resource-files-assoc :as resource-files-assoc]
     [y-video-back.db.resources :as resources]
     [y-video-back.db.courses :as courses]
     [y-video-back.db.files :as files]
@@ -90,8 +89,8 @@
                                                                                 :account-role 1}))) ; TA for collection
     (def test-coll-crse-one (ut/under-to-hyphen (collection-courses-assoc/CREATE {:collection-id (:id test-coll-one)
                                                                                   :course-id (:id test-crse-one)})))
-    (def test-coll-cont-one (ut/under-to-hyphen (collection-contents-assoc/CREATE {:collection-id (:id test-coll-one)}
-                                                                                   :resource-id (:id test-cont-one))))
+    (def test-coll-cont-one (ut/under-to-hyphen (collection-contents-assoc/CREATE {:collection-id (:id test-coll-one)
+                                                                                   :resource-id (:id test-cont-one)})))
     (mount.core/start #'y-video-back.handler/app))
 
   ; (no|with) connection -> (not) connected via many-to-many table
@@ -386,56 +385,56 @@
   (deftest collection-remove-resource
     (testing "student remove resource, no connection"
       (let [new-resource (resources/CREATE (g/get-random-resource-without-id))]
-        (collection-contents-assoc/CREATE {:resource-id (:id new-resource)}
-                                           :collection-id (:id test-coll-one))
+        (collection-contents-assoc/CREATE {:resource-id (:id new-resource)
+                                           :collection-id (:id test-coll-one)})
         (let [res (rp/collection-id-remove-resource (:id user-stud-na)
                                                    (:id test-coll-one)
                                                    (:id new-resource))]
           (is (= 401 (:status res))))))
     (testing "instructor remove resource, no connection"
       (let [new-resource (resources/CREATE (g/get-random-resource-without-id))]
-        (collection-contents-assoc/CREATE {:resource-id (:id new-resource)}
-                                           :collection-id (:id test-coll-one))
+        (collection-contents-assoc/CREATE {:resource-id (:id new-resource)
+                                           :collection-id (:id test-coll-one)})
         (let [res (rp/collection-id-remove-resource (:id user-instr-na)
                                                    (:id test-coll-one)
                                                    (:id new-resource))]
           (is (= 401 (:status res))))))
     (testing "lab assistant remove resource, no connection"
       (let [new-resource (resources/CREATE (g/get-random-resource-without-id))]
-        (collection-contents-assoc/CREATE {:resource-id (:id new-resource)}
-                                           :collection-id (:id test-coll-one))
+        (collection-contents-assoc/CREATE {:resource-id (:id new-resource)
+                                           :collection-id (:id test-coll-one)})
         (let [res (rp/collection-id-remove-resource (:id user-la)
                                                    (:id test-coll-one)
                                                    (:id new-resource))]
           (is (= 200 (:status res))))))
     (testing "admin remove resource, no connection"
       (let [new-resource (resources/CREATE (g/get-random-resource-without-id))]
-        (collection-contents-assoc/CREATE {:resource-id (:id new-resource)}
-                                           :collection-id (:id test-coll-one))
+        (collection-contents-assoc/CREATE {:resource-id (:id new-resource)
+                                           :collection-id (:id test-coll-one)})
         (let [res (rp/collection-id-remove-resource (:id user-admin)
                                                    (:id test-coll-one)
                                                    (:id new-resource))]
           (is (= 200 (:status res))))))
     (testing "student remove resource, with connection (student)"
       (let [new-resource (resources/CREATE (g/get-random-resource-without-id))]
-        (collection-contents-assoc/CREATE {:resource-id (:id new-resource)}
-                                           :collection-id (:id test-coll-one))
+        (collection-contents-assoc/CREATE {:resource-id (:id new-resource)
+                                           :collection-id (:id test-coll-one)})
         (let [res (rp/collection-id-remove-resource (:id user-stud-stud)
                                                    (:id test-coll-one)
                                                    (:id new-resource))]
           (is (= 401 (:status res))))))
     (testing "student remove resource, with connection (TA)"
       (let [new-resource (resources/CREATE (g/get-random-resource-without-id))]
-        (collection-contents-assoc/CREATE {:resource-id (:id new-resource)}
-                                           :collection-id (:id test-coll-one))
+        (collection-contents-assoc/CREATE {:resource-id (:id new-resource)
+                                           :collection-id (:id test-coll-one)})
         (let [res (rp/collection-id-remove-resource (:id user-stud-ta)
                                                    (:id test-coll-one)
                                                    (:id new-resource))]
           (is (= 401 (:status res))))))
     (testing "instructor remove resource, with connection (owner?)"
       (let [new-resource (resources/CREATE (g/get-random-resource-without-id))]
-        (collection-contents-assoc/CREATE {:resource-id (:id new-resource)}
-                                           :collection-id (:id test-coll-one))
+        (collection-contents-assoc/CREATE {:resource-id (:id new-resource)
+                                           :collection-id (:id test-coll-one)})
         (let [res (rp/collection-id-remove-resource (:id user-instr-c1)
                                                    (:id test-coll-one)
                                                    (:id new-resource))]
@@ -444,31 +443,31 @@
   ; Retrieve all resources for collection
   (deftest collection-get-all-resources
     (testing "student get resources, no connection"
-      (let [res (rp/collection-id-resources (:id user-stud-na)
+      (let [res (rp/collection-id-contents (:id user-stud-na)
                                            (:id test-coll-one))]
         (is (= 401 (:status res)))))
     (testing "instructor get resources, no connection"
-      (let [res (rp/collection-id-resources (:id user-instr-na)
+      (let [res (rp/collection-id-contents (:id user-instr-na)
                                            (:id test-coll-one))]
         (is (= 401 (:status res)))))
     (testing "lab assistant get resources, no connection"
-      (let [res (rp/collection-id-resources (:id user-la)
+      (let [res (rp/collection-id-contents (:id user-la)
                                            (:id test-coll-one))]
         (is (= 200 (:status res)))))
     (testing "admin get resources, no connection"
-      (let [res (rp/collection-id-resources (:id user-admin)
+      (let [res (rp/collection-id-contents (:id user-admin)
                                            (:id test-coll-one))]
         (is (= 200 (:status res)))))
     (testing "student get resources, with connection (student)"
-      (let [res (rp/collection-id-resources (:id user-stud-stud)
+      (let [res (rp/collection-id-contents (:id user-stud-stud)
                                            (:id test-coll-one))]
         (is (= 200 (:status res)))))
     (testing "student get resources, with connection (TA)"
-      (let [res (rp/collection-id-resources (:id user-stud-ta)
+      (let [res (rp/collection-id-contents (:id user-stud-ta)
                                            (:id test-coll-one))]
         (is (= 200 (:status res)))))
     (testing "instructor get resources, with connection (owner)"
-      (let [res (rp/collection-id-resources (:id user-instr-c1)
+      (let [res (rp/collection-id-contents (:id user-instr-c1)
                                            (:id test-coll-one))]
         (is (= 200 (:status res))))))
 

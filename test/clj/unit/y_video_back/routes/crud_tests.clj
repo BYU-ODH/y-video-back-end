@@ -14,7 +14,6 @@
       [y-video-back.db.users-by-collection :as users-by-collection]
       [y-video-back.db.collections-courses-assoc :as collection-courses-assoc]
       [y-video-back.db.collections :as collections]
-      [y-video-back.db.resource-files-assoc :as resource-files-assoc]
       [y-video-back.db.resources :as resources]
       [y-video-back.db.courses :as courses]
       [y-video-back.db.files :as files]
@@ -49,21 +48,21 @@
   (def test-user-coll-thr (ut/under-to-hyphen (user-collections-assoc/CREATE {:user-id (:id test-user-thr)
                                                                               :collection-id (:id test-coll-thr)
                                                                               :account-role 0})))
-  (def test-cont-one (ut/under-to-hyphen (resources/CREATE (g/get-random-resource-without-id))))
-  (def test-cont-two (ut/under-to-hyphen (resources/CREATE (g/get-random-resource-without-id))))
-  (def test-cont-thr (ut/under-to-hyphen (resources/CREATE (g/get-random-resource-without-id))))
+  (def test-rsrc-one (ut/under-to-hyphen (resources/CREATE (g/get-random-resource-without-id))))
+  (def test-rsrc-two (ut/under-to-hyphen (resources/CREATE (g/get-random-resource-without-id))))
+  (def test-rsrc-thr (ut/under-to-hyphen (resources/CREATE (g/get-random-resource-without-id))))
   (def test-crse-one (ut/under-to-hyphen (courses/CREATE (g/get-random-course-without-id))))
   (def test-crse-two (ut/under-to-hyphen (courses/CREATE (g/get-random-course-without-id))))
   (def test-crse-thr (ut/under-to-hyphen (courses/CREATE (g/get-random-course-without-id))))
-  (def test-file-one (ut/under-to-hyphen (files/CREATE (g/get-random-file-without-id))))
-  (def test-file-two (ut/under-to-hyphen (files/CREATE (g/get-random-file-without-id))))
-  (def test-file-thr (ut/under-to-hyphen (files/CREATE (g/get-random-file-without-id))))
+  (def test-file-one (ut/under-to-hyphen (files/CREATE (g/get-random-file-without-id (:id test-rsrc-one)))))
+  (def test-file-two (ut/under-to-hyphen (files/CREATE (g/get-random-file-without-id (:id test-rsrc-two)))))
+  (def test-file-thr (ut/under-to-hyphen (files/CREATE (g/get-random-file-without-id (:id test-rsrc-thr)))))
   (def test-word-one (ut/under-to-hyphen (words/CREATE (g/get-random-word-without-id (:id test-user-one)))))
   (def test-word-two (ut/under-to-hyphen (words/CREATE (g/get-random-word-without-id (:id test-user-two)))))
   (def test-word-thr (ut/under-to-hyphen (words/CREATE (g/get-random-word-without-id (:id test-user-thr)))))
-  (def test-content-one (ut/under-to-hyphen (contents/CREATE (g/get-random-content-without-id (:id test-coll-one) (:id test-cont-one)))))
-  (def test-content-two (ut/under-to-hyphen (contents/CREATE (g/get-random-content-without-id (:id test-coll-two) (:id test-cont-two)))))
-  (def test-content-thr (ut/under-to-hyphen (contents/CREATE (g/get-random-content-without-id (:id test-coll-thr) (:id test-cont-thr)))))
+  (def test-content-one (ut/under-to-hyphen (contents/CREATE (g/get-random-content-without-id (:id test-coll-one) (:id test-rsrc-one)))))
+  (def test-content-two (ut/under-to-hyphen (contents/CREATE (g/get-random-content-without-id (:id test-coll-two) (:id test-rsrc-two)))))
+  (def test-content-thr (ut/under-to-hyphen (contents/CREATE (g/get-random-content-without-id (:id test-coll-thr) (:id test-rsrc-thr)))))
   (mount.core/start #'y-video-back.handler/app))
 
 (deftest test-user
@@ -109,96 +108,32 @@
       (let [res (rp/collection-id-patch (:id test-coll-one) new-coll)]
         (is (= 200 (:status res)))
         (is (= (into new-coll {:id (:id test-coll-one)}) (ut/remove-db-only (collections/READ (:id test-coll-one))))))))
-  (testing "update collection to self"
-    (let [coll-one (into (g/get-random-collection-without-id-no-owner)
-                         {:owner (:id test-user-one)})
-          coll-one-res (collections/CREATE coll-one)
-          res (rp/collection-id-patch (:id coll-one-res) coll-one)]
-      (is (= 200 (:status res)))
-      (is (= (into coll-one {:id (:id coll-one-res)}) (ut/remove-db-only (collections/READ (:id coll-one-res)))))))
-  (testing "update collection name and owner to own name and owner"
-    (let [coll-one (into (g/get-random-collection-without-id-no-owner)
-                         {:owner (:id test-user-one)})
-          coll-one-res (collections/CREATE coll-one)
-          res (rp/collection-id-patch (:id coll-one-res) {:collection-name (:collection-name coll-one)
-                                                          :owner (:owner coll-one)})]
-      (is (= 200 (:status res)))
-      (is (= (into coll-one {:id (:id coll-one-res)}) (ut/remove-db-only (collections/READ (:id coll-one-res)))))))
-  (testing "update collection owner to own owner"
-    (let [coll-one (into (g/get-random-collection-without-id-no-owner)
-                         {:owner (:id test-user-one)})
-          coll-one-res (collections/CREATE coll-one)
-          res (rp/collection-id-patch (:id coll-one-res) {:owner (:owner coll-one)})]
-      (is (= 200 (:status res)))
-      (is (= (into coll-one {:id (:id coll-one-res)}) (ut/remove-db-only (collections/READ (:id coll-one-res)))))))
-  (testing "update collection name to own name"
-    (let [coll-one (into (g/get-random-collection-without-id-no-owner)
-                         {:owner (:id test-user-one)})
-          coll-one-res (collections/CREATE coll-one)
-          res (rp/collection-id-patch (:id coll-one-res) {:collection-name (:collection-name coll-one)})]
-      (is (= 200 (:status res)))
-      (is (= (into coll-one {:id (:id coll-one-res)}) (ut/remove-db-only (collections/READ (:id coll-one-res)))))))
   (testing "coll DELETE"
     (let [res (rp/collection-id-delete (:id test-coll-two))]
       (is (= 200 (:status res)))
       (is (= nil (collections/READ (:id test-coll-two)))))))
 
-(deftest test-cont
-  (testing "cont CREATE"
-    (let [new-cont (g/get-random-resource-without-id)]
-      (let [res (rp/resource-post new-cont)]
+(deftest test-rsrc
+  (testing "rsrc CREATE"
+    (let [new-rsrc (g/get-random-resource-without-id)]
+      (let [res (rp/resource-post new-rsrc)]
         (is (= 200 (:status res)))
         (let [id (ut/to-uuid (:id (m/decode-response-body res)))]
-          (is (= (into new-cont {:id id}) (ut/remove-db-only (resources/READ id))))))))
-  (testing "cont CREATE duplicate resource"
-    (let [new-cont (g/get-random-resource-without-id)]
-      (let [res (rp/resource-post new-cont)
-            res-dup (rp/resource-post new-cont)]
-        (is (= 200 (:status res)))
-        (let [id (ut/to-uuid (:id (m/decode-response-body res)))]
-          (is (= (into new-cont {:id id}) (ut/remove-db-only (resources/READ id)))))
-        (is (= 200 (:status res-dup)))
-        (let [id (ut/to-uuid (:id (m/decode-response-body res-dup)))]
-          (is (= (into new-cont {:id id}) (ut/remove-db-only (resources/READ id))))))))
-  (testing "cont READ"
-    (let [res (rp/resource-id-get (:id test-cont-one))]
+          (is (= (into new-rsrc {:id id}) (ut/remove-db-only (resources/READ id))))))))
+  (testing "rsrc READ"
+    (let [res (rp/resource-id-get (:id test-rsrc-one))]
       (is (= 200 (:status res)))
-      (is (= (update (ut/remove-db-only test-cont-one) :id str)
+      (is (= (update (ut/remove-db-only test-rsrc-one) :id str)
              (ut/remove-db-only (m/decode-response-body res))))))
-  (testing "cont UPDATE"
-    (let [new-cont (g/get-random-resource-without-id)]
-      (let [res (rp/resource-id-patch (:id test-cont-one) new-cont)]
+  (testing "rsrc UPDATE"
+    (let [new-rsrc (g/get-random-resource-without-id)]
+      (let [res (rp/resource-id-patch (:id test-rsrc-one) new-rsrc)]
         (is (= 200 (:status res)))
-        (is (= (into new-cont {:id (:id test-cont-one)}) (ut/remove-db-only (resources/READ (:id test-cont-one))))))))
-  (testing "update resource to taken name (all fields)"
-    (let [cont-one (g/get-random-resource-without-id)
-          cont-two (g/get-random-resource-without-id)
-          cont-one-res (resources/CREATE cont-one)
-          cont-two-res (resources/CREATE cont-two)
-          res (rp/resource-id-patch (:id cont-two-res) cont-one)]
+        (is (= (into new-rsrc {:id (:id test-rsrc-one)}) (ut/remove-db-only (resources/READ (:id test-rsrc-one))))))))
+  (testing "rsrc DELETE"
+    (let [res (rp/resource-id-delete (:id test-rsrc-two))]
       (is (= 200 (:status res)))
-      (is (= (into cont-one {:id (:id cont-two-res)}) (ut/remove-db-only (resources/READ (:id cont-two-res)))))))
-  (testing "update resource to taken name (name only)"
-    (let [cont-one (g/get-random-resource-without-id)
-          cont-two (g/get-random-resource-without-id)
-          cont-one-res (resources/CREATE cont-one)
-          cont-two-res (resources/CREATE cont-two)
-          res (rp/resource-id-patch (:id cont-two-res) {:resource-name (:resource-name cont-one)})]
-      (is (= 200 (:status res)))
-      (is (= (-> cont-two
-               (into {:id (:id cont-two-res)})
-               (dissoc :resource-name)
-               (into {:resource-name (:resource-name cont-one)}))
-             (ut/remove-db-only (resources/READ (:id cont-two-res)))))))
-  (testing "cont UPDATE to self"
-    (let [new-cont (g/get-random-resource-without-id)]
-      (let [res (rp/resource-id-patch (:id test-cont-one) new-cont)]
-        (is (= 200 (:status res)))
-        (is (= (into new-cont {:id (:id test-cont-one)}) (ut/remove-db-only (resources/READ (:id test-cont-one))))))))
-  (testing "cont DELETE"
-    (let [res (rp/resource-id-delete (:id test-cont-two))]
-      (is (= 200 (:status res)))
-      (is (= nil (resources/READ (:id test-cont-two)))))))
+      (is (= nil (resources/READ (:id test-rsrc-two)))))))
 
 (deftest test-crse
   (testing "crse CREATE"
@@ -224,7 +159,7 @@
 
 (deftest test-file
   (testing "file CREATE"
-    (let [new-file (g/get-random-file-without-id)]
+    (let [new-file (g/get-random-file-without-id (:id test-rsrc-one))]
       (let [res (rp/file-post new-file)]
         (is (= 200 (:status res)))
         (let [id (ut/to-uuid (:id (m/decode-response-body res)))]
@@ -232,10 +167,12 @@
   (testing "file READ"
     (let [res (rp/file-id-get (:id test-file-one))]
       (is (= 200 (:status res)))
-      (is (= (update (ut/remove-db-only test-file-one) :id str)
+      (is (= (-> (ut/remove-db-only test-file-one)
+                 (update :id str)
+                 (update :resource-id str))
              (ut/remove-db-only (m/decode-response-body res))))))
   (testing "file UPDATE"
-    (let [new-file (g/get-random-file-without-id)]
+    (let [new-file (g/get-random-file-without-id (:id test-rsrc-two))]
       (let [res (rp/file-id-patch (:id test-file-one) new-file)]
         (is (= 200 (:status res)))
         (is (= (into new-file {:id (:id test-file-one)}) (ut/remove-db-only (files/READ (:id test-file-one))))))))
@@ -268,31 +205,20 @@
 
 (deftest test-content
   (testing "content CREATE"
-    (let [new-content (g/get-random-content-without-id (:id test-coll-one) (:id test-cont-two))]
+    (let [new-content (g/get-random-content-without-id (:id test-coll-one) (:id test-rsrc-two))]
       (let [res (rp/content-post new-content)]
         (is (= 200 (:status res)))
         (let [id (ut/to-uuid (:id (m/decode-response-body res)))]
           (is (= (into new-content {:id id}) (ut/remove-db-only (contents/READ id))))))))
-  (testing "content read by ids"
-    (let [res (rp/content-get-by-ids (:collection-id test-content-one)
-                                        (:resource-id test-content-one))]
-      (is (= 200 (:status res)))
-      (is (= [(-> test-content-one
-                  (ut/remove-db-only)
-                  (update :id str)
-                  (update :collection-id str)
-                  (update :resource-id str))]
-             (map ut/remove-db-only (m/decode-response-body res)))))
-
-    (testing "content READ")
-    (let [res (rp/content-id-get (:id test-content-one))]
-      (is (= 200 (:status res)))
-      (is (= (-> test-content-one
-                 (ut/remove-db-only)
-                 (update :id str)
-                 (update :collection-id str)
-                 (update :resource-id str))
-             (ut/remove-db-only (m/decode-response-body res))))))
+  (testing "content READ")
+  (let [res (rp/content-id-get (:id test-content-one))]
+    (is (= 200 (:status res)))
+    (is (= (-> test-content-one
+               (ut/remove-db-only)
+               (update :id str)
+               (update :collection-id str)
+               (update :resource-id str))
+           (ut/remove-db-only (m/decode-response-body res)))))
   (testing "content UPDATE"
     (let [new-content (g/get-random-content-without-id (:collection-id test-content-one) (:resource-id test-content-one))]
       (let [res (rp/content-id-patch (:id test-content-one) new-content)]

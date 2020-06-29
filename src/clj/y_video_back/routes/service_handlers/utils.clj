@@ -26,6 +26,12 @@
   [text-in]
   (java.util.UUID/fromString text-in))
 
+(defn nuuid?
+  "Returns true if val is uuid or nil"
+  [val]
+  (or (uuid? val)
+      (nil? val)))
+
 (defn get-id
   [res]
   (str (:id res)))

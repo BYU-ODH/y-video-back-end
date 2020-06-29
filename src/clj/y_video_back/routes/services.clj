@@ -159,16 +159,12 @@
       {:post service-handlers/collection-add-user}]
      ["/{id}/remove-user"
       {:post service-handlers/collection-remove-user}]
-     ["/{id}/add-resource"
-      {:post service-handlers/collection-add-resource}]
-     ["/{id}/remove-resource"
-      {:post service-handlers/collection-remove-resource}]
      ["/{id}/add-course"
       {:post service-handlers/collection-add-course}]
      ["/{id}/remove-course"
       {:post service-handlers/collection-remove-course}]
-     ["/{id}/resources"
-      {:get service-handlers/collection-get-all-resources}]
+     ["/{id}/contents"
+      {:get service-handlers/collection-get-all-contents}]
      ["/{id}/courses"
       {:get service-handlers/collection-get-all-courses}]
      ["/{id}/users"
@@ -208,25 +204,23 @@
      ; {:post service-handlers/resource-connect-file}]
      ["/{id}/files"
       {:get service-handlers/resource-get-all-files}]
-     ["/{id}/add-view"
-      {:post service-handlers/resource-add-view}]
-     ["/{id}/add-file"
-      {:post service-handlers/resource-add-file}]
-     ["/{id}/remove-file"
-      {:post service-handlers/resource-remove-file}]
+     ;["/{id}/add-view"
+     ; {:post service-handlers/resource-add-view}]
      ["/{id}/collections"
-      {:get service-handlers/resource-get-all-collections}]]
+      {:get service-handlers/resource-get-all-collections}]
+     ["/{id}/contents"
+      {:get service-handlers/resource-get-all-contents}]]
+
 
     ["/content"
      {:swagger {:tags ["content"]}}
      [""
-      {:post service-handlers/content-create
-       :get service-handlers/content-get-by-collection-and-resource}]
-
+      {:post service-handlers/content-create}]
      ["/{id}"
       {:get service-handlers/content-get-by-id
        :patch service-handlers/content-update
-       :delete service-handlers/content-delete}]]
+       :delete service-handlers/content-delete
+       :post service-handlers/content-add-view}]]
 
     ["/file"
      {:swagger {:tags ["file"]}}
@@ -235,9 +229,7 @@
      ["/{id}"
       {:get service-handlers/file-get-by-id
        :patch service-handlers/file-update
-       :delete service-handlers/file-delete}]
-     ["/{id}/resources"
-      {:get service-handlers/file-get-all-resources}]]
+       :delete service-handlers/file-delete}]]
 
     ;["/connect-collection-and-course"
     ; {:swagger {:tags ["connect"]}}

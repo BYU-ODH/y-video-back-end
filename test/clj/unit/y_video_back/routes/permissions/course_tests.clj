@@ -15,7 +15,6 @@
     [y-video-back.db.users-by-collection :as users-by-collection]
     [y-video-back.db.collections-courses-assoc :as collection-courses-assoc]
     [y-video-back.db.collections :as collections]
-    [y-video-back.db.resource-files-assoc :as resource-files-assoc]
     [y-video-back.db.resources :as resources]
     [y-video-back.db.courses :as courses]
     [y-video-back.db.files :as files]
@@ -91,10 +90,8 @@
                                                                                 :account-role 1}))) ; TA for collection
     (def test-coll-crse-one (ut/under-to-hyphen (collection-courses-assoc/CREATE {:collection-id (:id test-coll-one)
                                                                                   :course-id (:id test-crse-one)})))
-    (def test-coll-cont-one (ut/under-to-hyphen (collection-contents-assoc/CREATE {:collection-id (:id test-coll-one)}
-                                                                                   :resource-id (:id test-cont-one))))
-    (def test-cont-file-one (ut/under-to-hyphen (resource-files-assoc/CREATE {:resource-id (:id test-cont-one)}
-                                                                             :file-id (:id test-file-one))))
+    (def test-coll-cont-one (ut/under-to-hyphen (collection-contents-assoc/CREATE {:collection-id (:id test-coll-one)
+                                                                                   :resource-id (:id test-cont-one)})))
     (mount.core/start #'y-video-back.handler/app))
 
   ; (no|with) connection -> (not) connected via many-to-many table

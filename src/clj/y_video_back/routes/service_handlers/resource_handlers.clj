@@ -1,7 +1,6 @@
 (ns y-video-back.routes.service-handlers.resource-handlers
   (:require
    [y-video-back.db.collections-contents-assoc :as collection-contents-assoc]
-   [y-video-back.db.resource-files-assoc :as resource-files-assoc]
    [y-video-back.db.resources :as resources]
    [y-video-back.db.files :as files]
    [y-video-back.models :as models]
@@ -87,7 +86,7 @@
   {:summary "Retrieves all collections for specified resource"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
-   :responses {200 {:body [(into models/collection {:resource-id uuid?})]}
+   :responses {200 {:body [models/collection]}
                404 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
               (if-not (ru/has-permission session-id "resource-get-all-collections" {:resource-id id})
@@ -95,10 +94,27 @@
                 (if (not (resources/EXISTS? id))
                   {:status 404
                    :body {:message "resource not found"}}
-                  (let [resource-collections-result (collection-contents-assoc/READ-COLLECTIONS-BY-CONTENT id)]
-                    (let [collection-result (map #(utils/remove-db-only %) resource-collections-result)]
-                      {:status 200
-                       :body collection-result})))))})
+                  (let [res (resources/COLLECTIONS-BY-RESOURCE id)]
+                    {:status 200
+                     :body (map #(-> %
+                                     (utils/remove-db-only)
+                                     (dissoc :resource-id))
+                                res)}))))})
+
+(def resource-get-all-contents ;; Non-functional
+  {:summary "Retrieves all contents for specified resource"
+   :parameters {:header {:session-id uuid?}
+                :path {:id uuid?}}
+   :responses {200 {:body [(into models/content {:resource-id uuid?})]}
+               404 {:body {:message string?}}}
+   :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
+              (if-not (ru/has-permission session-id "resource-get-all-contents" {:resource-id id})
+                ru/forbidden-page
+                (if (not (resources/EXISTS? id))
+                  {:status 404
+                   :body {:message "resource not found"}}
+                  {:status 394
+                   :body {:message "not implemented yet"}})))})
 
 (def resource-get-all-files ;; Non-functional
   {:summary "Retrieves all the files for the specified resource"
@@ -112,9 +128,9 @@
                 (if (not (resources/EXISTS? id))
                   {:status 404
                    :body {:message "resource not found"}}
-                  (let [file-resources-result (resource-files-assoc/READ-FILES-BY-CONTENT id)]
+                  (let [file-resources-result '[]]
                     (let [file-result (map #(utils/remove-db-only %) file-resources-result)]
-                      {:status 200
+                      {:status 394 ; Not implemented yet
                        :body file-result})))))})
 
 (def resource-add-view ;; Non-functional
@@ -136,56 +152,3 @@
                       (resources/UPDATE id {:views (+ 1 (:views resource-res))})
                       {:status 200
                        :body {:message "view successfully added"}})))))})
-
-(def resource-add-file
-  {:summary "Adds file to specified resource"
-   :parameters {:header {:session-id uuid?}
-                :path {:id uuid?} :body {:file-id uuid?}}
-   :responses {200 {:body {:message string? :id string?}}
-               404 {:body {:message string?}}
-               500 {:body {:message string?}}}
-   :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
-              (if-not (ru/has-permission session-id "resource-add-file" {:resource-id id})
-                ru/forbidden-page
-                (if (not (resources/EXISTS? id))
-                  {:status 404
-                   :body {:message "resource not found"}}
-                  (if (not (files/EXISTS? (:file-id body)))
-                    {:status 500
-                     :body {:message "file not found"}}
-                    (if (resource-files-assoc/EXISTS-CONT-FILE? id (:file-id body))
-                      {:status 500
-                       :body {:message "file already connected to resource"}}
-                      (let [result (utils/get-id (resource-files-assoc/CREATE (into body {:resource-id id})))]
-                        (if (= nil result)
-                          {:status 500
-                           :body {:message "unable to add file"}}
-                          {:status 200
-                           :body {:message (str 1 " files added to resource")
-                                  :id result}})))))))})
-
-(def resource-remove-file
-  {:summary "Removes file from specified resource"
-   :parameters {:header {:session-id uuid?}
-                :path {:id uuid?} :body {:file-id uuid?}}
-   :responses {200 {:body {:message string?}}
-               404 {:body {:message string?}}
-               500 {:body {:message string?}}}
-   :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
-              (if-not (ru/has-permission session-id "resource-remove-file" {:resource-id id})
-                ru/forbidden-page
-                (if (not (resources/EXISTS? id))
-                  {:status 404
-                   :body {:message "resource not found"}}
-                  (if (not (files/EXISTS? (:file-id body)))
-                    {:status 500
-                     :body {:message "file not found"}}
-                    (if-not (resource-files-assoc/EXISTS-CONT-FILE? id (:file-id body))
-                      {:status 500
-                       :body {:message "file not connected to resource"}}
-                      (let [result (resource-files-assoc/DELETE-BY-IDS [id (:file-id body)])]
-                        (if (= 0 result)
-                          {:status 500
-                           :body {:message "unable to remove file"}}
-                          {:status 200
-                           :body {:message (str result " files removed from resource")}})))))))})

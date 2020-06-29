@@ -21,8 +21,11 @@
   {:echo string?})
 
 (def user-without-id
-  {:email string? :lastLogin string? :name string?
-   :roles [int?] :username string?})
+  {:email string?
+   :lastLogin string?
+   :accountName string?
+   :accountType int?
+   :username string?})
 
 (def user
   (into user-without-id {:id uuid?}))
@@ -31,93 +34,85 @@
   (add-namespace "user" {:variable string?}))
 
 (def word-without-id-or-user-id
-  {:word string? :src-lang string? :dest-lang string?})
+  {:word string?
+   :srcLang string?
+   :destLang string?})
 
 (def word-without-id
-  (into word-without-id-or-user-id {:user-id uuid?}))
+  (into word-without-id-or-user-id {:userId uuid?}))
 
 (def word
   (into word-without-id {:id uuid?}))
 
+(def collection-without-id-or-owner
+  {:collectionName string?
+   :published boolean?
+   :archived boolean?})
+
 (def collection-without-id
-  {:name string? :published boolean? :archived boolean?})
+  (into collection-without-id-or-owner {:owner uuid?}))
 
 (def collection
   (into collection-without-id {:id uuid?}))
 
+(def collection-read-from-db
+  (-> collection-without-id-or-owner
+      (into {:id uuid?})
+      (into {:owner user})))
+
 (def course-without-id
-  {:department string? :catalog-number string? :section-number string?})
+  {:department string?
+   :catalogNumber string?
+   :sectionNumber string?})
 
 (def course
   (into course-without-id {:id uuid?}))
 
 (def resource-without-id
-  {:name string? :resourceType string? :requester string?
-   :thumbnail string? :isCopyrighted boolean? :physicalCopyExists boolean?
-   :fullVideo boolean? :published boolean? :allow-definitions boolean?
-   :allow-notes boolean? :allow-captions boolean? :dateValidated string?
-   :views int? :metadata string?})
+  {:resourceName string?
+   :resourceType string?
+   :requesterEmail string?
+   :copyrighted boolean?
+   :physicalCopyExists boolean?
+   :fullVideo boolean?
+   :published boolean?
+   :dateValidated string?
+   :views int?
+   :allFileVersions string?
+   :metadata string?})
 
 (def resource
   (into resource-without-id {:id uuid?}))
 
 (def content-without-any-ids
-  {:metadata string?})
+  {:title string?
+   :contentType string?
+   :url string?
+   :description string?
+   :tags string?
+   :annotations string?
+   :thumbnail string?
+   :allowDefinitions string?
+   :allowNotes string?
+   :allowCaptions string?
+   :views integer?
+   :fileVersion string?})
 
 (def content-without-id
-  (into content-without-any-ids {:resource-id uuid? :collection-id uuid?}))
+  (into content-without-any-ids {:resourceId uuid?
+                                 :collectionId uuid?}))
 
 (def content
   (into content-without-id {:id uuid?}))
 
+(def file-without-any-ids
+  {:filepath string?
+   :fileVersion string?
+   :mime string?
+   :metadata string?})
+
 (def file-without-id
-  {:filepath string? :mime string? :metadata string?})
+  (into file-without-any-ids {:resourceId uuid?}))
 
 (def file
   (into file-without-id {:id uuid?}))
-
-(def user-collections-assoc-without-any-ids
-  {:account-role int?})
-
-(def user-collections-assoc-without-id
-  (into user-collections-assoc-without-any-ids {:user-id uuid? :collection-id uuid?}))
-
-(def user-collections-assoc
-  (into user-collections-assoc-without-id {:id uuid?}))
-
-(def user-courses-assoc-without-any-ids
-  {:account-role int?})
-
-(def user-courses-assoc-without-id
-  (into user-courses-assoc-without-any-ids {:user-id uuid? :course-id uuid?}))
-
-(def user-courses-assoc
-  (into user-courses-assoc-without-id {:id uuid?}))
-
-
-(def collection-resources-assoc-without-any-ids
-  {})
-
-(def collection-resources-assoc-without-id
-  (into collection-resources-assoc-without-any-ids {:collection-id uuid? :resource-id uuid?}))
-
-(def collection-resources-assoc
-  (into collection-resources-assoc-without-id {:id uuid?}))
-
-(def collection-courses-assoc-without-any-ids
-  {})
-
-(def collection-courses-assoc-without-id
-  (into collection-courses-assoc-without-any-ids {:collection-id uuid? :course-id uuid?}))
-
-(def collection-courses-assoc
-  (into collection-courses-assoc-without-id {:id uuid?}))
-
-(def resource-files-assoc-without-any-ids
-  {})
-
-(def resource-files-assoc-without-id
-  (into resource-files-assoc-without-any-ids {:resource-id uuid? :file-id uuid?}))
-
-(def resource-files-assoc
-  (into resource-files-assoc-without-id {:id uuid?}))

@@ -153,61 +153,6 @@
                           {:status 200
                            :body {:message (str result " users removed from collection")}})))))))})
 
-(def collection-add-resource
-  {:summary "Adds resource to specified collection"
-   :parameters {:header {:session-id uuid?}
-                :path {:id uuid?} :body {:resource-id uuid?}}
-   :responses {200 {:body {:message string? :id string?}}
-               404 (:body {:message string?})
-               500 (:body {:message string?})}
-   :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
-              (if-not (ru/has-permission session-id "collection-add-resource" {:collection-id id})
-                ru/forbidden-page
-                (if (not (collections/EXISTS? id))
-                  {:status 404
-                   :body {:message "collection not found"}}
-                  (if (not (resources/EXISTS? (:resource-id body)))
-                    {:status 500
-                     :body {:message "resource not found"}}
-                    (if (contents/EXISTS-COLL-CONT? id (:resource-id body))
-                      {:status 500
-                       :body {:message "resource already connected to collection"}}
-                      (let [result (utils/get-id (contents/CREATE {:collection-id id
-                                                                      :resource-id (:resource-id body)
-                                                                      :metadata ""}))]
-                        (if (= nil result)
-                          {:status 500
-                           :body {:message "unable to add resource"}}
-                          {:status 200
-                           :body {:message (str 1 " resources added to collection")
-                                  :id result}})))))))})
-
-(def collection-remove-resource
-  {:summary "Removes resource from specified collection"
-   :parameters {:header {:session-id uuid?}
-                :path {:id uuid?} :body {:resource-id uuid?}}
-   :responses {200 {:body {:message string?}}
-               404 (:body {:message string?})
-               500 (:body {:message string?})}
-   :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
-              (if-not (ru/has-permission session-id "collection-remove-resource" {:collection-id id})
-                ru/forbidden-page
-                (if (not (collections/EXISTS? id))
-                  {:status 404
-                   :body {:message "collection not found"}}
-                  (if (not (resources/EXISTS? (:resource-id body)))
-                    {:status 500
-                     :body {:message "resource not found"}}
-                    (if-not (contents/EXISTS-COLL-CONT? id (:resource-id body))
-                      {:status 500
-                       :body {:message "resource not connected to collection"}}
-                      (let [result (contents/DELETE-BY-IDS [id (:resource-id body)])]
-                        (if (= 0 result)
-                          {:status 404
-                           :body {:message "unable to remove resource"}}
-                          {:status 200
-                           :body {:message (str result " resources removed from collection")}})))))))})
-
 (def collection-add-course
   {:summary "Adds course to specified collection"
    :parameters {:header {:session-id uuid?}
@@ -262,11 +207,11 @@
                            :body {:message (str result " courses removed from collection")}})))))))})
 
 
-(def collection-get-all-resources ;; Non-functional
+(def collection-get-all-contents ;; Non-functional
   {:summary "Retrieves all the resources for the specified collection"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
-   :responses {200 {:body [(into models/resource {:collection-id uuid?})]}
+   :responses {200 {:body [models/content]}
                404 (:body {:message string?})}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
               (if-not (ru/has-permission session-id "collection-get-all-resources" {:collection-id id})
@@ -274,10 +219,10 @@
                 (if (not (collections/EXISTS? id))
                   {:status 404
                    :body {:message "collection not found"}}
-                  (let [resource-collections-result (contents/READ-CONTENTS-BY-COLLECTION id)]
-                    (let [resource-result (map #(utils/remove-db-only %) resource-collections-result)]
-                      {:status 200
-                       :body resource-result})))))})
+                  (let [raw-res (contents/READ-BY-COLLECTION id)
+                        res (map #(utils/remove-db-only %) raw-res)]
+                    {:status 200
+                     :body res}))))})
 
 (def collection-get-all-courses ;; Non-functional
   {:summary "Retrieves all the courses for the specified collection"

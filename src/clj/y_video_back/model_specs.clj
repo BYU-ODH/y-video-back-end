@@ -36,50 +36,74 @@
                    :collection/archived
                    :collection/owner]))
 
-(s/def :resource/requester-email string?)
-(s/def :resource/physical-copy-exists boolean?)
-(s/def :resource/allow-definitions boolean?)
-(s/def :resource/resource-type string?)
 (s/def :resource/resource-name string?)
-(s/def :resource/date-validated string?)
-(s/def :resource/allow-notes boolean?)
-(s/def :resource/views int?)
+(s/def :resource/resource-type string?)
+(s/def :resource/requester-email string?)
 (s/def :resource/copyrighted boolean?)
-(s/def :resource/published boolean?)
-(s/def :resource/metadata string?)
-(s/def :resource/allow-captions boolean?)
+(s/def :resource/physical-copy-exists boolean?)
 (s/def :resource/full-video boolean?)
-(s/def :resource/thumbnail string?)
+(s/def :resource/published boolean?)
+(s/def :resource/date-validated string?)
+(s/def :resource/views int?)
+(s/def :resource/all-file-versions string?)
+(s/def :resource/metadata string?)
 (s/def ::resource
-  (s/keys :opt-un [:resource/requester-email
-                   :resource/physical-copy-exists
-                   :resource/allow-definitions
+  (s/keys :opt-un [:resource/resource-name
                    :resource/resource-type
-                   :resource/resource-name
-                   :resource/date-validated
-                   :resource/allow-notes
-                   :resource/views
+                   :resource/requester-email
                    :resource/copyrighted
-                   :resource/published
-                   :resource/metadata
-                   :resource/allow-captions
+                   :resource/physical-copy-exists
                    :resource/full-video
-                   :resource/thumbnail]))
+                   :resource/published
+                   :resource/date-validated
+                   :resource/views
+                   :resource/all-file-versions
+                   :resource/metadata]))
 
-(s/def :content/metadata string?)
+(s/def :content/title string?)
+(s/def :content/content-type string?)
+(s/def :content/url string?)
+(s/def :content/description string?)
+(s/def :content/tags string?)
+(s/def :content/annotations string?)
+(s/def :content/thumbnail string?)
+(s/def :content/allow-definitions boolean?)
+(s/def :content/allow-notes boolean?)
+(s/def :content/allow-captions boolean?)
+(s/def :content/views integer?)
+(s/def :content/file-version string?)
 (s/def :content/resource-id uuid?)
 (s/def :content/collection-id uuid?)
 (s/def ::content
-  (s/keys :opt-un [:content/metadata
+  (s/keys :opt-un [:content/title
+                   :content/content-type
+                   :content/url
+                   :content/description
+                   :content/tags
+                   :content/annotations
+                   :content/thumbnail
+                   :content/allow-definitions
+                   :content/allow-notes
+                   :content/allow-captions
+                   :content/views
+                   :content/file-version
                    :content/resource-id
                    :content/collection-id]))
 
+
+
+
+
 (s/def :file/filepath string?)
+(s/def :file/file-version string?)
 (s/def :file/mime string?)
+(s/def :file/resource-id uuid?)
 (s/def :file/metadata string?)
 (s/def ::file
   (s/keys :opt-un [:file/filepath
+                   :file/file-version
                    :file/mime
+                   :file/resource-id
                    :file/metadata]))
 
 (s/def :course/department string?)

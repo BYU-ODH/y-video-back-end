@@ -14,7 +14,6 @@
       [y-video-back.db.users-by-collection :as users-by-collection]
       [y-video-back.db.collections-courses-assoc :as collection-courses-assoc]
       [y-video-back.db.collections :as collections]
-      [y-video-back.db.resource-files-assoc :as resource-files-assoc]
       [y-video-back.db.resources :as resources]
       [y-video-back.db.courses :as courses]
       [y-video-back.db.files :as files]
@@ -124,23 +123,3 @@
   (testing "delete nonexistent content"
     (let [res (rp/content-id-delete (java.util.UUID/randomUUID))]
       (is (= 404 (:status res))))))
-
-(deftest content-get-by-collection-and-resource
-  (testing "find by valid ids, but no content"
-    (let [new-user (users/CREATE (g/get-random-user-without-id))
-          new-coll (collections/CREATE (into (g/get-random-collection-without-id) {:owner (:id new-user)}))
-          new-cont (resources/CREATE (g/get-random-resource-without-id))
-          res (rp/content-get-by-ids (:id new-coll) (:id new-cont))]
-      (is (= 404 (:status res)))))
-  (testing "find by invalid ids"
-    (let [res (rp/content-get-by-ids (java.util.UUID/randomUUID) (java.util.UUID/randomUUID))]
-      (is (= 500 (:status res)))))
-  (testing "find by invalid collection id"
-    (let [new-cont (resources/CREATE (g/get-random-resource-without-id))
-          res (rp/content-get-by-ids (java.util.UUID/randomUUID) (:id new-cont))]
-      (is (= 500 (:status res)))))
-  (testing "find by invalid resource id"
-    (let [new-user (users/CREATE (g/get-random-user-without-id))
-          new-coll (collections/CREATE (into (g/get-random-collection-without-id) {:owner (:id new-user)}))
-          res (rp/content-get-by-ids (:id new-coll) (java.util.UUID/randomUUID))]
-      (is (= 500 (:status res))))))
