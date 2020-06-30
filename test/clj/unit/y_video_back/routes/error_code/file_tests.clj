@@ -47,10 +47,14 @@
   (mount.core/start #'y-video-back.handler/app))
 
 (deftest file-post
-  (testing "add duplicated file"
+  (testing "add duplicated file (i.e. duplicate filepath)"
     (let [new-file (g/get-random-file-without-id (:id test-rsrc-one))
           add-file-res (files/CREATE new-file)
           res (rp/file-post new-file)]
+      (is (= 500 (:status res)))))
+  (testing "add file to nonexistent resource"
+    (let [new-file (g/get-random-file-without-id (java.util.UUID/randomUUID))
+          res(rp/file-post new-file)]
       (is (= 500 (:status res))))))
 
 (deftest file-id-get
@@ -63,18 +67,29 @@
     (let [res (rp/file-id-patch (java.util.UUID/randomUUID) (g/get-random-file-without-id (:id test-rsrc-one)))]
       (is (= 404 (:status res)))))
   (testing "update file to taken filepath (all fields)"
-    (let [crse-one (g/get-random-file-without-id (:id test-rsrc-one))
-          crse-two (g/get-random-file-without-id (:id test-rsrc-one))
-          crse-one-res (files/CREATE crse-one)
-          crse-two-res (files/CREATE crse-two)
-          res (rp/file-id-patch (:id crse-two-res) crse-one)]
+    (let [file-one (g/get-random-file-without-id (:id test-rsrc-one))
+          file-two (g/get-random-file-without-id (:id test-rsrc-one))
+          file-one-res (files/CREATE file-one)
+          file-two-res (files/CREATE file-two)
+          res (rp/file-id-patch (:id file-two-res) file-one)]
       (is (= 500 (:status res)))))
   (testing "update file to taken filepath (filepath)"
-    (let [crse-one (g/get-random-file-without-id (:id test-rsrc-one))
-          crse-two (g/get-random-file-without-id (:id test-rsrc-one))
-          crse-one-res (files/CREATE crse-one)
-          crse-two-res (files/CREATE crse-two)
-          res (rp/file-id-patch (:id crse-two-res) {:filepath (:filepath crse-one)})]
+    (let [file-one (g/get-random-file-without-id (:id test-rsrc-one))
+          file-two (g/get-random-file-without-id (:id test-rsrc-one))
+          file-one-res (files/CREATE file-one)
+          file-two-res (files/CREATE file-two)
+          res (rp/file-id-patch (:id file-two-res) {:filepath (:filepath file-one)})]
+      (is (= 500 (:status res)))))
+  (testing "update file to nonexistent resource (all fields)"
+    (let [file-one (g/get-random-file-without-id (:id test-rsrc-one))
+          file-two (g/get-random-file-without-id (java.util.UUID/randomUUID))
+          file-one-res (files/CREATE file-one)
+          res (rp/file-id-patch (:id file-one-res) file-two)]
+      (is (= 500 (:status res)))))
+  (testing "update file to nonexistent resource (resource-id only)"
+    (let [file-one (g/get-random-file-without-id (:id test-rsrc-one))
+          file-one-res (files/CREATE file-one)
+          res (rp/file-id-patch (:id file-one-res) {:resource-id (java.util.UUID/randomUUID)})]
       (is (= 500 (:status res))))))
 
 (deftest file-id-delete

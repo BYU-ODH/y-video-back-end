@@ -42,12 +42,12 @@
   (mount.core/start #'y-video-back.handler/app))
 
 (defn get-new-content
-  "Returns new content, with connected collection, resource, and user created in db. Annotation is not added to db."
+  "Returns new content, with connected collection, resource, and user created in db. Content is not add to db."
   []
   (let [new-user (users/CREATE (g/get-random-user-without-id))
         new-coll (collections/CREATE (into (g/get-random-collection-without-id) {:owner (:id new-user)}))
-        new-cont (resources/CREATE (g/get-random-resource-without-id))]
-    (g/get-random-content-without-id (:id new-coll) (:id new-cont))))
+        new-rsrc (resources/CREATE (g/get-random-resource-without-id))]
+    (g/get-random-content-without-id (:id new-coll) (:id new-rsrc))))
 
 (deftest content-post
   (testing "add duplicated content"
@@ -92,31 +92,6 @@
     (let [add-annt (contents/CREATE (get-new-content))
           res (rp/content-id-patch (:id add-annt) {:collection-id (java.util.UUID/randomUUID)
                                                       :resource-id (java.util.UUID/randomUUID)})]
-      (is (= 500 (:status res)))))
-  (testing "update content to taken collection-resource (all fields)"
-    (let [annt-one (get-new-content)
-          annt-two (get-new-content)
-          add-annt-one (contents/CREATE annt-one)
-          add-annt-two (contents/CREATE annt-two)
-          res (rp/content-id-patch (:id add-annt-two) annt-one)]
-      (is (= 500 (:status res)))))
-  (testing "update content to taken collection-resource (collection)"
-    (let [annt-one (get-new-content)
-          annt-two (get-new-content)
-          add-annt-one (contents/CREATE annt-one)
-          add-annt-two (contents/CREATE annt-two)
-          res-setup (rp/content-id-patch (:id add-annt-two) {:resource-id (:resource-id annt-one)})
-          res (rp/content-id-patch (:id add-annt-two) {:collection-id (:collection-id annt-one)})]
-      (is (= 200 (:status res-setup)))
-      (is (= 500 (:status res)))))
-  (testing "update content to taken collection-resource (resource)"
-    (let [annt-one (get-new-content)
-          annt-two (get-new-content)
-          add-annt-one (contents/CREATE annt-one)
-          add-annt-two (contents/CREATE annt-two)
-          res-setup (rp/content-id-patch (:id add-annt-two) {:collection-id (:collection-id annt-one)})
-          res (rp/content-id-patch (:id add-annt-two) {:resource-id (:resource-id annt-one)})]
-      (is (= 200 (:status res-setup)))
       (is (= 500 (:status res))))))
 
 (deftest content-delete

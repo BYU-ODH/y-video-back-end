@@ -169,11 +169,11 @@
           res (rp/collection-id-remove-course (:id test-coll-one) (:id new-course))]
       (is (= 500 (:status res))))))
 
-(deftest collection-resources
-  (testing "read resources for nonexistent collection"
+(deftest collection-contents
+  (testing "read contents for nonexistent collection"
     (let [res (rp/collection-id-contents (java.util.UUID/randomUUID))]
       (is (= 404 (:status res)))))
-  (testing "read resources for collection without resources"
+  (testing "read contents for collection without contents"
     (let [new-collection (into (g/get-random-collection-without-id-no-owner)
                                {:owner (:id test-user-one)})
           add-coll-res (collections/CREATE new-collection)

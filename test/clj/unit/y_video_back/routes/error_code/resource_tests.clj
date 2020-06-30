@@ -81,7 +81,13 @@
       (is (= 200 (:status res)))
       (is (= '() (m/decode-response-body res))))))
 
-(deftest resource-add-view
-  (testing "add view to nonexistent resource"
-    (let [res (rp/resource-id-add-view (java.util.UUID/randomUUID))]
-      (is (= 404 (:status res))))))
+(deftest resource-get-all-contents
+  (testing "get contents for nonexistent resource"
+    (let [res (rp/resource-id-contents (java.util.UUID/randomUUID))]
+      (is (= 404 (:status res)))))
+  (testing "get contents for resource with no contents"
+    (let [new-resource (g/get-random-resource-without-id)
+          add-rsrc-res (resources/CREATE new-resource)
+          res (rp/resource-id-contents (:id add-rsrc-res))]
+      (is (= 200 (:status res)))
+      (is (= '() (m/decode-response-body res))))))
