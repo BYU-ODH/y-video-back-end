@@ -266,25 +266,27 @@
                  (list))
              (map ut/remove-db-only (m/decode-response-body res)))))))
 
-(comment (deftest test-rsrc-file-assoc)
-  (testing "connect resource and file"
-    (let [new-resource-file-assoc (g/get-random-resource-files-assoc-without-id (:id test-rsrc-one) (:id test-file-two))]
-      (let [res (rp/resource-id-add-file (:resource-id new-resource-file-assoc) (:file-id new-resource-file-assoc))]
-        (is (= 200 (:status res)))
-        (let [id (ut/to-uuid (:id (m/decode-response-body res)))]
-          (is (= (list (into new-resource-file-assoc {:id id}))
-                 (map ut/remove-db-only (resource-files-assoc/READ-BY-IDS [(:resource-id new-resource-file-assoc) (:file-id new-resource-file-assoc)])))))))
-    (testing "disconnect resource and file")
-    (let [res (rp/resource-id-remove-file (:id test-rsrc-one) (:id test-file-one))]
+(deftest test-rsrc-file
+  (testing "find files by resource (1 file)"
+    (let [res (rp/resource-id-files (:id test-rsrc-one))]
       (is (= 200 (:status res)))
-      (is (= '()
-             (resource-files-assoc/READ-BY-IDS [(:id test-rsrc-one) (:id test-file-one)])))))
-  (testing "find all files by resource"
-    (let [res (rp/resource-id-files (:id test-rsrc-thr))]
+      (is (= [(-> test-file-one
+                  (ut/remove-db-only)
+                  (update :id str)
+                  (update :resource-id str))]
+             (m/decode-response-body res)))))
+  (testing "find files by resource (3 files)"
+    (let [new-file-one (g/get-random-file-without-id (:id test-rsrc-one))
+          new-file-two (g/get-random-file-without-id (:id test-rsrc-one))
+          file-one-res (files/CREATE new-file-one)
+          file-two-res (files/CREATE new-file-two)
+          res (rp/resource-id-files (:id test-rsrc-one))]
       (is (= 200 (:status res)))
-      (is (= (-> test-file-thr
-                 (update :id str)
-                 (into {:resource-id (str (:id test-rsrc-thr))})
-                 (ut/remove-db-only)
-                 (list))
-             (map ut/remove-db-only (m/decode-response-body res)))))))
+      (is (= (map #(-> %
+                       (ut/remove-db-only)
+                       (update :id str)
+                       (update :resource-id str))
+                  [test-file-one
+                   (assoc new-file-one :id (:id file-one-res))
+                   (assoc new-file-two :id (:id file-two-res))])
+             (m/decode-response-body res))))))

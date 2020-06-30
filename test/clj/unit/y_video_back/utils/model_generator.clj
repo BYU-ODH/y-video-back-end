@@ -115,7 +115,7 @@
   ([]
    (get-random-model models/content-without-id))
   ([collection-id resource-id]
-   (println "DEBUG: resource-id is of type " (type resource-id) " ; " resource-id)
+   ;(println "DEBUG: resource-id is of type " (type resource-id) " ; " resource-id)
    (into (get-random-model models/content-without-any-ids) {:collection-id collection-id :resource-id resource-id})))
 
 ; - - - - - - - - - INVALID MODEL GENERATORS - - - - - - - - ;

@@ -128,9 +128,9 @@
                 (if (not (resources/EXISTS? id))
                   {:status 404
                    :body {:message "resource not found"}}
-                  (let [file-resources-result '[]]
+                  (let [file-resources-result (resources/FILES-BY-RESOURCE id)]
                     (let [file-result (map #(utils/remove-db-only %) file-resources-result)]
-                      {:status 394 ; Not implemented yet
+                      {:status 200 ; Not implemented yet
                        :body file-result})))))})
 
 (def resource-add-view ;; Non-functional
