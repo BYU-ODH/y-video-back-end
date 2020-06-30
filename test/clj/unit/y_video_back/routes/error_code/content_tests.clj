@@ -98,3 +98,8 @@
   (testing "delete nonexistent content"
     (let [res (rp/content-id-delete (java.util.UUID/randomUUID))]
       (is (= 404 (:status res))))))
+
+(deftest content-add-view
+  (testing "add view to nonexistent content"
+    (let [res (rp/content-id-add-view (java.util.UUID/randomUUID))]
+      (is (= 404 (:status res))))))

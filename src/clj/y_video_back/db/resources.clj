@@ -14,3 +14,4 @@
 (def COLLECTIONS-BY-RESOURCE (partial db/read-all-where :collections-by-resource :resource-id))
 (def FILES-BY-RESOURCE (partial db/read-all-where :files-undeleted :resource-id))
 (def CONTENTS-BY-RESOURCE (partial db/read-all-where :contents-undeleted :resource-id))
+(def INCR-VIEWS (partial db/increment-field :resources :views))

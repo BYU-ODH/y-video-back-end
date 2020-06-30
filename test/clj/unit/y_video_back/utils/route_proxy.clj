@@ -160,13 +160,13 @@
   ([id]
    (resource-id-delete SESSION-ID-BYPASS id)))
 
-(defn resource-id-add-view
-  "Adds a view to resource"
+(defn content-id-add-view
+  "Adds a view to content"
   ([session-id id]
-   (app (-> (request :post (str "/api/resource/" id "/add-view"))
+   (app (-> (request :post (str "/api/content/" id "/add-view"))
             (header :session-id session-id))))
   ([id]
-   (resource-id-add-view SESSION-ID-BYPASS id)))
+   (content-id-add-view SESSION-ID-BYPASS id)))
 
 (defn content-post
   "Create a content via app's post request"

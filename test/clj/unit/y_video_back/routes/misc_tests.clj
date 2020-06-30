@@ -76,9 +76,9 @@
   (def test-user-crse-fou (ut/under-to-hyphen (user-courses-assoc/CREATE {:user-id (:id test-user-fou)
                                                                           :course-id (:id test-crse-one)
                                                                           :account-role 2})))
-  (def test-content-one (ut/under-to-hyphen (contents/CREATE (g/get-random-content-without-id (:id test-coll-one) (:id test-rsrc-one)))))
-  (def test-content-two (ut/under-to-hyphen (contents/CREATE (g/get-random-content-without-id (:id test-coll-two) (:id test-rsrc-two)))))
-  (def test-content-thr (ut/under-to-hyphen (contents/CREATE (g/get-random-content-without-id (:id test-coll-thr) (:id test-rsrc-thr)))))
+  (def test-cont-one (ut/under-to-hyphen (contents/CREATE (g/get-random-content-without-id (:id test-coll-one) (:id test-rsrc-one)))))
+  (def test-cont-two (ut/under-to-hyphen (contents/CREATE (g/get-random-content-without-id (:id test-coll-two) (:id test-rsrc-two)))))
+  (def test-cont-thr (ut/under-to-hyphen (contents/CREATE (g/get-random-content-without-id (:id test-coll-thr) (:id test-rsrc-thr)))))
   (def test-coll-crse-one (ut/under-to-hyphen (collection-courses-assoc/CREATE {:collection-id (:id test-coll-one)
                                                                                  :course-id (:id test-crse-one)})))
   (def test-coll-crse-two (ut/under-to-hyphen (collection-courses-assoc/CREATE {:collection-id (:id test-coll-two)
@@ -90,9 +90,11 @@
 
   (mount.core/start #'y-video-back.handler/app))
 
-(deftest test-resource-add-view
-  (testing "resource add view"
-    (let [res (rp/resource-id-add-view (:id test-rsrc-one))]
+(deftest test-cont-add-view
+  (testing "content add view"
+    (let [res (rp/content-id-add-view (:id test-cont-one))]
       (is (= 200 (:status res)))
-      (let [new-resource (resources/READ (:id test-rsrc-one))]
+      (let [new-content (contents/READ (:id test-cont-one))
+            new-resource (resources/READ (:id test-rsrc-one))]
+        (is (= (+ 1 (:views test-cont-one)) (:views new-content)))
         (is (= (+ 1 (:views test-rsrc-one)) (:views new-resource)))))))

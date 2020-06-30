@@ -99,5 +99,17 @@
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
               (if-not (ru/has-permission session-id "content-get-by-id" 0)
                 ru/forbidden-page
-                {:status 394
-                 :body {:message "not implemented yet"}}))})
+                (let [this-content (contents/READ id)]
+                  (if (nil? this-content)
+                    {:status 404
+                     :body {:message "content not found"}}
+                    (let [res-cont (contents/INCR-VIEWS id)]
+                      (if (= res-cont [0])
+                        {:status 500
+                         :message "unable to increment content view, aborting resource increment"}
+                        (let [res-rsrc (resources/INCR-VIEWS (:resource-id this-content))]
+                          (if (= res-rsrc [0])
+                            {:status 500
+                             :message "content view incremented, but unable to increment resource view"}
+                            {:status 200
+                             :body {:message "incremented views on content and resource"}}))))))))})

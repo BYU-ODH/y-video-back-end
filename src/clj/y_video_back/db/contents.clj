@@ -15,3 +15,4 @@
 (defn EXISTS-COLL-CONT? [collection-id resource-id] (not (empty? (db/read-where-and :contents-undeleted [:collection-id :resource-id] [collection-id resource-id]))))
 (defn EXISTS? [id] (not (nil? (db/READ :contents-undeleted id))))
 (def READ-BY-COLLECTION (partial db/read-all-where :contents-undeleted :collection-id))
+(def INCR-VIEWS (partial db/increment-field :contents :views))

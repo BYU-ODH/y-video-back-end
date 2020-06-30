@@ -219,8 +219,9 @@
      ["/{id}"
       {:get service-handlers/content-get-by-id
        :patch service-handlers/content-update
-       :delete service-handlers/content-delete
-       :post service-handlers/content-add-view}]]
+       :delete service-handlers/content-delete}]
+     ["/{id}/add-view"
+       {:post service-handlers/content-add-view}]]
 
     ["/file"
      {:swagger {:tags ["file"]}}
