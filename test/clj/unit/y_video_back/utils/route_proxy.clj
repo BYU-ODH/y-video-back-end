@@ -357,13 +357,13 @@
 ;  ([collection-id resource-id]
 ;   (collection-id-remove-resource SESSION-ID-BYPASS collection-id resource-id)))
 
-(defn collection-id-contents
-  "Reads all resources connected to collection"
-  ([session-id id]
-   (app (-> (request :get (str "/api/collection/" id "/contents"))
-            (header :session-id session-id))))
-  ([id]
-   (collection-id-contents SESSION-ID-BYPASS id)))
+;(defn collection-id-contents
+;  "Reads all resources connected to collection"
+;  ([session-id id]
+;   (app (-> (request :get (str "/api/collection/" id "/contents"))
+;            (header :session-id session-id)))
+;  ([id]
+;   (collection-id-contents SESSION-ID-BYPASS id)))
 
 (defn resource-id-collections
   "Reads all collections connected to resource"
@@ -449,6 +449,14 @@
             (header :session-id session-id))))
   ([id]
    (resource-id-files SESSION-ID-BYPASS id)))
+
+(defn resource-id-contents
+  "Reads all contents connected to resource"
+  ([session-id id]
+   (app (-> (request :get (str "/api/resource/" id "/contents"))
+            (header :session-id session-id))))
+  ([id]
+   (resource-id-contents SESSION-ID-BYPASS id)))
 
 ;(defn file-id-resources
 ;  "Reads all resources connected to file"

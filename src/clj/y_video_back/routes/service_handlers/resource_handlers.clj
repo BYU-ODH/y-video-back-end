@@ -113,8 +113,10 @@
                 (if (not (resources/EXISTS? id))
                   {:status 404
                    :body {:message "resource not found"}}
-                  {:status 394
-                   :body {:message "not implemented yet"}})))})
+                  (let [content-resources-result (resources/CONTENTS-BY-RESOURCE id)]
+                    (let [content-result (map #(utils/remove-db-only %) content-resources-result)]
+                      {:status 200 ; Not implemented yet
+                       :body content-result})))))})
 
 (def resource-get-all-files ;; Non-functional
   {:summary "Retrieves all the files for the specified resource"

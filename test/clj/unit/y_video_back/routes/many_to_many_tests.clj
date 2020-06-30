@@ -231,6 +231,19 @@
                   [test-coll-one])
              (m/decode-response-body res))))))
 
+(deftest test-content-resource
+  (testing "find all contents by resource"
+    (let [res (rp/resource-id-contents (:id test-rsrc-one))]
+      (is (= 200 (:status res)))
+      (is (= (map #(-> %
+                       (ut/remove-db-only)
+                       (update :id str)
+                       (update :collection-id str)
+                       (update :resource-id str))
+                  [test-cont-one])
+             (m/decode-response-body res))))))
+
+
 
 
 (deftest test-coll-course-assoc
