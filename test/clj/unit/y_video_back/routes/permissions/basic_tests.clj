@@ -7,7 +7,7 @@
     [muuntaja.core :as m]
     [clojure.java.jdbc :as jdbc]
     [mount.core :as mount]
-    [y-video-back.utils.route-proxy :as rp]
+    [y-video-back.utils.route-proxy.proxy :as rp]
     [y-video-back.db.core :refer [*db*] :as db]
     [y-video-back.utils.utils :as ut]))
 

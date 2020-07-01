@@ -1,17 +1,17 @@
-(ns y-video-back.utils.route-proxy
+(ns y-video-back.utils.route-proxy.proxy
   (:require
     [y-video-back.config :refer [env]]
     [clojure.test :refer :all]
     [ring.mock.request :refer :all]
     [y-video-back.handler :refer :all]
-    [y-video-back.utils.route-proxy-parts.rp-admin :as admin]
-    [y-video-back.utils.route-proxy-parts.rp-collection :as collection]
-    [y-video-back.utils.route-proxy-parts.rp-content :as content]
-    [y-video-back.utils.route-proxy-parts.rp-course :as course]
-    [y-video-back.utils.route-proxy-parts.rp-file :as file]
-    [y-video-back.utils.route-proxy-parts.rp-resource :as resource]
-    [y-video-back.utils.route-proxy-parts.rp-user :as user]
-    [y-video-back.utils.route-proxy-parts.rp-word :as word]))
+    [y-video-back.utils.route-proxy.routes.rp-admin :as admin]
+    [y-video-back.utils.route-proxy.routes.rp-collection :as collection]
+    [y-video-back.utils.route-proxy.routes.rp-content :as content]
+    [y-video-back.utils.route-proxy.routes.rp-course :as course]
+    [y-video-back.utils.route-proxy.routes.rp-file :as file]
+    [y-video-back.utils.route-proxy.routes.rp-resource :as resource]
+    [y-video-back.utils.route-proxy.routes.rp-user :as user]
+    [y-video-back.utils.route-proxy.routes.rp-word :as word]))
 
 (defn echo-post
   "Echo word from request body"

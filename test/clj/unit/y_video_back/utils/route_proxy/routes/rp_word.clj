@@ -1,4 +1,4 @@
-(ns y-video-back.utils.route-proxy-parts.rp-word
+(ns y-video-back.utils.route-proxy.routes.rp-word
   (:require
     [y-video-back.config :refer [env]]
     [clojure.test :refer :all]

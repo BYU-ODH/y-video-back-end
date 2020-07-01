@@ -14,7 +14,7 @@
       [clojure.java.jdbc :as jdbc]
       [mount.core :as mount]
       [y-video-back.utils.model-generator :as g]
-      [y-video-back.utils.route-proxy :as rp]
+      [y-video-back.utils.route-proxy.proxy :as rp]
       [y-video-back.db.core :refer [*db*] :as db]
       [y-video-back.db.contents :as contents]
       [y-video-back.db.users-by-collection :as users-by-collection]
@@ -295,11 +295,11 @@
           file-two-res (files/CREATE new-file-two)
           res (rp/resource-id-files (:id test-rsrc-one))]
       (is (= 200 (:status res)))
-      (is (= (map #(-> %
-                       (ut/remove-db-only)
-                       (update :id str)
-                       (update :resource-id str))
-                  [test-file-one
-                   (assoc new-file-one :id (:id file-one-res))
-                   (assoc new-file-two :id (:id file-two-res))])
-             (m/decode-response-body res))))))
+      (is (= (frequencies (map #(-> %
+                                    (ut/remove-db-only)
+                                    (update :id str)
+                                    (update :resource-id str))
+                               [test-file-one
+                                (assoc new-file-one :id (:id file-one-res))
+                                (assoc new-file-two :id (:id file-two-res))]))
+             (frequencies (m/decode-response-body res)))))))

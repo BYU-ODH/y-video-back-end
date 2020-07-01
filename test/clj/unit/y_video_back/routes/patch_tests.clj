@@ -14,7 +14,7 @@
     [clojure.java.jdbc :as jdbc]
     [mount.core :as mount]
     [y-video-back.utils.model-generator :as g]
-    [y-video-back.utils.route-proxy :as rp]
+    [y-video-back.utils.route-proxy.proxy :as rp]
     [y-video-back.db.core :refer [*db*] :as db]
     [y-video-back.db.contents :as contents]
     [y-video-back.db.users-by-collection :as users-by-collection]
