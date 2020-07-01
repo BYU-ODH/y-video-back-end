@@ -1,22 +1,26 @@
 ;; env/dev/resources/config.edn
 {:dev true
  :port 3030
+ :session-id-bypass "f1d1a6cc-e3db-4a6c-b0c5-13407887fb51"
  :nrepl-port 7000
- :roles {:ADMIN 0
-         :LA 1
-         :INSTR 2
-         :STUD 3
-         :CRSE-STUD 2
-         :TA 1
-         :OWNER 2}
+ :ADMIN 0
+ :LA 1
+ :INSTR 2
+ :STUD 3
+ :CRSE-STUD 2
+ :TA 1
+ :OWNER 2
+ :NEW-USER-PASSWORD "ae91e6b1-e29c-458f-8ddc-1a6fa2ba141b"
+ :CONSUMER_KEY "fc028869ad27420ba215d5b99efeacfe"
+ :CONSUMER_SECRET "48b7593d27c946ec8be2abdf0b8f3837"
  :y-video-back {:site-url "http://localhost:3030"
-                :db {:database-name "y-video-back"
+                :db {:database-name "my-db"
                      :adapter "postgresql"
                      :auto-commit true
                      :register-mbeans false
-                     :password "y-video-back"
+                     :password "12345"
                      :port-number 5432
-                     :username "y-video-back"
+                     :username "a-user"
                      :max-lifetime 1800000
                      :minimum-idle 10
                      :connection-timeout 30000
