@@ -57,13 +57,20 @@
              {:url "/api/swagger.json"
               :config {:validator-url nil}})}]]
 
-    ["/get-session-id/{username}"
+    ["/get-session-id/{username}/{password}"
      {:get {:summary "gets session id for username"
-            :parameters {:path {:username string?}}
-            :responses {200 {:body {:session-id string?}}}
-            :handler (fn [{{{:keys [username]} :path} :parameters}]
-                       {:status 200
-                        :body {:session-id (str (uc/get-session-id username))}})}}]
+            :parameters {:path {:username string?
+                                :password string?}}
+            :responses {200 {:body {:session-id string?}}
+                        403 {:body {:message string?}}}
+            :handler (fn [{{{:keys [username password]} :path} :parameters}]
+                       (println "USERNAME: " username)
+                       (println "PASSWORD: " password)
+                       (if-not (= "98bf2d2e-3d5d-4c4f-a656-9ac9c011b6b7" password)
+                         {:status 403
+                          :body {:message "incorrect password"}}
+                         {:status 200
+                          :body {:session-id (str (uc/get-session-id username))}}))}}]
     ["/ping"
      {:get (constantly (response/ok {:message "pong"}))}]
 
