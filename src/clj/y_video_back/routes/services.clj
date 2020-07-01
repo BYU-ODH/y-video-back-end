@@ -1,5 +1,6 @@
 (ns y-video-back.routes.services
   (:require
+    [y-video-back.config :refer [env]]
     [reitit.swagger :as swagger]
     [reitit.swagger-ui :as swagger-ui]
     [reitit.ring.coercion :as coercion]
@@ -64,7 +65,7 @@
             :responses {200 {:body {:session-id string?}}
                         403 {:body {:message string?}}}
             :handler (fn [{{{:keys [username password]} :path} :parameters}]
-                       (if-not (= "98bf2d2e-3d5d-4c4f-a656-9ac9c011b6b7" password)
+                       (if-not (= (:NEW-USER-PASSWORD env) password)
                          {:status 403
                           :body {:message "incorrect password"}}
                          {:status 200
