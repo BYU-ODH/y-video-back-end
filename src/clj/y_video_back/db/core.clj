@@ -236,16 +236,12 @@
 (defn increment-field
   "Increment given field in given table by 1 (field must be an int)"
   [table-keyword column-keyword row-id]
-  ; This is hard coded - fix it
-  (let [sql-string (str "UPDATE " (name table-keyword) " SET " (name column-keyword) " = " (name column-keyword) " + 1 WHERE id = '" (str row-id) "';")]
-    (dbdo! sql-string)))
-  ;(cond-> (helpers/update table-keyword)
-          ;true (helpers/sset {column-keyword (str column-keyword " + " 1)})
-          ;true (helpers/where := :id row-id)
-          ;true sql/format])
-          ;true (clojure.string/replace "=" "LIKE")
+  (cond-> (helpers/update table-keyword)
+          true (helpers/sset {column-keyword (sql/call :+ column-keyword 1)})
+          true (helpers/where := :id row-id)
+          true sql/format
           ;true (spy)
-          ;true dbr))
+          true dbdo!))
 
 ; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ;
 
