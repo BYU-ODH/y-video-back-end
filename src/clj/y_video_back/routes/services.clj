@@ -64,8 +64,6 @@
             :responses {200 {:body {:session-id string?}}
                         403 {:body {:message string?}}}
             :handler (fn [{{{:keys [username password]} :path} :parameters}]
-                       (println "USERNAME: " username)
-                       (println "PASSWORD: " password)
                        (if-not (= "98bf2d2e-3d5d-4c4f-a656-9ac9c011b6b7" password)
                          {:status 403
                           :body {:message "incorrect password"}}
