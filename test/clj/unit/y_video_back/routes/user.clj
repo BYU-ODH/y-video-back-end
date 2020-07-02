@@ -52,3 +52,59 @@
           res (rp/user-id-delete (:id user-one))]
       (is (= 200 (:status res)))
       (is (= nil (users/READ (:id user-one)))))))
+
+(deftest user-all-colls
+  (testing "find all collections by user"
+    (let [user-one (db-pop/add-user)
+          user-two (db-pop/add-user)
+          coll-one (db-pop/add-collection)
+          coll-two (db-pop/add-collection)
+          ; Connect one-one, two-two
+          user-coll-one (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one))
+          user-coll-two (db-pop/add-user-coll-assoc (:id user-two) (:id coll-two))
+          res-one (rp/user-id-collections (:id user-one))
+          res-two (rp/user-id-collections (:id user-two))]
+      (is (= 200 (:status res-one)))
+      (is (= 200 (:status res-two)))
+      (is (= (-> coll-one
+                 (update :id str)
+                 (update :owner str)
+                 (into {:user-id (str (:id user-one))
+                                 :account-role (:account-role user-coll-one)})
+                 (ut/remove-db-only)
+                 (list))
+             (map ut/remove-db-only (m/decode-response-body res-one))))
+      (is (= (-> coll-two
+                 (update :id str)
+                 (update :owner str)
+                 (into {:user-id (str (:id user-two))
+                                 :account-role (:account-role user-coll-two)})
+                 (ut/remove-db-only)
+                 (list))
+             (map ut/remove-db-only (m/decode-response-body res-two)))))))
+
+(deftest user-all-crses
+  (testing "find all courses by user"
+    (let [user-one (db-pop/add-user)
+          user-two (db-pop/add-user)
+          crse-one (db-pop/add-course)
+          crse-two (db-pop/add-course)
+          ; Connect one-one, two-two
+          user-crse-one (db-pop/add-user-crse-assoc (:id user-one) (:id crse-one))
+          user-crse-two (db-pop/add-user-crse-assoc (:id user-two) (:id crse-two))
+          res-one (rp/user-id-courses (:id user-one))
+          res-two (rp/user-id-courses (:id user-two))]
+      (is (= 200 (:status res-one)))
+      (is (= 200 (:status res-two)))
+      (is (= (-> crse-one
+                 (update :id str)
+                 (into {:user-id (str (:id user-one))
+                                 :account-role (:account-role user-crse-one)})
+                 (list))
+             (map ut/remove-db-only (m/decode-response-body res-one))))
+      (is (= (-> crse-two
+                 (update :id str)
+                 (into {:user-id (str (:id user-two))
+                                 :account-role (:account-role user-crse-two)})
+                 (list))
+             (map ut/remove-db-only (m/decode-response-body res-two)))))))

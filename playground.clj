@@ -59,3 +59,22 @@
   (if c
     (println c))
   "done!")
+
+
+(defn hey
+  ([{:keys [first]}]
+   (println (str "hey there, " first)))
+  ([{:keys [first last]}]
+   (str "why so formal, " first " " last "?")))
+
+(defmulti hey (fn [m] [(keys m)]))
+
+(defmethod hey
+  ['(:first)]
+  [{:keys [first]}]
+  (str "hey there, " first))
+
+(defmethod hey
+  ['(:first :last)]
+  [{:keys [first last]}]
+  (str "why so formal, " first " " last "?"))

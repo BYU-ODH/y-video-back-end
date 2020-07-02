@@ -54,3 +54,41 @@
           res (rp/resource-id-delete (:id rsrc-one))]
       (is (= 200 (:status res)))
       (is (= nil (resources/READ (:id rsrc-one)))))))
+
+(deftest rsrc-all-colls
+  (testing "find all collections by resource"
+    (let [rsrc-one (db-pop/add-resource)
+          coll-one (db-pop/add-collection)
+          cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
+          res (rp/resource-id-collections (:id rsrc-one))]
+      (is (= 200 (:status res)))
+      (is (= (-> coll-one
+                 (update :id str)
+                 (update :owner str)
+                 (list))
+             (map ut/remove-db-only (m/decode-response-body res)))))))
+
+(deftest rsrc-all-conts
+  (testing "find all contents by resource"
+    (let [cont-one (db-pop/add-content)
+          rsrc-id (:resource-id cont-one)
+          res (rp/resource-id-contents rsrc-id)]
+      (is (= 200 (:status res)))
+      (is (= (-> cont-one
+                 (update :id str)
+                 (update :collection-id str)
+                 (update :resource-id str)
+                 (list))
+             (map ut/remove-db-only (m/decode-response-body res)))))))
+
+(deftest rsrc-all-files
+  (testing "find all files by resource"
+    (let [file-one (db-pop/add-file)
+          rsrc-id (:resource-id file-one)
+          res (rp/resource-id-files rsrc-id)]
+      (is (= 200 (:status res)))
+      (is (= (-> file-one
+                 (update :id str)
+                 (update :resource-id str)
+                 (list))
+             (map ut/remove-db-only (m/decode-response-body res)))))))
