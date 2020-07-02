@@ -21,7 +21,8 @@
       [y-video-back.db.user-courses-assoc :as user-courses-assoc]
       [y-video-back.db.users :as users]
       [y-video-back.db.words :as words]
-      [y-video-back.utils.utils :as ut]))
+      [y-video-back.utils.utils :as ut]
+      [y-video-back.utils.db-populator :as db-pop]))
 
 (declare ^:dynamic *txn*)
 
@@ -82,6 +83,9 @@
           ; Create collections
           coll-one (ut/under-to-hyphen (collections/CREATE (g/get-random-collection-without-id user-id)))
           coll-two (ut/under-to-hyphen (collections/CREATE (g/get-random-collection-without-id user-id)))
+          ; Create content for coll-two
+          rsrc-one (db-pop/add-resource)
+          cont-one (db-pop/add-content (:id coll-two) (:id rsrc-one))
           ; Connect user to collections
           user-coll-one (user-collections-assoc/CREATE {:collection-id (:id coll-one)
                                                         :user-id user-id
@@ -92,13 +96,20 @@
           ; Read collections by session-id
           res (rp/collections-by-logged-in user-id)]
       (is (= 200 (:status res)))
-      (is (= (map #(-> %
-                       (ut/remove-db-only)
-                       (update :id str)
-                       (update :owner str))
-                       ;(assoc :account-role 1)
-                       ;(assoc :user-id (str user-id)))
-                  [coll-one coll-two])
+      (is (= [(-> coll-one
+                   (ut/remove-db-only)
+                   (update :id str)
+                   (update :owner str)
+                   (assoc :content '[]))
+              (-> coll-two
+                           (ut/remove-db-only)
+                           (update :id str)
+                           (update :owner str)
+                           (assoc :content [(-> cont-one
+                                                (ut/remove-db-only)
+                                                (update :id str)
+                                                (update :collection-id str)
+                                                (update :resource-id str))]))]
              (map ut/remove-db-only (m/decode-response-body res))))))
 
   (testing "get collections - indirect via course only"
@@ -107,6 +118,9 @@
           ; Create collections
           coll-one (ut/under-to-hyphen (collections/CREATE (g/get-random-collection-without-id user-id)))
           coll-two (ut/under-to-hyphen (collections/CREATE (g/get-random-collection-without-id user-id)))
+          ; Create content for coll-two
+          rsrc-one (db-pop/add-resource)
+          cont-one (db-pop/add-content (:id coll-two) (:id rsrc-one))
           ; Create courses
           crse-one (courses/CREATE (g/get-random-course-without-id))
           crse-two (courses/CREATE (g/get-random-course-without-id))
@@ -123,13 +137,20 @@
           ; Read collections by sessio-id
           res (rp/collections-by-logged-in user-id)]
         (is (= 200 (:status res)))
-        (is (= (map #(-> %
-                         (ut/remove-db-only)
-                         (update :id str)
-                         (update :owner str))
-                         ;(assoc :account-role 2)
-                         ;(assoc :user-id (str user-id)))
-                    [coll-one coll-two])
+        (is (= [(-> coll-one
+                     (ut/remove-db-only)
+                     (update :id str)
+                     (update :owner str)
+                     (assoc :content '[]))
+                (-> coll-two
+                             (ut/remove-db-only)
+                             (update :id str)
+                             (update :owner str)
+                             (assoc :content [(-> cont-one
+                                                  (ut/remove-db-only)
+                                                  (update :id str)
+                                                  (update :collection-id str)
+                                                  (update :resource-id str))]))]
                (map ut/remove-db-only (m/decode-response-body res))))))
   (testing "get collections - user-coll and via course"
     (let [user-one (users/CREATE (g/get-random-user-without-id))
@@ -163,14 +184,16 @@
       (let [updated-directs (map #(-> %
                                       (ut/remove-db-only)
                                       (update :id str)
-                                      (update :owner str))
+                                      (update :owner str)
+                                      (assoc :content '[]))
                                       ;(assoc :account-role 1)
                                       ;(assoc :user-id (str user-id)))
                                  [coll-one coll-two])
             updated-indirects (map #(-> %
                                         (ut/remove-db-only)
                                         (update :id str)
-                                        (update :owner str))
+                                        (update :owner str)
+                                        (assoc :content '[]))
                                         ;(assoc :account-role 2)
                                         ;(assoc :user-id (str user-id)))
                                    [coll-thr coll-fou])]

@@ -3,6 +3,7 @@
    [y-video-back.db.user-collections-assoc :as user-collections-assoc]
    [y-video-back.db.user-courses-assoc :as user-courses-assoc]
    [y-video-back.db.users :as users]
+   [y-video-back.db.contents :as contents]
    [y-video-back.models :as models]
    [y-video-back.front-end-models :as fmodels]
    [y-video-back.model-specs :as sp]
@@ -123,7 +124,7 @@
 (def user-get-all-collections-by-logged-in
   {:summary "Retrieves all collections for session user"
    :parameters {:header {:session-id uuid?}}
-   :responses {200 {:body [models/collection]}
+   :responses {200 {:body [(assoc models/collection :content [models/content])]}
                404 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header} :parameters}]
               (if-not (ru/has-permission session-id "user-get-all-collections" 0)
@@ -142,9 +143,12 @@
                                                          (utils/remove-db-only)
                                                          (dissoc :user-id)
                                                          (dissoc :account-role))
-                                                    user-collections-result)]
-                          {:status 200
-                           :body (concat courses-result collections-result)}))))))})
+                                                    user-collections-result)
+                            total-result (map #(-> %
+                                                   (assoc :content (map utils/remove-db-only (contents/READ-BY-COLLECTION (:id %)))))
+                                              (concat courses-result collections-result))]
+                        {:status 200
+                         :body total-result}))))))})
 
 (def user-get-all-courses ;; Non-functional
   {:summary "Retrieves all courses for specified user"
