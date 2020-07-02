@@ -95,9 +95,9 @@
       (is (= (map #(-> %
                        (ut/remove-db-only)
                        (update :id str)
-                       (update :owner str)
-                       (assoc :account-role 1)
-                       (assoc :user-id (str user-id)))
+                       (update :owner str))
+                       ;(assoc :account-role 1)
+                       ;(assoc :user-id (str user-id)))
                   [coll-one coll-two])
              (map ut/remove-db-only (m/decode-response-body res))))))
 
@@ -126,9 +126,9 @@
         (is (= (map #(-> %
                          (ut/remove-db-only)
                          (update :id str)
-                         (update :owner str)
-                         (assoc :account-role 2)
-                         (assoc :user-id (str user-id)))
+                         (update :owner str))
+                         ;(assoc :account-role 2)
+                         ;(assoc :user-id (str user-id)))
                     [coll-one coll-two])
                (map ut/remove-db-only (m/decode-response-body res))))))
   (testing "get collections - user-coll and via course"
@@ -163,16 +163,16 @@
       (let [updated-directs (map #(-> %
                                       (ut/remove-db-only)
                                       (update :id str)
-                                      (update :owner str)
-                                      (assoc :account-role 1)
-                                      (assoc :user-id (str user-id)))
+                                      (update :owner str))
+                                      ;(assoc :account-role 1)
+                                      ;(assoc :user-id (str user-id)))
                                  [coll-one coll-two])
             updated-indirects (map #(-> %
                                         (ut/remove-db-only)
                                         (update :id str)
-                                        (update :owner str)
-                                        (assoc :account-role 2)
-                                        (assoc :user-id (str user-id)))
+                                        (update :owner str))
+                                        ;(assoc :account-role 2)
+                                        ;(assoc :user-id (str user-id)))
                                    [coll-thr coll-fou])]
         (is (= (frequencies (concat updated-directs updated-indirects))
                (frequencies (m/decode-response-body res))))))))

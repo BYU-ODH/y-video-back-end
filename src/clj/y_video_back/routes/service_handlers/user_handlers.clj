@@ -103,7 +103,7 @@
   {:summary "Retrieves all collections for specified user"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
-   :responses {200 {:body [(into models/collection {:account-role int? :user-id uuid?})]}
+   :responses {200 {:body [models/collection]}
                404 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
               (if-not (ru/has-permission session-id "user-get-all-collections" 0)
@@ -112,14 +112,18 @@
                   {:status 404
                    :body {:message "user not found"}}
                   (let [user-collections-result (user-collections-assoc/READ-COLLECTIONS-BY-USER id)]
-                    (let [collection-result (map #(utils/remove-db-only %) user-collections-result)]
+                    (let [collection-result (map #(-> %
+                                                      (utils/remove-db-only)
+                                                      (dissoc :user-id)
+                                                      (dissoc :account-role))
+                                                 user-collections-result)]
                         {:status 200
                          :body collection-result})))))})
 
 (def user-get-all-collections-by-logged-in
   {:summary "Retrieves all collections for session user"
    :parameters {:header {:session-id uuid?}}
-   :responses {200 {:body [(into models/collection {:account-role int? :user-id uuid?})]}
+   :responses {200 {:body [models/collection]}
                404 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header} :parameters}]
               (if-not (ru/has-permission session-id "user-get-all-collections" 0)
@@ -132,9 +136,13 @@
                           user-courses-result (users/READ-COLLECTIONS-BY-USER-VIA-COURSES user-id)]
                       (let [courses-result (map #(-> %
                                                      (utils/remove-db-only)
-                                                     (assoc :account-role 2))
+                                                     (dissoc :user-id))
                                                 user-courses-result)
-                            collections-result (map #(utils/remove-db-only %) user-collections-result)]
+                            collections-result (map #(-> %
+                                                         (utils/remove-db-only)
+                                                         (dissoc :user-id)
+                                                         (dissoc :account-role))
+                                                    user-collections-result)]
                           {:status 200
                            :body (concat courses-result collections-result)}))))))})
 
@@ -142,7 +150,7 @@
   {:summary "Retrieves all courses for specified user"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
-   :responses {200 {:body [(into models/course {:account-role int? :user-id uuid?})]}
+   :responses {200 {:body [models/course]}
                404 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
               (if-not (ru/has-permission session-id "user-get-all-courses" 0)
@@ -151,7 +159,11 @@
                   {:status 404
                    :body {:message "user not found"}}
                   (let [user-courses-result (user-courses-assoc/READ-COURSES-BY-USER id)]
-                    (let [course-result (map #(utils/remove-db-only %) user-courses-result)]
+                    (let [course-result (map #(-> %
+                                                  (utils/remove-db-only)
+                                                  (dissoc :user-id)
+                                                  (dissoc :account-role))
+                                             user-courses-result)]
                         {:status 200
                          :body course-result})))))})
 

@@ -228,7 +228,7 @@
   {:summary "Retrieves all the courses for the specified collection"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
-   :responses {200 {:body [(into models/course {:collection-id uuid?})]}
+   :responses {200 {:body [models/course]}
                404 (:body {:message string?})}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
               (if-not (ru/has-permission session-id "collection-get-all-courses" {:collection-id id})
@@ -237,7 +237,10 @@
                   {:status 404
                    :body {:message "collection not found"}}
                   (let [course-collections-result (collection-courses-assoc/READ-COURSES-BY-COLLECTION id)]
-                    (let [course-result (map #(utils/remove-db-only %) course-collections-result)]
+                    (let [course-result (map #(-> %
+                                                  (utils/remove-db-only)
+                                                  (dissoc :collection-id))
+                                             course-collections-result)]
                       {:status 200
                        :body course-result})))))})
 
@@ -245,7 +248,7 @@
   {:summary "Retrieves all users for the specified collection"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
-   :responses {200 {:body [(into models/user {:account-role int? :collection-id uuid?})]}
+   :responses {200 {:body [models/user]}
                404 (:body {:message string?})}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
               (if-not (ru/has-permission session-id "collection-get-all-users" {:collection-id id})
@@ -254,6 +257,10 @@
                   {:status 404
                    :body {:message "collection not found"}}
                   (let [user-collections-result (user-collections-assoc/READ-USERS-BY-COLLECTION id)]
-                    (let [user-result (map #(utils/remove-db-only %) user-collections-result)]
+                    (let [user-result (map #(-> %
+                                                (utils/remove-db-only)
+                                                (dissoc :collection-id)
+                                                (dissoc :account-role))
+                                           user-collections-result)]
                       {:status 200
                        :body user-result})))))})

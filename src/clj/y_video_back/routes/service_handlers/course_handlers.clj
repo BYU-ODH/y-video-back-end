@@ -146,7 +146,7 @@
   {:summary "Retrieves all users for the specified course"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
-   :responses {200 {:body [(into models/user {:account-role int? :course-id uuid?})]}
+   :responses {200 {:body [models/user]}
                404 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
               (if-not (ru/has-permission session-id "course-get-all-users" {:course-id id})
@@ -155,7 +155,11 @@
                   {:status 404
                    :body {:message "course not found"}}
                   (let [user-courses-result (user-courses-assoc/READ-USERS-BY-COURSE id)]
-                    (let [user-result (map #(utils/remove-db-only %) user-courses-result)]
+                    (let [user-result (map #(-> %
+                                                (utils/remove-db-only)
+                                                (dissoc :course-id)
+                                                (dissoc :account-role))
+                                           user-courses-result)]
                       {:status 200
                        :body user-result})))))})
 
@@ -163,7 +167,7 @@
   {:summary "Retrieves all collections for specified course"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
-   :responses {200 {:body [(into models/collection {:course-id uuid?})]}
+   :responses {200 {:body [models/collection]}
                404 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
               (if-not (ru/has-permission session-id "course-get-all-collections" {:course-id id})
@@ -172,6 +176,7 @@
                   {:status 404
                    :body {:message "course not found"}}
                   (let [course-collections-result (collection-courses-assoc/READ-COLLECTIONS-BY-COURSE id)]
-                    (let [collection-result (map #(utils/remove-db-only %) course-collections-result)]
+                    (let [collection-result (map #(utils/remove-db-only %) course-collections-result)
+                          remove-extra (map #(dissoc % :course-id) collection-result)]
                       {:status 200
-                       :body collection-result})))))})
+                       :body remove-extra})))))})

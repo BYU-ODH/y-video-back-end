@@ -101,12 +101,12 @@
       (is (= 200 (:status res-two)))
       (is (= (-> user-one
                  (update :id str)
-                 (into {:course-id (str (:id crse-one)) :account-role (:account-role user-crse-one)})
+                 ;(into {:course-id (str (:id crse-one)) :account-role (:account-role user-crse-one)})
                  (list))
              (map ut/remove-db-only (m/decode-response-body res-one))))
       (is (= (-> user-two
                  (update :id str)
-                 (into {:course-id (str (:id crse-two)) :account-role (:account-role user-crse-two)})
+                 ;(into {:course-id (str (:id crse-two)) :account-role (:account-role user-crse-two)})
                  (list))
              (map ut/remove-db-only (m/decode-response-body res-two)))))))
 
@@ -126,12 +126,12 @@
       (is (= (-> coll-one
                  (update :id str)
                  (update :owner str)
-                 (into {:course-id (str (:id crse-one))})
+                 ;(into {:course-id (str (:id crse-one))})
                  (list))
              (map ut/remove-db-only (m/decode-response-body res-one))))
       (is (= (-> coll-two
                  (update :id str)
                  (update :owner str)
-                 (into {:course-id (str (:id crse-two))})
+                 ;(into {:course-id (str (:id crse-two))})
                  (list))
              (map ut/remove-db-only (m/decode-response-body res-two)))))))
