@@ -6,7 +6,9 @@
 ;; a new Word with that User's id as its user-id, and returns the new
 ;; Word. However, it does not add the Word to the database.
 
-;; Returned variable names only have -'s, no _'s.
+;; All add functions - same as get functions, with additional step of
+;; adding target object to the db. Target object is returned with
+;; id included.
 
 (ns y-video-back.utils.db-populator
     (:require
