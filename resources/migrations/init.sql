@@ -118,6 +118,31 @@ CREATE TABLE contents (
 );
 COMMENT ON TABLE contents IS 'Contains contents to be applied over resources';
 
+DROP TABLE IF EXISTS subtitles CASCADE;
+CREATE TABLE subtitles (
+    id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY
+    ,deleted TIMESTAMP DEFAULT NULL
+    ,updated TIMESTAMP DEFAULT NULL
+    ,created  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    ,title TEXT
+    ,language TEXT
+    ,content TEXT
+    ,resource_id UUID REFERENCES resources(id)
+);
+COMMENT ON TABLE subtitles IS 'Contains subtitles to be applied over resources';
+
+DROP TABLE IF EXISTS content_subtitles_assoc CASCADE;
+CREATE TABLE content_subtitles_assoc (
+   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY
+   ,deleted TIMESTAMP DEFAULT NULL
+   ,updated TIMESTAMP DEFAULT NULL
+   ,created  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+   ,content_id UUID REFERENCES contents(id) ON DELETE CASCADE
+   ,subtitle_id UUID REFERENCES subtitles(id) ON DELETE CASCADE
+   , CONSTRAINT no_duplicate_content_subtitles UNIQUE (content_id, subtitle_id)
+);
+COMMENT ON TABLE content_subtitles_assoc IS 'Many-to-many table connecting contents and subtitles';
+
 DROP TABLE IF EXISTS user_collections_assoc CASCADE;
 CREATE TABLE user_collections_assoc (
    id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY
