@@ -3,6 +3,8 @@
    [y-video-back.db.contents :as contents]
    [y-video-back.db.collections :as collections]
    [y-video-back.db.resources :as resources]
+   [y-video-back.db.subtitles :as subtitles]
+   [y-video-back.db.content-subtitles-assoc :as content-subtitles-assoc]
    [y-video-back.models :as models]
    [y-video-back.model-specs :as sp]
    [y-video-back.routes.service-handlers.utils :as utils]
@@ -113,3 +115,56 @@
                              :message "content view incremented, but unable to increment resource view"}
                             {:status 200
                              :body {:message "incremented views on content and resource"}}))))))))})
+
+(def content-add-subtitle
+  {:summary "Adds subtitle to specified content"
+   :parameters {:header {:session-id uuid?}
+                :path {:id uuid?} :body {:subtitle-id uuid?}}
+   :responses {200 {:body {:message string? :id string?}}
+               404 {:body {:message string?}}
+               500 {:body {:message string?}}}
+   :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
+              (if-not (ru/has-permission session-id "content-add-subtitle" {:content-id id})
+                ru/forbidden-page
+                (if (not (contents/EXISTS? id))
+                  {:status 404
+                   :body {:message "content not found"}}
+                  (if (not (subtitles/EXISTS? (:subtitle-id body)))
+                    {:status 500
+                     :body {:message "subtitle not found"}}
+                    (if (content-subtitles-assoc/EXISTS-CONT-SBTL? id (:subtitle-id body))
+                      {:status 500
+                       :body {:message "subtitle already connected to content"}}
+                      (let [result (utils/get-id (content-subtitles-assoc/CREATE (into body {:content-id id})))]
+                        (if (= nil result)
+                          {:status 500
+                           :body {:message "unable to add subtitle"}}
+                          {:status 200
+                           :body {:message (str 1 " subtitles added to content")
+                                  :id result}})))))))})
+
+(def content-remove-subtitle
+  {:summary "Removes subtitle from specified content"
+   :parameters {:header {:session-id uuid?}
+                :path {:id uuid?} :body {:subtitle-id uuid?}}
+   :responses {200 {:body {:message string?}}
+               404 {:body {:message string?}}
+               500 {:body {:message string?}}}
+   :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
+              (if-not (ru/has-permission session-id "content-remove-subtitle" {:content-id id})
+                ru/forbidden-page
+                (if (not (contents/EXISTS? id))
+                  {:status 404
+                   :body {:message "content not found"}}
+                  (if (not (subtitles/EXISTS? (:subtitle-id body)))
+                    {:status 500
+                     :body {:message "subtitle not found"}}
+                    (if-not (content-subtitles-assoc/EXISTS-CONT-SBTL? id (:subtitle-id body))
+                      {:status 500
+                       :body {:message "subtitle not connected to content"}}
+                      (let [result (content-subtitles-assoc/DELETE-BY-IDS [id (:subtitle-id body)])]
+                        (if (= 0 result)
+                          {:status 500
+                           :body {:message "unable to remove subtitle"}}
+                          {:status 200
+                           :body {:message (str result " subtitles removed from content")}})))))))})

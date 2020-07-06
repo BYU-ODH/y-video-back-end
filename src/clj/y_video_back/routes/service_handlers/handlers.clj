@@ -85,6 +85,7 @@
 (def content-update contents/content-update)
 (def content-delete contents/content-delete)
 (def content-add-view contents/content-add-view)
+(def content-add-subtitle contents/content-add-subtitle)
 
 ; Admin handlers
 (def search-by-user admin/search-by-user)

@@ -104,6 +104,12 @@
   ([user-id course-id]
    (into (get-random-model models/user-courses-assoc-without-any-ids) {:user-id user-id :course-id course-id})))
 
+(defn get-random-content-subtitles-assoc-without-id
+  ([]
+   (get-random-model models/content-subtitles-assoc-without-id))
+  ([content-id subtitle-id]
+   (into (get-random-model models/content-subtitles-assoc-without-any-ids) {:content-id content-id :subtitle-id subtitle-id})))
+
 
 ;(defn get-random-collection-resources-assoc-without-id
 ;  ([]

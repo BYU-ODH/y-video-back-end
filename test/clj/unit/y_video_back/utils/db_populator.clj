@@ -113,17 +113,19 @@
 
 (defn get-subtitle
   "Creates subtitle, ready to be added to db"
-  []
-  (let [new-rsrc (add-resource)]
-    (g/get-random-subtitle-without-id (:id new-rsrc))))
-
+  ([]
+   (let [new-rsrc (add-resource)]
+     (g/get-random-subtitle-without-id (:id new-rsrc))))
+  ([resource-id]
+   (g/get-random-subtitle-without-id resource-id)))
 (defn add-subtitle
   "Creates subtitle, adds to db"
-  []
-  (let [sbtl-one (get-subtitle)
-        sbtl-one-add (subtitles/CREATE sbtl-one)]
-    (assoc sbtl-one :id (:id sbtl-one-add))))
-
+  ([]
+   (add-subtitle (java.util.UUID/randomUUID)))
+  ([resource-id]
+   (let [sbtl-one (get-subtitle resource-id)
+         sbtl-one-add (subtitles/CREATE sbtl-one)]
+     (assoc sbtl-one :id (:id sbtl-one-add)))))
 
 (defn get-file
   "Creates file, ready to be added to db"

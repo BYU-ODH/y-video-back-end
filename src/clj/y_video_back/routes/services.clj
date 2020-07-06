@@ -227,7 +227,9 @@
        :patch service-handlers/content-update
        :delete service-handlers/content-delete}]
      ["/{id}/add-view"
-       {:post service-handlers/content-add-view}]]
+       {:post service-handlers/content-add-view}]
+     ["/{id}/add-subtitle"
+       {:post service-handlers/content-add-subtitle}]]
 
     ["/subtitle"
      {:swagger {:tags ["subtitle"]}}

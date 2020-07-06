@@ -69,6 +69,8 @@
 (def content-id-get content/content-id-get)
 (def content-id-patch content/content-id-patch)
 (def content-id-delete content/content-id-delete)
+(def content-id-add-subtitle content/content-id-add-subtitle)
+(def content-id-remove-subtitle content/content-id-remove-subtitle)
 
 ; subtitle routes
 (def subtitle-post subtitle/subtitle-post)
