@@ -229,6 +229,15 @@
      ["/{id}/add-view"
        {:post service-handlers/content-add-view}]]
 
+    ["/subtitle"
+     {:swagger {:tags ["subtitle"]}}
+     [""
+      {:post service-handlers/subtitle-create}]
+     ["/{id}"
+      {:get service-handlers/subtitle-get-by-id
+       :patch service-handlers/subtitle-update
+       :delete service-handlers/subtitle-delete}]]
+
     ["/file"
      {:swagger {:tags ["file"]}}
      [""

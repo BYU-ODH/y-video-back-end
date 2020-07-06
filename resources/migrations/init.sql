@@ -128,6 +128,7 @@ CREATE TABLE subtitles (
     ,language TEXT
     ,content TEXT
     ,resource_id UUID REFERENCES resources(id)
+   , CONSTRAINT no_duplicate_resource_subtitles UNIQUE (title, resource_id)
 );
 COMMENT ON TABLE subtitles IS 'Contains subtitles to be applied over resources';
 

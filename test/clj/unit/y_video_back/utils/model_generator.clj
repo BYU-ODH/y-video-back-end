@@ -80,6 +80,12 @@
   []
   (get-random-model models/resource-without-id))
 
+(defn get-random-subtitle-without-id
+  ([]
+   (get-random-model models/subtitle-without-id))
+  ([resource-id]
+   (into (get-random-model models/subtitle-without-any-ids) {:resource-id resource-id})))
+
 (defn get-random-file-without-id
   ([]
    (get-random-model models/file-without-id))
