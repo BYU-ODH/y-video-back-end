@@ -1,5 +1,6 @@
 (ns y-video-back.routes.service-handlers.role-utils
-  (:require [y-video-back.layout :refer [error-page]]
+  (:require [y-video-back.config :refer [env]]
+            [y-video-back.layout :refer [error-page]]
             [y-video-back.db.core :as db]
             [y-video-back.routes.service-handlers.utils :as utils]
             [y-video-back.db.user-courses-assoc :as user-courses-assoc]
@@ -82,13 +83,16 @@
 (defn has-permission
   "Placeholder for real has-permission function. Always returns true."
   [token route args]
-  true)
+  (if (or (= token (utils/to-uuid (:session-id-bypass env)))
+          (users/EXISTS? token))
+    true
+    false))
 
 (comment
   (defn has-permission
     "Returns true if user has permission for route, else false"
     [token route args]
-    (if (= token (utils/to-uuid "6bc824a6-f446-416d-8dd6-06350ae577f4")) ; Add if test before deployment
+    (if (= token (utils/to-uuid "")) ; Add if test before deployment
       true
       (let [user-id (token-to-user-id token)
             user-type (get-user-type user-id)]
@@ -145,12 +149,12 @@
           "resource-get-all-collections" (or (la+ user-type))
           "resource-get-all-files" (or (la+ user-type)
                                       (is-child? (:resource-id args) user-id CRSE-STUD))
-          "resource-add-view" (or (la+ user-type
-                                  (is-child? (:resource-id args) user-id CRSE-STUD)))
+          "resource-add-view" (or (la+ user-type)
+                                  (is-child? (:resource-id args) user-id CRSE-STUD))
           "resource-add-file" (or (la+ user-type)
-                                 (is-child? (:resource-id args) user-id TA))
+                                  (is-child? (:resource-id args) user-id TA))
           "resource-remove-file" (or (la+ user-type)
-                                    (is-child? (:resource-id args) user-id TA))
+                                     (is-child? (:resource-id args) user-id TA))
 
           ; File handlers
           "file-create" (or (admin+ user-type) false)
