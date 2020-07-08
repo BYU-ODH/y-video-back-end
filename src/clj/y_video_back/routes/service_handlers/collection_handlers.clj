@@ -26,14 +26,17 @@
                 ru/forbidden-page
                 (if (not (users/EXISTS? (:owner body)))
                   {:status 500
-                   :body {:message "user (owner) not found, unable to create collection"}}
+                   :body {:message "user (owner) not found, unable to create collection"}
+                   :headers {"session-id" session-id}}
                   (if (collections/EXISTS-NAME-OWNER? (:collection-name body)
                                                       (:owner body))
                     {:status 500
-                     :body {:message "collection name / owner combination already in use, unable to create collection"}}
+                     :body {:message "collection name / owner combination already in use, unable to create collection"}
+                     :headers {"session-id" session-id}}
                     {:status 200
                      :body {:message "1 collection created"
-                            :id (utils/get-id (collections/CREATE body))}}))))})
+                            :id (utils/get-id (collections/CREATE body))
+                            :headers {"session-id" session-id}}}))))})
 
 (def collection-get-by-id ;; Not tested
   {:summary "Retrieves specified collection"
@@ -47,9 +50,11 @@
                 (let [res (collections/READ id)]
                   (if (nil? res)
                     {:status 404
-                     :body {:message "requested collection not found"}}
+                     :body {:message "requested collection not found"}
+                     :headers {"session-id" session-id}}
                     {:status 200
-                     :body res}))))})
+                     :body res
+                     :headers {"session-id" session-id}}))))})
 
 (def collection-update ;; Non-functional
   {:summary "Updates the specified collection"
@@ -63,7 +68,8 @@
                 ru/forbidden-page
                 (if-not (collections/EXISTS? id)
                   {:status 404
-                   :body {:message "collection not found"}}
+                   :body {:message "collection not found"}
+                   :headers {"session-id" session-id}}
                   (let [current-collection (collections/READ id)
                         proposed-collection (merge current-collection body)
                         same-name-collection (first (collections/READ-ALL-BY-NAME-OWNER [(:collection-name proposed-collection)
@@ -73,16 +79,20 @@
                              (not (= (:id current-collection)
                                      (:id same-name-collection))))
                       {:status 500
-                       :body {:message "unable to update collection, name-owner pair likely in use"}}
+                       :body {:message "unable to update collection, name-owner pair likely in use"}
+                       :headers {"session-id" session-id}}
                       (if-not (users/EXISTS? (:owner proposed-collection))
                         {:status 500
-                         :body {:message "user (owner) not found, unable to create collection"}}
+                         :body {:message "user (owner) not found, unable to create collection"}
+                         :headers {"session-id" session-id}}
                         (let [result (collections/UPDATE id body)]
                           (if (nil? result)
                             {:status 500
-                             :body {:message "unable to update collection"}}
+                             :body {:message "unable to update collection"}
+                             :headers {"session-id" session-id}}
                             {:status 200
-                             :body {:message (str 1 " collections updated")}}))))))))})
+                             :body {:message (str 1 " collections updated")}
+                             :headers {"session-id" session-id}}))))))))})
 
 (def collection-delete ;; Non-functional
   {:summary "Deletes the specified collection"
@@ -96,9 +106,11 @@
                 (let [result (collections/DELETE id)]
                   (if (nil? result)
                     {:status 404
-                     :body {:message "requested collection not found"}}
+                     :body {:message "requested collection not found"}
+                     :headers {"session-id" session-id}}
                     {:status 200
-                     :body {:message (str 1 " collections deleted")}}))))})
+                     :body {:message (str 1 " collections deleted")}
+                     :headers {"session-id" session-id}}))))})
 
 (def collection-add-user
   {:summary "Adds user to specified collection"
@@ -112,20 +124,25 @@
                 ru/forbidden-page
                 (if (not (collections/EXISTS? id))
                   {:status 404
-                   :body {:message "collection not found"}}
+                   :body {:message "collection not found"}
+                   :headers {"session-id" session-id}}
                   (if (not (users/EXISTS? (:user-id body)))
                     {:status 500
-                     :body {:message "user not found"}}
+                     :body {:message "user not found"}
+                     :headers {"session-id" session-id}}
                     (if (user-collections-assoc/EXISTS-COLL-USER? id (:user-id body))
                       {:status 500
-                       :body {:message "user already connected to collection"}}
+                       :body {:message "user already connected to collection"}
+                       :headers {"session-id" session-id}}
                       (let [result (utils/get-id (user-collections-assoc/CREATE (into body {:collection-id id})))]
                         (if (nil? result)
                           {:status 500
-                           :body {:message "unable to add user"}}
+                           :body {:message "unable to add user"}
+                           :headers {"session-id" session-id}}
                           {:status 200
                            :body {:message (str 1 " users added to collection")
-                                  :id result}})))))))})
+                                  :id result}
+                           :headers {"session-id" session-id}})))))))})
 
 (def collection-remove-user
   {:summary "Removes user from specified collection"
@@ -139,19 +156,24 @@
                 ru/forbidden-page
                 (if (not (collections/EXISTS? id))
                   {:status 404
-                   :body {:message "collection not found"}}
+                   :body {:message "collection not found"}
+                   :headers {"session-id" session-id}}
                   (if (not (users/EXISTS? (:user-id body)))
                     {:status 500
-                     :body {:message "user not found"}}
+                     :body {:message "user not found"}
+                     :headers {"session-id" session-id}}
                     (if-not (user-collections-assoc/EXISTS-COLL-USER? id (:user-id body))
                       {:status 500
-                       :body {:message "user not connected to collection"}}
+                       :body {:message "user not connected to collection"}
+                       :headers {"session-id" session-id}}
                       (let [result (user-collections-assoc/DELETE-BY-IDS [id (:user-id body)])]
                         (if (= 0 result)
                           {:status 500
-                           :body {:message "unable to remove user"}}
+                           :body {:message "unable to remove user"}
+                           :headers {"session-id" session-id}}
                           {:status 200
-                           :body {:message (str result " users removed from collection")}})))))))})
+                           :body {:message (str result " users removed from collection")}
+                           :headers {"session-id" session-id}})))))))})
 
 (def collection-add-course
   {:summary "Adds course to specified collection"
@@ -165,20 +187,25 @@
                 ru/forbidden-page
                 (if (not (collections/EXISTS? id))
                   {:status 404
-                   :body {:message "collection not found"}}
+                   :body {:message "collection not found"}
+                   :headers {"session-id" session-id}}
                   (if (not (courses/EXISTS? (:course-id body)))
                     {:status 500
-                     :body {:message "course not found"}}
+                     :body {:message "course not found"}
+                     :headers {"session-id" session-id}}
                     (if (collection-courses-assoc/EXISTS-COLL-CRSE? id (:course-id body))
                       {:status 500
-                       :body {:message "course already connected to collection"}}
+                       :body {:message "course already connected to collection"}
+                       :headers {"session-id" session-id}}
                       (let [result (utils/get-id (collection-courses-assoc/CREATE (into body {:collection-id id})))]
                         (if (= nil result)
                           {:status 500
-                           :body {:message "unable to add course"}}
+                           :body {:message "unable to add course"}
+                           :headers {"session-id" session-id}}
                           {:status 200
                            :body {:message (str 1 " courses added to collection")
-                                  :id result}})))))))})
+                                  :id result}
+                           :headers {"session-id" session-id}})))))))})
 
 (def collection-remove-course
   {:summary "Removes course from specified collection"
@@ -192,19 +219,24 @@
                 ru/forbidden-page
                 (if (not (collections/EXISTS? id))
                   {:status 404
-                   :body {:message "collection not found"}}
+                   :body {:message "collection not found"}
+                   :headers {"session-id" session-id}}
                   (if (not (courses/EXISTS? (:course-id body)))
                     {:status 500
-                     :body {:message "course not found"}}
+                     :body {:message "course not found"}
+                     :headers {"session-id" session-id}}
                     (if-not (collection-courses-assoc/EXISTS-COLL-CRSE? id (:course-id body))
                       {:status 500
-                       :body {:message "course not connected to collection"}}
+                       :body {:message "course not connected to collection"}
+                       :headers {"session-id" session-id}}
                       (let [result (collection-courses-assoc/DELETE-BY-IDS [id (:course-id body)])]
                         (if (= 0 result)
                           {:status 404
-                           :body {:message "unable to remove course"}}
+                           :body {:message "unable to remove course"}
+                           :headers {"session-id" session-id}}
                           {:status 200
-                           :body {:message (str result " courses removed from collection")}})))))))})
+                           :body {:message (str result " courses removed from collection")}
+                           :headers {"session-id" session-id}})))))))})
 
 
 (def collection-get-all-contents ;; Non-functional
@@ -218,11 +250,13 @@
                 ru/forbidden-page
                 (if (not (collections/EXISTS? id))
                   {:status 404
-                   :body {:message "collection not found"}}
+                   :body {:message "collection not found"}
+                   :headers {"session-id" session-id}}
                   (let [raw-res (contents/READ-BY-COLLECTION id)
                         res (map #(utils/remove-db-only %) raw-res)]
                     {:status 200
-                     :body res}))))})
+                     :body res
+                     :headers {"session-id" session-id}}))))})
 
 (def collection-get-all-courses ;; Non-functional
   {:summary "Retrieves all the courses for the specified collection"
@@ -235,14 +269,16 @@
                 ru/forbidden-page
                 (if (not (collections/EXISTS? id))
                   {:status 404
-                   :body {:message "collection not found"}}
+                   :body {:message "collection not found"}
+                   :headers {"session-id" session-id}}
                   (let [course-collections-result (collection-courses-assoc/READ-COURSES-BY-COLLECTION id)]
                     (let [course-result (map #(-> %
                                                   (utils/remove-db-only)
                                                   (dissoc :collection-id))
                                              course-collections-result)]
                       {:status 200
-                       :body course-result})))))})
+                       :body course-result
+                       :headers {"session-id" session-id}})))))})
 
 (def collection-get-all-users
   {:summary "Retrieves all users for the specified collection"
@@ -255,7 +291,8 @@
                 ru/forbidden-page
                 (if (not (collections/EXISTS? id))
                   {:status 404
-                   :body {:message "collection not found"}}
+                   :body {:message "collection not found"}
+                   :headers {"session-id" session-id}}
                   (let [user-collections-result (user-collections-assoc/READ-USERS-BY-COLLECTION id)]
                     (let [user-result (map #(-> %
                                                 (utils/remove-db-only)
@@ -263,4 +300,5 @@
                                                 (dissoc :account-role))
                                            user-collections-result)]
                       {:status 200
-                       :body user-result})))))})
+                       :body user-result
+                       :headers {"session-id" session-id}})))))})

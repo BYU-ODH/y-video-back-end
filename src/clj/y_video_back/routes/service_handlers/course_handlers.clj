@@ -21,10 +21,12 @@
                 ru/forbidden-page
                   (if (courses/EXISTS-DEP-CAT-SEC? (:department body) (:catalog-number body) (:section-number body))
                     {:status 500
-                     :body {:message "department / catalog number / section number combination already in use, unable to create course"}}
+                     :body {:message "department / catalog number / section number combination already in use, unable to create course"}
+                     :headers {"session-id" session-id}}
                     {:status 200
                      :body {:message "1 course created"
-                            :id (utils/get-id (courses/CREATE body))}})))})
+                            :id (utils/get-id (courses/CREATE body))}
+                     :headers {"session-id" session-id}})))})
 
 (def course-get-by-id ;; Non-functional
   {:summary "Retrieves specified course"
@@ -38,9 +40,11 @@
                 (let [res (courses/READ id)]
                   (if (nil? res)
                     {:status 404
-                     :body {:message "requested course not found"}}
+                     :body {:message "requested course not found"}
+                     :headers {"session-id" session-id}}
                     {:status 200
-                     :body res}))))})
+                     :body res
+                     :headers {"session-id" session-id}}))))})
 
 (def course-update ;; Non-functional
   {:summary "Updates the specified course"
@@ -54,7 +58,8 @@
                 ru/forbidden-page
                 (if-not (courses/EXISTS? id)
                   {:status 404
-                   :body {:message "course not found"}}
+                   :body {:message "course not found"}
+                   :headers {"session-id" session-id}}
                   (let [current-course (courses/READ id)
                         proposed-course (merge current-course body)
                         same-name-course (first (courses/READ-ALL-BY-DEP-CAT-SEC [(:department proposed-course)
@@ -65,13 +70,16 @@
                              (not (= (:id current-course)
                                      (:id same-name-course))))
                       {:status 500
-                       :body {:message "unable to update course, department / catalog / section combination likely in use"}}
+                       :body {:message "unable to update course, department / catalog / section combination likely in use"}
+                       :headers {"session-id" session-id}}
                       (let [result (courses/UPDATE id body)]
                         (if (= 0 result)
                           {:status 500
-                           :body {:message "unable to update course"}}
+                           :body {:message "unable to update course"}
+                           :headers {"session-id" session-id}}
                           {:status 200
-                           :body {:message (str result " courses updated")}})))))))})
+                           :body {:message (str result " courses updated")}
+                           :headers {"session-id" session-id}})))))))})
 
 (def course-delete ;; Non-functional
   {:summary "Deletes the specified course"
@@ -85,9 +93,11 @@
                 (let [result (courses/DELETE id)]
                   (if (nil? result)
                     {:status 404
-                     :body {:message "requested course not found"}}
+                     :body {:message "requested course not found"}
+                     :headers {"session-id" session-id}}
                     {:status 200
-                     :body {:message (str result " courses deleted")}}))))})
+                     :body {:message (str result " courses deleted")}
+                     :headers {"session-id" session-id}}))))})
 
 (def course-add-user
   {:summary "Adds user to specified course"
@@ -101,20 +111,25 @@
                 ru/forbidden-page
                 (if (not (courses/EXISTS? id))
                   {:status 404
-                   :body {:message "course not found"}}
+                   :body {:message "course not found"}
+                   :headers {"session-id" session-id}}
                   (if (not (users/EXISTS? (:user-id body)))
                     {:status 500
-                     :body {:message "user not found"}}
+                     :body {:message "user not found"}
+                     :headers {"session-id" session-id}}
                     (if (user-courses-assoc/EXISTS-CRSE-USER? id (:user-id body))
                       {:status 500
-                       :body {:message "user already connected to course"}}
+                       :body {:message "user already connected to course"}
+                       :headers {"session-id" session-id}}
                       (let [result (utils/get-id (user-courses-assoc/CREATE (into body {:course-id id})))]
                         (if (= nil result)
                           {:status 500
-                           :body {:message "unable to add user"}}
+                           :body {:message "unable to add user"}
+                           :headers {"session-id" session-id}}
                           {:status 200
                            :body {:message (str 1 " users added to course")
-                                  :id result}})))))))})
+                                  :id result}
+                           :headers {"session-id" session-id}})))))))})
 
 (def course-remove-user
   {:summary "Removes user from specified course"
@@ -128,19 +143,24 @@
                 ru/forbidden-page
                 (if (not (courses/EXISTS? id))
                   {:status 404
-                   :body {:message "course not found"}}
+                   :body {:message "course not found"}
+                   :headers {"session-id" session-id}}
                   (if (not (users/EXISTS? (:user-id body)))
                     {:status 500
-                     :body {:message "user not found"}}
+                     :body {:message "user not found"}
+                     :headers {"session-id" session-id}}
                     (if-not (user-courses-assoc/EXISTS-CRSE-USER? id (:user-id body))
                       {:status 500
-                       :body {:message "user not connected to course"}}
+                       :body {:message "user not connected to course"}
+                       :headers {"session-id" session-id}}
                       (let [result (user-courses-assoc/DELETE-BY-IDS [id (:user-id body)])]
                         (if (= 0 result)
                           {:status 500
-                           :body {:message "unable to remove user"}}
+                           :body {:message "unable to remove user"}
+                           :headers {"session-id" session-id}}
                           {:status 200
-                           :body {:message (str result " users removed from course")}})))))))})
+                           :body {:message (str result " users removed from course")}
+                           :headers {"session-id" session-id}})))))))})
 
 (def course-get-all-users
   {:summary "Retrieves all users for the specified course"
@@ -153,7 +173,8 @@
                 ru/forbidden-page
                 (if-not (courses/EXISTS? id)
                   {:status 404
-                   :body {:message "course not found"}}
+                   :body {:message "course not found"}
+                   :headers {"session-id" session-id}}
                   (let [user-courses-result (user-courses-assoc/READ-USERS-BY-COURSE id)]
                     (let [user-result (map #(-> %
                                                 (utils/remove-db-only)
@@ -161,7 +182,8 @@
                                                 (dissoc :account-role))
                                            user-courses-result)]
                       {:status 200
-                       :body user-result})))))})
+                       :body user-result
+                       :headers {"session-id" session-id}})))))})
 
 (def course-get-all-collections ;; Non-functional
   {:summary "Retrieves all collections for specified course"
@@ -174,9 +196,11 @@
                 ru/forbidden-page
                 (if-not (courses/EXISTS? id)
                   {:status 404
-                   :body {:message "course not found"}}
+                   :body {:message "course not found"}
+                   :headers {"session-id" session-id}}
                   (let [course-collections-result (collection-courses-assoc/READ-COLLECTIONS-BY-COURSE id)]
                     (let [collection-result (map #(utils/remove-db-only %) course-collections-result)
                           remove-extra (map #(dissoc % :course-id) collection-result)]
                       {:status 200
-                       :body remove-extra})))))})
+                       :body remove-extra
+                       :headers {"session-id" session-id}})))))})

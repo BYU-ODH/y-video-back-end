@@ -117,6 +117,17 @@
 (def content
   (into content-without-id {:id uuid?}))
 
+(def subtitle-without-any-ids
+  {:title string?
+   :language string?
+   :content string?})
+
+(def subtitle-without-id
+  (into subtitle-without-any-ids {:resource-id uuid?}))
+
+(def subtitle
+  (into subtitle-without-id {:id uuid?}))
+
 (def file-without-any-ids
   {:filepath string?
    :file-version string?
@@ -165,6 +176,16 @@
 
 (def collection-courses-assoc
   (into collection-courses-assoc-without-id {:id uuid?}))
+
+(def content-subtitles-assoc-without-any-ids
+  {})
+
+(def content-subtitles-assoc-without-id
+  (into content-subtitles-assoc-without-any-ids {:content-id uuid? :subtitle-id uuid?}))
+
+(def content-subtitles-assoc
+  (into content-subtitles-assoc-without-id {:id uuid?}))
+
 
 ;(def resource-files-assoc-without-any-ids
 ;  {})

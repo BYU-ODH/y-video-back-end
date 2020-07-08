@@ -23,10 +23,12 @@
                 ru/forbidden-page
                 (if-not (= '() (users/READ-BY-EMAIL [(:email body)]))
                   {:status 500
-                   :body {:message "email already taken"}}
+                   :body {:message "email already taken"}
+                   :headers {"session-id" session-id}}
                   {:status 200
                    :body {:message "1 user created"
-                          :id (utils/get-id (users/CREATE body))}})))})
+                          :id (utils/get-id (users/CREATE body))}
+                   :headers {"session-id" session-id}})))})
 
 (def user-get-by-id
   {:summary "Retrieves specified user"
@@ -40,9 +42,11 @@
                 (let [user-result (users/READ id)]
                   (if (nil? user-result)
                     {:status 404
-                     :body {:message "user not found"}}
+                     :body {:message "user not found"}
+                     :headers {"session-id" session-id}}
                     {:status 200
-                     :body user-result}))))})
+                     :body user-result
+                     :headers {"session-id" session-id}}))))})
 
 
 (def user-update
@@ -57,9 +61,11 @@
                 (let [result (users/UPDATE id body)]
                   (if (nil? result)
                     {:status 404
-                     :body {:message "requested user not found"}}
+                     :body {:message "requested user not found"}
+                     :headers {"session-id" session-id}}
                     {:status 200
-                     :body {:message (str 1 " users updated")}}))))})  ; I know, hard coded. Will change later.
+                     :body {:message (str 1 " users updated")}  ; I know, hard coded. Will change later.
+                     :headers {"session-id" session-id}}))))})
 
 (def user-delete
   {:summary "Deletes specified user"
@@ -73,9 +79,11 @@
                 (let [result (users/DELETE id)]
                   (if (nil? result)
                     {:status 404
-                     :body {:message "requested user not found"}}
+                     :body {:message "requested user not found"}
+                     :headers {"session-id" session-id}}
                     {:status 200
-                     :body {:message (str result " users deleted")}}))))})
+                     :body {:message (str result " users deleted")}
+                     :headers {"session-id" session-id}}))))})
 
 
 (def user-get-logged-in ;; Non-functional
@@ -89,15 +97,18 @@
               (if-not (ru/has-permission session-id "user-get-logged-in" 0)
                 ru/forbidden-page
                 (let [user-id (ru/token-to-user-id session-id)]
-                  (if-not (users/EXISTS? user-id)
+                  (if-not (users/EXISTS? user-id) ; this can only be true if using session-id-bypass
                     {:status 404
-                     :body {:message "user not found"}}
+                     :body {:message "user not found"}
+                     :headers {"session-id" session-id}}
                     (let [user-result (users/READ user-id)]
                       (if (nil? user-result)
                         {:status 500
-                         :body {:message "user not found, not sure why"}}
+                         :body {:message "user not found, not sure why"}
+                         :headers {"session-id" session-id}}
                         {:status 200
-                         :body user-result}))))))})
+                         :body user-result
+                         :headers {"session-id" session-id}}))))))})
 
 
 (def user-get-all-collections ;; Non-functional
@@ -111,7 +122,8 @@
                 ru/forbidden-page
                 (if-not (users/EXISTS? id)
                   {:status 404
-                   :body {:message "user not found"}}
+                   :body {:message "user not found"}
+                   :headers {"session-id" session-id}}
                   (let [user-collections-result (user-collections-assoc/READ-COLLECTIONS-BY-USER id)]
                     (let [collection-result (map #(-> %
                                                       (utils/remove-db-only)
@@ -119,7 +131,8 @@
                                                       (dissoc :account-role))
                                                  user-collections-result)]
                         {:status 200
-                         :body collection-result})))))})
+                         :body collection-result
+                         :headers {"session-id" session-id}})))))})
 
 (def user-get-all-collections-by-logged-in
   {:summary "Retrieves all collections for session user"
@@ -132,7 +145,8 @@
                 (let [user-id (ru/token-to-user-id session-id)]
                   (if-not (users/EXISTS? user-id)
                     {:status 404
-                     :body {:message "user not found"}}
+                     :body {:message "user not found"}
+                     :headers {"session-id" session-id}}
                     (let [user-collections-result (user-collections-assoc/READ-COLLECTIONS-BY-USER user-id)
                           user-courses-result (users/READ-COLLECTIONS-BY-USER-VIA-COURSES user-id)]
                       (let [courses-result (map #(-> %
@@ -148,7 +162,8 @@
                                                    (assoc :content (map utils/remove-db-only (contents/READ-BY-COLLECTION (:id %)))))
                                               (concat courses-result collections-result))]
                         {:status 200
-                         :body total-result}))))))})
+                         :body total-result
+                         :headers {"session-id" session-id}}))))))})
 
 (def user-get-all-courses ;; Non-functional
   {:summary "Retrieves all courses for specified user"
@@ -161,7 +176,8 @@
                 ru/forbidden-page
                 (if-not (users/EXISTS? id)
                   {:status 404
-                   :body {:message "user not found"}}
+                   :body {:message "user not found"}
+                   :headers {"session-id" session-id}}
                   (let [user-courses-result (user-courses-assoc/READ-COURSES-BY-USER id)]
                     (let [course-result (map #(-> %
                                                   (utils/remove-db-only)
@@ -169,7 +185,8 @@
                                                   (dissoc :account-role))
                                              user-courses-result)]
                         {:status 200
-                         :body course-result})))))})
+                         :body course-result
+                         :headers {"session-id" session-id}})))))})
 
 
 (def user-get-all-words
@@ -183,8 +200,10 @@
                 ru/forbidden-page
                 (if-not (users/EXISTS? id)
                   {:status 404
-                   :body {:message "user not found"}}
+                   :body {:message "user not found"}
+                   :headers {"session-id" session-id}}
                   (let [user-words-result (users/READ-WORDS id)]
                     (let [word-result (map #(utils/remove-db-only %) user-words-result)]
                         {:status 200
-                         :body word-result})))))})
+                         :body word-result
+                         :headers {"session-id" session-id}})))))})

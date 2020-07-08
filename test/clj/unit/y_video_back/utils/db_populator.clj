@@ -27,6 +27,7 @@
       [y-video-back.db.collections :as collections]
       [y-video-back.db.resources :as resources]
       [y-video-back.db.courses :as courses]
+      [y-video-back.db.subtitles :as subtitles]
       [y-video-back.db.files :as files]
       [y-video-back.db.users :as users]
       [y-video-back.db.words :as words]
@@ -109,6 +110,22 @@
   (let [rsrc-one (get-resource)
         rsrc-one-add (resources/CREATE rsrc-one)]
     (assoc rsrc-one :id (:id rsrc-one-add))))
+
+(defn get-subtitle
+  "Creates subtitle, ready to be added to db"
+  ([]
+   (let [new-rsrc (add-resource)]
+     (g/get-random-subtitle-without-id (:id new-rsrc))))
+  ([resource-id]
+   (g/get-random-subtitle-without-id resource-id)))
+(defn add-subtitle
+  "Creates subtitle, adds to db"
+  ([]
+   (add-subtitle (java.util.UUID/randomUUID)))
+  ([resource-id]
+   (let [sbtl-one (get-subtitle resource-id)
+         sbtl-one-add (subtitles/CREATE sbtl-one)]
+     (assoc sbtl-one :id (:id sbtl-one-add)))))
 
 (defn get-file
   "Creates file, ready to be added to db"

@@ -19,13 +19,16 @@
                 ru/forbidden-page
                 (if-not (users/EXISTS? (:user-id body))
                   {:status 500
-                   :body {:message "user not found"}}
+                   :body {:message "user not found"}
+                   :headers {"session-id" session-id}}
                   (if (words/EXISTS-BY-FIELDS? (:user-id body) (:word body) (:src-lang body) (:dest-lang body))
                     {:status 500
-                     :body {:message "word already exists"}}
+                     :body {:message "word already exists"}
+                     :headers {"session-id" session-id}}
                     {:status 200
                      :body {:message "1 word created"
-                            :id (utils/get-id (words/CREATE body))}}))))})
+                            :id (utils/get-id (words/CREATE body))}
+                     :headers {"session-id" session-id}}))))})
 
 (def word-get-by-id
   {:summary "Retrieves specified word"
@@ -39,9 +42,11 @@
                 (let [word-result (words/READ id)]
                   (if (nil? word-result)
                     {:status 404
-                     :body {:message "requested word not found"}}
+                     :body {:message "requested word not found"}
+                     :headers {"session-id" session-id}}
                     {:status 200
-                     :body word-result}))))})
+                     :body word-result
+                     :headers {"session-id" session-id}}))))})
 
 (def word-update
   {:summary "Updates specified word"
@@ -55,7 +60,8 @@
                 ru/forbidden-page
                 (if-not (words/EXISTS? id)
                   {:status 404
-                   :body {:message "word not found"}}
+                   :body {:message "word not found"}
+                   :headers {"session-id" session-id}}
                   (let [current-word (words/READ id)
                         proposed-word (merge current-word body)
                         same-name-word (first (words/READ-ALL-BY-FIELDS [(:user-id proposed-word)
@@ -67,16 +73,20 @@
                              (not (= (:id current-word)
                                      (:id same-name-word))))
                       {:status 500
-                       :body {:message "unable to update word, identical word likely exists"}}
+                       :body {:message "unable to update word, identical word likely exists"}
+                       :headers {"session-id" session-id}}
                       (if-not (users/EXISTS? (:user-id proposed-word))
                         {:status 500
-                         :body {:message "user not found"}}
+                         :body {:message "user not found"}
+                         :headers {"session-id" session-id}}
                         (let [result (words/UPDATE id body)]
                           (if (= 0 result)
                             {:status 500
-                             :body {:message "unable to update word"}}
+                             :body {:message "unable to update word"}
+                             :headers {"session-id" session-id}}
                             {:status 200
-                             :body {:message (str result " words updated")}}))))))))})
+                             :body {:message (str result " words updated")}
+                             :headers {"session-id" session-id}}))))))))})
 
 (def word-delete
   {:summary "Deletes specified word"
@@ -90,6 +100,8 @@
                 (let [result (words/DELETE id)]
                   (if (nil? result)
                     {:status 404
-                     :body {:message "requested word not found"}}
+                     :body {:message "requested word not found"}
+                     :headers {"session-id" session-id}}
                     {:status 200
-                     :body {:message (str result " words deleted")}}))))})
+                     :body {:message (str result " words deleted")}
+                     :headers {"session-id" session-id}}))))})

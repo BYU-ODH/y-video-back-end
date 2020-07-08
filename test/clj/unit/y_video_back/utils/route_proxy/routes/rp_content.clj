@@ -46,3 +46,21 @@
             (header :session-id session-id))))
   ([id]
    (content-id-delete (:session-id-bypass env) id)))
+
+(defn content-id-add-subtitle
+  "Connects subtitle and content"
+  ([session-id content-id subtitle-id]
+   (app (-> (request :post (str "/api/content/" content-id "/add-subtitle"))
+            (header :session-id session-id)
+            (json-body {:subtitle-id subtitle-id}))))
+  ([content-id subtitle-id]
+   (content-id-add-subtitle (:session-id-bypass env) content-id subtitle-id)))
+
+(defn content-id-remove-subtitle
+  "Connects subtitle and content"
+  ([session-id content-id subtitle-id]
+   (app (-> (request :post (str "/api/content/" content-id "/remove-subtitle"))
+            (json-body {:subtitle-id subtitle-id})
+            (header :session-id session-id))))
+  ([content-id subtitle-id]
+   (content-id-remove-subtitle (:session-id-bypass env) content-id subtitle-id)))

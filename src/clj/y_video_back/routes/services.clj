@@ -111,16 +111,16 @@
                         {:status 200
                          :body {:echo word
                                 :second second}})}}]]
-    ["/cas-testing"
-     {:swagger {:tags ["cas-testing"]}}
+    ;["/cas-testing"
+    ; {:swagger {:tags ["cas-testing"]}}
 
-     [""
-      {:get {:summary "return username"
-             :parameters {}
-             :responses {200 {:body {:username string?}}}
-             :handler (fn [{{{:keys [username]} :body} :parameters}]
-                        {:status 200
-                         :body {:username username}})}}]]
+    ; [""
+    ;  {:get {:summary "return username"
+    ;         :parameters {}
+    ;         :responses {200 {:body {:username string?}}}
+    ;         :handler (fn [{{{:keys [username]} :body} :parameters}]
+    ;                    {:status 200
+    ;                     :body {:username username}})}}]]
     ["/user"
      {:swagger {:tags ["user"]}}
      [""
@@ -227,7 +227,18 @@
        :patch service-handlers/content-update
        :delete service-handlers/content-delete}]
      ["/{id}/add-view"
-       {:post service-handlers/content-add-view}]]
+       {:post service-handlers/content-add-view}]
+     ["/{id}/add-subtitle"
+       {:post service-handlers/content-add-subtitle}]]
+
+    ["/subtitle"
+     {:swagger {:tags ["subtitle"]}}
+     [""
+      {:post service-handlers/subtitle-create}]
+     ["/{id}"
+      {:get service-handlers/subtitle-get-by-id
+       :patch service-handlers/subtitle-update
+       :delete service-handlers/subtitle-delete}]]
 
     ["/file"
      {:swagger {:tags ["file"]}}

@@ -12,7 +12,8 @@
       [y-video-back.db.core :refer [*db*] :as db]
       [y-video-back.utils.utils :as ut]
       [y-video-back.utils.db-populator :as db-pop]
-      [y-video-back.db.contents :as contents]))
+      [y-video-back.db.contents :as contents]
+      [y-video-back.db.content-subtitles-assoc :as content-subtitles-assoc]))
 
 (declare ^:dynamic *txn*)
 
@@ -56,3 +57,28 @@
           res (rp/content-id-delete (:id cont-one))]
       (is (= 200 (:status res)))
       (is (= nil (contents/READ (:id cont-one)))))))
+
+(deftest content-add-subtitle
+  (testing "add subtitile to content"
+    (let [cont-one (db-pop/add-content)
+          rsrc-id (:resource-id cont-one)
+          sbtl-one (db-pop/add-subtitle rsrc-id)]
+      (is (= '() (content-subtitles-assoc/READ-BY-IDS [(:id cont-one) rsrc-id])))
+      (let [res (rp/content-id-add-subtitle (:id cont-one)
+                                         (:id sbtl-one))]
+        (is (= 200 (:status res)))
+        (let [id (ut/to-uuid (:id (m/decode-response-body res)))]
+          (is (= (list {:id id
+                        :content-id (:id cont-one)
+                        :subtitle-id (:id sbtl-one)})
+                 (map ut/remove-db-only (content-subtitles-assoc/READ-BY-IDS [(:id cont-one) (:id sbtl-one)])))))))))
+
+(deftest cont-remove-subtitle
+  (testing "remove subtitle from content"
+    (let [cont-one (db-pop/add-content)
+          sbtl-one (db-pop/add-subtitle)
+          sbtl-cont (content-subtitles-assoc/CREATE (g/get-random-content-subtitles-assoc-without-id (:id cont-one) (:id sbtl-one)))]
+      (is (not (= '() (content-subtitles-assoc/READ-BY-IDS [(:id cont-one) (:id sbtl-one)]))))
+      (let [res (rp/content-id-remove-subtitle (:id cont-one) (:id sbtl-one))]
+        (is (= 200 (:status res)))
+        (is (= '() (content-subtitles-assoc/READ-BY-IDS [(:id cont-one) (:id sbtl-one)])))))))

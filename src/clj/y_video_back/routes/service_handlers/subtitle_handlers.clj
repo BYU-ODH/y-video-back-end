@@ -1,106 +1,103 @@
-(ns y-video-back.routes.service-handlers.file-handlers
+(ns y-video-back.routes.service-handlers.subtitle-handlers
   (:require
-   [y-video-back.db.files :as files]
+   [y-video-back.db.subtitles :as subtitles]
    [y-video-back.db.resources :as resources]
    [y-video-back.models :as models]
    [y-video-back.model-specs :as sp]
    [y-video-back.routes.service-handlers.utils :as utils]
    [y-video-back.routes.service-handlers.role-utils :as ru]))
 
-(def file-create
-  {:summary "Creates a new file"
+(def subtitle-create
+  {:summary "Creates a new subtitle"
    :parameters {:header {:session-id uuid?}
-                :body models/file-without-id}
+                :body models/subtitle-without-id}
    :responses {200 {:body {:message string?
                            :id string?}}
                500 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header :keys [body]} :parameters}]
-              (if-not (ru/has-permission session-id "file-create" 0)
+              (if-not (ru/has-permission session-id "subtitle-create" 0)
                 ru/forbidden-page
                 (if-not (resources/EXISTS? (:resource-id body))
                   {:status 500
                    :body {:message "resource not found"}
                    :headers {"session-id" session-id}}
-                  (if (files/EXISTS-FILEPATH? (:filepath body))
-                    {:status 500
-                     :body {:message "filepath already in use, unable to create file"}
-                     :headers {"session-id" session-id}}
-                    {:status 200
-                     :body {:message "1 file created"
-                            :id (utils/get-id (files/CREATE body))}
-                     :headers {"session-id" session-id}}))))})
+                  {:status 200
+                   :body {:message "1 subtitle created"
+                          :id (utils/get-id (subtitles/CREATE body))}
+                   :headers {"session-id" session-id}})))})
 
 
 
-(def file-get-by-id
-  {:summary "Retrieves specified file"
+(def subtitle-get-by-id
+  {:summary "Retrieves specified subtitle"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
-   :responses {200 {:body models/file}
+   :responses {200 {:body models/subtitle}
                404 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
-              (if-not (ru/has-permission session-id "file-get-by-id" 0)
+              (if-not (ru/has-permission session-id "subtitle-get-by-id" 0)
                 ru/forbidden-page
-                (let [res (files/READ id)]
+                (let [res (subtitles/READ id)]
                   (if (nil? res)
                     {:status 404
-                     :body {:message "requested file not found"}
+                     :body {:message "requested subtitle not found"}
                      :headers {"session-id" session-id}}
                     {:status 200
                      :body res
                      :headers {"session-id" session-id}}))))})
 
-(def file-update
-  {:summary "Updates specified file"
+(def subtitle-update
+  {:summary "Updates specified subtitle"
    :parameters {:header {:session-id uuid?}
-                :path {:id uuid?} :body ::sp/file}
+                :path {:id uuid?} :body ::sp/subtitle}
    :responses {200 {:body {:message string?}}
                404 {:body {:message string?}}
                500 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
-              (if-not (ru/has-permission session-id "file-update" 0)
+              (if-not (ru/has-permission session-id "subtitle-update" 0)
                 ru/forbidden-page
-                (if-not (files/EXISTS? id)
+                (if-not (subtitles/EXISTS? id)
                   {:status 404
-                   :body {:message "file not found"}
+                   :body {:message "subtitle not found"}
                    :headers {"session-id" session-id}}
-                  (let [current-file (files/READ id)
-                        proposed-file (merge current-file body)
-                        same-name-file (first (files/READ-ALL-BY-FILEPATH [(:filepath proposed-file)]))]
-                    ; If there is a name-owner collision and the collision is not with self (i.e. file being changed)
-                    (if-not (resources/EXISTS? (:resource-id proposed-file))
+                  (let [current-subtitle (subtitles/READ id)
+                        proposed-subtitle (merge current-subtitle body)
+                        same-name-subtitle (first (subtitles/READ-BY-TITLE-RSRC [(:title proposed-subtitle
+                                                                                     (:resource-id proposed-subtitle))]))]
+                    ; If there is a collision and the collision is not with self (i.e. subtitle being changed)
+                    (if (and (not (nil? same-name-subtitle))
+                             (not (= (:id current-subtitle)
+                                     (:id same-name-subtitle))))
                       {:status 500
-                       :body {:message "resource not found"}
+                       :body {:message "unable to update subtitle, title-resource pair likely exists"}
                        :headers {"session-id" session-id}}
-                      (if (and (not (nil? same-name-file))
-                               (not (= (:id current-file)
-                                       (:id same-name-file))))
+                      (if-not (resources/EXISTS? (:resource-id proposed-subtitle))
                         {:status 500
-                         :body {:message "unable to update file, filepath likely in use"}
+                         :body {:message "resource not found"}
                          :headers {"session-id" session-id}}
-                        (let [result (files/UPDATE id body)]
+                        (let [result (subtitles/UPDATE id body)]
                           (if (= 0 result)
                             {:status 500
-                             :body {:message "unable to update file"}
+                             :body {:message "unable to update subtitle"}
                              :headers {"session-id" session-id}}
                             {:status 200
-                             :body {:message (str result " files updated")}
+                             :body {:message (str result " subtitles updated")}
                              :headers {"session-id" session-id}}))))))))})
 
-(def file-delete
-  {:summary "Deletes specified file"
+(def subtitle-delete
+  {:summary "Deletes specified subtitle"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
    :responses {200 {:body {:message string?}}
                404 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
-              (if-not (ru/has-permission session-id "file-delete" 0)
+              (if-not (ru/has-permission session-id "subtitle-delete" 0)
                 ru/forbidden-page
-                (let [result (files/DELETE id)]
+                (let [result (subtitles/DELETE id)]
                   (if (nil? result)
                     {:status 404
-                     :body {:message "requested file not found"}
+                     :body {:message "requested subtitle not found"}
                      :headers {"session-id" session-id}}
                     {:status 200
-                     :body {:message (str result " files deleted")}
+                     :body {:message (str result " subtitles deleted")}
                      :headers {"session-id" session-id}}))))})

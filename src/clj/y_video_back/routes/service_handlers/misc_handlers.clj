@@ -21,19 +21,21 @@
    :handler (fn [{{{:keys [session-id]} :header} :parameters}]
               (if-not (ru/has-permission session-id "echo-patch" 0)
                 ru/forbidden-page
-                {:status 200 :body {:message "this route does nothing!"}}))})
+                {:status 200
+                 :body {:message "this route does nothing!"}
+                 :headers {"session-id" session-id}}))})
 
 
 (def connect-collection-and-course ;; Non-functional
   {:summary "Connects specified collection and course (bidirectional)"
    :parameters {:header {:session-id uuid?}}
-
    :responses {200 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header} :parameters}]
               (if-not (ru/has-permission session-id "connect-collection-and-course" 0)
                 ru/forbidden-page
                 {:status 200
-                 :body {:message "placeholder"}}))})
+                 :body {:message "placeholder"}
+                 :headers {"session-id" session-id}}))})
 
 ;; Searches across users, collections, resources, and courses
 (def search-by-term ;; Non-functional
@@ -68,4 +70,5 @@
                    :body {:users user-result
                           :collections collection-result
                           :resources resource-result
-                          :courses course-result}})))})
+                          :courses course-result}
+                   :headers {"session-id" session-id}})))})

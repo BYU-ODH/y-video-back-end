@@ -9,6 +9,7 @@
     [y-video-back.utils.route-proxy.routes.rp-content :as content]
     [y-video-back.utils.route-proxy.routes.rp-course :as course]
     [y-video-back.utils.route-proxy.routes.rp-file :as file]
+    [y-video-back.utils.route-proxy.routes.rp-subtitle :as subtitle]
     [y-video-back.utils.route-proxy.routes.rp-resource :as resource]
     [y-video-back.utils.route-proxy.routes.rp-user :as user]
     [y-video-back.utils.route-proxy.routes.rp-word :as word]))
@@ -68,6 +69,14 @@
 (def content-id-get content/content-id-get)
 (def content-id-patch content/content-id-patch)
 (def content-id-delete content/content-id-delete)
+(def content-id-add-subtitle content/content-id-add-subtitle)
+(def content-id-remove-subtitle content/content-id-remove-subtitle)
+
+; subtitle routes
+(def subtitle-post subtitle/subtitle-post)
+(def subtitle-id-get subtitle/subtitle-id-get)
+(def subtitle-id-patch subtitle/subtitle-id-patch)
+(def subtitle-id-delete subtitle/subtitle-id-delete)
 
 ; course routes
 (def course-post course/course-post)
