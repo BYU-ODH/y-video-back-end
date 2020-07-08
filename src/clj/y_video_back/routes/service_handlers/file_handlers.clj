@@ -19,13 +19,16 @@
                 ru/forbidden-page
                 (if-not (resources/EXISTS? (:resource-id body))
                   {:status 500
-                   :body {:message "resource not found"}}
+                   :body {:message "resource not found"}
+                   :headers {"session-id" session-id}}
                   (if (files/EXISTS-FILEPATH? (:filepath body))
                     {:status 500
-                     :body {:message "filepath already in use, unable to create file"}}
+                     :body {:message "filepath already in use, unable to create file"}
+                     :headers {"session-id" session-id}}
                     {:status 200
                      :body {:message "1 file created"
-                            :id (utils/get-id (files/CREATE body))}}))))})
+                            :id (utils/get-id (files/CREATE body))}
+                     :headers {"session-id" session-id}}))))})
 
 
 
@@ -41,9 +44,11 @@
                 (let [res (files/READ id)]
                   (if (nil? res)
                     {:status 404
-                     :body {:message "requested file not found"}}
+                     :body {:message "requested file not found"}
+                     :headers {"session-id" session-id}}
                     {:status 200
-                     :body res}))))})
+                     :body res
+                     :headers {"session-id" session-id}}))))})
 
 (def file-update
   {:summary "Updates specified file"
@@ -57,25 +62,30 @@
                 ru/forbidden-page
                 (if-not (files/EXISTS? id)
                   {:status 404
-                   :body {:message "file not found"}}
+                   :body {:message "file not found"}
+                   :headers {"session-id" session-id}}
                   (let [current-file (files/READ id)
                         proposed-file (merge current-file body)
                         same-name-file (first (files/READ-ALL-BY-FILEPATH [(:filepath proposed-file)]))]
                     ; If there is a name-owner collision and the collision is not with self (i.e. file being changed)
                     (if-not (resources/EXISTS? (:resource-id proposed-file))
                       {:status 500
-                       :body {:message "resource not found"}}
+                       :body {:message "resource not found"}
+                       :headers {"session-id" session-id}}
                       (if (and (not (nil? same-name-file))
                                (not (= (:id current-file)
                                        (:id same-name-file))))
                         {:status 500
-                         :body {:message "unable to update file, filepath likely in use"}}
+                         :body {:message "unable to update file, filepath likely in use"}
+                         :headers {"session-id" session-id}}
                         (let [result (files/UPDATE id body)]
                           (if (= 0 result)
                             {:status 500
-                             :body {:message "unable to update file"}}
+                             :body {:message "unable to update file"}
+                             :headers {"session-id" session-id}}
                             {:status 200
-                             :body {:message (str result " files updated")}}))))))))})
+                             :body {:message (str result " files updated")}
+                             :headers {"session-id" session-id}}))))))))})
 
 (def file-delete
   {:summary "Deletes specified file"
@@ -89,6 +99,8 @@
                 (let [result (files/DELETE id)]
                   (if (nil? result)
                     {:status 404
-                     :body {:message "requested file not found"}}
+                     :body {:message "requested file not found"}
+                     :headers {"session-id" session-id}}
                     {:status 200
-                     :body {:message (str result " files deleted")}}))))})
+                     :body {:message (str result " files deleted")}
+                     :headers {"session-id" session-id}}))))})

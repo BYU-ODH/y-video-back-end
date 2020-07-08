@@ -111,16 +111,16 @@
                         {:status 200
                          :body {:echo word
                                 :second second}})}}]]
-    ["/cas-testing"
-     {:swagger {:tags ["cas-testing"]}}
+    ;["/cas-testing"
+    ; {:swagger {:tags ["cas-testing"]}}
 
-     [""
-      {:get {:summary "return username"
-             :parameters {}
-             :responses {200 {:body {:username string?}}}
-             :handler (fn [{{{:keys [username]} :body} :parameters}]
-                        {:status 200
-                         :body {:username username}})}}]]
+    ; [""
+    ;  {:get {:summary "return username"
+    ;         :parameters {}
+    ;         :responses {200 {:body {:username string?}}}
+    ;         :handler (fn [{{{:keys [username]} :body} :parameters}]
+    ;                    {:status 200
+    ;                     :body {:username username}})}}]]
     ["/user"
      {:swagger {:tags ["user"]}}
      [""
