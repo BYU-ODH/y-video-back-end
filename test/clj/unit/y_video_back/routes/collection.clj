@@ -66,7 +66,7 @@
           user-one (db-pop/add-user)]
       (is (= '() (user-collections-assoc/READ-BY-IDS [(:id coll-one) (:id user-one)])))
       (let [res (rp/collection-id-add-user (:id coll-one)
-                                           (:id user-one)
+                                           (:username user-one)
                                            0)]
         (is (= 200 (:status res)))
         (let [id (ut/to-uuid (:id (m/decode-response-body res)))]
@@ -82,7 +82,7 @@
           user-one (users/CREATE (db-pop/get-user))
           user-coll (user-collections-assoc/CREATE (g/get-random-user-collections-assoc-without-id (:id user-one) (:id coll-one)))]
       (is (not (= '() (user-collections-assoc/READ-BY-IDS [(:id coll-one) (:id user-one)]))))
-      (let [res (rp/collection-id-remove-user (:id coll-one) (:id user-one))]
+      (let [res (rp/collection-id-remove-user (:id coll-one) (:username user-one))]
         (is (= 200 (:status res)))
         (is (= '() (user-collections-assoc/READ-BY-IDS [(:id coll-one) (:id user-one)])))))))
 

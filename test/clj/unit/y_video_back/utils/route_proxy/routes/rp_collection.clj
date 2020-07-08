@@ -42,21 +42,21 @@
 
 (defn collection-id-add-user
   "Connects user and collection"
-  ([session-id collection-id user-id role]
+  ([session-id collection-id username role]
    (app (-> (request :post (str "/api/collection/" collection-id "/add-user"))
             (header :session-id session-id)
-            (json-body {:user-id user-id :account-role role}))))
-  ([collection-id user-id role]
-   (collection-id-add-user (:session-id-bypass env) collection-id user-id role)))
+            (json-body {:username username :account-role role}))))
+  ([collection-id username role]
+   (collection-id-add-user (:session-id-bypass env) collection-id username role)))
 
 (defn collection-id-remove-user
   "Connects user and collection"
-  ([session-id collection-id user-id]
+  ([session-id collection-id username]
    (app (-> (request :post (str "/api/collection/" collection-id "/remove-user"))
             (header :session-id session-id)
-            (json-body {:user-id user-id}))))
-  ([collection-id user-id]
-   (collection-id-remove-user (:session-id-bypass env) collection-id user-id)))
+            (json-body {:username username}))))
+  ([collection-id username]
+   (collection-id-remove-user (:session-id-bypass env) collection-id username)))
 
 
 (defn collection-id-users

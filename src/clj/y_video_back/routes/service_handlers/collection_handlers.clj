@@ -115,7 +115,7 @@
 (def collection-add-user
   {:summary "Adds user to specified collection"
    :parameters {:header {:session-id uuid?}
-                :path {:id uuid?} :body {:user-id uuid? :account-role int?}}
+                :path {:id uuid?} :body {:username string? :account-role int?}}
    :responses {200 {:body {:message string? :id string?}}
                404 (:body {:message string?})
                500 (:body {:message string?})}
@@ -126,28 +126,29 @@
                   {:status 404
                    :body {:message "collection not found"}
                    :headers {"session-id" session-id}}
-                  (if (not (users/EXISTS? (:user-id body)))
-                    {:status 500
-                     :body {:message "user not found"}
-                     :headers {"session-id" session-id}}
-                    (if (user-collections-assoc/EXISTS-COLL-USER? id (:user-id body))
+                  (let [user-id (:id (first (users/READ-BY-USERNAME [(:username body)])))]
+                    (if (nil? user-id)
                       {:status 500
-                       :body {:message "user already connected to collection"}
+                       :body {:message (str "user: " (:username body) " not found")}
                        :headers {"session-id" session-id}}
-                      (let [result (utils/get-id (user-collections-assoc/CREATE (into body {:collection-id id})))]
-                        (if (nil? result)
-                          {:status 500
-                           :body {:message "unable to add user"}
-                           :headers {"session-id" session-id}}
-                          {:status 200
-                           :body {:message (str 1 " users added to collection")
-                                  :id result}
-                           :headers {"session-id" session-id}})))))))})
+                      (if (user-collections-assoc/EXISTS-COLL-USER? id user-id)
+                        {:status 500
+                         :body {:message "user already connected to collection"}
+                         :headers {"session-id" session-id}}
+                        (let [result (utils/get-id (user-collections-assoc/CREATE (into (dissoc body :username) {:collection-id id :user-id user-id})))]
+                          (if (nil? result)
+                            {:status 500
+                             :body {:message "unable to add user"}
+                             :headers {"session-id" session-id}}
+                            {:status 200
+                             :body {:message (str 1 " users added to collection")
+                                    :id result}
+                             :headers {"session-id" session-id}}))))))))})
 
 (def collection-remove-user
   {:summary "Removes user from specified collection"
    :parameters {:header {:session-id uuid?}
-                :path {:id uuid?} :body {:user-id uuid?}}
+                :path {:id uuid?} :body {:username string?}}
    :responses {200 {:body {:message string?}}
                404 (:body {:message string?})
                500 (:body {:message string?})}
@@ -158,22 +159,24 @@
                   {:status 404
                    :body {:message "collection not found"}
                    :headers {"session-id" session-id}}
-                  (if (not (users/EXISTS? (:user-id body)))
-                    {:status 500
-                     :body {:message "user not found"}
-                     :headers {"session-id" session-id}}
-                    (if-not (user-collections-assoc/EXISTS-COLL-USER? id (:user-id body))
+                  (let [user-id (:id (first (users/READ-BY-USERNAME [(:username body)])))
+                        body (assoc (dissoc body :username) :user-id user-id)]
+                    (if (not (users/EXISTS? (:user-id body)))
                       {:status 500
-                       :body {:message "user not connected to collection"}
+                       :body {:message "user not found"}
                        :headers {"session-id" session-id}}
-                      (let [result (user-collections-assoc/DELETE-BY-IDS [id (:user-id body)])]
-                        (if (= 0 result)
-                          {:status 500
-                           :body {:message "unable to remove user"}
-                           :headers {"session-id" session-id}}
-                          {:status 200
-                           :body {:message (str result " users removed from collection")}
-                           :headers {"session-id" session-id}})))))))})
+                      (if-not (user-collections-assoc/EXISTS-COLL-USER? id (:user-id body))
+                        {:status 500
+                         :body {:message "user not connected to collection"}
+                         :headers {"session-id" session-id}}
+                        (let [result (user-collections-assoc/DELETE-BY-IDS [id (:user-id body)])]
+                          (if (= 0 result)
+                            {:status 500
+                             :body {:message "unable to remove user"}
+                             :headers {"session-id" session-id}}
+                            {:status 200
+                             :body {:message (str result " users removed from collection")}
+                             :headers {"session-id" session-id}}))))))))})
 
 (def collection-add-course
   {:summary "Adds course to specified collection"
