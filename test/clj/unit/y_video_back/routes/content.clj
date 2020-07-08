@@ -73,7 +73,7 @@
                         :subtitle-id (:id sbtl-one)})
                  (map ut/remove-db-only (content-subtitles-assoc/READ-BY-IDS [(:id cont-one) (:id sbtl-one)])))))))))
 
-(deftest cont-remove-subtitle
+(comment (deftest cont-remove-subtitle)
   (testing "remove subtitle from content"
     (let [cont-one (db-pop/add-content)
           sbtl-one (db-pop/add-subtitle)

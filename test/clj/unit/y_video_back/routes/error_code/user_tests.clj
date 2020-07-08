@@ -90,9 +90,9 @@
 (deftest user-get-collections-logged-in
   (testing "invalid session-id"
     (let [res (rp/collections-by-logged-in (java.util.UUID/randomUUID))]
-      (is (= 404 (:status res))))))
+      (is (= 401 (:status res))))))
 
 (deftest user-get-logged-in
   (testing "invalid session-id"
     (let [res (rp/get-current-user (java.util.UUID/randomUUID))]
-      (is (= 404 (:status res))))))
+      (is (= 401 (:status res))))))

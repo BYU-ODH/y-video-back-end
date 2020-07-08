@@ -59,17 +59,20 @@
               :config {:validator-url nil}})}]]
 
     ["/get-session-id/{username}/{password}"
-     {:get {:summary "gets session id for username"
-            :parameters {:path {:username string?
-                                :password string?}}
-            :responses {200 {:body {:session-id string?}}
-                        403 {:body {:message string?}}}
-            :handler (fn [{{{:keys [username password]} :path} :parameters}]
-                       (if-not (= (:NEW-USER-PASSWORD env) password)
-                         {:status 403
-                          :body {:message "incorrect password"}}
-                         {:status 200
-                          :body {:session-id (str (uc/get-session-id username))}}))}}]
+     {:swagger {:tags ["auth"]}}
+
+     [""
+      {:get {:summary "gets session id for username"
+             :parameters {:path {:username string?
+                                 :password string?}}
+             :responses {200 {:body {:session-id string?}}
+                         403 {:body {:message string?}}}
+             :handler (fn [{{{:keys [username password]} :path} :parameters}]
+                        (if-not (= (:NEW-USER-PASSWORD env) password)
+                          {:status 403
+                           :body {:message "incorrect password"}}
+                          {:status 200
+                           :body {:session-id (str (uc/get-session-id username))}}))}}]]
     ["/ping"
      {:get (constantly (response/ok {:message "pong"}))}]
 

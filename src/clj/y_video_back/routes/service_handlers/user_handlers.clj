@@ -4,6 +4,7 @@
    [y-video-back.db.user-courses-assoc :as user-courses-assoc]
    [y-video-back.db.users :as users]
    [y-video-back.db.contents :as contents]
+   [y-video-back.db.collections :as collections]
    [y-video-back.models :as models]
    [y-video-back.front-end-models :as fmodels]
    [y-video-back.model-specs :as sp]
@@ -147,7 +148,8 @@
                     {:status 404
                      :body {:message "user not found"}
                      :headers {"session-id" session-id}}
-                    (let [user-collections-result (user-collections-assoc/READ-COLLECTIONS-BY-USER user-id)
+                    (let [user-owner-result (collections/READ-ALL-BY-OWNER [user-id])
+                          user-collections-result (user-collections-assoc/READ-COLLECTIONS-BY-USER user-id)
                           user-courses-result (users/READ-COLLECTIONS-BY-USER-VIA-COURSES user-id)]
                       (let [courses-result (map #(-> %
                                                      (utils/remove-db-only)
@@ -158,9 +160,13 @@
                                                          (dissoc :user-id)
                                                          (dissoc :account-role))
                                                     user-collections-result)
+                            owner-result (map #(-> %
+                                                   (utils/remove-db-only)
+                                                   (dissoc :user-id))
+                                               user-owner-result)
                             total-result (map #(-> %
                                                    (assoc :content (map utils/remove-db-only (contents/READ-BY-COLLECTION (:id %)))))
-                                              (concat courses-result collections-result))]
+                                              (distinct (concat courses-result collections-result owner-result)))]
                         {:status 200
                          :body total-result
                          :headers {"session-id" session-id}}))))))})

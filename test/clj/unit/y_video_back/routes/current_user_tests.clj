@@ -76,7 +76,54 @@
              (ut/remove-db-only (m/decode-response-body res-thr)))))))
 
 (deftest get-all-collections-by-logged-in
+  (testing "get collections - owner only"
+    (let [coll-one (db-pop/add-collection)
+          res (rp/collections-by-logged-in (:owner coll-one))]
+      (is (= 200 (:status res)))
+      (is (= [(-> coll-one
+                   (ut/remove-db-only)
+                   (update :id str)
+                   (update :owner str)
+                   (assoc :content '[]))]
+             (m/decode-response-body res)))))
   (testing "get collections - direct user-coll assoc only"
+          ; Create user
+    (let [user-one (users/CREATE (g/get-random-user-without-id))
+          user-two (db-pop/add-user)
+          user-id (:id user-one)
+          ; Create collections
+          coll-one (ut/under-to-hyphen (collections/CREATE (g/get-random-collection-without-id (:id user-two))))
+          coll-two (ut/under-to-hyphen (collections/CREATE (g/get-random-collection-without-id (:id user-two))))
+          ; Create content for coll-two
+          rsrc-one (db-pop/add-resource)
+          cont-one (db-pop/add-content (:id coll-two) (:id rsrc-one))
+          ; Connect user to collections
+          user-coll-one (user-collections-assoc/CREATE {:collection-id (:id coll-one)
+                                                        :user-id user-id
+                                                        :account-role 1})
+          user-coll-two (user-collections-assoc/CREATE {:collection-id (:id coll-two)
+                                                        :user-id user-id
+                                                        :account-role 1})
+          ; Read collections by session-id
+          res (rp/collections-by-logged-in user-id)]
+      (is (= 200 (:status res)))
+      (is (= [(-> coll-one
+                   (ut/remove-db-only)
+                   (update :id str)
+                   (update :owner str)
+                   (assoc :content '[]))
+              (-> coll-two
+                           (ut/remove-db-only)
+                           (update :id str)
+                           (update :owner str)
+                           (assoc :content [(-> cont-one
+                                                (ut/remove-db-only)
+                                                (update :id str)
+                                                (update :collection-id str)
+                                                (update :resource-id str))]))]
+             (map ut/remove-db-only (m/decode-response-body res))))))
+
+  (testing "get collections - direct user-coll assoc and owner of same"
           ; Create user
     (let [user-one (users/CREATE (g/get-random-user-without-id))
           user-id (:id user-one)
@@ -114,10 +161,11 @@
 
   (testing "get collections - indirect via course only"
     (let [user-one (users/CREATE (g/get-random-user-without-id))
+          user-two (db-pop/add-user)
           user-id (:id user-one)
           ; Create collections
-          coll-one (ut/under-to-hyphen (collections/CREATE (g/get-random-collection-without-id user-id)))
-          coll-two (ut/under-to-hyphen (collections/CREATE (g/get-random-collection-without-id user-id)))
+          coll-one (ut/under-to-hyphen (collections/CREATE (g/get-random-collection-without-id (:id user-two))))
+          coll-two (ut/under-to-hyphen (collections/CREATE (g/get-random-collection-without-id (:id user-two))))
           ; Create content for coll-two
           rsrc-one (db-pop/add-resource)
           cont-one (db-pop/add-content (:id coll-two) (:id rsrc-one))
@@ -154,10 +202,11 @@
                (map ut/remove-db-only (m/decode-response-body res))))))
   (testing "get collections - user-coll and via course"
     (let [user-one (users/CREATE (g/get-random-user-without-id))
+          user-two (db-pop/add-user)
           user-id (:id user-one)
           ; Create collections
-          coll-one (ut/under-to-hyphen (collections/CREATE (g/get-random-collection-without-id user-id)))
-          coll-two (ut/under-to-hyphen (collections/CREATE (g/get-random-collection-without-id user-id)))
+          coll-one (ut/under-to-hyphen (collections/CREATE (g/get-random-collection-without-id (:id user-two))))
+          coll-two (ut/under-to-hyphen (collections/CREATE (g/get-random-collection-without-id (:id user-two))))
           ; Connect user to collections
           user-coll-one (user-collections-assoc/CREATE {:collection-id (:id coll-one)
                                                         :user-id user-id
@@ -165,8 +214,8 @@
           user-coll-two (user-collections-assoc/CREATE {:collection-id (:id coll-two)
                                                         :user-id user-id
                                                         :account-role 1})
-          coll-thr (ut/under-to-hyphen (collections/CREATE (g/get-random-collection-without-id user-id)))
-          coll-fou (ut/under-to-hyphen (collections/CREATE (g/get-random-collection-without-id user-id)))
+          coll-thr (ut/under-to-hyphen (collections/CREATE (g/get-random-collection-without-id (:id user-two))))
+          coll-fou (ut/under-to-hyphen (collections/CREATE (g/get-random-collection-without-id (:id user-two))))
           ; Create courses
           crse-one (courses/CREATE (g/get-random-course-without-id))
           crse-two (courses/CREATE (g/get-random-course-without-id))
