@@ -1,19 +1,24 @@
 - - - - - - - - - - - - - -
-UNIVERSAL
+
+USER account-type
 
 Least Permissions
 
     Student - 3
 
-    Instructor (i.e. professor) - 2
+    Instructor - 2
 
     Lab Assistant - 1
 
     Admin - 0
 
 Most Permissions
+
 - - - - - - - - - - - - - -
-DEPENDENT
+
+USER-COLLECTION account-role
+and
+USER-COURSE account-role
 
 Least Permissions
 
@@ -21,7 +26,8 @@ Least Permissions
 
     TA - 1
 
-    Instructor/Owner - 0
+    Instructor (not owner) - 0
 
 Most Permissions
+
 - - - - - - - - - - - - - -
