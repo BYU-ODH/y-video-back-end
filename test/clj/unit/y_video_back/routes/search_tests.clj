@@ -173,11 +173,13 @@
   (testing "all colls name"
     (test-search-table :collections
                        "Books"
-                       [test-coll-one test-coll-two test-coll-thr]))
+                       [(assoc test-coll-one :username (:username test-user-one))
+                        (assoc test-coll-two :username (:username test-user-two))
+                        (assoc test-coll-thr :username (:username test-user-thr))]))
   (testing "one coll name"
     (test-search-table :collections
                        "fiction"
-                       [test-coll-thr]))
+                       [(assoc test-coll-thr :username (:username test-user-thr))]))
   (testing "no colls name"
     (test-search-table :collections
                        "Movies"
@@ -185,7 +187,9 @@
   (testing "only a space"
     (test-search-table :collections
                        " "
-                       [test-coll-one test-coll-two test-coll-thr])))
+                       [(assoc test-coll-one :username (:username test-user-one))
+                        (assoc test-coll-two :username (:username test-user-two))
+                        (assoc test-coll-thr :username (:username test-user-thr))])))
 (deftest test-search-resources
   (testing "all conts name"
     (test-search-table :resources
