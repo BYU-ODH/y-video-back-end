@@ -121,7 +121,7 @@
 (defn add-subtitle
   "Creates subtitle, adds to db"
   ([]
-   (add-subtitle (java.util.UUID/randomUUID)))
+   (add-subtitle (:id (add-resource))))
   ([resource-id]
    (let [sbtl-one (get-subtitle resource-id)
          sbtl-one-add (subtitles/CREATE sbtl-one)]
