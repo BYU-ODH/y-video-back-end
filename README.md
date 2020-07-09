@@ -28,9 +28,35 @@ The database has several relationships between tables. Below is a visual represe
 
 To query across these relationships, we use custom views in the `init.sql` files (discussed below).
 
-The methods in core.clj are kept general to all tables. The other files in this directory define functions specific to each table using the core functions. These are generally either partial functions (i.e. they take a core function and define zero or more of its parameters, thus creating a new function with fewer parameters), or functions which call core functions alongside other logic.
+The functions in `core.clj` are kept general to all tables. The other files in this directory define functions specific to each table using the core functions. These are generally either partial functions (i.e. they take a core function and define zero or more of its parameters, thus creating a new function with fewer parameters), or functions which call core functions alongside other logic.
 
 Core functions are rarely called outside of this directory, but it can (and does, in a few places) happen.
+
+### middleware
+
+This directory mainly contains code to help in debugging. In the normal course of development, this directory will not be changed.
+
+### routes
+
+The `routes` directory contains code that defines what the api's endpoints look like, how they behave, what they return, etc.
+
+`home.clj` - This file defines the home routes (meaning any route not beginning with `/api`). While some experimental routes have been defined, the only route for production is `/index`. This is the endpoint that CAS will redirect to after authentication. Y-Video serves a SPA, so no other routes are needed for the front-end.
+
+`services.clj` - This file defines all of the `/api` routes. The bodies of the majority of the routes are contained in the `service_handlers` directory.
+
+`service_handlers` - `handlers.clj` serves as an entrance into this directory. It pulls all the functions `services.clj` needs from the other handler files into a single namespace. The `_handler.clj` files in this directory define the Swagger documentation and handler functions for each endpoint. These are described in more detail in `src/clj/y_video_back/routes/service_handlers/README.md`.
+
+`handler.clj` - This is where the home and service routes are combined and connected to the app. This is also where some error pages (like 404 and 405) are defined.
+
+`layout.clj` - Among other things, this is where the front end `index.html` is rendered - the function `render`, which uses selmer.parser.
+
+`middleware.clj` - This file contains middleware for the routes (functions that are run on each request before it is passed to a handler). Ones to note are `wrap-cors`, `wrap-cas`, and `wrap-csrf`.
+
+`models.clj` - These are the models that represent the database tables in the app. These models must match the database tables. To provide flexibility, each model is built incrementally, with the lowest form having no id or references to other tables. The next level adds references to other tables, and the final level adds the table's own id. Functions elsewhere in the app may use any of these levels.
+
+`model_specs.clj` - For every route, Swagger describes what fields the request body must contain. For a route to be valid, it must contain all of the listed fields. The exception, however, is patch routes. These routes may contain any subset of the fields described by Swagger. To facilitate this exception, all the base table models (i.e. any table not ending in `_assoc`) are redefined here as separate namespaces. These models must match the models in `models.clj`.
+
+`user_creator.clj` - This is where users are logged into the app. Upon their first login, their information is also added to the database.
 
 ### To be continued!
 
