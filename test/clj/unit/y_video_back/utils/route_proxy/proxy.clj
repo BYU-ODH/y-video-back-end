@@ -100,3 +100,4 @@
 (def search-by-user admin/search-by-user)
 (def search-by-collection admin/search-by-collection)
 (def search-by-resource admin/search-by-resource)
+(def search-by-content admin/search-by-content)

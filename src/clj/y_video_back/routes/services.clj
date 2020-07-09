@@ -267,5 +267,7 @@
       {:get service-handlers/search-by-user}]
      ["/collection/{term}"
       {:get service-handlers/search-by-collection}]
+     ["/content/{term}"
+      {:get service-handlers/search-by-content}]
      ["/resource/{term}"
       {:get service-handlers/search-by-resource}]]])

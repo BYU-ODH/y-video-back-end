@@ -48,6 +48,24 @@
                    :body res
                    :headers {"session-id" session-id}})))})
 
+(def search-by-content
+  {:summary "Searches users, collections, contents, and courses by search term"
+   :parameters {:header {:session-id uuid?}
+                :path {:term string?}}
+   :responses {200 {:body [models/content]}}
+   :handler (fn [{{{:keys [session-id]} :header {:keys [term]} :path} :parameters}]
+              (if-not (ru/has-permission session-id "search-by-term" 0)
+                ru/forbidden-page
+                (let [term (java.net.URLDecoder/decode term)
+                      res (map utils/remove-db-only
+                               (db/read-all-pattern :contents
+                                                    [:title :content-type :url :description :tags :file-version]
+                                                    (str "%" term "%")))]
+                  {:status 200
+                   :body res
+                   :headers {"session-id" session-id}})))})
+
+
 (def search-by-resource
   {:summary "Searches users, collections, resources, and courses by search term"
    :parameters {:header {:session-id uuid?}

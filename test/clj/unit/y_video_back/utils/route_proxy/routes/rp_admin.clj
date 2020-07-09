@@ -31,6 +31,14 @@
   ([term]
    (search-by-collection (:session-id-bypass env) term)))
 
+(defn search-by-content
+  "Search content table by term"
+  ([session-id term]
+   (app (-> (request :get (str "/api/admin/content/" (java.net.URLEncoder/encode term)))
+            (header :session-id session-id))))
+  ([term]
+   (search-by-content (:session-id-bypass env) term)))
+
 (defn search-by-resource
   "Search resource table by term"
   ([session-id term]

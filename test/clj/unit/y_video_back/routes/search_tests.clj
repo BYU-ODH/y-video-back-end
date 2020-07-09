@@ -102,6 +102,51 @@
   (def test-crse-thr (ut/under-to-hyphen (courses/CREATE {:department "Charms"
                                                           :catalog-number "CouldveBeenDualing 101"
                                                           :section-number "001"})))
+  (def test-cont-one (ut/under-to-hyphen (contents/CREATE {:title "aaaa"
+                                                           :content-type "b"
+                                                           :url "cccc"
+                                                           :description "dddd"
+                                                           :tags "e; e; ee; eee"
+                                                           :annotations ""
+                                                           :thumbnail ""
+                                                           :allow-definitions false
+                                                           :allow-notes false
+                                                           :allow-captions false
+                                                           :views 0
+                                                           :file-version "f"
+                                                           :resource-id (:id test-rsrc-one)
+                                                           :collection-id (:id test-coll-one)})))
+  (def test-cont-two (ut/under-to-hyphen (contents/CREATE {:title "aaa"
+                                                           :content-type "g"
+                                                           :url "adfwe"
+                                                           :description "awgwab"
+                                                           :tags "e; e; rbe; eee"
+                                                           :annotations ""
+                                                           :thumbnail ""
+                                                           :allow-definitions false
+                                                           :allow-notes false
+                                                           :allow-captions false
+                                                           :views 0
+                                                           :file-version "f"
+                                                           :resource-id (:id test-rsrc-two)
+                                                           :collection-id (:id test-coll-two)})))
+  (def test-cont-thr (ut/under-to-hyphen (contents/CREATE {:title "aa"
+                                                           :content-type "h"
+                                                           :url "cebreabccc"
+                                                           :description "dtrntnrstddd"
+                                                           :tags "e; ertnsre; ee; eee"
+                                                           :annotations ""
+                                                           :thumbnail ""
+                                                           :allow-definitions false
+                                                           :allow-notes false
+                                                           :allow-captions false
+                                                           :views 0
+                                                           :file-version "f"
+                                                           :resource-id (:id test-rsrc-thr)
+                                                           :collection-id (:id test-coll-thr)})))
+
+
+
   (mount.core/start #'y-video-back.handler/app))
 
 ; For testing master search route - may add that feature in future
@@ -120,7 +165,8 @@
   (let [res (case table-key
               :users (rp/search-by-user query-term)
               :collections (rp/search-by-collection query-term)
-              :resources (rp/search-by-resource query-term))]
+              :resources (rp/search-by-resource query-term)
+              :contents (rp/search-by-content query-term))]
     (is (= 200 (:status res)))
     (if (= table-key :collections)
       (is (= (into [] (map #(update (update (ut/remove-db-only %) :id str) :owner str) expected-res))
@@ -231,3 +277,18 @@
     (test-search-table :resources
                        " "
                        [test-rsrc-one test-rsrc-two test-rsrc-thr])))
+(deftest test-search-contents
+  (testing "all conts"
+    (test-search-table :contents
+                       "a"
+                       [(update (update test-cont-one :resource-id str) :collection-id str)
+                        (update (update test-cont-two :resource-id str) :collection-id str)
+                        (update (update test-cont-thr :resource-id str) :collection-id str)]))
+  (testing "one cont"
+    (test-search-table :contents
+                       "adfwe"
+                       [(update (update test-cont-two :resource-id str) :collection-id str)]))
+  (testing "no conts"
+    (test-search-table :contents
+                       "z"
+                       [])))
