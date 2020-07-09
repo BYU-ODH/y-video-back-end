@@ -277,6 +277,8 @@
     (test-search-table :resources
                        " "
                        [test-rsrc-one test-rsrc-two test-rsrc-thr])))
+
+;; Need more tests here - this is bare minimum
 (deftest test-search-contents
   (testing "all conts"
     (test-search-table :contents
