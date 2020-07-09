@@ -36,6 +36,8 @@ Core functions are rarely called outside of this directory, but it can (and does
 
 **Note on resources table:** The `files` table represents literal files on the server's disk. The `resources` table represents physical media, such as DVDs. While most resources will likely have only 1 file, some may have multiple files ripped from the same source (such as films with multiple language tracks). Additionally, resources do not represent online media (such as YouTube videos). Online media is represented only in the `contents` table. To satisfy the foriegn key `resource_id` for such online media contents, the database is pre-populated with an online resource with id `00000000-0000-0000-0000-000000000000`. Thus, any content representing online media is given `00000000-0000-0000-0000-000000000000` as its `resource_id`.
 
+**Note on created, updated, deleted fields:** Every table in the database has the fields `created`, `updated`, and `deleted`. These are managed exclusively by the database, and should not be manipulated by the server or any of its handlers. They will likely be filtered out of all endpoint responses in the future, and so the front-end should not rely on them either. Additionally, `id`s are all UUIDs, which the database generates automatically. They should also not be set or changed by the server.
+
 ### middleware
 
 This directory mainly contains code to help in debugging. In the normal course of development, this directory will not be changed.
