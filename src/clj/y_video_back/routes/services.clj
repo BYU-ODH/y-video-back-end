@@ -56,6 +56,10 @@
      ["/api-docs/*"
       {:get (swagger-ui/create-swagger-ui-handler
              {:url "/api/swagger.json"
+              :config {:validator-url nil}})}]
+     ["/api-docs"
+      {:get (swagger-ui/create-swagger-ui-handler
+             {:url "/api/swagger.json"
               :config {:validator-url nil}})}]]
 
     ["/get-session-id/{username}/{password}"
