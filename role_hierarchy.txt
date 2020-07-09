@@ -22,6 +22,8 @@ USER-COURSE account-role
 
 Least Permissions
 
+    Auditing - 3
+
     Student - 2
 
     TA - 1
