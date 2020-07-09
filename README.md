@@ -1,6 +1,6 @@
-## YVideo back-end
+## Y-Video back-end
 
-> Note: Project is currently in Development.
+> Note: Y-Video back-end is currently in Development.
 
 Swagger API for DB manipulations for Y-Video
 
@@ -18,11 +18,15 @@ All source code is located in the src directory. This is divided into several co
 
 ### db
 
-This is where the API interacts with the database. No file outside this directory (with the exception of resource and config files) should interact with or define the database in any way.
+This is where the API interacts with the database. No file outside this directory (with the exception of resource and config files) should directly interact with or define the database in any way.
 
-All direct interaction takes place in core.clj. This file contains generic functions for several database operations, including creating data, reading data, updating existing data, and deleting data. Each of these operations relies on the table ids. There are also methods for more complex operations, such as reading data contingent on multiple fields (the equivelant of SELECT * FROM users WHERE first_name='Bilbo' AND last_name='Baggins').
+All direct interaction takes place in `core.clj`. This file contains generic functions for several database operations, including creating data, reading data, updating data, and deleting data. Each of these operations relies on each table's ids. There are also functions for more complex operations, such as reading data contingent on multiple fields (the equivelant of `SELECT * FROM users WHERE first_name='Bilbo' AND last_name='Baggins'`).
 
-The database has several relationships between tables. To query across these relationships, we use custom views in the init.sql files (discussed below).
+The database has several relationships between tables. Below is a visual representation of the database:
+
+![alt text][db-image]
+
+To query across these relationships, we use custom views in the `init.sql` files (discussed below).
 
 The methods in core.clj are kept general to all tables. The other files in this directory define functions specific to each table using the core functions. These are generally either partial functions (i.e. they take a core function and define zero or more of its parameters, thus creating a new function with fewer parameters), or functions which call core functions alongside other logic.
 
@@ -34,3 +38,5 @@ Stay tuned for more exciting technical documentation....
 
 * License
 Copyright © 2020 Brigham Young University
+
+[db-image]: https://github.com/BYU-ODH/y-video-back-end/blob/master/y-video-db.png "ERD for Y-Video DB"
