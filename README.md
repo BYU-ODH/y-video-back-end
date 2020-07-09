@@ -16,6 +16,8 @@ This API supports 3 environments - development, testing, and production. Each sh
 
 All source code is located in the src directory. This is divided into several components, each explained briefly below. These components are all located in the src/clj/y-video-back subtree.
 
+**Note on naming conventions:** This project uses kebab-case as much as possible. The main exceptions are filenames and the database definition (`resources/migrations/init.sql`). These use snake_case. However, we automatically convert snake_case to kebab-case, so all Clojure code is written in kebab-case, even when representing filepaths and database table and field names.
+
 ### db
 
 This is where the API interacts with the database. No file outside this directory (with the exception of resource and config files) should directly interact with or define the database in any way.
@@ -31,6 +33,8 @@ To query across these relationships, we use custom views in the `init.sql` files
 The functions in `core.clj` are kept general to all tables. The other files in this directory define functions specific to each table using the core functions. These are generally either partial functions (i.e. they take a core function and define zero or more of its parameters, thus creating a new function with fewer parameters), or functions which call core functions alongside other logic.
 
 Core functions are rarely called outside of this directory, but it can (and does, in a few places) happen.
+
+**Note on resources table:** The `files` table represents literal files on the server's disk. The `resources` table represents physical media, such as DVDs. While most resources will likely have only 1 file, some may have multiple files ripped from the same source (such as films with multiple language tracks). Additionally, resources do not represent online media (such as YouTube videos). Online media is represented only in the `contents` table. To satisfy the foriegn key `resource_id` for such online media contents, the database is pre-populated with an online resource with id `00000000-0000-0000-0000-000000000000`. Thus, any content representing online media is given `00000000-0000-0000-0000-000000000000` as its `resource_id`.
 
 ### middleware
 
