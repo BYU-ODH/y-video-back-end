@@ -10,7 +10,7 @@ This API is written in Clojure and serves a front-end in React. The majority of 
 
 ## Environment Configuration
 
-This API supports 3 environments - development, testing, and production. Each should, somewhere in their respective subtrees, contain a config.edn file, which holds variables specific to the environment. For example, these files are where we specify the credentials for 3 different databases, so we don't test on the same database we stores actual user data.
+This API supports 3 environments - development, testing, and production. Each should, somewhere in their respective subtrees, contain a config.edn file, which holds variables specific to the environment. For example, these files are where we specify the credentials for 3 different databases, so we don't test on the same database that stores actual user data.
 
 ## Source Code
 
@@ -45,6 +45,8 @@ The `routes` directory contains code that defines what the api's endpoints look 
 `services.clj` - This file defines all of the `/api` routes. The bodies of the majority of the routes are contained in the `service_handlers` directory.
 
 `service_handlers` - `handlers.clj` serves as an entrance into this directory. It pulls all the functions `services.clj` needs from the other handler files into a single namespace. The `_handler.clj` files in this directory define the Swagger documentation and handler functions for each endpoint. These are described in more detail in `src/clj/y_video_back/routes/service_handlers/README.md`.
+
+### other files
 
 `handler.clj` - This is where the home and service routes are combined and connected to the app. This is also where some error pages (like 404 and 405) are defined.
 
