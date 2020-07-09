@@ -60,6 +60,17 @@ The `routes` directory contains code that defines what the api's endpoints look 
 
 `user_creator.clj` - This is where users are logged into the app. Upon their first login, their information is also added to the database.
 
+## Adding DB Fields
+
+To add fields to a model (like adding an address to Users, or owner-email to Collections), the models must be updated in the following places:
+
+1. `resources/migrations/init.sql`
+2. `src/clj/y_video_back/models.clj`
+3. `src/clj/y_video_back/model_specs.clj`
+4. `test/clj/unit/y_video_back/routes/search_tests.clj`
+
+There may also be other places that must be updated. Running `lein test` from the top directory will likely identify these places.
+
 ### To be continued!
 
 Stay tuned for more exciting technical documentation....
