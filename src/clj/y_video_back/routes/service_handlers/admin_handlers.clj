@@ -18,16 +18,14 @@
                 :path {:term string?}}
    :responses {200 {:body [models/user]}}
    :handler (fn [{{{:keys [session-id]} :header {:keys [term]} :path} :parameters}]
-              (if-not (ru/has-permission session-id "search-by-term" 0)
-                ru/forbidden-page
-                (let [term (java.net.URLDecoder/decode term)
-                      res (map utils/remove-db-only
-                               (db/read-all-pattern :users
-                                                    [:email :account-name :username]
-                                                    (str "%" term "%")))]
-                  {:status 200
-                   :body res
-                   :headers {"session-id" session-id}})))})
+              (let [term (java.net.URLDecoder/decode term)
+                    res (map utils/remove-db-only
+                             (db/read-all-pattern :users
+                                                  [:email :account-name :username]
+                                                  (str "%" term "%")))]
+                {:status 200
+                 :body res
+                 :headers {"session-id" session-id}}))})
 
 (def search-by-collection ;; Non-functional
   {:summary "Searches users, collections, resources, and courses by search term"
@@ -35,18 +33,16 @@
                 :path {:term string?}}
    :responses {200 {:body [(into models/collection {:username string?})]}}
    :handler (fn [{{{:keys [session-id]} :header {:keys [term]} :path} :parameters}]
-              (if-not (ru/has-permission session-id "search-by-term" 0)
-                ru/forbidden-page
-                (let [term (java.net.URLDecoder/decode term)
-                      coll-res (map utils/remove-db-only
-                                    (db/read-all-pattern :collections
-                                                         [:collection-name]
-                                                         (str "%" term "%")))
-                      res (map #(into % {:username (:username (users/READ (:owner %)))})
-                               coll-res)]
-                  {:status 200
-                   :body res
-                   :headers {"session-id" session-id}})))})
+              (let [term (java.net.URLDecoder/decode term)
+                    coll-res (map utils/remove-db-only
+                                  (db/read-all-pattern :collections
+                                                       [:collection-name]
+                                                       (str "%" term "%")))
+                    res (map #(into % {:username (:username (users/READ (:owner %)))})
+                             coll-res)]
+                {:status 200
+                 :body res
+                 :headers {"session-id" session-id}}))})
 
 (def search-by-content
   {:summary "Searches users, collections, contents, and courses by search term"
@@ -54,16 +50,14 @@
                 :path {:term string?}}
    :responses {200 {:body [models/content]}}
    :handler (fn [{{{:keys [session-id]} :header {:keys [term]} :path} :parameters}]
-              (if-not (ru/has-permission session-id "search-by-term" 0)
-                ru/forbidden-page
-                (let [term (java.net.URLDecoder/decode term)
-                      res (map utils/remove-db-only
-                               (db/read-all-pattern :contents
-                                                    [:title :content-type :url :description :tags :file-version]
-                                                    (str "%" term "%")))]
-                  {:status 200
-                   :body res
-                   :headers {"session-id" session-id}})))})
+              (let [term (java.net.URLDecoder/decode term)
+                    res (map utils/remove-db-only
+                             (db/read-all-pattern :contents
+                                                  [:title :content-type :url :description :tags :file-version]
+                                                  (str "%" term "%")))]
+                {:status 200
+                 :body res
+                 :headers {"session-id" session-id}}))})
 
 
 (def search-by-resource
@@ -72,13 +66,11 @@
                 :path {:term string?}}
    :responses {200 {:body [models/resource]}}
    :handler (fn [{{{:keys [session-id]} :header {:keys [term]} :path} :parameters}]
-              (if-not (ru/has-permission session-id "search-by-term" 0)
-                ru/forbidden-page
-                (let [term (java.net.URLDecoder/decode term)
-                      res (map utils/remove-db-only
-                               (db/read-all-pattern :resources
-                                                    [:resource-name :resource-type :requester-email]
-                                                    (str "%" term "%")))]
-                  {:status 200
-                   :body res
-                   :headers {"session-id" session-id}})))})
+              (let [term (java.net.URLDecoder/decode term)
+                    res (map utils/remove-db-only
+                             (db/read-all-pattern :resources
+                                                  [:resource-name :resource-type :requester-email]
+                                                  (str "%" term "%")))]
+                {:status 200
+                 :body res
+                 :headers {"session-id" session-id}}))})

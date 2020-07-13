@@ -104,10 +104,8 @@
                            :body {:echo string?}}
               :responses {200 {:body {:echo string?}}}
               :handler (fn [{{{:keys [session-id]} :header :keys [body]} :parameters}]
-                         (if-not (ru/has-permission session-id "echo-post" 0)
-                           ru/forbidden-page
-                           {:status 200
-                            :body body}))}
+                         {:status 200
+                          :body body})}
        :patch service-handlers/echo-patch}]
      ["/:word"
       {:get {:summary "echo parameter get"
