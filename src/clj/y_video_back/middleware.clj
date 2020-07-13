@@ -16,7 +16,8 @@
             ;[muuntaja.middleware :refer [wrap-format wrap-params]]
             [ring-ttl-session.core :refer [ttl-memory-store]]
             [y-video-back.routes.service-handlers.utils :as sh-utils]
-            [ring.middleware.cors :refer [wrap-cors]])
+            [ring.middleware.cors :refer [wrap-cors]]
+            [y-video-back.routes.service-handlers.role-utils :as ru])
   (:import [javax.servlet ServletContext]))
 
 (def cors-headers
@@ -101,7 +102,12 @@
 (defn check-permission
   "Checks user has permission for route"
   [handler]
-  (fn [request] (handler {:status 401 :body "forbidden"})))
+  ;handler)
+  (fn [request]
+    (if (ru/req-has-permission (:uri request) (:header (:parameters request)) (:body (:parameters request)))
+      (handler request)
+      (error-page {:status 401, :title "401 - Unauthorized",
+                   :image "anakin_sitting.jpg", :caption "It's unfair! How can you be on this website and not be an admin?!"}))))
 
 (defn wrap-api [handler]
   (let [check-csrf  (if-not (:test env) wrap-csrf identity)]
@@ -121,6 +127,9 @@
           ;wrap-context
           ;wrap-internal-error)))
 
+(defn wrap-api-post [handler]
+  (-> handler
+      check-permission))
 
 (defn wrap-base [handler]
   (-> ((:middleware defaults) handler)

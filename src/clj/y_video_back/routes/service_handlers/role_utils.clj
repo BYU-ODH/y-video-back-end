@@ -81,12 +81,22 @@
    (is-child? target-id user-id ##Inf)))
 
 (defn has-permission
-  "Placeholder for real has-permission function. Always returns true."
+  "Placeholder for real has-permission function. Checks for session-id-bypass or (any) user-id."
   [token route args]
   (if (or (= token (utils/to-uuid (:session-id-bypass env)))
           (users/EXISTS? token))
     true
     false))
+
+(defn req-has-permission
+  "Checks for session-id in request header, then calls has-permission"
+  [uri headers body]
+  (if (or (clojure.string/starts-with? uri "/api/get-session-id/")
+          (= uri "/api/ping"))
+    true
+    (if (not (contains? headers :session-id))
+      false
+      (has-permission (:session-id headers) uri body))))
 
 (comment
   (defn has-permission
