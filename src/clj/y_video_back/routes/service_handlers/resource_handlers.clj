@@ -18,8 +18,7 @@
    :handler (fn [{{{:keys [session-id]} :header :keys [body]} :parameters}]
               {:status 200
                :body {:message "1 resource created"
-                      :id (utils/get-id (resources/CREATE body))}
-               :headers {"session-id" session-id}})})
+                      :id (utils/get-id (resources/CREATE body))}})})
 
 (def resource-get-by-id
   {:summary "Retrieves specified resource"
@@ -31,11 +30,9 @@
               (let [res (resources/READ id)]
                 (if (nil? res)
                   {:status 404
-                   :body {:message "requested resource not found"}
-                   :headers {"session-id" session-id}}
+                   :body {:message "requested resource not found"}}
                   {:status 200
-                   :body res
-                   :headers {"session-id" session-id}})))})
+                   :body res})))})
 
 (def resource-update ;; Non-functional
   {:summary "Updates the specified resource"
@@ -46,8 +43,7 @@
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
               (if-not (resources/EXISTS? id)
                 {:status 404
-                 :body {:message "resource not found"}
-                 :headers {"session-id" session-id}}
+                 :body {:message "resource not found"}}
                 ;(let [current-resource (resources/READ id)
                 ;      proposed-resource (merge current-resource body)
                 ;      same-name-resource (first (resources/READ-ALL-BY-NAME [(:resource-name proposed-resource)]))
@@ -60,11 +56,9 @@
                 (let [result (resources/UPDATE id body)]
                   (if (= 0 result)
                     {:status 404
-                     :body {:message "requested resource not found"}
-                     :headers {"session-id" session-id}}
+                     :body {:message "requested resource not found"}}
                     {:status 200
-                     :body {:message (str result " resources updated")}
-                     :headers {"session-id" session-id}}))))})
+                     :body {:message (str result " resources updated")}}))))})
 
 (def resource-delete ;; Non-functional
   {:summary "Deletes the specified resource"
@@ -76,11 +70,9 @@
               (let [result (resources/DELETE id)]
                 (if (nil? result)
                   {:status 404
-                   :body {:message "requested resource not found"}
-                   :headers {"session-id" session-id}}
+                   :body {:message "requested resource not found"}}
                   {:status 200
-                   :body {:message (str 1 " resources deleted")}
-                   :headers {"session-id" session-id}})))})
+                   :body {:message (str 1 " resources deleted")}})))})
 
 (def resource-get-all-collections ;; Non-functional
   {:summary "Retrieves all collections for specified resource"
@@ -91,15 +83,13 @@
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
               (if (not (resources/EXISTS? id))
                 {:status 404
-                 :body {:message "resource not found"}
-                 :headers {"session-id" session-id}}
+                 :body {:message "resource not found"}}
                 (let [res (resources/COLLECTIONS-BY-RESOURCE id)]
                   {:status 200
                    :body (map #(-> %
                                    (utils/remove-db-only)
                                    (dissoc :resource-id))
-                              res)
-                   :headers {"session-id" session-id}})))})
+                              res)})))})
 
 (def resource-get-all-contents ;; Non-functional
   {:summary "Retrieves all contents for specified resource"
@@ -110,13 +100,11 @@
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
               (if (not (resources/EXISTS? id))
                 {:status 404
-                 :body {:message "resource not found"}
-                 :headers {"session-id" session-id}}
+                 :body {:message "resource not found"}}
                 (let [content-resources-result (resources/CONTENTS-BY-RESOURCE id)]
                   (let [content-result (map #(utils/remove-db-only %) content-resources-result)]
                     {:status 200 ; Not implemented yet
-                     :body content-result
-                     :headers {"session-id" session-id}}))))})
+                     :body content-result}))))})
 
 (def resource-get-all-files ;; Non-functional
   {:summary "Retrieves all the files for the specified resource"
@@ -127,13 +115,11 @@
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
               (if (not (resources/EXISTS? id))
                 {:status 404
-                 :body {:message "resource not found"}
-                 :headers {"session-id" session-id}}
+                 :body {:message "resource not found"}}
                 (let [file-resources-result (resources/FILES-BY-RESOURCE id)]
                   (let [file-result (map #(utils/remove-db-only %) file-resources-result)]
                     {:status 200 ; Not implemented yet
-                     :body file-result
-                     :headers {"session-id" session-id}}))))})
+                     :body file-result}))))})
 
 (def resource-add-view ;; Non-functional
   {:summary "Adds 1 view to specified resource"
@@ -147,10 +133,8 @@
               (let [resource-res (resources/READ id)]
                 (if-not resource-res
                   {:status 404
-                   :body {:message "requested resource not found"}
-                   :headers {"session-id" session-id}}
+                   :body {:message "requested resource not found"}}
                   (do
                     (resources/UPDATE id {:views (+ 1 (:views resource-res))})
                     {:status 200
-                     :body {:message "view successfully added"}
-                     :headers {"session-id" session-id}}))))})
+                     :body {:message "view successfully added"}}))))})

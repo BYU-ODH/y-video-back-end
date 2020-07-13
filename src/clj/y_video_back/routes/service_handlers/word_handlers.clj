@@ -17,16 +17,13 @@
    :handler (fn [{{{:keys [session-id]} :header {:keys [user-id]} :path :keys [body]} :parameters}]
               (if-not (users/EXISTS? (:user-id body))
                 {:status 500
-                 :body {:message "user not found"}
-                 :headers {"session-id" session-id}}
+                 :body {:message "user not found"}}
                 (if (words/EXISTS-BY-FIELDS? (:user-id body) (:word body) (:src-lang body) (:dest-lang body))
                   {:status 500
-                   :body {:message "word already exists"}
-                   :headers {"session-id" session-id}}
+                   :body {:message "word already exists"}}
                   {:status 200
                    :body {:message "1 word created"
-                          :id (utils/get-id (words/CREATE body))}
-                   :headers {"session-id" session-id}})))})
+                          :id (utils/get-id (words/CREATE body))}})))})
 
 (def word-get-by-id
   {:summary "Retrieves specified word"
@@ -38,11 +35,9 @@
               (let [word-result (words/READ id)]
                 (if (nil? word-result)
                   {:status 404
-                   :body {:message "requested word not found"}
-                   :headers {"session-id" session-id}}
+                   :body {:message "requested word not found"}}
                   {:status 200
-                   :body word-result
-                   :headers {"session-id" session-id}})))})
+                   :body word-result})))})
 
 (def word-update
   {:summary "Updates specified word"
@@ -54,8 +49,7 @@
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
               (if-not (words/EXISTS? id)
                 {:status 404
-                 :body {:message "word not found"}
-                 :headers {"session-id" session-id}}
+                 :body {:message "word not found"}}
                 (let [current-word (words/READ id)
                       proposed-word (merge current-word body)
                       same-name-word (first (words/READ-ALL-BY-FIELDS [(:user-id proposed-word)
@@ -67,20 +61,16 @@
                            (not (= (:id current-word)
                                    (:id same-name-word))))
                     {:status 500
-                     :body {:message "unable to update word, identical word likely exists"}
-                     :headers {"session-id" session-id}}
+                     :body {:message "unable to update word, identical word likely exists"}}
                     (if-not (users/EXISTS? (:user-id proposed-word))
                       {:status 500
-                       :body {:message "user not found"}
-                       :headers {"session-id" session-id}}
+                       :body {:message "user not found"}}
                       (let [result (words/UPDATE id body)]
                         (if (= 0 result)
                           {:status 500
-                           :body {:message "unable to update word"}
-                           :headers {"session-id" session-id}}
+                           :body {:message "unable to update word"}}
                           {:status 200
-                           :body {:message (str result " words updated")}
-                           :headers {"session-id" session-id}})))))))})
+                           :body {:message (str result " words updated")}})))))))})
 
 (def word-delete
   {:summary "Deletes specified word"
@@ -92,8 +82,6 @@
               (let [result (words/DELETE id)]
                 (if (nil? result)
                   {:status 404
-                   :body {:message "requested word not found"}
-                   :headers {"session-id" session-id}}
+                   :body {:message "requested word not found"}}
                   {:status 200
-                   :body {:message (str result " words deleted")}
-                   :headers {"session-id" session-id}})))})
+                   :body {:message (str result " words deleted")}})))})

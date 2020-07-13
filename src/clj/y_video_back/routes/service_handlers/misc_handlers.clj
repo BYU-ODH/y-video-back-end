@@ -20,8 +20,7 @@
    :responses {200 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header} :parameters}]
               {:status 200
-               :body {:message "this route does nothing!"}
-               :headers {"session-id" session-id}})})
+               :body {:message "this route does nothing!"}})})
 
 
 (def connect-collection-and-course ;; Non-functional
@@ -30,8 +29,7 @@
    :responses {200 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header} :parameters}]
               {:status 200
-               :body {:message "placeholder"}
-               :headers {"session-id" session-id}})})
+               :body {:message "placeholder"}})})
 
 ;; Searches across users, collections, resources, and courses
 (def search-by-term ;; Non-functional
@@ -64,5 +62,4 @@
                  :body {:users user-result
                         :collections collection-result
                         :resources resource-result
-                        :courses course-result}
-                 :headers {"session-id" session-id}}))})
+                        :courses course-result}}))})

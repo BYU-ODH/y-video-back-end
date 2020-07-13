@@ -99,6 +99,11 @@
       ((if (:websocket? request) handler wrapped) request))))
 
 
+(defn get-session-id
+  "Gets session-id out of request"
+  [req]
+  (:session-id (:header (:parameters req))))
+
 (defn check-permission
   "Checks user has permission for route"
   [handler]
@@ -108,6 +113,14 @@
       (handler request)
       (error-page {:status 401, :title "401 - Unauthorized",
                    :image "anakin_sitting.jpg", :caption "It's unfair! How can you be on this website and not be an admin?!"}))))
+
+(defn add-session-id
+  "Adds new session-id to response header"
+  [handler]
+  (fn [request]
+    (let [new-id (ru/get-new-session-id (get-session-id request))
+          response (handler request)]
+      (assoc-in response [:headers "session-id"] new-id))))
 
 (defn wrap-api [handler]
   (let [check-csrf  (if-not (:test env) wrap-csrf identity)]
@@ -129,7 +142,8 @@
 
 (defn wrap-api-post [handler]
   (-> handler
-      check-permission))
+      check-permission
+      add-session-id))
 
 (defn wrap-base [handler]
   (-> ((:middleware defaults) handler)
