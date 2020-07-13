@@ -92,6 +92,8 @@
   "Checks for session-id in request header, then calls has-permission"
   [uri headers body]
   (if (or (clojure.string/starts-with? uri "/api/get-session-id/")
+          (clojure.string/starts-with? uri "/api/api-docs")
+          (clojure.string/starts-with? uri "/api/swagger")
           (= uri "/api/ping"))
     true
     (if (not (contains? headers :session-id))
