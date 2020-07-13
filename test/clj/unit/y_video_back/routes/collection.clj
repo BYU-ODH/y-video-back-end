@@ -31,6 +31,16 @@
 (tcore/basic-transaction-fixtures
   (mount.core/start #'y-video-back.handler/app))
 
+(deftest test-session-id-header
+  (testing "coll CREATE - session id header"
+    (let [coll-one (db-pop/get-collection)]
+      (let [res (rp/collection-post coll-one)]
+        (is (= 200 (:status res)))
+        (let [id (ut/to-uuid (:id (m/decode-response-body res)))]
+              ;header (m/decode-response-body res)]
+          (is (= (into coll-one {:id id})
+                 (ut/remove-db-only (collections/READ id)))))))))
+
 (deftest test-coll
   (testing "coll CREATE"
     (let [coll-one (db-pop/get-collection)]
