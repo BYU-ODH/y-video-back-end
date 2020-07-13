@@ -16,3 +16,4 @@
 (defn EXISTS? [id] (not (nil? (db/READ :contents-undeleted id))))
 (def READ-BY-COLLECTION (partial db/read-all-where :contents-undeleted :collection-id))
 (def INCR-VIEWS (partial db/increment-field :contents :views))
+(defn ELIGIBLE-CONT-SUB? [content-id subtitle-id] (not (empty? (db/read-where-and :cont_res_sub [:content-id :subtitle-id] [content-id subtitle-id]))))

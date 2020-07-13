@@ -12,7 +12,8 @@
       [y-video-back.db.core :refer [*db*] :as db]
       [y-video-back.utils.utils :as ut]
       [y-video-back.utils.db-populator :as db-pop]
-      [y-video-back.db.subtitles :as subtitles]))
+      [y-video-back.db.subtitles :as subtitles]
+      [y-video-back.db.content-subtitles-assoc :as content-subtitles-assoc]))
 
 (declare ^:dynamic *txn*)
 
@@ -55,3 +56,20 @@
           res (rp/subtitle-id-delete (:id sbtl-one))]
       (is (= 200 (:status res)))
       (is (= nil (subtitles/READ (:id sbtl-one)))))))
+
+(deftest sbtl-cont
+  (testing "add sbtl to cont, same rsrc"
+    (let [cont-one (db-pop/add-content)
+          rsrc-id (:resource-id cont-one)
+          sbtl-one (db-pop/add-subtitle rsrc-id)
+          res (rp/content-id-add-subtitle (:id cont-one) (:id sbtl-one))]
+      (is (= 200 (:status res)))
+      (is (= {:id (ut/to-uuid (:id (m/decode-response-body res)))
+              :content-id (:id cont-one)
+              :subtitle-id (:id sbtl-one)}
+             (ut/remove-db-only (first (content-subtitles-assoc/READ-BY-IDS [(:id cont-one) (:id sbtl-one)])))))))
+  (testing "add sbtl to cont, wrong rsrc"
+    (let [cont-one (db-pop/add-content)
+          sbtl-one (db-pop/add-subtitle)
+          res (rp/content-id-add-subtitle (:id cont-one) (:id sbtl-one))]
+      (is (= 500 (:status res))))))

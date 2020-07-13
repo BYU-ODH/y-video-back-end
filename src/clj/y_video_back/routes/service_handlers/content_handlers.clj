@@ -150,19 +150,23 @@
                     {:status 500
                      :body {:message "subtitle not found"}
                      :headers {"session-id" session-id}}
-                    (if (content-subtitles-assoc/EXISTS-CONT-SBTL? id (:subtitle-id body))
+                    (if (not (contents/ELIGIBLE-CONT-SUB? id (:subtitle-id body)))
                       {:status 500
-                       :body {:message "subtitle already connected to content"}
+                       :body {:message "content and subtitle not eligible for connection"}
                        :headers {"session-id" session-id}}
-                      (let [result (utils/get-id (content-subtitles-assoc/CREATE (into body {:content-id id})))]
-                        (if (= nil result)
-                          {:status 500
-                           :body {:message "unable to add subtitle"}
-                           :headers {"session-id" session-id}}
-                          {:status 200
-                           :body {:message (str 1 " subtitles added to content")
-                                  :id result}
-                           :headers {"session-id" session-id}})))))))})
+                      (if (content-subtitles-assoc/EXISTS-CONT-SBTL? id (:subtitle-id body))
+                        {:status 500
+                         :body {:message "subtitle already connected to content"}
+                         :headers {"session-id" session-id}}
+                        (let [result (utils/get-id (content-subtitles-assoc/CREATE (into body {:content-id id})))]
+                          (if (= nil result)
+                            {:status 500
+                             :body {:message "unable to add subtitle"}
+                             :headers {"session-id" session-id}}
+                            {:status 200
+                             :body {:message (str 1 " subtitles added to content")
+                                    :id result}
+                             :headers {"session-id" session-id}}))))))))})
 
 (def content-remove-subtitle
   {:summary "Removes subtitle from specified content"

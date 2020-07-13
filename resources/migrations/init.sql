@@ -364,6 +364,15 @@ CREATE VIEW collections_by_resource AS
     ON collections_undeleted.id = contents_undeleted.collection_id
     JOIN resources_undeleted ON contents_undeleted.resource_id = resources_undeleted.id;
 
+DROP VIEW IF EXISTS cont_res_sub;
+CREATE VIEW cont_res_sub AS
+    SELECT c.id AS content_id, r.id AS resource_id, s.id AS subtitle_id
+    FROM contents_undeleted AS c
+    JOIN resources_undeleted AS r
+    ON c.resource_id = r.id
+    JOIN subtitles_undeleted AS s
+    ON s.resource_id = r.id;
+
 --------------------------------------------------
 -- Set up resource placeholder for online media --
 --------------------------------------------------
