@@ -24,8 +24,7 @@
                                                   [:email :account-name :username]
                                                   (str "%" term "%")))]
                 {:status 200
-                 :body res
-                 :headers {"session-id" session-id}}))})
+                 :body res}))})
 
 (def search-by-collection ;; Non-functional
   {:summary "Searches users, collections, resources, and courses by search term"
@@ -41,8 +40,7 @@
                     res (map #(into % {:username (:username (users/READ (:owner %)))})
                              coll-res)]
                 {:status 200
-                 :body res
-                 :headers {"session-id" session-id}}))})
+                 :body res}))})
 
 (def search-by-content
   {:summary "Searches users, collections, contents, and courses by search term"
@@ -56,8 +54,7 @@
                                                   [:title :content-type :url :description :tags :file-version]
                                                   (str "%" term "%")))]
                 {:status 200
-                 :body res
-                 :headers {"session-id" session-id}}))})
+                 :body res}))})
 
 
 (def search-by-resource
@@ -72,5 +69,4 @@
                                                   [:resource-name :resource-type :requester-email]
                                                   (str "%" term "%")))]
                 {:status 200
-                 :body res
-                 :headers {"session-id" session-id}}))})
+                 :body res}))})

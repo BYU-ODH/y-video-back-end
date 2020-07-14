@@ -80,6 +80,11 @@
   ([target-id user-id]
    (is-child? target-id user-id ##Inf)))
 
+(defn get-new-session-id
+  "Generate new session-id, associated with same user as given session-id - Non-functional"
+  [session-id]
+  session-id)
+
 (defn has-permission
   "Placeholder for real has-permission function. Checks for session-id-bypass or (any) user-id."
   [token route args]

@@ -22,12 +22,10 @@
    :handler (fn [{{{:keys [session-id]} :header :keys [body]} :parameters}]
               (if-not (= '() (users/READ-BY-EMAIL [(:email body)]))
                 {:status 500
-                 :body {:message "email already taken"}
-                 :headers {"session-id" session-id}}
+                 :body {:message "email already taken"}}
                 {:status 200
                  :body {:message "1 user created"
-                        :id (utils/get-id (users/CREATE body))}
-                 :headers {"session-id" session-id}}))})
+                        :id (utils/get-id (users/CREATE body))}}))})
 
 (def user-get-by-id
   {:summary "Retrieves specified user"
@@ -39,11 +37,9 @@
               (let [user-result (users/READ id)]
                 (if (nil? user-result)
                   {:status 404
-                   :body {:message "user not found"}
-                   :headers {"session-id" session-id}}
+                   :body {:message "user not found"}}
                   {:status 200
-                   :body user-result
-                   :headers {"session-id" session-id}})))})
+                   :body user-result})))})
 
 
 (def user-update
@@ -56,11 +52,9 @@
               (let [result (users/UPDATE id body)]
                 (if (nil? result)
                   {:status 404
-                   :body {:message "requested user not found"}
-                   :headers {"session-id" session-id}}
+                   :body {:message "requested user not found"}}
                   {:status 200
-                   :body {:message (str 1 " users updated")}  ; I know, hard coded. Will change later.
-                   :headers {"session-id" session-id}})))})
+                   :body {:message (str 1 " users updated")}})))})  ; I know, hard coded. Will change later.
 
 (def user-delete
   {:summary "Deletes specified user"
@@ -72,11 +66,9 @@
               (let [result (users/DELETE id)]
                 (if (nil? result)
                   {:status 404
-                   :body {:message "requested user not found"}
-                   :headers {"session-id" session-id}}
+                   :body {:message "requested user not found"}}
                   {:status 200
-                   :body {:message (str result " users deleted")}
-                   :headers {"session-id" session-id}})))})
+                   :body {:message (str result " users deleted")}})))})
 
 
 (def user-get-logged-in ;; Non-functional
@@ -90,16 +82,13 @@
               (let [user-id (ru/token-to-user-id session-id)]
                 (if-not (users/EXISTS? user-id) ; this can only be true if using session-id-bypass
                   {:status 404
-                   :body {:message "user not found"}
-                   :headers {"session-id" session-id}}
+                   :body {:message "user not found"}}
                   (let [user-result (users/READ user-id)]
                     (if (nil? user-result)
                       {:status 500
-                       :body {:message "user not found, not sure why"}
-                       :headers {"session-id" session-id}}
+                       :body {:message "user not found, not sure why"}}
                       {:status 200
-                       :body user-result
-                       :headers {"session-id" session-id}})))))})
+                       :body user-result})))))})
 
 
 (def user-get-all-collections ;; Non-functional
@@ -111,8 +100,7 @@
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
               (if-not (users/EXISTS? id)
                 {:status 404
-                 :body {:message "user not found"}
-                 :headers {"session-id" session-id}}
+                 :body {:message "user not found"}}
                 (let [user-collections-result (user-collections-assoc/READ-COLLECTIONS-BY-USER id)]
                   (let [collection-result (map #(-> %
                                                     (utils/remove-db-only)
@@ -120,8 +108,7 @@
                                                     (dissoc :account-role))
                                                user-collections-result)]
                       {:status 200
-                       :body collection-result
-                       :headers {"session-id" session-id}}))))})
+                       :body collection-result}))))})
 
 (def user-get-all-collections-by-logged-in
   {:summary "Retrieves all collections for session user"
@@ -132,8 +119,7 @@
               (let [user-id (ru/token-to-user-id session-id)]
                 (if-not (users/EXISTS? user-id)
                   {:status 404
-                   :body {:message "user not found"}
-                   :headers {"session-id" session-id}}
+                   :body {:message "user not found"}}
                   (let [user-owner-result (collections/READ-ALL-BY-OWNER [user-id])
                         user-collections-result (user-collections-assoc/READ-COLLECTIONS-BY-USER user-id)
                         user-courses-result (users/READ-COLLECTIONS-BY-USER-VIA-COURSES user-id)]
@@ -154,8 +140,7 @@
                                                  (assoc :content (map utils/remove-db-only (contents/READ-BY-COLLECTION (:id %)))))
                                             (distinct (concat courses-result collections-result owner-result)))]
                       {:status 200
-                       :body total-result
-                       :headers {"session-id" session-id}})))))})
+                       :body total-result})))))})
 
 (def user-get-all-courses ;; Non-functional
   {:summary "Retrieves all courses for specified user"
@@ -166,8 +151,7 @@
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
               (if-not (users/EXISTS? id)
                 {:status 404
-                 :body {:message "user not found"}
-                 :headers {"session-id" session-id}}
+                 :body {:message "user not found"}}
                 (let [user-courses-result (user-courses-assoc/READ-COURSES-BY-USER id)]
                   (let [course-result (map #(-> %
                                                 (utils/remove-db-only)
@@ -175,8 +159,7 @@
                                                 (dissoc :account-role))
                                            user-courses-result)]
                       {:status 200
-                       :body course-result
-                       :headers {"session-id" session-id}}))))})
+                       :body course-result}))))})
 
 
 (def user-get-all-words
@@ -188,10 +171,8 @@
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
               (if-not (users/EXISTS? id)
                 {:status 404
-                 :body {:message "user not found"}
-                 :headers {"session-id" session-id}}
+                 :body {:message "user not found"}}
                 (let [user-words-result (users/READ-WORDS id)]
                   (let [word-result (map #(utils/remove-db-only %) user-words-result)]
                       {:status 200
-                       :body word-result
-                       :headers {"session-id" session-id}}))))})
+                       :body word-result}))))})

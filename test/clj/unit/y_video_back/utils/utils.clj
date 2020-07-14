@@ -1,6 +1,7 @@
 (ns y-video-back.utils.utils
   (:require
-    [muuntaja.core :as m]))
+    [muuntaja.core :as m]
+    [clojure.test :refer :all]))
 
 
 (defn under-to-hyphen
@@ -53,3 +54,9 @@
    (let [shuffled-map (shuffle (seq map-in))
          cutoff (+ min-take (rand-int (- (inc max-take) min-take)))]
      (into {} (take cutoff shuffled-map)))))
+
+(defn check-header
+  "Checks if session-id is in response header"
+  [res]
+  (is (contains? (:headers res) "session-id")) ;; Change to actually decode header then check
+  res)

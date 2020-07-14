@@ -21,21 +21,17 @@
    :handler (fn [{{{:keys [session-id]} :header :keys [body]} :parameters}]
               (if-not (collections/EXISTS? (:collection-id body))
                 {:status 500
-                 :body {:message "collection not found"}
-                 :headers {"session-id" session-id}}
+                 :body {:message "collection not found"}}
                 (if-not (resources/EXISTS? (:resource-id body))
                   {:status 500
-                   :body {:message "resource not found"}
-                   :headers {"session-id" session-id}}
+                   :body {:message "resource not found"}}
                   (if (contents/EXISTS-COLL-CONT? (:collection-id body) (:resource-id body))
                     {:status 500
-                     :body {:message "content connecting collection and resource already exists"}
-                     :headers {"session-id" session-id}}
+                     :body {:message "content connecting collection and resource already exists"}}
                     (let [res (contents/CREATE body)]
                       {:status 200
                        :body {:message "1 content created"
-                              :id (utils/get-id res)}
-                       :headers {"session-id" session-id}})))))})
+                              :id (utils/get-id res)}})))))})
 
 (def content-get-by-id
   {:summary "Retrieves specified content"
@@ -47,11 +43,9 @@
               (let [res (contents/READ id)]
                 (if (nil? res)
                   {:status 404
-                   :body {:message "requested content not found"}
-                   :headers {"session-id" session-id}}
+                   :body {:message "requested content not found"}}
                   {:status 200
-                   :body res
-                   :headers {"session-id" session-id}})))})
+                   :body res})))})
 
 (def content-update ;; Non-functional
   {:summary "Updates the specified content"
@@ -63,22 +57,18 @@
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
               (if-not (contents/EXISTS? id)
                 {:status 404
-                 :body {:message "content not found"}
-                 :headers {"session-id" session-id}}
+                 :body {:message "content not found"}}
                 (let [current-content (contents/READ id)
                       proposed-content (merge current-content body)]
                   (if-not (collections/EXISTS? (:collection-id proposed-content))
                     {:status 500
-                     :body {:message "collection not found"}
-                     :headers {"session-id" session-id}}
+                     :body {:message "collection not found"}}
                     (if-not (resources/EXISTS? (:resource-id proposed-content))
                       {:status 500
-                       :body {:message "resource not found"}
-                       :headers {"session-id" session-id}}
+                       :body {:message "resource not found"}}
                       (let [result (contents/UPDATE id body)]
                         {:status 200
-                         :body {:message (str result " contents updated")}
-                         :headers {"session-id" session-id}}))))))})
+                         :body {:message (str result " contents updated")}}))))))})
 
 (def content-delete ;; Non-functional
   {:summary "Deletes the specified content"
@@ -90,11 +80,9 @@
               (let [result (contents/DELETE id)]
                 (if (nil? result)
                   {:status 404
-                   :body {:message "content not found"}
-                   :headers {"session-id" session-id}}
+                   :body {:message "content not found"}}
                   {:status 200
-                   :body {:message (str result " contents deleted")}
-                   :headers {"session-id" session-id}})))})
+                   :body {:message (str result " contents deleted")}})))})
 
 (def content-add-view
   {:summary "Adds view to content and resource"
@@ -106,21 +94,17 @@
               (let [this-content (contents/READ id)]
                 (if (nil? this-content)
                   {:status 404
-                   :body {:message "content not found"}
-                   :headers {"session-id" session-id}}
+                   :body {:message "content not found"}}
                   (let [res-cont (contents/INCR-VIEWS id)]
                     (if (= res-cont [0])
                       {:status 500
-                       :body {:message "unable to increment content view, aborting resource increment"}
-                       :headers {"session-id" session-id}}
+                       :body {:message "unable to increment content view, aborting resource increment"}}
                       (let [res-rsrc (resources/INCR-VIEWS (:resource-id this-content))]
                         (if (= res-rsrc [0])
                           {:status 500
-                           :body {:message "content view incremented, but unable to increment resource view"}
-                           :headers {"session-id" session-id}}
+                           :body {:message "content view incremented, but unable to increment resource view"}}
                           {:status 200
-                           :body {:message "incremented views on content and resource"}
-                           :headers {"session-id" session-id}})))))))})
+                           :body {:message "incremented views on content and resource"}})))))))})
 
 (def content-add-subtitle
   {:summary "Adds subtitle to specified content"
@@ -132,29 +116,23 @@
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
               (if (not (contents/EXISTS? id))
                 {:status 404
-                 :body {:message "content not found"}
-                 :headers {"session-id" session-id}}
+                 :body {:message "content not found"}}
                 (if (not (subtitles/EXISTS? (:subtitle-id body)))
                   {:status 500
-                   :body {:message "subtitle not found"}
-                   :headers {"session-id" session-id}}
+                   :body {:message "subtitle not found"}}
                   (if (not (contents/ELIGIBLE-CONT-SUB? id (:subtitle-id body)))
                     {:status 500
-                     :body {:message "content and subtitle not eligible for connection"}
-                     :headers {"session-id" session-id}}
+                     :body {:message "content and subtitle not eligible for connection"}}
                     (if (content-subtitles-assoc/EXISTS-CONT-SBTL? id (:subtitle-id body))
                       {:status 500
-                       :body {:message "subtitle already connected to content"}
-                       :headers {"session-id" session-id}}
+                       :body {:message "subtitle already connected to content"}}
                       (let [result (utils/get-id (content-subtitles-assoc/CREATE (into body {:content-id id})))]
                         (if (= nil result)
                           {:status 500
-                           :body {:message "unable to add subtitle"}
-                           :headers {"session-id" session-id}}
+                           :body {:message "unable to add subtitle"}}
                           {:status 200
                            :body {:message (str 1 " subtitles added to content")
-                                  :id result}
-                           :headers {"session-id" session-id}})))))))})
+                                  :id result}})))))))})
 
 (def content-remove-subtitle
   {:summary "Removes subtitle from specified content"
@@ -166,21 +144,16 @@
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
               (if (not (contents/EXISTS? id))
                 {:status 404
-                 :body {:message "content not found"}
-                 :headers {"session-id" session-id}}
+                 :body {:message "content not found"}}
                 (if (not (subtitles/EXISTS? (:subtitle-id body)))
                   {:status 500
-                   :body {:message "subtitle not found"}
-                   :headers {"session-id" session-id}}
+                   :body {:message "subtitle not found"}}
                   (if-not (content-subtitles-assoc/EXISTS-CONT-SBTL? id (:subtitle-id body))
                     {:status 500
-                     :body {:message "subtitle not connected to content"}
-                     :headers {"session-id" session-id}}
+                     :body {:message "subtitle not connected to content"}}
                     (let [result (content-subtitles-assoc/DELETE-BY-IDS [id (:subtitle-id body)])]
                       (if (= 0 result)
                         {:status 500
-                         :body {:message "unable to remove subtitle"}
-                         :headers {"session-id" session-id}}
+                         :body {:message "unable to remove subtitle"}}
                         {:status 200
-                         :body {:message (str result " subtitles removed from content")}
-                         :headers {"session-id" session-id}}))))))})
+                         :body {:message (str result " subtitles removed from content")}}))))))})

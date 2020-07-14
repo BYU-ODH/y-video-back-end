@@ -17,12 +17,10 @@
    :handler (fn [{{{:keys [session-id]} :header :keys [body]} :parameters}]
               (if-not (resources/EXISTS? (:resource-id body))
                 {:status 500
-                 :body {:message "resource not found"}
-                 :headers {"session-id" session-id}}
+                 :body {:message "resource not found"}}
                 {:status 200
                  :body {:message "1 subtitle created"
-                        :id (utils/get-id (subtitles/CREATE body))}
-                 :headers {"session-id" session-id}}))})
+                        :id (utils/get-id (subtitles/CREATE body))}}))})
 
 
 
@@ -36,11 +34,9 @@
               (let [res (subtitles/READ id)]
                 (if (nil? res)
                   {:status 404
-                   :body {:message "requested subtitle not found"}
-                   :headers {"session-id" session-id}}
+                   :body {:message "requested subtitle not found"}}
                   {:status 200
-                   :body res
-                   :headers {"session-id" session-id}})))})
+                   :body res})))})
 
 (def subtitle-update
   {:summary "Updates specified subtitle"
@@ -52,8 +48,7 @@
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
               (if-not (subtitles/EXISTS? id)
                 {:status 404
-                 :body {:message "subtitle not found"}
-                 :headers {"session-id" session-id}}
+                 :body {:message "subtitle not found"}}
                 (let [current-subtitle (subtitles/READ id)
                       proposed-subtitle (merge current-subtitle body)
                       same-name-subtitle (first (subtitles/READ-BY-TITLE-RSRC [(:title proposed-subtitle
@@ -63,20 +58,16 @@
                            (not (= (:id current-subtitle)
                                    (:id same-name-subtitle))))
                     {:status 500
-                     :body {:message "unable to update subtitle, title-resource pair likely exists"}
-                     :headers {"session-id" session-id}}
+                     :body {:message "unable to update subtitle, title-resource pair likely exists"}}
                     (if-not (resources/EXISTS? (:resource-id proposed-subtitle))
                       {:status 500
-                       :body {:message "resource not found"}
-                       :headers {"session-id" session-id}}
+                       :body {:message "resource not found"}}
                       (let [result (subtitles/UPDATE id body)]
                         (if (= 0 result)
                           {:status 500
-                           :body {:message "unable to update subtitle"}
-                           :headers {"session-id" session-id}}
+                           :body {:message "unable to update subtitle"}}
                           {:status 200
-                           :body {:message (str result " subtitles updated")}
-                           :headers {"session-id" session-id}})))))))})
+                           :body {:message (str result " subtitles updated")}})))))))})
 
 (def subtitle-delete
   {:summary "Deletes specified subtitle"
@@ -88,8 +79,6 @@
               (let [result (subtitles/DELETE id)]
                 (if (nil? result)
                   {:status 404
-                   :body {:message "requested subtitle not found"}
-                   :headers {"session-id" session-id}}
+                   :body {:message "requested subtitle not found"}}
                   {:status 200
-                   :body {:message (str result " subtitles deleted")}
-                   :headers {"session-id" session-id}})))})
+                   :body {:message (str result " subtitles deleted")}})))})
