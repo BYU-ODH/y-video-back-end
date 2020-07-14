@@ -78,3 +78,9 @@
   ['(:first :last)]
   [{:keys [first last]}]
   (str "why so formal, " first " " last "?"))
+
+
+(try
+  (throw (Exception. "one"))
+  (catch (Exception. "one") e
+    (prn "caught" e)))

@@ -118,9 +118,11 @@
   "Adds new session-id to response header"
   [handler]
   (fn [request]
-    (let [new-id (ru/get-new-session-id (get-session-id request))
-          response (handler request)]
-      (assoc-in response [:headers "session-id"] new-id))))
+    (if (clojure.string/starts-with? uri "/api/api-docs")
+      (handler request)
+      (let [new-id (ru/get-new-session-id (get-session-id request))
+            response (handler request)]
+        (assoc-in response [:headers "session-id"] new-id)))))
 
 (defn wrap-api [handler]
   (let [check-csrf  (if-not (:test env) wrap-csrf identity)]
