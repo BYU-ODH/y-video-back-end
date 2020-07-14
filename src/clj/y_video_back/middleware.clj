@@ -118,7 +118,7 @@
   "Adds new session-id to response header"
   [handler]
   (fn [request]
-    (if (clojure.string/starts-with? uri "/api/api-docs")
+    (if (clojure.string/starts-with? (:uri request) "/api/api-docs")
       (handler request)
       (let [new-id (ru/get-new-session-id (get-session-id request))
             response (handler request)]
