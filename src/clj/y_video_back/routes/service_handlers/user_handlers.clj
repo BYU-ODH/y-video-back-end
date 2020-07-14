@@ -87,8 +87,10 @@
                     (if (nil? user-result)
                       {:status 500
                        :body {:message "user not found, not sure why"}}
-                      {:status 200
-                       :body user-result})))))})
+                      (do
+                        (users/UPDATE user-id {:last-login (str (utils/now))})
+                        {:status 200
+                         :body user-result}))))))})
 
 
 (def user-get-all-collections ;; Non-functional

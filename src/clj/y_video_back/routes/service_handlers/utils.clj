@@ -36,6 +36,16 @@
   [res]
   (str (:id res)))
 
+(defn now [] (new java.util.Date))
+
+(defn get-thumbnail
+  [url]
+  (if (clojure.string/includes? url "youtube")
+    (let [video-args (get (clojure.string/split url #"v=") 1)]
+      (if-not (nil? video-args)
+        (let [video-id (get (clojure.string/split video-args #"&") 0)]
+          (str "https://img.youtube.com/vi/" video-id "/0.jpg"))))))
+
 (defn user-db-to-front
   "Replace keywords with what the front end expects"
   [user]
