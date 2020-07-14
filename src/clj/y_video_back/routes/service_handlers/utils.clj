@@ -72,3 +72,16 @@
    :dateValidated (:date-validated cont)
    :views (:views cont)
    :metadata (:metadata cont)})
+
+(defn run-tests
+  "Runs arg 0 of each test. If any evaluates false, returns arg 1 of failing test.
+  tests: test0 arg0 test1 arg1 test2 arg2"
+  [& tests])
+
+
+
+(defn temp
+  [& args]
+  args)
+
+(def v [[false 1] [false 2] [true 3] [true 4]])

@@ -106,7 +106,7 @@
            [:div {:class "column is-half"}
             [:div.alert.alert-warning]
             [:h1 {:class "title"} (or (:title error-details) (str "Error " (:status error-details)))]
-            [:div [:img {:class "is-centered" :src (str images-path "/" (:image error-details))}]]
+            [:div [:img {:class "is-centered" :src (str (:image error-details))}]]
             [:div [:h1.title (:caption error-details)]]
             [:div.error-details (:message error-details)]]])})
 

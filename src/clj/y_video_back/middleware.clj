@@ -107,7 +107,7 @@
     (if (ru/req-has-permission (:uri request) (:header (:parameters request)) (:body (:parameters request)))
       (handler request)
       (error-page {:status 401, :title "401 - Unauthorized",
-                   :image "anakin_sitting.jpg", :caption "It's unfair! How can you be on this website and not be an admin?!"}))))
+                   :image "https://www.cheatsheet.com/wp-content/uploads/2020/02/anakin_council_ROTS.jpg", :caption "It's unfair! How can you be on this website and not be an admin?!"}))))
 
 (defn wrap-api [handler]
   (let [check-csrf  (if-not (:test env) wrap-csrf identity)]
