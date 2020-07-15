@@ -31,9 +31,12 @@
   (layout/render request "hello.html"))
 
 (defn index-page [request]
-  (let [session-id (uc/get-session-id (:username request))]
-    (println (str "serving session-id from home.clj: " session-id))
-    (layout/render (into request {:session-id session-id}) "index.html")))
+  (if (nil? (:username request))
+    "failed to provide username"
+    (let [session-id (uc/get-session-id (:username request))]
+      (println (str "user from CAS: " (:username request)))
+      (println (str "serving session-id from home.clj: " session-id))
+      (layout/render (into request {:session-id session-id}) "index.html"))))
 
 (defn factor-home [request]
   (layout/render request "fear-no-factor.html"))
