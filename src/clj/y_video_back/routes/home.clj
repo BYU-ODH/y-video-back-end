@@ -71,4 +71,6 @@
          ["/about" {:get factor-about}]
          ["/contact" {:get factor-contact}]
          ["/echo" {:get echo-page}]
-         ["/index" {:get index-page}])))
+         ["/index" {:get index-page}]
+         ["/manager" {:get index-page}]
+         ["/admin" {:get index-page}])))
