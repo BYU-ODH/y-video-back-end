@@ -6,26 +6,8 @@
      [y-video-back.middleware :as middleware]
      [y-video-back.user-creator :as uc]))
 
-
-
-;(defn home-page [request]
-;  (layout/render request "home.html" {:docs (-> "docs/docs.md" io/resource slurp)}))
-
-;(defn about-page [request]
-;  (layout/render request "about.html"))
-
-;(defn home-routes []
-;  [""
-;   {:middleware [middleware/wrap-csrf
-;                 middleware/wrap-formats
-;   ["/" {:get home-page}]
-;   ["/about" {:get about-page}]))
-
-
-
 (defn home-page [request-map]
   (layout/hiccup-render-cljs-base {:username request-map}))
-
 
 (defn hello-page [request]
   (layout/render request "hello.html"))
@@ -38,21 +20,8 @@
       (println (str "serving session-id from home.clj: " session-id))
       (layout/render (into request {:session-id session-id}) "index.html"))))
 
-(defn factor-home [request]
-  (layout/render request "fear-no-factor.html"))
-
-(defn factor-about [request]
-  (layout/render request "about.html"))
-
-(defn factor-contact [request]
-  (layout/render request "contact.html"))
-
-(defn echo-page [request]
-  (layout/render request "echo.html"))
-
 (def ^{:private true} home-paths
   ["/"])
-
 
 (defn home-routes
   "The basic routes to be handled by the SPA (as rendered by fn `home-page`)"
@@ -63,16 +32,22 @@
         (conj
          (for [path home-paths]
            [path {:get index-page}])
+
+         ; dev routes
          ["/ping" {:get (constantly (response/ok {:message "pong"}))}]
-         ["/ping-post" {:post (constantly (response/ok {:message "pong"}))}]
-         ["/who-am-i" {:get (fn [request] {:status 200 :body {:username (:username request)}})}]
-         ["/show-request" {:get (fn [request] {:status 200 :body {:request (str request)}})}]
          ["/hello" {:get hello-page}]
-         ["/factoring" {:get factor-home}]
-         ["/about" {:get factor-about}]
-         ["/contact" {:get factor-contact}]
-         ["/echo" {:get echo-page}]
+         ["/who-am-i" {:get (fn [request] {:status 200 :body {:username (:username request)}})}]
+         ["/show-request" {:get (fn [request] {:status 200 :body {:request (str request)
+                                                                  :cas-info (:cas-info request)}})}]
+
+         ; React BrowserRouter support
          ["/index" {:get index-page}]
+         ["/admin" {:get index-page}]
+         ["/collections" {:get index-page}]
+         ["/lab-assistant" {:get index-page}]
+         ["/lab-assistant-manager/:professorId" {:get index-page}]
+         ["/lab-assistant-manager/:professorId/:collectionId" {:get index-page}]
          ["/manager" {:get index-page}]
-         ["/manager/*" {:get index-page}]
-         ["/admin" {:get index-page}])))
+         ["/manager/:id" {:get index-page}]
+         ["/player/:id" {:get index-page}]
+         ["/trackeditor/:id" {:get index-page}])))
