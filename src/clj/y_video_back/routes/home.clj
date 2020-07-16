@@ -66,6 +66,7 @@
          ["/ping" {:get (constantly (response/ok {:message "pong"}))}]
          ["/ping-post" {:post (constantly (response/ok {:message "pong"}))}]
          ["/who-am-i" {:get (fn [request] {:status 200 :body {:username (:username request)}})}]
+         ["/show-request" {:get (fn [request] {:status 200 :body {:request (str request)}})}]
          ["/hello" {:get hello-page}]
          ["/factoring" {:get factor-home}]
          ["/about" {:get factor-about}]
