@@ -73,4 +73,5 @@
          ["/echo" {:get echo-page}]
          ["/index" {:get index-page}]
          ["/manager" {:get index-page}]
+         ["/manager/*" {:get index-page}]
          ["/admin" {:get index-page}])))

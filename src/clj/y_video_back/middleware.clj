@@ -27,7 +27,9 @@
    "Access-Control-Allow-Methods" "GET POST OPTIONS DELETE PUT"})
 
 (defn wrap-cas [handler]
-  (cas/wrap-cas handler (str (-> env :y-video-back :site-url) "/")))
+  (fn [request]
+    ((cas/wrap-cas handler (str (-> env :y-video-back :site-url) (str (:uri request))))
+     request)))
 
 (defn wrap-cas-to-request-url
   "redirects user to BYU cas login"
