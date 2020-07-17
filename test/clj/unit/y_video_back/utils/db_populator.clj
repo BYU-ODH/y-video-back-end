@@ -67,16 +67,23 @@
 
 (defn get-collection
   "Creates collection, ready to be added to db"
-  []
-  (let [new-user (ut/under-to-hyphen (users/CREATE (g/get-random-user-without-id)))]
-    (g/get-random-collection-without-id (:id new-user))))
+  ([]
+   (let [new-user (ut/under-to-hyphen (users/CREATE (g/get-random-user-without-id)))]
+     (g/get-random-collection-without-id (:id new-user))))
+  ([owner-id]
+   (g/get-random-collection-without-id owner-id)))
+
 
 (defn add-collection
   "Creates collection, adds to db"
-  []
-  (let [coll-one (get-collection)
-        coll-one-add (collections/CREATE coll-one)]
-    (assoc coll-one :id (:id coll-one-add))))
+  ([]
+   (let [coll-one (get-collection)
+         coll-one-add (collections/CREATE coll-one)]
+     (assoc coll-one :id (:id coll-one-add))))
+  ([owner-id]
+   (let [coll-one (get-collection owner-id)
+         coll-one-add (collections/CREATE coll-one)]
+     (assoc coll-one :id (:id coll-one-add)))))
 
 (defn get-content
   "Creates content, ready to be added to db"

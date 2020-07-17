@@ -103,12 +103,13 @@
               (if-not (users/EXISTS? id)
                 {:status 404
                  :body {:message "user not found"}}
-                (let [user-collections-result (user-collections-assoc/READ-COLLECTIONS-BY-USER id)]
+                (let [user-collections-result (user-collections-assoc/READ-COLLECTIONS-BY-USER id)
+                      owner-result (collections/READ-ALL-BY-OWNER [id])]
                   (let [collection-result (map #(-> %
                                                     (utils/remove-db-only)
                                                     (dissoc :user-id)
                                                     (dissoc :account-role))
-                                               user-collections-result)]
+                                               (concat user-collections-result owner-result))]
                       {:status 200
                        :body collection-result}))))})
 
