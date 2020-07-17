@@ -60,6 +60,7 @@
           coll-one (db-pop/add-collection)
           coll-two (db-pop/add-collection)
           coll-thr (db-pop/add-collection (:id user-two))
+          coll-fou (db-pop/add-collection (:id user-two))
           ; Connect one-one, two-two
           user-coll-one (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one))
           user-coll-two (db-pop/add-user-coll-assoc (:id user-two) (:id coll-two))
@@ -67,13 +68,7 @@
           res-two (rp/user-id-collections (:id user-two))]
       (is (= 200 (:status res-one)))
       (is (= 200 (:status res-two)))
-      (is (= (-> coll-one
-                 (update :id str)
-                 (update :owner str)
-                 ;(into {:user-id (str (:id user-one))
-                 ;                :account-role (:account-role user-coll-one))
-                 (ut/remove-db-only)
-                 (list))
+      (is (= '()
              (map ut/remove-db-only (m/decode-response-body res-one))))
       (is (= (map #(-> %
                        (update :id str)
@@ -81,7 +76,7 @@
                        ;(into {:user-id (str (:id user-two))
                        ;                :account-role (:account-role user-coll-two))
                        (ut/remove-db-only))
-                  [coll-two coll-thr])
+                  [coll-thr coll-fou])
              (map ut/remove-db-only (m/decode-response-body res-two)))))))
 
 (deftest user-all-crses

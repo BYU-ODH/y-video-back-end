@@ -84,3 +84,6 @@
   (throw (Exception. "one"))
   (catch (Exception. "one") e
     (prn "caught" e)))
+
+
+(first (filter #(not (= "" %)) [(:thumbnail body) (get-thumbnail ("https://www.youtube.com/watch?v=eYYUAib5EWo") "none")]))

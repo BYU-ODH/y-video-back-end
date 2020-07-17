@@ -94,7 +94,7 @@
 
 
 (def user-get-all-collections ;; Non-functional
-  {:summary "Retrieves all collections for specified user"
+  {:summary "Retrieves all collections the specified user owns"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
    :responses {200 {:body [models/collection]}
@@ -103,13 +103,12 @@
               (if-not (users/EXISTS? id)
                 {:status 404
                  :body {:message "user not found"}}
-                (let [user-collections-result (user-collections-assoc/READ-COLLECTIONS-BY-USER id)
-                      owner-result (collections/READ-ALL-BY-OWNER [id])]
+                (let [owner-result (collections/READ-ALL-BY-OWNER [id])]
                   (let [collection-result (map #(-> %
                                                     (utils/remove-db-only)
                                                     (dissoc :user-id)
                                                     (dissoc :account-role))
-                                               (concat user-collections-result owner-result))]
+                                               owner-result)]
                       {:status 200
                        :body collection-result}))))})
 
