@@ -13,13 +13,12 @@
   (layout/render request "hello.html"))
 
 (defn index-page [request]
-  (if-not (nil? (:username request))
-    "failed to provide username"
+  (if (nil? (:username request))
+    (response/ok {:message "CAS failed to provide username"})
     (let [session-id (uc/get-session-id "mchen95")]
       (println (str "user from CAS: " "mchen95"))
       (println (str "serving session-id from home.clj: " session-id))
-      (response/ok {:message "home page"}))))
-      ;(layout/render (into request {:session-id session-id}) "index.html"))))
+      (layout/render (into request {:session-id session-id}) "index.html"))))
 
 (def ^{:private true} home-paths
   ["/"])
