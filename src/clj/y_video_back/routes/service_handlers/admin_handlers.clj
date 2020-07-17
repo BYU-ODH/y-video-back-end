@@ -20,7 +20,7 @@
    :handler (fn [{{{:keys [session-id]} :header {:keys [term]} :path} :parameters}]
               (let [term (java.net.URLDecoder/decode term)
                     res (map utils/remove-db-only
-                             (db/read-all-pattern :users_undeleted
+                             (db/read-all-pattern :users-undeleted
                                                   [:email :account-name :username]
                                                   (str "%" term "%")))]
                 {:status 200
@@ -34,7 +34,7 @@
    :handler (fn [{{{:keys [session-id]} :header {:keys [term]} :path} :parameters}]
               (let [term (java.net.URLDecoder/decode term)
                     coll-res (map utils/remove-db-only
-                                  (db/read-all-pattern :collections_undeleted
+                                  (db/read-all-pattern :collections-undeleted
                                                        [:collection-name]
                                                        (str "%" term "%")))
                     res (map #(into % {:username (:username (users/READ (:owner %)))})
@@ -50,7 +50,7 @@
    :handler (fn [{{{:keys [session-id]} :header {:keys [term]} :path} :parameters}]
               (let [term (java.net.URLDecoder/decode term)
                     res (map utils/remove-db-only
-                             (db/read-all-pattern :contents_undeleted
+                             (db/read-all-pattern :contents-undeleted
                                                   [:title :content-type :url :description :tags :file-version]
                                                   (str "%" term "%")))]
                 {:status 200
@@ -65,7 +65,7 @@
    :handler (fn [{{{:keys [session-id]} :header {:keys [term]} :path} :parameters}]
               (let [term (java.net.URLDecoder/decode term)
                     res (map utils/remove-db-only
-                             (db/read-all-pattern :resources_undeleted
+                             (db/read-all-pattern :resources-undeleted
                                                   [:resource-name :resource-type :requester-email]
                                                   (str "%" term "%")))]
                 {:status 200
