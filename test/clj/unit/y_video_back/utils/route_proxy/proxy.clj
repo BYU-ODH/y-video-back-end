@@ -101,3 +101,9 @@
 (def search-by-collection admin/search-by-collection)
 (def search-by-resource admin/search-by-resource)
 (def search-by-content admin/search-by-content)
+
+(defn auth-ping
+  "ping route, requires valid session-id (any permission level)"
+  [session-id]
+  (app (-> (request :get "/api/auth-ping")
+           (header :session-id session-id))))

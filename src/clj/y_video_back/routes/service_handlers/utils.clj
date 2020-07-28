@@ -1,6 +1,8 @@
 (ns y-video-back.routes.service-handlers.utils
-  (:require [y-video-back.layout :refer [error-page]]
-            [y-video-back.db.core :as db]))
+  (:require [y-video-back.config :refer [env]]
+            [y-video-back.layout :refer [error-page]]
+            [y-video-back.db.core :as db]
+            [y-video-back.db.files :as files]))
 (defn remove-db-only
   "Removes created, updated, and deleted fields from map"
   [my-map]
@@ -45,6 +47,12 @@
       (if-not (nil? video-args)
         (let [video-id (get (clojure.string/split video-args #"&") 0)]
           (str "https://img.youtube.com/vi/" video-id "/0.jpg"))))))
+
+(defn file-id-to-path
+  "Returns absolute version of filepath for file-id"
+  [file-id]
+  (str (-> env :FILES :media-url)
+       (:filepath (files/READ file-id))))
 
 (defn user-db-to-front
   "Replace keywords with what the front end expects"

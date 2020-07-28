@@ -9,7 +9,8 @@
    [y-video-back.routes.service-handlers.subtitle-handlers :as subtitles]
    [y-video-back.routes.service-handlers.content-handlers :as contents]
    [y-video-back.routes.service-handlers.word-handlers :as words]
-   [y-video-back.routes.service-handlers.admin-handlers :as admin]))
+   [y-video-back.routes.service-handlers.admin-handlers :as admin]
+   [y-video-back.routes.service-handlers.media-handlers :as media]))
 
 
 ; Misc handlers
@@ -93,3 +94,7 @@
 (def search-by-collection admin/search-by-collection)
 (def search-by-content admin/search-by-content)
 (def search-by-resource admin/search-by-resource)
+
+; Media handlers
+(def get-file-key media/get-file-key)
+(def stream-media media/stream-media)

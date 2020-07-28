@@ -5,7 +5,8 @@
             [y-video-back.routes.service-handlers.utils :as utils]
             [y-video-back.db.user-courses-assoc :as user-courses-assoc]
             [y-video-back.db.users :as users]
-            [y-video-back.routes.service-handlers.db-utils :as dbu]))
+            [y-video-back.routes.service-handlers.db-utils :as dbu]
+            [y-video-back.db.auth-tokens :as auth-tokens]))
             ;[y-video-back.config :refer [env]]))
 
 ; User account types
@@ -88,10 +89,11 @@
 (defn has-permission
   "Placeholder for real has-permission function. Checks for session-id-bypass or (any) user-id."
   [token route args]
-  (if (or (= token (utils/to-uuid (:session-id-bypass env)))
-          (users/EXISTS? token))
-    true
-    false))
+  (let [user-id (token-to-user-id token)]
+    (if (or (= token (utils/to-uuid (:session-id-bypass env)))
+            (users/EXISTS? token))
+      true
+      false)))
 
 (defn req-has-permission
   "Checks for session-id in request header, then calls has-permission"
@@ -99,6 +101,9 @@
   (if (or (clojure.string/starts-with? uri "/api/get-session-id/")
           (clojure.string/starts-with? uri "/api/api-docs")
           (clojure.string/starts-with? uri "/api/swagger")
+          (clojure.string/starts-with? uri "/api/video")
+          (clojure.string/starts-with? uri "/api/get-video-url");temporary
+          (clojure.string/starts-with? uri "/api/media");temporary
           (= uri "/api/ping"))
     true
     (if (not (contains? headers :session-id))

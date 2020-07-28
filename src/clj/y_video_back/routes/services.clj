@@ -4,6 +4,7 @@
     [reitit.swagger :as swagger]
     [reitit.swagger-ui :as swagger-ui]
     [reitit.ring.coercion :as coercion]
+    [reitit.ring :as ring]
     [reitit.coercion.spec :as spec-coercion]
     [reitit.ring.middleware.muuntaja :as muuntaja]
     [reitit.ring.middleware.multipart :as multipart]
@@ -17,8 +18,8 @@
     [clojure.java.io :as io]
     [y-video-back.routes.service-handlers.utils :as utils]
     [y-video-back.routes.service-handlers.role-utils :as ru]
-    [y-video-back.user-creator :as uc]))
-
+    [y-video-back.user-creator :as uc]
+    [clojure.java.io :as io]))
 
 (defn service-routes []
    ["/api"
@@ -63,6 +64,25 @@
              {:url "/api/swagger.json"
               :config {:validator-url nil}})}]]
 
+    ["/get-video-url/{filename}"
+     {:get {:parameters {:path {:filename string?}}
+            :handler (fn [{{{:keys [filename]} :path} :parameters}]
+                       (let [link (java.util.UUID/randomUUID)
+                             new-file (io/as-file (str "resources/public/" link ".mp4"))
+                             video-file (io/as-file (str "resources/videos/" filename))]
+                         (println filename)
+                         (println (str (.toPath new-file)))
+                         (println (str (.toPath video-file)))
+                         (println (str "creating link: " link ".mp4"))
+                         (java.nio.file.Files/createLink
+                           (.toPath new-file)
+                           (.toPath video-file))
+                         {:status 200
+                          :body {:message "success"
+                                 :link link}}))}}]
+    ["/video/*" (ring/create-resource-handler {:root "/videos/"})]
+
+
     ["/get-session-id/{username}/{password}"
      {:swagger {:tags ["auth"]}}
 
@@ -79,6 +99,8 @@
                           {:status 200
                            :body {:session-id (str (uc/get-session-id username))}}))}}]]
     ["/ping"
+     {:get (constantly (response/ok {:message "pong"}))}]
+    ["/auth-ping"
      {:get (constantly (response/ok {:message "pong"}))}]
 
     ["/surely-a-get-method"
@@ -275,4 +297,10 @@
      ["/content/{term}"
       {:get service-handlers/search-by-content}]
      ["/resource/{term}"
-      {:get service-handlers/search-by-resource}]]])
+      {:get service-handlers/search-by-resource}]]
+    ["/media"
+     {:swagger {:tags ["media"]}}
+     ["/get-file-key/{file-id}"
+      {:get service-handlers/get-file-key}]
+     ["/stream-media/{file-key}"
+      {:get service-handlers/stream-media}]]])

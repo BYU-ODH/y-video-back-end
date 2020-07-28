@@ -95,6 +95,17 @@ CREATE TABLE files (
 );
 COMMENT ON TABLE files IS 'Files represent media (i.e. videos) with path to file and metadata';
 
+DROP TABLE IF EXISTS file_keys CASCADE;
+CREATE TABLE file_keys (
+   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY
+   ,deleted TIMESTAMP DEFAULT NULL
+   ,updated TIMESTAMP DEFAULT NULL
+   ,created  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+   ,file_id UUID REFERENCES files(id)
+   ,user_id UUID REFERENCES users(id)
+);
+COMMENT ON TABLE file_keys IS 'Volatile keys to represent files for streaming to front end';
+
 DROP TABLE IF EXISTS contents CASCADE;
 CREATE TABLE contents (
     id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY
@@ -131,6 +142,16 @@ CREATE TABLE subtitles (
    , CONSTRAINT no_duplicate_resource_subtitles UNIQUE (title, resource_id)
 );
 COMMENT ON TABLE subtitles IS 'Contains subtitles to be applied over resources';
+
+DROP TABLE IF EXISTS auth_tokens CASCADE;
+CREATE TABLE auth_tokens (
+    id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY
+    ,deleted TIMESTAMP DEFAULT NULL
+    ,updated TIMESTAMP DEFAULT NULL
+    ,created  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    ,user_id UUID
+);
+COMMENT ON TABLE auth_tokens IS 'Contains auth_tokens (stored in id) mapped to user ids';
 
 DROP TABLE IF EXISTS content_subtitles_assoc CASCADE;
 CREATE TABLE content_subtitles_assoc (
