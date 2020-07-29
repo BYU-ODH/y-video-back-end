@@ -28,7 +28,7 @@
   (mount.core/start #'y-video-back.handler/app))
 
 ; auth-ping with valid auth token
-(deftest auth-token
+(comment (deftest auth-token)
   (testing "valid auth token"
     (let [user-one (db-pop/add-user)
           token (auth-tokens/CREATE {:user-id (:id user-one)})

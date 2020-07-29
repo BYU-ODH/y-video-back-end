@@ -26,7 +26,7 @@
                     file-key (file-keys/CREATE {:file-id file-id
                                                 :user-id user-id})]
                 {:status 200
-                 :body {:file-key file-key}}))})
+                 :body {:file-key (:id file-key)}}))})
 
 (def stream-media ;; Non-functional
   {:summary "Stream media referenced by file-key"
@@ -36,5 +36,8 @@
    ;:responses {200 {:body [models/user]}}
    ;:handler (fn [{{{:keys [session-id]} :header {:keys [file-id]} :path} :parameters}])
    :handler (fn [{{{:keys [file-key]} :path} :parameters}]
-              (let [file-key-res (file-keys/READ file-key)]
-                (ring.util.response/file-response (utils/file-id-to-path (:file-id file-key-res)))))})
+              (let [file-key-res (file-keys/READ-UNEXPIRED file-key)]
+                (if (nil? file-key-res)
+                  {:status 404
+                   :body {:message "file-key not found"}}
+                  (ring.util.response/file-response (utils/file-id-to-path (:file-id file-key-res))))))})

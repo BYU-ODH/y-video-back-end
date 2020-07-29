@@ -13,7 +13,8 @@
  :NEW-USER-PASSWORD "ae91e6b1-e29c-458f-8ddc-1a6fa2ba141b"
  :CONSUMER_KEY "fc028869ad27420ba215d5b99efeacfe"
  :CONSUMER_SECRET "48b7593d27c946ec8be2abdf0b8f3837"
- :FILES {:media-url "/home/user/files/"}
+ :FILES {:media-url "/home/matthew/Clojure/file-server/"
+         :timeout 10000} ; 10 seconds
  :y-video-back {:site-url "http://localhost:3030"
                 :db {:database-name "my-db"
                      :adapter "postgresql"

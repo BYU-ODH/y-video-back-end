@@ -9,6 +9,7 @@
     [y-video-back.utils.route-proxy.routes.rp-content :as content]
     [y-video-back.utils.route-proxy.routes.rp-course :as course]
     [y-video-back.utils.route-proxy.routes.rp-file :as file]
+    [y-video-back.utils.route-proxy.routes.rp-media :as media]
     [y-video-back.utils.route-proxy.routes.rp-subtitle :as subtitle]
     [y-video-back.utils.route-proxy.routes.rp-resource :as resource]
     [y-video-back.utils.route-proxy.routes.rp-user :as user]
@@ -94,6 +95,10 @@
 (def file-id-get file/file-id-get)
 (def file-id-patch file/file-id-patch)
 (def file-id-delete file/file-id-delete)
+
+; media routes
+(def get-file-key media/get-file-key)
+(def stream-media media/stream-media)
 
 ; admin routes
 (def search admin/search)

@@ -136,17 +136,23 @@
 
 (defn get-file
   "Creates file, ready to be added to db"
-  []
-  (let [new-rsrc (ut/under-to-hyphen (resources/CREATE (get-resource)))]
-    (g/get-random-file-without-id (:id new-rsrc))))
+  ([]
+   (let [new-rsrc (ut/under-to-hyphen (resources/CREATE (get-resource)))]
+     (g/get-random-file-without-id (:id new-rsrc))))
+  ([resource-id]
+   (g/get-random-file-without-id resource-id)))
+
 
 (defn add-file
   "Creates file, adds to db"
-  []
-  (let [file-one (get-file)
-        file-one-add (files/CREATE file-one)]
-    (assoc file-one :id (:id file-one-add))))
-
+  ([]
+   (let [file-one (get-file)
+         file-one-add (files/CREATE file-one)]
+     (assoc file-one :id (:id file-one-add))))
+  ([resource-id]
+   (let [file-one (get-file resource-id)
+         file-one-add (files/CREATE file-one)]
+     (assoc file-one :id (:id file-one-add)))))
 
 (defn get-user-coll-assoc
   "Creates user-coll-assoc, ready to be added to db"
