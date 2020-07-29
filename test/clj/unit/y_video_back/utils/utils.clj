@@ -1,8 +1,9 @@
 (ns y-video-back.utils.utils
   (:require
+    [y-video-back.config :refer [env]]
     [muuntaja.core :as m]
-    [clojure.test :refer :all]))
-
+    [clojure.test :refer :all]
+    [clojure.java.io :as io]))
 
 (defn under-to-hyphen
   "Converts all underscores to hypens in map keywords"
@@ -60,3 +61,14 @@
   [res]
   (is (contains? (:headers res) "session-id")) ;; Change to actually decode header then check
   res)
+
+(defn create-temp-file
+  "Simulates the output from ring's wrap-multipart-params."
+  [file-path-raw]
+  (let [file-path (str (-> env :FILES :test-src) file-path-raw)
+        file-name-with-ext (last (clojure.string/split file-path #"/"))
+        file-name (first (clojure.string/split file-name-with-ext #"\."))
+        file-ext (str "." (last (clojure.string/split file-name-with-ext #"\.")))
+        temp-file (java.io.File/createTempFile file-name file-ext (io/file (-> env :FILES :test-temp)))]
+    (io/copy (io/file file-path) temp-file)
+    temp-file))

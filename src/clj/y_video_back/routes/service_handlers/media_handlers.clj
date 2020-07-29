@@ -1,5 +1,6 @@
 (ns y-video-back.routes.service-handlers.media-handlers
   (:require
+   [y-video-back.config :refer [env]]
    [y-video-back.db.user-collections-assoc :as user-collections-assoc]
    [y-video-back.db.user-courses-assoc :as user-courses-assoc]
    [y-video-back.db.users :as users]
@@ -11,16 +12,30 @@
    [y-video-back.routes.service-handlers.utils :as utils]
    [y-video-back.routes.service-handlers.role-utils :as ru]
    [clojure.spec.alpha :as s]
-   [y-video-back.db.core :as db]))
+   [y-video-back.db.core :as db]
+   [ring.swagger.upload :as swagger-upload]))
+
+(def upload-file
+  {:summary "Uploads file"
+   :responses {200 {:body {:message string?}}}
+   :handler (fn [p]
+              (let [file-params (get-in p [:params "file"])
+                    body (:body p)]
+                (println "DEBUG: file-params=" file-params)
+                (println "DEBUG: body=" body)
+                (clojure.java.io/copy (:tempfile file-params)
+                                      (clojure.java.io/file (str (-> env :FILES :media-url) (:filename file-params)))))
+              {:status 200
+               :schema swagger-upload/TempFileUpload})})
+
 
 ;; TODO - check if user has permission to stream requested file
 
 (def get-file-key ;; Non-functional
   {:summary "Gets volatile url for streaming specified media file"
-   :parameters {
-                :header {:session-id uuid?}
+   :parameters {:header {:session-id uuid?}
                 :path {:file-id uuid?}}
-   ;:responses {200 {:body [models/user]}}
+   :responses {200 {:body {:file-key uuid?}}}
    :handler (fn [{{{:keys [session-id]} :header {:keys [file-id]} :path} :parameters}]
               (let [user-id (ru/token-to-user-id session-id)
                     file-key (file-keys/CREATE {:file-id file-id
@@ -33,7 +48,8 @@
    :parameters {
                 ;:header {:session-id uuid?}
                 :path {:file-key uuid?}}
-   ;:responses {200 {:body [models/user]}}
+   ;:responses {200 {:body "file response body"}
+   ;            404 (:body {:message string?})
    ;:handler (fn [{{{:keys [session-id]} :header {:keys [file-id]} :path} :parameters}])
    :handler (fn [{{{:keys [file-key]} :path} :parameters}]
               (let [file-key-res (file-keys/READ-UNEXPIRED file-key)]

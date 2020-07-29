@@ -30,8 +30,11 @@
 
 (deftest test-file
   (testing "file CREATE"
-    (let [file-one (db-pop/get-file)]
-      (let [res (rp/file-post file-one)]
+    (let [filecontent {:tempfile (ut/create-temp-file "test_kitten.mp4")
+                       :content-type "application/octet-stream"
+                       :filename "test_kitten.mp4"}
+          file-one (db-pop/get-file)]
+      (let [res (rp/file-post [file-one filecontent])]
         (is (= 200 (:status res)))
         (let [id (ut/to-uuid (:id (m/decode-response-body res)))]
           (is (= (into file-one {:id id})

@@ -104,6 +104,7 @@
           (clojure.string/starts-with? uri "/api/video")
           (clojure.string/starts-with? uri "/api/get-video-url");temporary
           (clojure.string/starts-with? uri "/api/media");temporary
+          (clojure.string/starts-with? uri "/api/upload");temporary
           (= uri "/api/ping"))
     true
     (if (not (contains? headers :session-id))

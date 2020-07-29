@@ -19,8 +19,8 @@
     [y-video-back.routes.service-handlers.utils :as utils]
     [y-video-back.routes.service-handlers.role-utils :as ru]
     [y-video-back.user-creator :as uc]
-    [clojure.java.io :as io]))
-
+    [clojure.java.io :as io]
+    [ring.middleware.multipart-params :refer [wrap-multipart-params]]))
 (defn service-routes []
    ["/api"
     {:coercion spec-coercion/coercion
@@ -43,6 +43,7 @@
                   coercion/coerce-request-middleware
                   ;; multipart
                   multipart/multipart-middleware
+                  wrap-multipart-params
                   ;; CAS
                   ;middleware/wrap-cas-no-redirect
                   middleware/wrap-api-post]}
@@ -298,8 +299,11 @@
       {:get service-handlers/search-by-content}]
      ["/resource/{term}"
       {:get service-handlers/search-by-resource}]]
+
     ["/media"
      {:swagger {:tags ["media"]}}
+     ["/upload-file"
+      {:post service-handlers/upload-file}]
      ["/get-file-key/{file-id}"
       {:get service-handlers/get-file-key}]
      ["/stream-media/{file-key}"

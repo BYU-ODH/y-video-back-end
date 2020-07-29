@@ -96,5 +96,6 @@
 (def search-by-resource admin/search-by-resource)
 
 ; Media handlers
+(def upload-file media/upload-file)
 (def get-file-key media/get-file-key)
 (def stream-media media/stream-media)

@@ -1,5 +1,6 @@
 (ns y-video-back.routes.service-handlers.file-handlers
   (:require
+   [y-video-back.config :refer [env]]
    [y-video-back.db.files :as files]
    [y-video-back.db.resources :as resources]
    [y-video-back.models :as models]
@@ -8,22 +9,32 @@
    [y-video-back.routes.service-handlers.role-utils :as ru]))
 
 (def file-create
-  {:summary "Creates a new file"
+  {:summary "Creates a new file. MUST INCLUDE FILE AS UPLOAD."
    :parameters {:header {:session-id uuid?}
                 :body models/file-without-id}
    :responses {200 {:body {:message string?
                            :id string?}}
                500 {:body {:message string?}}}
-   :handler (fn [{{{:keys [session-id]} :header :keys [body]} :parameters}]
-              (if-not (resources/EXISTS? (:resource-id body))
-                {:status 500
-                 :body {:message "resource not found"}}
-                (if (files/EXISTS-FILEPATH? (:filepath body))
-                  {:status 500
-                   :body {:message "filepath already in use, unable to create file"}}
-                  {:status 200
-                   :body {:message "1 file created"
-                          :id (utils/get-id (files/CREATE body))}})))})
+   :handler (fn [req]
+              ;(println "req=" req)
+              (let [session-id (get-in req [:parameters :header :session-id])
+                    body (get-in req [:parameters :body])
+                    file-params (get-in req [:params "file"])]
+                (if (nil? file-params)
+                  {:status 400
+                   :body {:message "missing file to upload"}}
+                  (if-not (resources/EXISTS? (:resource-id body))
+                    {:status 500
+                     :body {:message "resource not found"}}
+                    (if (files/EXISTS-FILEPATH? (:filepath body))
+                      {:status 500
+                       :body {:message "filepath already in use, unable to create file"}}
+                      (do
+                        (clojure.java.io/copy (:tempfile file-params)
+                                              (clojure.java.io/file (str (-> env :FILES :media-url) (:filepath body))))
+                        {:status 200
+                         :body {:message "1 file created"
+                                :id (utils/get-id (files/CREATE body))}}))))))})
 
 
 
