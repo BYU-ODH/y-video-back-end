@@ -1,5 +1,6 @@
 (ns y-video-back.routes.file
     (:require
+      [y-video-back.config :refer [env]]
       [clojure.test :refer :all]
       [ring.mock.request :refer :all]
       [y-video-back.handler :refer :all]
@@ -12,8 +13,8 @@
       [y-video-back.db.core :refer [*db*] :as db]
       [y-video-back.utils.utils :as ut]
       [y-video-back.utils.db-populator :as db-pop]
-      [y-video-back.db.files :as files]))
-
+      [y-video-back.db.files :as files]
+      [clojure.java.io :as io]))
 
 (declare ^:dynamic *txn*)
 
@@ -36,9 +37,12 @@
           file-one (db-pop/get-file)]
       (let [res (rp/file-post [file-one filecontent])]
         (is (= 200 (:status res)))
-        (let [id (ut/to-uuid (:id (m/decode-response-body res)))]
-          (is (= (into file-one {:id id})
-                 (ut/remove-db-only (files/READ id))))))))
+        (let [id (ut/to-uuid (:id (m/decode-response-body res)))
+              db-file (ut/remove-db-only (files/READ id))]
+          (is (= (assoc (dissoc (into file-one {:id id}) :filepath) :filepath (str "test_kitten-" id ".mp4"))
+                 db-file))
+          (is (.exists (io/as-file (str (-> env :FILES :media-url) (:filepath db-file)))))))))
+
   (testing "file READ"
     (let [file-one (ut/under-to-hyphen (files/CREATE (db-pop/get-file)))
           res (rp/file-id-get (:id file-one))]

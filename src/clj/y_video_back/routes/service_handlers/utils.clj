@@ -54,6 +54,26 @@
   (str (-> env :FILES :media-url)
        (:filepath (files/READ file-id))))
 
+(defn split-first [re s]
+  (clojure.string/split s re 2))
+
+(defn split-last [re s]
+  (let [pattern (re-pattern (str re "(?!.*" re ")"))]
+    (split-first pattern s)))
+
+(defn insert-before-ext
+  "Inserts ins before file extension. If no extension, appends ins."
+  [file-name, ins]
+  (let [file-split (split-last #"\." file-name)]
+    (if (empty? file-split)
+      (str file-name ins)
+      (str
+        (reduce str (drop-last file-split))
+        "-"
+        ins
+        "."
+        (last file-split)))))
+
 (defn user-db-to-front
   "Replace keywords with what the front end expects"
   [user]

@@ -6,8 +6,8 @@
    [y-video-back.models :as models]
    [y-video-back.model-specs :as sp]
    [y-video-back.routes.service-handlers.utils :as utils]
-   [y-video-back.routes.service-handlers.role-utils :as ru]))
-
+   [y-video-back.routes.service-handlers.role-utils :as ru]
+   [ring.swagger.upload :as upload]))
 (def file-create
   {:summary "Creates a new file. MUST INCLUDE FILE AS UPLOAD."
    :parameters {:header {:session-id uuid?}
@@ -26,15 +26,13 @@
                   (if-not (resources/EXISTS? (:resource-id body))
                     {:status 500
                      :body {:message "resource not found"}}
-                    (if (files/EXISTS-FILEPATH? (:filepath body))
-                      {:status 500
-                       :body {:message "filepath already in use, unable to create file"}}
-                      (do
-                        (clojure.java.io/copy (:tempfile file-params)
-                                              (clojure.java.io/file (str (-> env :FILES :media-url) (:filepath body))))
-                        {:status 200
-                         :body {:message "1 file created"
-                                :id (utils/get-id (files/CREATE body))}}))))))})
+                    (let [file-id (utils/get-id (files/CREATE body))]
+                      (clojure.java.io/copy (:tempfile file-params)
+                                            (clojure.java.io/file (str (-> env :FILES :media-url) (utils/insert-before-ext (:filename file-params) file-id))))
+                      (files/UPDATE (utils/to-uuid file-id) {:filepath (utils/insert-before-ext (:filename file-params) file-id)})
+                      {:status 200
+                       :body {:message "1 file created"
+                              :id file-id}})))))})
 
 
 
