@@ -74,6 +74,19 @@
         "."
         (last file-split)))))
 
+(defn rand-str [len]
+  (apply str (take len (repeatedly #(char (+ (let [num (rand-int 36)]
+                                               (if (< num 10)
+                                                 num
+                                                 (+ num 39)))
+                                             48))))))
+
+(defn get-filename
+  "Generates random file name with extension"
+  [given-name]
+  (str (rand-str 8)
+       (str "." (last (clojure.string/split given-name #"\.")))))
+
 (defn user-db-to-front
   "Replace keywords with what the front end expects"
   [user]

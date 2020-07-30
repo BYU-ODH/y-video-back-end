@@ -34,12 +34,12 @@
     (let [filecontent {:tempfile (ut/create-temp-file "test_kitten.mp4")
                        :content-type "application/octet-stream"
                        :filename "test_kitten.mp4"}
-          file-one (db-pop/get-file)]
+          file-one (dissoc (db-pop/get-file) :filepath)]
       (let [res (rp/file-post [file-one filecontent])]
         (is (= 200 (:status res)))
         (let [id (ut/to-uuid (:id (m/decode-response-body res)))
               db-file (ut/remove-db-only (files/READ id))]
-          (is (= (assoc (dissoc (into file-one {:id id}) :filepath) :filepath (str "test_kitten-" id ".mp4"))
+          (is (= (assoc (into file-one {:id id}) :filepath (:filepath db-file))
                  db-file))
           (is (.exists (io/as-file (str (-> env :FILES :media-url) (:filepath db-file)))))))))
 

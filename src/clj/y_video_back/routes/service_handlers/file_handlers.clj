@@ -11,7 +11,7 @@
 (def file-create
   {:summary "Creates a new file. MUST INCLUDE FILE AS UPLOAD."
    :parameters {:header {:session-id uuid?}
-                :body models/file-without-id}
+                :body (dissoc models/file-without-id :filepath)}
    :responses {200 {:body {:message string?
                            :id string?}}
                500 {:body {:message string?}}}
@@ -19,20 +19,20 @@
               ;(println "req=" req)
               (let [session-id (get-in req [:parameters :header :session-id])
                     body (get-in req [:parameters :body])
-                    file-params (get-in req [:params "file"])]
+                    file-params (get-in req [:params "file"])
+                    file-name (utils/get-filename (:filename file-params))]
                 (if (nil? file-params)
                   {:status 400
                    :body {:message "missing file to upload"}}
                   (if-not (resources/EXISTS? (:resource-id body))
                     {:status 500
                      :body {:message "resource not found"}}
-                    (let [file-id (utils/get-id (files/CREATE body))]
+                    (do
                       (clojure.java.io/copy (:tempfile file-params)
-                                            (clojure.java.io/file (str (-> env :FILES :media-url) (utils/insert-before-ext (:filename file-params) file-id))))
-                      (files/UPDATE (utils/to-uuid file-id) {:filepath (utils/insert-before-ext (:filename file-params) file-id)})
+                                            (clojure.java.io/file (str (-> env :FILES :media-url) file-name)))
                       {:status 200
                        :body {:message "1 file created"
-                              :id file-id}})))))})
+                              :id (utils/get-id (files/CREATE (assoc body :filepath file-name)))}})))))})
 
 
 
