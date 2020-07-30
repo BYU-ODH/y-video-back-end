@@ -46,14 +46,43 @@
 ; instructor_class_count > 0 => instructor
 ; Only check on create account - will probably change this to check periodically
 ; (maybe beginning of each term?)
+
+(defn get-oauth-token
+  "Gets oauth token from api"
+  []
+  (let [url "https://api.byu.edu/token"
+        auth (str (:CONSUMER_KEY env) ":" (:CONSUMER_SECRET env))
+        tokenRes (client/post url {:body "grant_type=client_credentials"
+                                   :basic-auth auth
+                                   :content-type "application/x-www-form-urlencoded"})]
+    (get (json/read-str (:body tokenRes)) "access_token")))
+
+(defn get-user-data
+  "Gets data from AcademicRecordsStudentStatusInfo"
+  [netid]
+  (if (:test env)
+    {:full-name (str "Mr. " netid)
+     :first-name "Mr."
+     :last-name netid
+     :email (str netid "@yvideobeta.byu.edu")}
+    (let [url (str "https://api.byu.edu:443/domains/legacy/academic/records/studentstatusinfo/v1/netid/" netid)
+          res (client/get url {:oauth-token (get-oauth-token)})
+          json-res (json/read-str (:body res))
+          full-name (get-in json-res ["StudentStatusInfoService" "response" "student_name"])]
+      {:full-name full-name
+       :first-name (first (clojure.string/split (last (clojure.string/split full-name #", ")) #" "))
+       :last-name (first (clojure.string/split full-name #", "))
+       :email (clojure.string/lower-case (get-in json-res ["StudentStatusInfoService" "response" "email_address"]))})))
+
 (defn create-user
   "Creates user with data from BYU api"
   [username]
-  (let [url "https://api.byu.edu/token"
-        auth [(:CONSUMER_KEY env) (:CONSUMER_SECRET env)]
-        tokenRes (client/post url {:body "grant_type=client_credentials" :basic-auth auth})]
-    (println "tokenRes " tokenRes)))
-
+  (let [user-data (get-user-data username)]
+    users/CREATE {:username username
+                  :email (:email user-data)
+                  :last-login "today"
+                  :account-type 0
+                  :account-name (str (:first-name user-data) " " (:last-name user-data))}))
 
 (defn get-session-id
   "Generates session id for user with given username. If user does not exist, first creates user."
@@ -64,10 +93,5 @@
       ;(println user-res)
       (if-not (= 0 (count user-res))
         (:id (first user-res))
-        (let [user-create-res (users/CREATE {:username username
-                                             :email (str username "@byu.edu")
-                                             :last-login "today"
-                                             :account-type 0
-                                             :account-name (str "Mr. " username)})] ; Replace with api to get user info
-          (get-current-sem)
+        (let [user-create-res (create-user username)]
           (:id user-create-res)))))
