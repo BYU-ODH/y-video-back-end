@@ -135,7 +135,7 @@
      (assoc sbtl-one :id (:id sbtl-one-add)))))
 
 (defn get-file
-  "Creates file, ready to be added to db"
+  "Creates file, ready to be added to db. Contains random filepath."
   ([]
    (let [new-rsrc (ut/under-to-hyphen (resources/CREATE (get-resource)))]
      (g/get-random-file-without-id (:id new-rsrc))))
@@ -144,7 +144,7 @@
 
 
 (defn add-file
-  "Creates file, adds to db"
+  "Creates file, adds to db. Contains random filepath."
   ([]
    (let [file-one (get-file)
          file-one-add (files/CREATE file-one)]

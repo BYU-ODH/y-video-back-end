@@ -75,6 +75,11 @@
   (str "hey there, " first))
 
 (defmethod hey
+  ['(:last)]
+  [{:keys [last]}]
+  (str "greetings, Comrade  " last))
+
+(defmethod hey
   ['(:first :last)]
   [{:keys [first last]}]
   (str "why so formal, " first " " last "?"))

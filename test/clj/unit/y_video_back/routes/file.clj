@@ -31,9 +31,7 @@
 
 (deftest test-file
   (testing "file CREATE"
-    (let [filecontent {:tempfile (ut/create-temp-file "test_kitten.mp4")
-                       :content-type "application/octet-stream"
-                       :filename "test_kitten.mp4"}
+    (let [filecontent (ut/get-filecontent)
           file-one (dissoc (db-pop/get-file) :filepath)]
       (let [res (rp/file-post [file-one filecontent])]
         (is (= 200 (:status res)))

@@ -72,3 +72,14 @@
         temp-file (java.io.File/createTempFile file-name file-ext (io/file (-> env :FILES :test-temp)))]
     (io/copy (io/file file-path) temp-file)
     temp-file))
+
+(defn get-filecontent
+  "Generates filecontent to be included in file routes"
+  ([]
+   {:tempfile (create-temp-file "test_kitten.mp4")
+    :content-type "application/octet-stream"
+    :filename "test_kitten.mp4"})
+  ([filename]
+   {:tempfile (create-temp-file filename)
+    :content-type "application/octet-stream"
+    :filename filename}))

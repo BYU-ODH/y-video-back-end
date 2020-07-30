@@ -21,7 +21,8 @@
       [y-video-back.db.user-courses-assoc :as user-courses-assoc]
       [y-video-back.db.users :as users]
       [y-video-back.db.words :as words]
-      [y-video-back.utils.utils :as ut]))
+      [y-video-back.utils.utils :as ut]
+      [y-video-back.utils.db-populator :as db-pop]))
 
 (declare ^:dynamic *txn*)
 
@@ -47,14 +48,17 @@
   (mount.core/start #'y-video-back.handler/app))
 
 (deftest file-post
-  (testing "add duplicated file (i.e. duplicate filepath)"
-    (let [new-file (g/get-random-file-without-id (:id test-rsrc-one))
-          add-file-res (files/CREATE new-file)
-          res (rp/file-post new-file)]
-      (is (= 500 (:status res)))))
+  (testing "add duplicated file (i.e. duplicate filename)"
+    (let [filecontent (ut/get-filecontent)
+          file-one (db-pop/get-file)
+          res-one (rp/file-post [file-one filecontent])
+          res-two (rp/file-post [file-one filecontent])]
+      (is (= 200 (:status res-one)))
+      (is (= 200 (:status res-two)))))
   (testing "add file to nonexistent resource"
-    (let [new-file (g/get-random-file-without-id (java.util.UUID/randomUUID))
-          res(rp/file-post new-file)]
+    (let [filecontent (ut/get-filecontent)
+          file-one (db-pop/get-file (java.util.UUID/randomUUID))
+          res(rp/file-post [file-one filecontent])]
       (is (= 500 (:status res))))))
 
 (deftest file-id-get

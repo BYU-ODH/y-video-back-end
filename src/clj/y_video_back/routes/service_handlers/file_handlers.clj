@@ -50,6 +50,7 @@
                   {:status 200
                    :body res})))})
 
+; Should this be allowed to update the filepath?
 (def file-update
   {:summary "Updates specified file"
    :parameters {:header {:session-id uuid?}

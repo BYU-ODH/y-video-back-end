@@ -32,7 +32,7 @@
   (def user-one (users/CREATE (assoc (dissoc (db-pop/get-user) :account-type) :account-type 0)))
   (def rsrc-one (db-pop/add-resource))
   (def file-one (files/CREATE {:resource-id (:id rsrc-one)
-                               :filepath "test/test_kitten.mp4"
+                               :filepath "persistent/test_kitten.mp4" ; move this into github repository?
                                :file_version "no-speech"
                                :mime "text"
                                :metadata "text"}))
