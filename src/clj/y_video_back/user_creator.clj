@@ -66,23 +66,28 @@
      :last-name netid
      :email (str netid "@yvideobeta.byu.edu")}
     (let [url (str "https://api.byu.edu:443/domains/legacy/academic/records/studentstatusinfo/v1/netid/" netid)
-          res (client/get url {:oauth-token (get-oauth-token)})
-          json-res (json/read-str (:body res))
-          full-name (get-in json-res ["StudentStatusInfoService" "response" "student_name"])]
-      {:full-name full-name
-       :first-name (first (clojure.string/split (last (clojure.string/split full-name #", ")) #" "))
-       :last-name (first (clojure.string/split full-name #", "))
-       :email (clojure.string/lower-case (get-in json-res ["StudentStatusInfoService" "response" "email_address"]))})))
+          res (client/get url {:oauth-token (get-oauth-token)})]
+      (if-not (= 200 (:status res))
+        {:full-name (str netid ", no_name")
+         :first-name "no_name"
+         :last-name netid
+         :email "no_email@yvideobeta.byu.edu"}
+        (let [json-res (json/read-str (:body res))
+              full-name (get-in json-res ["StudentStatusInfoService" "response" "student_name"])]
+          {:full-name full-name
+           :first-name (first (clojure.string/split (last (clojure.string/split full-name #", ")) #" "))
+           :last-name (first (clojure.string/split full-name #", "))
+           :email (clojure.string/lower-case (get-in json-res ["StudentStatusInfoService" "response" "email_address"]))})))))
 
 (defn create-user
   "Creates user with data from BYU api"
   [username]
   (let [user-data (get-user-data username)]
-    users/CREATE {:username username
-                  :email (:email user-data)
-                  :last-login "today"
-                  :account-type 0
-                  :account-name (str (:first-name user-data) " " (:last-name user-data))}))
+    (users/CREATE {:username username
+                   :email (:email user-data)
+                   :last-login "today"
+                   :account-type 0
+                   :account-name (str (:first-name user-data) " " (:last-name user-data))})))
 
 (defn get-session-id
   "Generates session id for user with given username. If user does not exist, first creates user."

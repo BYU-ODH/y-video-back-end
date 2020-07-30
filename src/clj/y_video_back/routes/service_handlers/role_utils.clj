@@ -91,7 +91,7 @@
   [token route args]
   (let [user-id (token-to-user-id token)]
     (if (or (= token (utils/to-uuid (:session-id-bypass env)))
-            (users/EXISTS? token))
+            (users/EXISTS? user-id))
       true
       false)))
 
