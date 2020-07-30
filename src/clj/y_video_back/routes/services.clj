@@ -65,25 +65,6 @@
              {:url "/api/swagger.json"
               :config {:validator-url nil}})}]]
 
-    ["/get-video-url/{filename}"
-     {:get {:parameters {:path {:filename string?}}
-            :handler (fn [{{{:keys [filename]} :path} :parameters}]
-                       (let [link (java.util.UUID/randomUUID)
-                             new-file (io/as-file (str "resources/public/" link ".mp4"))
-                             video-file (io/as-file (str "resources/videos/" filename))]
-                         (println filename)
-                         (println (str (.toPath new-file)))
-                         (println (str (.toPath video-file)))
-                         (println (str "creating link: " link ".mp4"))
-                         (java.nio.file.Files/createLink
-                           (.toPath new-file)
-                           (.toPath video-file))
-                         {:status 200
-                          :body {:message "success"
-                                 :link link}}))}}]
-    ["/video/*" (ring/create-resource-handler {:root "/videos/"})]
-
-
     ["/get-session-id/{username}/{password}"
      {:swagger {:tags ["auth"]}}
 
