@@ -32,17 +32,12 @@
 (deftest test-file
   (testing "file CREATE"
     (let [filecontent (ut/get-filecontent)
-          rsrc-one (db-pop/add-resource)]
-      (let [res (rp/file-post (:id rsrc-one) filecontent)]
+          file-one (dissoc (db-pop/get-file) :filepath)]
+      (let [res (rp/file-post file-one filecontent)]
         (is (= 200 (:status res)))
         (let [id (ut/to-uuid (:id (m/decode-response-body res)))
               db-file (ut/remove-db-only (files/READ id))]
-          (is (= {:id id
-                  :resource-id (:id rsrc-one)
-                  :filepath (:filepath db-file)
-                  :mime ""
-                  :metadata ""
-                  :file-version ""}
+          (is (= (assoc (into file-one {:id id}) :filepath (:filepath db-file))
                  db-file))
           (is (.exists (io/as-file (str (-> env :FILES :media-url) (:filepath db-file)))))))))
 

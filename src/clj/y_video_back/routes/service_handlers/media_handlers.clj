@@ -43,7 +43,7 @@
                 {:status 200
                  :body {:file-key (:id file-key)}}))})
 
-(def stream-media ;; Non-functional
+(def stream-media ;; TODO - require session-id?
   {:summary "Stream media referenced by file-key"
    :parameters {
                 ;:header {:session-id uuid?}

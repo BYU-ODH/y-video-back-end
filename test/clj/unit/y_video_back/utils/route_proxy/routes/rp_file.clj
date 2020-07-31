@@ -14,14 +14,18 @@
 
 (defn file-post
   "Create a file via app's post request"
-  ([session-id resource-id file-data]
-   (ap2 (-> (request :post (str "/api/resource/" resource-id "/file"))
+  ([session-id file-db filecontent]
+   (ap2 (-> (request :post (str "/api/file"))
             ;(json-body (get file-data 0))
             (header :session-id session-id)
-            ;(assoc :params {:file file-data})
-            (assoc :multipart-params {"file" file-data}))))
-  ([resource-id file-data]
-   (file-post (:session-id-bypass env) resource-id file-data)))
+            ;(assoc :params file-db)
+            (assoc :multipart-params {"file" filecontent
+                                      :file-version (:file-version file-db)
+                                      :metadata (:metadata file-db)
+                                      :mime (:mime file-db)
+                                      :resource-id (:resource-id file-db)}))))
+  ([file-db filecontent]
+   (file-post (:session-id-bypass env) file-db filecontent)))
 
 (defn file-id-get
   "Retrieves file via app's get (id) request"
