@@ -1,0 +1,21 @@
+To do before Sep 2020:
+
+1. Use an API to tag users as instructors or students, and then filter for admins and lab assistants
+    - Currently, everyone is just labeled as an admin
+
+2. Implement single-use session-id tokens (aka auth-tokens)
+    - We are currently just using user-ids directly.
+
+3. Make session-id-bypass testing/development only
+
+4. Restrict user access to each endpoint (via session-id)
+    - This is partially built, but currently disabled.
+
+5. Serve public login screen with access to public data (collections, resources, etc.)
+    - Either need to update how we're filtering through CAS, or separately host login page
+
+6. Add is-public field to db tables for resources, contents, collections
+
+7. Add functionality to access public data without authentication
+
+8. Potentially add csrf prevention to api routes
