@@ -283,8 +283,8 @@
 
     ["/media"
      {:swagger {:tags ["media"]}}
-     ["/upload-file"
-      {:post service-handlers/upload-file}]
+     ;["/upload-file"
+     ; {:post service-handlers/upload-file}}
      ["/get-file-key/{file-id}"
       {:get service-handlers/get-file-key}]
      ["/stream-media/{file-key}"
