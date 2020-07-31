@@ -7,32 +7,37 @@
    [y-video-back.model-specs :as sp]
    [y-video-back.routes.service-handlers.utils :as utils]
    [y-video-back.routes.service-handlers.role-utils :as ru]
-   [ring.swagger.upload :as upload]))
+   [ring.swagger.upload :as upload]
+   [reitit.ring.middleware.multipart :as multipart]))
 (def file-create
   {:summary "Creates a new file. MUST INCLUDE FILE AS UPLOAD."
    :parameters {:header {:session-id uuid?}
-                :body (dissoc models/file-without-id :filepath)}
+                ;:body {:file-version string?}
+                :path {:id uuid?}
+                :multipart {:file multipart/temp-file-part}}
+                ;:body (dissoc models/file-without-id :filepath)
    :responses {200 {:body {:message string?
                            :id string?}}
                500 {:body {:message string?}}}
-   :handler (fn [req]
+   :handler (fn [{{{:keys [session-id]} :header {:keys [file]} :multipart {:keys [id]} :path} :parameters}]
               ;(println "req=" req)
-              (let [session-id (get-in req [:parameters :header :session-id])
-                    body (get-in req [:parameters :body])
-                    file-params (get-in req [:params "file"])
-                    file-name (utils/get-filename (:filename file-params))]
-                (if (nil? file-params)
-                  {:status 400
-                   :body {:message "missing file to upload"}}
-                  (if-not (resources/EXISTS? (:resource-id body))
-                    {:status 500
-                     :body {:message "resource not found"}}
-                    (do
-                      (clojure.java.io/copy (:tempfile file-params)
-                                            (clojure.java.io/file (str (-> env :FILES :media-url) file-name)))
-                      {:status 200
-                       :body {:message "1 file created"
-                              :id (utils/get-id (files/CREATE (assoc body :filepath file-name)))}})))))})
+              ;(if (nil? (get-in req [:multipart-params "file"]))
+              ;  {:status 394
+              ;   :body {:message "missing file to upload"}]
+              (let [file-name (utils/get-filename (:filename file))]
+                (if-not (resources/EXISTS? id)
+                  {:status 500
+                   :body {:message "resource not found"}}
+                  (do
+                    (clojure.java.io/copy (:tempfile file)
+                                          (clojure.java.io/file (str (-> env :FILES :media-url) file-name)))
+                    {:status 200
+                     :body {:message "1 file created"
+                            :id (utils/get-id (files/CREATE {:filepath file-name
+                                                             :file-version ""
+                                                             :mime ""
+                                                             :metadata ""
+                                                             :resource-id id}))}}))))})
 
 
 

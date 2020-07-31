@@ -129,6 +129,7 @@
 (defn wrap-api [handler]
   (let [check-csrf  (if-not (:test env) wrap-csrf identity)]
       (-> ((:middleware defaults) handler)
+          ;(print-handler)
           (wrap-cors :access-control-allow-origin #"http://localhost:3000" :access-control-allow-methods [:get :put :post :delete :patch]
                      :access-control-allow-credentials "true"))))
           ;check-csrf)))

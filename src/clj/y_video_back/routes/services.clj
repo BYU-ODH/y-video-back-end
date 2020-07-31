@@ -106,10 +106,13 @@
        :post {:summary "echo parameter post"
               :parameters {:header {:session-id uuid?}
                            :body {:echo string?}}
+                           ;:multipart {"file" multipart/temp-file-part}}
+                           ;:multipart {:data {:echo string?}}}
               :responses {200 {:body {:echo string?}}}
-              :handler (fn [{{{:keys [session-id]} :header :keys [body]} :parameters}]
+              :handler (fn [req]
+                         (println "req=" req)
                          {:status 200
-                          :body body})}
+                          :body (get-in req [:parameters :body])})}
        :patch service-handlers/echo-patch}]
      ["/:word"
       {:get {:summary "echo parameter get"
@@ -218,6 +221,8 @@
        :delete service-handlers/resource-delete}]
      ;["/{id}/connect-file"
      ; {:post service-handlers/resource-connect-file}]
+     ["/{id}/file"
+      {:post service-handlers/file-create}]
      ["/{id}/files"
       {:get service-handlers/resource-get-all-files}]
      ;["/{id}/add-view"
@@ -254,8 +259,8 @@
 
     ["/file"
      {:swagger {:tags ["file"]}}
-     [""
-      {:post service-handlers/file-create}]
+     ;[""
+     ; {:post service-handlers/file-create}}
      ["/{id}"
       {:get service-handlers/file-get-by-id
        :patch service-handlers/file-update

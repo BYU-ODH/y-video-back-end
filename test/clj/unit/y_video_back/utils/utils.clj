@@ -78,8 +78,10 @@
   ([]
    {:tempfile (create-temp-file "test_kitten.mp4")
     :content-type "application/octet-stream"
-    :filename "test_kitten.mp4"})
+    :filename "test_kitten.mp4"
+    :size 0})
   ([filename]
    {:tempfile (create-temp-file filename)
     :content-type "application/octet-stream"
-    :filename filename}))
+    :filename filename
+    :size 0}))

@@ -50,15 +50,14 @@
 (deftest file-post
   (testing "add duplicated file (i.e. duplicate filename)"
     (let [filecontent (ut/get-filecontent)
-          file-one (db-pop/get-file)
-          res-one (rp/file-post [file-one filecontent])
-          res-two (rp/file-post [file-one filecontent])]
+          rsrc-one (db-pop/add-resource)
+          res-one (rp/file-post (:id rsrc-one) filecontent)
+          res-two (rp/file-post (:id rsrc-one) filecontent)]
       (is (= 200 (:status res-one)))
       (is (= 200 (:status res-two)))))
   (testing "add file to nonexistent resource"
     (let [filecontent (ut/get-filecontent)
-          file-one (db-pop/get-file (java.util.UUID/randomUUID))
-          res(rp/file-post [file-one filecontent])]
+          res(rp/file-post (java.util.UUID/randomUUID) filecontent)]
       (is (= 500 (:status res))))))
 
 (deftest file-id-get
