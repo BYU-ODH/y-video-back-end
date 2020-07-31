@@ -13,32 +13,34 @@
   {:summary "Creates a new file. MUST INCLUDE FILE AS UPLOAD."
    :parameters {:header {:session-id uuid?}
                 ;:body {:file-version string?}
-                :path {:id uuid?}
-                :multipart {:file multipart/temp-file-part}}
+                :multipart {:file multipart/temp-file-part
+                            :resource-id uuid?
+                            :file-version string?
+                            :mime string?
+                            :metadata string?}}
                 ;:body (dissoc models/file-without-id :filepath)
    :responses {200 {:body {:message string?
                            :id string?}}
                500 {:body {:message string?}}}
-   :handler (fn [{{{:keys [session-id]} :header {:keys [file]} :multipart {:keys [id]} :path} :parameters}]
+   :handler (fn [{{{:keys [session-id]} :header {:keys [file resource-id file-version mime metadata]} :multipart} :parameters}]
               ;(println "req=" req)
               ;(if (nil? (get-in req [:multipart-params "file"]))
               ;  {:status 394
               ;   :body {:message "missing file to upload"}]
               (let [file-name (utils/get-filename (:filename file))]
-                (if-not (resources/EXISTS? id)
+                (if-not (resources/EXISTS? resource-id)
                   {:status 500
                    :body {:message "resource not found"}}
-                  (do
+                  (let [id (utils/get-id (files/CREATE {:filepath file-name
+                                                        :file-version file-version
+                                                        :mime mime
+                                                        :metadata metadata
+                                                        :resource-id resource-id}))]
                     (clojure.java.io/copy (:tempfile file)
                                           (clojure.java.io/file (str (-> env :FILES :media-url) file-name)))
                     {:status 200
                      :body {:message "1 file created"
-                            :id (utils/get-id (files/CREATE {:filepath file-name
-                                                             :file-version ""
-                                                             :mime ""
-                                                             :metadata ""
-                                                             :resource-id id}))}}))))})
-
+                            :id id}}))))})
 
 
 (def file-get-by-id

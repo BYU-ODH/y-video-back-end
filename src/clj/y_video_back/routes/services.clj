@@ -221,8 +221,6 @@
        :delete service-handlers/resource-delete}]
      ;["/{id}/connect-file"
      ; {:post service-handlers/resource-connect-file}]
-     ["/{id}/file"
-      {:post service-handlers/file-create}]
      ["/{id}/files"
       {:get service-handlers/resource-get-all-files}]
      ;["/{id}/add-view"
@@ -259,8 +257,8 @@
 
     ["/file"
      {:swagger {:tags ["file"]}}
-     ;[""
-     ; {:post service-handlers/file-create}}
+     [""
+      {:post service-handlers/file-create}]
      ["/{id}"
       {:get service-handlers/file-get-by-id
        :patch service-handlers/file-update
