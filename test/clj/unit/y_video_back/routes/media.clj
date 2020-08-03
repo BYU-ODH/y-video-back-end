@@ -16,7 +16,8 @@
       [y-video-back.db.users :as users]
       [y-video-back.db.resources :as resources]
       [y-video-back.db.files :as files]
-      [y-video-back.db.file-keys :as file-keys]))
+      [y-video-back.db.file-keys :as file-keys]
+      [y-video-back.user-creator :as uc]))
 
 (declare ^:dynamic *txn*)
 
@@ -41,7 +42,7 @@
 ; get file key - all good
 (deftest file-key-and-streaming
   (testing "get file-key with admin user, then stream"
-    (let [res (rp/get-file-key (:id user-one) (:id file-one))
+    (let [res (rp/get-file-key (uc/user-id-to-session-id (:id user-one)) (:id file-one))
           res-body (m/decode-response-body res)]
       (is (= 200 (:status res)))
       (is (contains? res-body :file-key))
@@ -51,7 +52,7 @@
         (is (= java.io.File (type (:body res))))
         (is (= (str (-> env :FILES :media-url) (:filepath file-one)) (.getAbsolutePath (:body res)))))))
   (testing "get file-key with admin user, then let expire"
-    (let [res (rp/get-file-key (:id user-one) (:id file-one))
+    (let [res (rp/get-file-key (uc/user-id-to-session-id (:id user-one)) (:id file-one))
           res-body (m/decode-response-body res)]
       (is (= 200 (:status res)))
       (is (contains? res-body :file-key))

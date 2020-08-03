@@ -98,7 +98,8 @@
    and the status specified by the status key"
   [error-details]
   {:status  (:status error-details)
-   :headers {"Content-Type" "text/html; charset=utf-8"}
+   :headers {"Content-Type" "text/html; charset=utf-8"
+             "session-id" nil}
    :body (hp/html5
           (top-matter)
           (boiler-plate)

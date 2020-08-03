@@ -80,7 +80,7 @@
                500 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header} :parameters}]
               (let [user-id (ru/token-to-user-id session-id)]
-                (if-not (users/EXISTS? user-id) ; this can only be true if using session-id-bypass
+                (if-not (users/EXISTS? user-id) ; this should only be true if using session-id-bypass
                   {:status 404
                    :body {:message "user not found"}}
                   (let [user-result (users/READ user-id)]

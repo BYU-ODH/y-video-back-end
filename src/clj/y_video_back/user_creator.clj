@@ -104,10 +104,16 @@
   "Generates session id for user with given username. If user does not exist, first creates user."
   [username]
   (let [user-res (users/READ-BY-USERNAME [username])]
-      ;(println "getting session id - - - - - - - - - - - ")
-      ;(println username)
-      ;(println user-res)
-      (if-not (= 0 (count user-res))
-        (get-auth-token (:id (first user-res)))
-        (let [user-create-res (create-user username)]
-          (get-auth-token (:id user-create-res))))))
+    ;(println "getting session id - - - - - - - - - - - ")
+    ;(println username)
+    ;(println user-res)
+    (if-not (= 0 (count user-res))
+      (get-auth-token (:id (first user-res)))
+      (let [user-create-res (create-user username)]
+        (get-auth-token (:id user-create-res))))))
+(defn user-id-to-session-id
+  "Generates session id for user with given id. If user does not exist, returns nil."
+  [user-id]
+  (let [user-res (users/READ user-id)]
+    (if-not (nil? user-res)
+      (get-auth-token user-id))))

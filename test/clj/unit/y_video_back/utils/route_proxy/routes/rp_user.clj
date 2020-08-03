@@ -81,4 +81,4 @@
 (defn login-current-user
   "Retrieves current user (by session-id)"
   [username]
-  (ap2 (-> (request :get (str "/api/get-session-id/" username "/" (:NEW-USER-PASSWORD env))))))
+  (app (-> (request :get (str "/api/get-session-id/" username "/" (:NEW-USER-PASSWORD env))))))

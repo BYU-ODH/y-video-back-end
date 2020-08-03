@@ -22,8 +22,8 @@
       [y-video-back.db.users :as users]
       [y-video-back.db.words :as words]
       [y-video-back.utils.utils :as ut]
-      [y-video-back.utils.db-populator :as db-pop]))
-
+      [y-video-back.utils.db-populator :as db-pop]
+      [y-video-back.user-creator :as uc]))
 (declare ^:dynamic *txn*)
 
 (use-fixtures
@@ -46,7 +46,7 @@
 (deftest get-current-user-logged-in
   (testing "get user, only one in database"
     (let [user-one (ut/under-to-hyphen (users/CREATE (g/get-random-user-without-id)))
-          res (rp/get-current-user (:id user-one))]
+          res (rp/get-current-user (uc/user-id-to-session-id (:id user-one)))]
       (is (= 200 (:status res)))
       (is (= (-> user-one
                  (ut/remove-db-only)
@@ -56,9 +56,9 @@
     (let [user-one (ut/under-to-hyphen (users/CREATE (g/get-random-user-without-id)))
           user-two (ut/under-to-hyphen (users/CREATE (g/get-random-user-without-id)))
           user-thr (ut/under-to-hyphen (users/CREATE (g/get-random-user-without-id)))
-          res-two (rp/get-current-user (:id user-two))
-          res-one (rp/get-current-user (:id user-one))
-          res-thr (rp/get-current-user (:id user-thr))]
+          res-two (rp/get-current-user (uc/user-id-to-session-id (:id user-two)))
+          res-one (rp/get-current-user (uc/user-id-to-session-id (:id user-one)))
+          res-thr (rp/get-current-user (uc/user-id-to-session-id (:id user-thr)))]
       (is (= 200 (:status res-one)))
       (is (= 200 (:status res-two)))
       (is (= 200 (:status res-thr)))
@@ -78,7 +78,7 @@
 (deftest get-all-collections-by-logged-in
   (testing "get collections - owner only"
     (let [coll-one (db-pop/add-collection)
-          res (rp/collections-by-logged-in (:owner coll-one))]
+          res (rp/collections-by-logged-in (uc/user-id-to-session-id (:owner coll-one)))]
       (is (= 200 (:status res)))
       (is (= [(-> coll-one
                    (ut/remove-db-only)
@@ -105,7 +105,7 @@
                                                         :user-id user-id
                                                         :account-role 1})
           ; Read collections by session-id
-          res (rp/collections-by-logged-in user-id)]
+          res (rp/collections-by-logged-in (uc/user-id-to-session-id user-id))]
       (is (= 200 (:status res)))
       (is (= [(-> coll-one
                    (ut/remove-db-only)
@@ -141,7 +141,7 @@
                                                         :user-id user-id
                                                         :account-role 1})
           ; Read collections by session-id
-          res (rp/collections-by-logged-in user-id)]
+          res (rp/collections-by-logged-in (uc/user-id-to-session-id user-id))]
       (is (= 200 (:status res)))
       (is (= [(-> coll-one
                    (ut/remove-db-only)
@@ -183,7 +183,7 @@
           coll-crse-two (collection-courses-assoc/CREATE {:course-id (:id crse-two)
                                                           :collection-id (:id coll-two)})
           ; Read collections by sessio-id
-          res (rp/collections-by-logged-in user-id)]
+          res (rp/collections-by-logged-in (uc/user-id-to-session-id user-id))]
         (is (= 200 (:status res)))
         (is (= [(-> coll-one
                      (ut/remove-db-only)
@@ -229,7 +229,7 @@
                                                           :collection-id (:id coll-thr)})
           coll-crse-two (collection-courses-assoc/CREATE {:course-id (:id crse-two)
                                                           :collection-id (:id coll-fou)})
-          res (rp/collections-by-logged-in user-id)]
+          res (rp/collections-by-logged-in (uc/user-id-to-session-id user-id))]
       (let [updated-directs (map #(-> %
                                       (ut/remove-db-only)
                                       (update :id str)

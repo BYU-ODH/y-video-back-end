@@ -25,8 +25,6 @@
   [token]
   ; DEVELOPMENT ONLY - token is actually the userID, so just return it
   (let [res (auth-tokens/READ token)]
-    ;(println "token: " token)
-    ;(println "res: " res)
     (:user-id res)))
   ;(:user-id (auth-tokens/READ token)))
 

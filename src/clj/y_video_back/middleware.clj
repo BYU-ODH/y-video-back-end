@@ -123,11 +123,15 @@
   (fn [request]
     ;(println "add session-id middleware")
     (if (or (clojure.string/starts-with? (:uri request) "/api/api-docs")
-            (clojure.string/starts-with? (:uri request) "/api/swagger.json"))
+            (clojure.string/starts-with? (:uri request) "/api/swagger.json")
+            (clojure.string/starts-with? (:uri request) "/api/get-session-id")
+            (clojure.string/starts-with? (:uri request) "/api/media/stream-media"))
       (handler request)
-      (let [new-id (ru/get-new-session-id (get-session-id request))
-            response (handler request)]
-        (assoc-in response [:headers "session-id"] new-id)))))
+      (if (= (get-session-id request) (sh-utils/to-uuid (:session-id-bypass env)))
+        (assoc-in (handler request) [:headers "session-id"] (get-session-id request))
+        (let [response (handler request)
+              new-id (ru/get-new-session-id (get-session-id request))]
+          (assoc-in response [:headers "session-id"] new-id))))))
 
 (defn wrap-api [handler]
   (let [check-csrf  (if-not (:test env) wrap-csrf identity)]
@@ -152,24 +156,6 @@
   (-> handler
       add-session-id ; Why are these evaluated backwards?
       check-permission))
-
-; INCORRECT FLOW:
-;
-; (handler ...)  <- 1
-;      \/
-; (add-session-id)  <- 2
-;      \/
-; (check-permission)  <- 3
-;
-;
-;
-; CORRECT FLOW:
-;
-; (handler  <- 3
-;   (add-session-id  <- 2
-;     (check-permission)))  <- 1
-
-
 
 (defn wrap-base [handler]
   (-> ((:middleware defaults) handler)
