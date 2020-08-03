@@ -5,6 +5,7 @@ To do before Sep 2020:
 
 2. Implement single-use session-id tokens (aka auth-tokens)
     - We are currently just using user-ids directly.
+    - Update - implemented on back end, ready for front end to begin using
 
 3. Make session-id-bypass testing/development only
 
