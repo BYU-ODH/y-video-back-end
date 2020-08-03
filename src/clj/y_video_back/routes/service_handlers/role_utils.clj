@@ -24,7 +24,9 @@
   "Returns userID associated with token. Returns false if token invalid."
   [token]
   ; DEVELOPMENT ONLY - token is actually the userID, so just return it
-  (let [res (auth-tokens/READ token)]
+  (let [res (auth-tokens/READ-UNEXPIRED token)]
+    ;(println "token-to-user-id token=" token)
+    ;(println "token-to-user-id res=" res)
     (:user-id res)))
   ;(:user-id (auth-tokens/READ token)))
 
@@ -86,7 +88,7 @@
 (defn get-new-session-id
   "Generate new session-id, associated with same user as given session-id. Invalidate old session-id."
   [session-id]
-  (let [new-session-id (:id (auth-tokens/CREATE {:user-id (:user-id (auth-tokens/READ session-id))}))]
+  (let [new-session-id (:id (auth-tokens/CREATE {:user-id (:user-id (auth-tokens/READ-UNEXPIRED session-id))}))]
     ;(println "deleting auth-token: " session-id)
     (auth-tokens/DELETE session-id)
     new-session-id))
@@ -94,6 +96,7 @@
 (defn has-permission
   "Placeholder for real has-permission function. Checks for session-id-bypass or (any) user-id."
   [token route args]
+  ;(println "in has-permission")
   (if (= token (utils/to-uuid (:session-id-bypass env)))
     true
     (let [user-id (token-to-user-id token)]
@@ -103,6 +106,7 @@
 (defn req-has-permission
   "Checks for session-id in request header, then calls has-permission"
   [uri headers body]
+  ;(println "headers=" headers)
   (if (or (clojure.string/starts-with? uri "/api/get-session-id/")
           (clojure.string/starts-with? uri "/api/api-docs")
           (clojure.string/starts-with? uri "/api/swagger")

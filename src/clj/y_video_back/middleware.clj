@@ -112,6 +112,7 @@
   ;handler)
   (fn [request]
     ;(println "checking permission middleware")
+    ;(println "request=" request)
     (if (ru/req-has-permission (:uri request) (:header (:parameters request)) (:body (:parameters request)))
       (handler request)
       (error-page {:status 401, :title "401 - Unauthorized",

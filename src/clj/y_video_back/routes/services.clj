@@ -83,7 +83,12 @@
     ["/ping"
      {:get (constantly (response/ok {:message "pong"}))}]
     ["/auth-ping"
-     {:get (constantly (response/ok {:message "pong"}))}]
+     {:get {:summary "ping, requires valid session-id"
+            :parameters {:header {:session-id uuid?}}
+            :responses {200 {:body {:message string?}}}
+            :handler (fn [req]
+                       {:status 200
+                        :body {:message "ping"}})}}]
 
     ["/surely-a-get-method"
      {:post (constantly (response/ok {:message "pong"}))}]
