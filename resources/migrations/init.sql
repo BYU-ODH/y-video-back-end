@@ -143,16 +143,6 @@ CREATE TABLE subtitles (
 );
 COMMENT ON TABLE subtitles IS 'Contains subtitles to be applied over resources';
 
-DROP TABLE IF EXISTS auth_tokens CASCADE;
-CREATE TABLE auth_tokens (
-    id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY
-    ,deleted TIMESTAMP DEFAULT NULL
-    ,updated TIMESTAMP DEFAULT NULL
-    ,created  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    ,user_id UUID
-);
-COMMENT ON TABLE auth_tokens IS 'Contains auth_tokens (stored in id) mapped to user ids';
-
 DROP TABLE IF EXISTS content_subtitles_assoc CASCADE;
 CREATE TABLE content_subtitles_assoc (
    id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY

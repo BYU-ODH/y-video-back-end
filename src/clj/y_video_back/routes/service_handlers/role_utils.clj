@@ -5,8 +5,8 @@
             [y-video-back.routes.service-handlers.utils :as utils]
             [y-video-back.db.user-courses-assoc :as user-courses-assoc]
             [y-video-back.db.users :as users]
-            [y-video-back.routes.service-handlers.db-utils :as dbu]
-            [y-video-back.db.auth-tokens :as auth-tokens]))
+            [y-video-back.db.auth-tokens :as auth-tokens]
+            [y-video-back.routes.service-handlers.db-utils :as dbu]))
             ;[y-video-back.config :refer [env]]))
 
 ; User account types
@@ -24,7 +24,11 @@
   "Returns userID associated with token. Returns false if token invalid."
   [token]
   ; DEVELOPMENT ONLY - token is actually the userID, so just return it
-  token)
+  (let [res (auth-tokens/READ token)]
+    ;(println "token: " token)
+    ;(println "res: " res)
+    (:user-id res)))
+  ;(:user-id (auth-tokens/READ token)))
 
 (defn get-user-type
   "Returns user type from DB"
@@ -82,18 +86,21 @@
    (is-child? target-id user-id ##Inf)))
 
 (defn get-new-session-id
-  "Generate new session-id, associated with same user as given session-id - Non-functional"
+  "Generate new session-id, associated with same user as given session-id. Invalidate old session-id."
   [session-id]
-  session-id)
+  (let [new-session-id (:id (auth-tokens/CREATE {:user-id (:user-id (auth-tokens/READ session-id))}))]
+    ;(println "deleting auth-token: " session-id)
+    (auth-tokens/DELETE session-id)
+    new-session-id))
 
 (defn has-permission
   "Placeholder for real has-permission function. Checks for session-id-bypass or (any) user-id."
   [token route args]
-  (let [user-id (token-to-user-id token)]
-    (if (or (= token (utils/to-uuid (:session-id-bypass env)))
-            (users/EXISTS? user-id))
-      true
-      false)))
+  (if (= token (utils/to-uuid (:session-id-bypass env)))
+    true
+    (let [user-id (token-to-user-id token)]
+      ;(println "user-id: " user-id)
+      (not (nil? user-id)))))
 
 (defn req-has-permission
   "Checks for session-id in request header, then calls has-permission"

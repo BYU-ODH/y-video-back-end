@@ -111,16 +111,19 @@
   [handler]
   ;handler)
   (fn [request]
+    ;(println "checking permission middleware")
     (if (ru/req-has-permission (:uri request) (:header (:parameters request)) (:body (:parameters request)))
       (handler request)
       (error-page {:status 401, :title "401 - Unauthorized",
                    :image "https://www.cheatsheet.com/wp-content/uploads/2020/02/anakin_council_ROTS.jpg", :caption "It's unfair! How can you be on this website and not be an admin?!"}))))
 
 (defn add-session-id
-  "Adds new session-id to response header"
+  "Adds new session-id to response header. Invalidates old session-id."
   [handler]
   (fn [request]
-    (if (clojure.string/starts-with? (:uri request) "/api/api-docs")
+    ;(println "add session-id middleware")
+    (if (or (clojure.string/starts-with? (:uri request) "/api/api-docs")
+            (clojure.string/starts-with? (:uri request) "/api/swagger.json"))
       (handler request)
       (let [new-id (ru/get-new-session-id (get-session-id request))
             response (handler request)]
@@ -147,8 +150,26 @@
 
 (defn wrap-api-post [handler]
   (-> handler
-      check-permission
-      add-session-id))
+      add-session-id ; Why are these evaluated backwards?
+      check-permission))
+
+; INCORRECT FLOW:
+;
+; (handler ...)  <- 1
+;      \/
+; (add-session-id)  <- 2
+;      \/
+; (check-permission)  <- 3
+;
+;
+;
+; CORRECT FLOW:
+;
+; (handler  <- 3
+;   (add-session-id  <- 2
+;     (check-permission)))  <- 1
+
+
 
 (defn wrap-base [handler]
   (-> ((:middleware defaults) handler)

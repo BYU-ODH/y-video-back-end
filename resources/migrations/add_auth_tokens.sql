@@ -4,6 +4,6 @@ CREATE TABLE auth_tokens (
     ,deleted TIMESTAMP DEFAULT NULL
     ,updated TIMESTAMP DEFAULT NULL
     ,created  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    ,user_id UUID
+    ,user_id UUID REFERENCES users(id)
 );
 COMMENT ON TABLE auth_tokens IS 'Contains auth_tokens (stored in id) mapped to user ids';

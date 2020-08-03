@@ -51,6 +51,6 @@
 (deftest test-user-not-exists
   (testing "username already in db"
     (let [res (uc/get-session-id "other-username!")]
-      (is (not (= (:id test-user-one) res)))
-      (let [res-two (uc/get-session-id "other-username!")]
-        (is (= res res-two))))))
+      (is (not (= (:id test-user-one) res))))))
+      ;(let [res-two (uc/get-session-id "other-username!")]
+      ;  (is (= res res-two))))))

@@ -4,6 +4,7 @@
     [y-video-back.db.user-collections-assoc :as user-collections-assoc]
     [y-video-back.db.user-courses-assoc :as user-courses-assoc]
     [y-video-back.db.users :as users]
+    [y-video-back.db.auth-tokens :as auth-tokens]
     [y-video-back.models :as models]
     [y-video-back.front-end-models :as fmodels]
     [y-video-back.model-specs :as sp]
@@ -71,13 +72,18 @@
         {:full-name (str netid ", no_name")
          :first-name "no_name"
          :last-name netid
-         :email "no_email@yvideobeta.byu.edu"}
+         :email (str netid "@yvideobeta.byu.edu")}
         (let [json-res (json/read-str (:body res))
               full-name (get-in json-res ["StudentStatusInfoService" "response" "student_name"])]
-          {:full-name full-name
-           :first-name (first (clojure.string/split (last (clojure.string/split full-name #", ")) #" "))
-           :last-name (first (clojure.string/split full-name #", "))
-           :email (clojure.string/lower-case (get-in json-res ["StudentStatusInfoService" "response" "email_address"]))})))))
+          (if (nil? full-name)
+            {:full-name (str netid ", no_name")
+             :first-name "no_name"
+             :last-name netid
+             :email (str netid "@yvideobeta.byu.edu")}
+            {:full-name full-name
+             :first-name (first (clojure.string/split (last (clojure.string/split full-name #", ")) #" "))
+             :last-name (first (clojure.string/split full-name #", "))
+             :email (clojure.string/lower-case (get-in json-res ["StudentStatusInfoService" "response" "email_address"]))}))))))
 
 (defn create-user
   "Creates user with data from BYU api"
@@ -89,6 +95,11 @@
                    :account-type 0
                    :account-name (str (:first-name user-data) " " (:last-name user-data))})))
 
+(defn get-auth-token
+  "Adds auth token to database and returns it"
+  [user-id]
+  (:id (auth-tokens/CREATE {:user-id user-id})))
+
 (defn get-session-id
   "Generates session id for user with given username. If user does not exist, first creates user."
   [username]
@@ -97,6 +108,6 @@
       ;(println username)
       ;(println user-res)
       (if-not (= 0 (count user-res))
-        (:id (first user-res))
+        (get-auth-token (:id (first user-res)))
         (let [user-create-res (create-user username)]
-          (:id user-create-res)))))
+          (get-auth-token (:id user-create-res))))))

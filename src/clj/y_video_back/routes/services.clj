@@ -110,7 +110,7 @@
                            ;:multipart {:data {:echo string?}}}
               :responses {200 {:body {:echo string?}}}
               :handler (fn [req]
-                         (println "req=" req)
+                         ;(println "req=" req)
                          {:status 200
                           :body (get-in req [:parameters :body])})}
        :patch service-handlers/echo-patch}]
