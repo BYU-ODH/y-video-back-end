@@ -13,3 +13,14 @@
 (defn EXISTS? [id] (not (nil? (db/READ :collections-undeleted id))))
 (defn EXISTS-NAME-OWNER? [name owner] (not (empty? (db/read-where-and :collections-undeleted [:collection-name :owner] [name owner]))))
 (def READ-ALL-BY-OWNER (partial db/read-where-and :collections-undeleted [:owner]))
+(defn READ-PUBLIC
+  "Read by id, restrict to public results only"
+  [id]
+  (let [res (READ id)]
+    (if-not (:public res)
+      nil
+      res)))
+(defn READ-ALL-PUBLIC
+  "Read all public results"
+  []
+  (db/read-all-where :collections-undeleted :public true))

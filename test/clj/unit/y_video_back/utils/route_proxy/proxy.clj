@@ -13,7 +13,8 @@
     [y-video-back.utils.route-proxy.routes.rp-subtitle :as subtitle]
     [y-video-back.utils.route-proxy.routes.rp-resource :as resource]
     [y-video-back.utils.route-proxy.routes.rp-user :as user]
-    [y-video-back.utils.route-proxy.routes.rp-word :as word]))
+    [y-video-back.utils.route-proxy.routes.rp-word :as word]
+    [y-video-back.utils.route-proxy.routes.rp-public :as public]))
 
 (defn echo-post
   "Echo word from request body"
@@ -95,6 +96,14 @@
 (def file-id-get file/file-id-get)
 (def file-id-patch file/file-id-patch)
 (def file-id-delete file/file-id-delete)
+
+; public routes
+(def public-collection-id-get public/collection-id-get)
+(def public-collection-get-all public/collection-get-all)
+(def public-content-id-get public/content-id-get)
+(def public-content-get-all public/content-get-all)
+(def public-resource-id-get public/resource-id-get)
+(def public-resource-get-all public/resource-get-all)
 
 ; media routes
 (def get-file-key media/get-file-key)

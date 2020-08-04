@@ -85,6 +85,59 @@
          coll-one-add (collections/CREATE coll-one)]
      (assoc coll-one :id (:id coll-one-add)))))
 
+(defn get-public-collection
+  "Creates public collection, ready to be added to db"
+  ([]
+   (let [new-user (ut/under-to-hyphen (users/CREATE (g/get-random-user-without-id)))]
+     (-> (g/get-random-collection-without-id (:id new-user))
+         (dissoc :public)
+         (assoc :public true))))
+  ([owner-id]
+   (-> (g/get-random-collection-without-id owner-id)
+       (dissoc :public)
+       (assoc :public true))))
+
+
+(defn add-public-collection
+  "Creates public collection, adds to db"
+  ([]
+   (let [coll-one (get-public-collection)
+         coll-one-add (collections/CREATE coll-one)]
+     (assoc coll-one :id (:id coll-one-add))))
+  ([owner-id]
+   (let [coll-one (get-public-collection owner-id)
+         coll-one-add (collections/CREATE coll-one)]
+     (assoc coll-one :id (:id coll-one-add)))))
+
+
+
+(defn get-resource
+  "Creates resource, ready to be added to db"
+  []
+  (g/get-random-resource-without-id))
+
+(defn add-resource
+  "Creates resource, adds to db"
+  []
+  (let [rsrc-one (get-resource)
+        rsrc-one-add (resources/CREATE rsrc-one)]
+    (assoc rsrc-one :id (:id rsrc-one-add))))
+
+(defn get-public-resource
+  "Creates resource, ready to be added to db"
+  []
+  (-> (g/get-random-resource-without-id)
+      (dissoc :public)
+      (assoc :public true)))
+
+(defn add-public-resource
+  "Creates resource, adds to db"
+  []
+  (let [rsrc-one (get-public-resource)
+        rsrc-one-add (resources/CREATE rsrc-one)]
+    (assoc rsrc-one :id (:id rsrc-one-add))))
+
+
 (defn get-content
   "Creates content, ready to be added to db"
   ([]
@@ -105,18 +158,29 @@
          cont-one-add (contents/CREATE cont-one)]
      (assoc cont-one :id (:id cont-one-add)))))
 
+(defn get-public-content
+  "Creates content, ready to be added to db"
+  ([]
+   (let [new-coll (ut/under-to-hyphen (collections/CREATE (get-public-collection)))
+         new-rsrc (ut/under-to-hyphen (resources/CREATE (get-public-resource)))]
+     (-> (g/get-random-content-without-id (:id new-coll) (:id new-rsrc))
+         (dissoc :public)
+         (assoc :public true))))
+  ([collection-id resource-id]
+   (-> (g/get-random-content-without-id collection-id resource-id)
+       (dissoc :public)
+       (assoc :public true))))
 
-(defn get-resource
-  "Creates resource, ready to be added to db"
-  []
-  (g/get-random-resource-without-id))
-
-(defn add-resource
-  "Creates resource, adds to db"
-  []
-  (let [rsrc-one (get-resource)
-        rsrc-one-add (resources/CREATE rsrc-one)]
-    (assoc rsrc-one :id (:id rsrc-one-add))))
+(defn add-public-content
+  "Creates content, adds to db"
+  ([]
+   (let [cont-one (get-public-content)
+         cont-one-add (contents/CREATE cont-one)]
+     (assoc cont-one :id (:id cont-one-add))))
+  ([collection-id resource-id]
+   (let [cont-one (get-public-content collection-id resource-id)
+         cont-one-add (contents/CREATE cont-one)]
+     (assoc cont-one :id (:id cont-one-add)))))
 
 (defn get-subtitle
   "Creates subtitle, ready to be added to db"

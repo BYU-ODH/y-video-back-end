@@ -12,7 +12,7 @@
    [y-video-back.routes.service-handlers.utils.utils :as utils]
    [y-video-back.routes.service-handlers.utils.role-utils :as ru]
    [clojure.spec.alpha :as s]
-   [y-video-back.db.core :as db]
+   ;[y-video-back.db.core :as db]
    [ring.swagger.upload :as swagger-upload]))
 
 (def upload-file
@@ -32,7 +32,7 @@
 ;; TODO - check if user has permission to stream requested file
 
 (def get-file-key ;; Non-functional
-  {:summary "Gets volatile url for streaming specified media file"
+  {:summary "Gets volatile url for streaming specified media file. If accessing public file as public user, use '00000000-0000-0000-0000-000000000000' as session-id."
    :parameters {:header {:session-id uuid?}
                 :path {:file-id uuid?}}
    :responses {200 {:body {:file-key uuid?}}}

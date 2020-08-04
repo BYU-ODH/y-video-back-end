@@ -15,3 +15,14 @@
 (def FILES-BY-RESOURCE (partial db/read-all-where :files-undeleted :resource-id))
 (def CONTENTS-BY-RESOURCE (partial db/read-all-where :contents-undeleted :resource-id))
 (def INCR-VIEWS (partial db/increment-field :resources :views))
+(defn READ-PUBLIC
+  "Read by id, restrict to public results only"
+  [id]
+  (let [res (READ id)]
+    (if-not (:public res)
+      nil
+      res)))
+(defn READ-ALL-PUBLIC
+  "Read all public results"
+  []
+  (db/read-all-where :resources-undeleted :public true))
