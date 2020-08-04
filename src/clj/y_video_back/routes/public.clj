@@ -19,7 +19,7 @@
     ;[y-video-back.user-creator :as uc]
     [ring.middleware.multipart-params :refer [wrap-multipart-params]]))
 (defn public-routes []
-   [""
+   ["/public"
     {:coercion spec-coercion/coercion
      :muuntaja formats/instance
      :swagger {:id ::api}
@@ -43,7 +43,25 @@
                   ;; CAS
                   ;middleware/wrap-cas-no-redirect
 
-    ["/public"
+   ;; swagger documentation
+    ["" {:no-doc true
+         :swagger {:info {:title "my-api"
+                          :description "https://cljdoc.org/d/metosin/reitit"}}}
+
+     ["/swagger.json"
+      {:get (swagger/create-swagger-handler)}]
+
+     ["/docs/*"
+      {:get (swagger-ui/create-swagger-ui-handler
+             {:url "/public/swagger.json"
+              :config {:validator-url nil}})}]
+     ["/docs"
+      {:get (swagger-ui/create-swagger-ui-handler
+             {:url "/api/sw agger.json"
+              :config {:validator-url nil}})}]]
+
+
+    [""
      {:swagger {:tags ["public"]}}
      ["/ping"
       {:get (constantly (response/ok {:message "pong"}))}]

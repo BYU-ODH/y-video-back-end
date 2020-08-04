@@ -125,10 +125,11 @@
   [handler]
   (fn [request]
     ;(println "add session-id middleware")
-    (if (or (clojure.string/starts-with? (:uri request) "/api/api-docs")
+    (if (or (clojure.string/starts-with? (:uri request) "/api/docs")
             (clojure.string/starts-with? (:uri request) "/api/swagger.json")
             (clojure.string/starts-with? (:uri request) "/api/get-session-id")
-            (clojure.string/starts-with? (:uri request) "/api/media/stream-media"))
+            (clojure.string/starts-with? (:uri request) "/api/media/stream-media")
+            (= (:uri request) "/api/ping"))
       (handler request)
       (if (= (get-session-id request) (sh-utils/to-uuid (:session-id-bypass env)))
         (assoc-in (handler request) [:headers "session-id"] (get-session-id request))

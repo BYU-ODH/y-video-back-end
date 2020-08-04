@@ -17,8 +17,8 @@
 (defn index-page [request]
   (if (nil? (:username request))
     (response/ok {:message "CAS failed to provide username"})
-    (let [session-id (uc/get-session-id "mchen95")] ; temporary fix
-      (println (str "user from CAS: " "mchen95"))
+    (let [session-id (uc/get-session-id (:username request))] ; temporary fix
+      (println (str "user from CAS: " (:username request)))
       (println (str "serving session-id from home.clj: " session-id))
       (layout/render (into request {:session-id session-id}) "index.html"))))
 

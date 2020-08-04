@@ -56,11 +56,11 @@
      ["/swagger.json"
       {:get (swagger/create-swagger-handler)}]
 
-     ["/api-docs/*"
+     ["/docs/*"
       {:get (swagger-ui/create-swagger-ui-handler
              {:url "/api/swagger.json"
               :config {:validator-url nil}})}]
-     ["/api-docs"
+     ["/docs"
       {:get (swagger-ui/create-swagger-ui-handler
              {:url "/api/swagger.json"
               :config {:validator-url nil}})}]]
