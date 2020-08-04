@@ -23,11 +23,12 @@
 (defn token-to-user-id
   "Returns userID associated with token. Returns false if token invalid."
   [token]
+  token)
   ; DEVELOPMENT ONLY - token is actually the userID, so just return it
-  (let [res (auth-tokens/READ-UNEXPIRED token)]
+  ;(let [res (auth-tokens/READ-UNEXPIRED token)]
     ;(println "token-to-user-id token=" token)
     ;(println "token-to-user-id res=" res)
-    (:user-id res)))
+  ;  (:user-id res)])
   ;(:user-id (auth-tokens/READ token)))
 
 (defn get-user-type
