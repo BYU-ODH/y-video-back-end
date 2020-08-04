@@ -1,4 +1,4 @@
-(ns y-video-back.routes.service-handlers.resource-handlers
+(ns y-video-back.routes.service-handlers.handlers.resource-handlers
   (:require
    [y-video-back.db.collections-contents-assoc :as collection-contents-assoc]
    [y-video-back.db.resources :as resources]

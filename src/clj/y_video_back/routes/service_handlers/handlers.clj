@@ -1,16 +1,16 @@
 (ns y-video-back.routes.service-handlers.handlers
   (:require
-   [y-video-back.routes.service-handlers.misc-handlers :as miscs]
-   [y-video-back.routes.service-handlers.user-handlers :as users]
-   [y-video-back.routes.service-handlers.collection-handlers :as collections]
-   [y-video-back.routes.service-handlers.resource-handlers :as resources]
-   [y-video-back.routes.service-handlers.course-handlers :as courses]
-   [y-video-back.routes.service-handlers.file-handlers :as files]
-   [y-video-back.routes.service-handlers.subtitle-handlers :as subtitles]
-   [y-video-back.routes.service-handlers.content-handlers :as contents]
-   [y-video-back.routes.service-handlers.word-handlers :as words]
-   [y-video-back.routes.service-handlers.admin-handlers :as admin]
-   [y-video-back.routes.service-handlers.media-handlers :as media]))
+   [y-video-back.routes.service-handlers.handlers.misc-handlers :as miscs]
+   [y-video-back.routes.service-handlers.handlers.user-handlers :as users]
+   [y-video-back.routes.service-handlers.handlers.collection-handlers :as collections]
+   [y-video-back.routes.service-handlers.handlers.resource-handlers :as resources]
+   [y-video-back.routes.service-handlers.handlers.course-handlers :as courses]
+   [y-video-back.routes.service-handlers.handlers.file-handlers :as files]
+   [y-video-back.routes.service-handlers.handlers.subtitle-handlers :as subtitles]
+   [y-video-back.routes.service-handlers.handlers.content-handlers :as contents]
+   [y-video-back.routes.service-handlers.handlers.word-handlers :as words]
+   [y-video-back.routes.service-handlers.handlers.admin-handlers :as admin]
+   [y-video-back.routes.service-handlers.handlers.media-handlers :as media]))
 
 
 ; Misc handlers

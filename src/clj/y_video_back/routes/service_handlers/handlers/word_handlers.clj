@@ -1,4 +1,4 @@
-(ns y-video-back.routes.service-handlers.word-handlers
+(ns y-video-back.routes.service-handlers.handlers.word-handlers
   (:require
    [y-video-back.db.words :as words]
    [y-video-back.db.users :as users]

@@ -1,4 +1,4 @@
-(ns y-video-back.routes.service-handlers.file-handlers
+(ns y-video-back.routes.service-handlers.handlers.file-handlers
   (:require
    [y-video-back.config :refer [env]]
    [y-video-back.db.files :as files]

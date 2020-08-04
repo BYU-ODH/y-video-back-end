@@ -1,4 +1,4 @@
-(ns y-video-back.routes.service-handlers.subtitle-handlers
+(ns y-video-back.routes.service-handlers.handlers.subtitle-handlers
   (:require
    [y-video-back.db.subtitles :as subtitles]
    [y-video-back.db.resources :as resources]

@@ -1,4 +1,4 @@
-(ns y-video-back.routes.service-handlers.media-handlers
+(ns y-video-back.routes.service-handlers.handlers.media-handlers
   (:require
    [y-video-back.config :refer [env]]
    [y-video-back.db.user-collections-assoc :as user-collections-assoc]

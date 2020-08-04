@@ -1,4 +1,4 @@
-(ns y-video-back.routes.service-handlers.admin-handlers
+(ns y-video-back.routes.service-handlers.handlers.admin-handlers
   (:require
    [y-video-back.db.user-collections-assoc :as user-collections-assoc]
    [y-video-back.db.user-courses-assoc :as user-courses-assoc]

@@ -1,4 +1,4 @@
-(ns y-video-back.routes.service-handlers.content-handlers
+(ns y-video-back.routes.service-handlers.handlers.content-handlers
   (:require
    [y-video-back.db.contents :as contents]
    [y-video-back.db.collections :as collections]
@@ -28,7 +28,7 @@
                   ;(if (contents/EXISTS-COLL-CONT? (:collection-id body) (:resource-id body))
                   ;  {:status 500
                   ;   :body {:message "content connecting collection and resource already exists"}
-                  (let [new-thumbnail (first (filter #(not (= "" %)) [(:thumbnail body) (utils/get-thumbnail (:url body)) "none"])) 
+                  (let [new-thumbnail (first (filter #(not (= "" %)) [(:thumbnail body) (utils/get-thumbnail (:url body)) "none"]))
                         res (contents/CREATE (assoc (dissoc body :thumbnail) :thumbnail new-thumbnail))]
                     {:status 200
                      :body {:message "1 content created"

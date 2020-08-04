@@ -1,4 +1,4 @@
-(ns y-video-back.routes.service-handlers.misc-handlers
+(ns y-video-back.routes.service-handlers.handlers.misc-handlers
   (:require
    [y-video-back.models :as models]
    [y-video-back.model-specs :as sp]
