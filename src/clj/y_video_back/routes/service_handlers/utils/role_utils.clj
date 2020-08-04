@@ -108,7 +108,7 @@
   [uri headers body]
   ;(println "headers=" headers)
   (if (or (clojure.string/starts-with? uri "/api/get-session-id/")
-          (clojure.string/starts-with? uri "/api/docs")
+          (clojure.string/starts-with? uri "/api/api-docs")
           (clojure.string/starts-with? uri "/api/swagger")
           (clojure.string/starts-with? uri "/api/video")
           (clojure.string/starts-with? uri "/api/get-video-url");temporary
