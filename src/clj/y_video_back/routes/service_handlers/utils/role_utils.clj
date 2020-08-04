@@ -23,12 +23,11 @@
 (defn token-to-user-id
   "Returns userID associated with token. Returns false if token invalid."
   [token]
-  token)
   ; DEVELOPMENT ONLY - token is actually the userID, so just return it
-  ;(let [res (auth-tokens/READ-UNEXPIRED token)]
+  (let [res (auth-tokens/READ-UNEXPIRED token)]
     ;(println "token-to-user-id token=" token)
     ;(println "token-to-user-id res=" res)
-  ;  (:user-id res)])
+    (:user-id res)))
   ;(:user-id (auth-tokens/READ token)))
 
 (defn get-user-type
@@ -92,8 +91,7 @@
   (let [new-session-id (:id (auth-tokens/CREATE {:user-id (:user-id (auth-tokens/READ-UNEXPIRED session-id))}))]
     ;(println "deleting auth-token: " session-id)
     (auth-tokens/DELETE session-id)
-    new-session-id)
-  session-id)
+    new-session-id))
 
 (defn has-permission
   "Placeholder for real has-permission function. Checks for session-id-bypass or (any) user-id."
@@ -116,8 +114,7 @@
           (clojure.string/starts-with? uri "/api/get-video-url");temporary
           (clojure.string/starts-with? uri "/api/media");temporary
           (clojure.string/starts-with? uri "/api/upload");temporary
-          (= uri "/api/ping")
-          true)
+          (= uri "/api/ping"))
     true
     (if (not (contains? headers :session-id))
       false

@@ -98,8 +98,7 @@
 (defn get-auth-token
   "Adds auth token to database and returns it"
   [user-id]
-  (:id (auth-tokens/CREATE {:user-id user-id}))
-  user-id)
+  (:id (auth-tokens/CREATE {:user-id user-id})))
 
 (defn get-session-id
   "Generates session id for user with given username. If user does not exist, first creates user."
