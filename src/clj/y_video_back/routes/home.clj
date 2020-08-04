@@ -5,7 +5,8 @@
      [ring.util.http-response :as response]
      [y-video-back.middleware :as middleware]
      [y-video-back.user-creator :as uc]
-     [reitit.ring :as ring]))
+     [reitit.ring :as ring]
+     [byu-cas.core :as cas]))
 
 (defn home-page [request-map]
   (layout/hiccup-render-cljs-base {:username request-map}))
@@ -44,6 +45,7 @@
          ["/show-request" {:get (fn [request] {:status 200 :body {:request (str request)
                                                                   :cas-info (:cas-info request)}})}]
 
+         ["/logout" {:get {:handler (fn [req] (cas/logout-resp "https://cheneycreations.com"))}}] ; placeholder url until we get a login page going
          ; serving videos routes
 
          ; React BrowserRouter support
