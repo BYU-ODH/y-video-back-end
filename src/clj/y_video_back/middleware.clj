@@ -15,9 +15,9 @@
             [y-video-back.middleware.formats :as formats]
             ;[muuntaja.middleware :refer [wrap-format wrap-params]]
             [ring-ttl-session.core :refer [ttl-memory-store]]
-            [y-video-back.routes.service-handlers.utils :as sh-utils]
+            [y-video-back.routes.service-handlers.utils.utils :as sh-utils]
             [ring.middleware.cors :refer [wrap-cors]]
-            [y-video-back.routes.service-handlers.role-utils :as ru])
+            [y-video-back.routes.service-handlers.utils.role-utils :as ru])
   (:import [javax.servlet ServletContext]))
 
 (def cors-headers

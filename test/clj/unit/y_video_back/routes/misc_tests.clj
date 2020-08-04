@@ -22,7 +22,7 @@
       [y-video-back.db.users :as users]
       [y-video-back.db.words :as words]
       [y-video-back.utils.utils :as ut]
-      [y-video-back.routes.service-handlers.db-utils :as dbu]))
+      [y-video-back.routes.service-handlers.utils.db-utils :as dbu]))
 
 (declare ^:dynamic *txn*)
 

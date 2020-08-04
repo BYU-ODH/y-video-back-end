@@ -8,8 +8,8 @@
    [y-video-back.models :as models]
    [y-video-back.front-end-models :as fmodels]
    [y-video-back.model-specs :as sp]
-   [y-video-back.routes.service-handlers.utils :as utils]
-   [y-video-back.routes.service-handlers.role-utils :as ru]))
+   [y-video-back.routes.service-handlers.utils.utils :as utils]
+   [y-video-back.routes.service-handlers.utils.role-utils :as ru]))
 
 
 (def user-create

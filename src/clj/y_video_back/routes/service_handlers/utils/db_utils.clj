@@ -1,4 +1,4 @@
-(ns y-video-back.routes.service-handlers.db-utils
+(ns y-video-back.routes.service-handlers.utils.db-utils
   (:require
    ;[y-video-back.models :as models]
    ;[y-video-back.model-specs :as sp]

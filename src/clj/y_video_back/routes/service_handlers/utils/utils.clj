@@ -1,4 +1,4 @@
-(ns y-video-back.routes.service-handlers.utils
+(ns y-video-back.routes.service-handlers.utils.utils
   (:require [y-video-back.config :refer [env]]
             [y-video-back.layout :refer [error-page]]
             [y-video-back.db.core :as db]

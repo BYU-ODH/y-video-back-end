@@ -16,8 +16,8 @@
     [y-video-back.routes.service-handlers.handlers :as service-handlers]
     [ring.util.http-response :as response]
     [clojure.java.io :as io]
-    [y-video-back.routes.service-handlers.utils :as utils]
-    [y-video-back.routes.service-handlers.role-utils :as ru]
+    [y-video-back.routes.service-handlers.utils.utils :as utils]
+    [y-video-back.routes.service-handlers.utils.role-utils :as ru]
     [y-video-back.user-creator :as uc]
     [clojure.java.io :as io]
     [ring.middleware.multipart-params :refer [wrap-multipart-params]]))

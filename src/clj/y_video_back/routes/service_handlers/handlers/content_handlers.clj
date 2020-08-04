@@ -7,8 +7,8 @@
    [y-video-back.db.content-subtitles-assoc :as content-subtitles-assoc]
    [y-video-back.models :as models]
    [y-video-back.model-specs :as sp]
-   [y-video-back.routes.service-handlers.utils :as utils]
-   [y-video-back.routes.service-handlers.role-utils :as ru]))
+   [y-video-back.routes.service-handlers.utils.utils :as utils]
+   [y-video-back.routes.service-handlers.utils.role-utils :as ru]))
 
 
 (def content-create ;; Non-functional

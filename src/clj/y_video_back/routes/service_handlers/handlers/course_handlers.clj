@@ -6,8 +6,8 @@
    [y-video-back.db.user-courses-assoc :as user-courses-assoc]
    [y-video-back.models :as models]
    [y-video-back.model-specs :as sp]
-   [y-video-back.routes.service-handlers.utils :as utils]
-   [y-video-back.routes.service-handlers.role-utils :as ru]))
+   [y-video-back.routes.service-handlers.utils.utils :as utils]
+   [y-video-back.routes.service-handlers.utils.role-utils :as ru]))
 
 (def course-create ;; Non-functional
   {:summary "Creates a new course"

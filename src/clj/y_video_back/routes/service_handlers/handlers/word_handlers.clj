@@ -4,8 +4,8 @@
    [y-video-back.db.users :as users]
    [y-video-back.models :as models]
    [y-video-back.model-specs :as sp]
-   [y-video-back.routes.service-handlers.utils :as utils]
-   [y-video-back.routes.service-handlers.role-utils :as ru]))
+   [y-video-back.routes.service-handlers.utils.utils :as utils]
+   [y-video-back.routes.service-handlers.utils.role-utils :as ru]))
 
 (def word-create
   {:summary "Creates a new word"

@@ -1,12 +1,12 @@
-(ns y-video-back.routes.service-handlers.role-utils
+(ns y-video-back.routes.service-handlers.utils.role-utils
   (:require [y-video-back.config :refer [env]]
             [y-video-back.layout :refer [error-page]]
             [y-video-back.db.core :as db]
-            [y-video-back.routes.service-handlers.utils :as utils]
+            [y-video-back.routes.service-handlers.utils.utils :as utils]
             [y-video-back.db.user-courses-assoc :as user-courses-assoc]
             [y-video-back.db.users :as users]
             [y-video-back.db.auth-tokens :as auth-tokens]
-            [y-video-back.routes.service-handlers.db-utils :as dbu]))
+            [y-video-back.routes.service-handlers.utils.db-utils :as dbu]))
             ;[y-video-back.config :refer [env]]))
 
 ; User account types
