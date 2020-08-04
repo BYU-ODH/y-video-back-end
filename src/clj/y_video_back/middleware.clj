@@ -143,7 +143,7 @@
       (-> ((:middleware defaults) handler)
           ;(print-handler)
           (wrap-cors :access-control-allow-origin #"http://localhost:3000" :access-control-allow-methods [:get :put :post :delete :patch]
-                     :access-control-allow-credentials "true"))))
+                     :access-control-allow-credentials "true" :access-control-expose-headers "session-id"))))
           ;check-csrf)))
           ;check-permission)))
           ;wrap-flash
