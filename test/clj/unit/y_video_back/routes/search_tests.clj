@@ -51,14 +51,17 @@
   (def test-coll-one (ut/under-to-hyphen (collections/CREATE {:collection-name "Quidditch Books"
                                                               :published true
                                                               :archived false
+                                                              :public false
                                                               :owner (:id test-user-one)})))
   (def test-coll-two (ut/under-to-hyphen (collections/CREATE {:collection-name "Self-help Books"
                                                               :published true
                                                               :archived true
+                                                              :public false
                                                               :owner (:id test-user-two)})))
   (def test-coll-thr (ut/under-to-hyphen (collections/CREATE {:collection-name "Non-fiction Books"
                                                               :published false
                                                               :archived true
+                                                              :public false
                                                               :owner (:id test-user-thr)})))
   (def test-rsrc-one (ut/under-to-hyphen (resources/CREATE {:resource-name "Quidditch Through the Ages"
                                                             :resource-type "book 1"
@@ -70,6 +73,7 @@
                                                             :date-validated "a while ago"
                                                             :views 0
                                                             :all_file_versions "[book]"
+                                                            :public false
                                                             :metadata "so meta"})))
   (def test-rsrc-two (ut/under-to-hyphen (resources/CREATE {:resource-name "Twelve Fail-Safe Ways to Charm Witches"
                                                             :resource-type "book 2"
@@ -81,6 +85,7 @@
                                                             :date-validated "recently"
                                                             :views 0
                                                             :all_file_versions "[book]"
+                                                            :public false
                                                             :metadata "so meta"})))
   (def test-rsrc-thr (ut/under-to-hyphen (resources/CREATE {:resource-name "Hogwarts: A History"
                                                             :resource-type "book 2"
@@ -92,6 +97,7 @@
                                                             :date-validated "every day"
                                                             :views 0
                                                             :all_file_versions "[book]"
+                                                            :public false
                                                             :metadata "so meta"})))
   (def test-crse-one (ut/under-to-hyphen (courses/CREATE {:department "Transfiguration"
                                                           :catalog-number "ClockAndMap 101"
@@ -112,6 +118,7 @@
                                                            :allow-definitions false
                                                            :allow-notes false
                                                            :allow-captions false
+                                                           :public false
                                                            :views 0
                                                            :file-version "f"
                                                            :resource-id (:id test-rsrc-one)
@@ -126,6 +133,7 @@
                                                            :allow-definitions false
                                                            :allow-notes false
                                                            :allow-captions false
+                                                           :public false
                                                            :views 0
                                                            :file-version "f"
                                                            :resource-id (:id test-rsrc-two)
@@ -140,6 +148,7 @@
                                                            :allow-definitions false
                                                            :allow-notes false
                                                            :allow-captions false
+                                                           :public false
                                                            :views 0
                                                            :file-version "f"
                                                            :resource-id (:id test-rsrc-thr)

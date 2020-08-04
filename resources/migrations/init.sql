@@ -43,6 +43,7 @@ CREATE TABLE collections (
    ,owner UUID REFERENCES users(id)
    ,published BOOLEAN
    ,archived BOOLEAN
+   ,public BOOLEAN
    , CONSTRAINT no_duplicate_owner_names UNIQUE (owner, collection_name)
 );
 COMMENT ON TABLE collections IS 'Collections of content/resources';
@@ -77,6 +78,7 @@ CREATE TABLE resources (
    ,views INTEGER
    ,all_file_versions TEXT
    ,metadata TEXT
+   ,public BOOLEAN
 );
 COMMENT ON TABLE resources IS 'Referenced by contents, hold media in files table';
 
@@ -126,6 +128,7 @@ CREATE TABLE contents (
     ,file_version TEXT
     ,resource_id UUID REFERENCES resources(id)
     ,collection_id UUID REFERENCES collections(id)
+    ,public BOOLEAN
 );
 COMMENT ON TABLE contents IS 'Contains contents to be applied over resources';
 
@@ -142,6 +145,16 @@ CREATE TABLE subtitles (
    , CONSTRAINT no_duplicate_resource_subtitles UNIQUE (title, resource_id)
 );
 COMMENT ON TABLE subtitles IS 'Contains subtitles to be applied over resources';
+
+DROP TABLE IF EXISTS auth_tokens CASCADE;
+CREATE TABLE auth_tokens (
+    id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY
+    ,deleted TIMESTAMP DEFAULT NULL
+    ,updated TIMESTAMP DEFAULT NULL
+    ,created  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    ,user_id UUID REFERENCES users(id)
+);
+COMMENT ON TABLE auth_tokens IS 'Contains auth_tokens (stored in id) mapped to user ids';
 
 DROP TABLE IF EXISTS content_subtitles_assoc CASCADE;
 CREATE TABLE content_subtitles_assoc (
