@@ -3,7 +3,7 @@
   :description "Default template for a BYU ODH Clojure Program"
   :url "http://example.com/FIXME"
 
-  :dependencies [[byu-odh/byu-cas "1"]
+  :dependencies [[byu-odh/byu-cas "4"]
                  [camel-snake-kebab "0.4.1"]
                  [cheshire "5.10.0"]
                  [clj-http "3.10.0"]

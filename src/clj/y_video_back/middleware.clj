@@ -28,8 +28,10 @@
 
 (defn wrap-cas [handler]
   (fn [request]
-    ((cas/wrap-cas handler (str (-> env :y-video-back :site-url) (str (:uri request))))
+    ((cas/wrap-cas handler {:timeout 120})
      request)))
+    ;((cas/wrap-cas handler (str (-> env :y-video-back :site-url) (str (:uri request))))
+    ; request))
 
 (defn wrap-cas-to-request-url
   "redirects user to BYU cas login"
