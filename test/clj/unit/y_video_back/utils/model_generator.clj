@@ -42,7 +42,9 @@
 
 (defn get-random-user-without-id
   []
-  (get-random-model models/user-without-id))
+  (-> (get-random-model models/user-without-id)
+      (dissoc :account-type)
+      (assoc :account-type (rand-int 4))))
 
 (defn get-random-word-without-id-or-user-id
   []

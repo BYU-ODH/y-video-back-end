@@ -27,3 +27,5 @@ To do before Sep 2020:
     - Update - get by id and get all for collections, contents, resources done
 
 8. Potentially add csrf prevention to api routes
+
+9. Change content thumbnail (and other fields?) to default to "" if left blank

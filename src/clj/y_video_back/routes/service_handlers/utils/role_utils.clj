@@ -9,17 +9,6 @@
             [y-video-back.routes.service-handlers.utils.db-utils :as dbu]))
             ;[y-video-back.config :refer [env]]))
 
-; User account types
-(def ADMIN 0) ; administrator
-(def LA 1) ; lab assistant
-(def INSTR 2) ; instructor
-(def STUD 3) ; student
-
-; User-Collection roles
-(def CRSE-STUD 2) ; student enrolled in course
-(def TA 1) ; student with TA privileges
-(def OWNER 0) ; typically professor who own collection)
-
 (defn token-to-user-id
   "Returns userID associated with token. Returns false if token invalid."
   [token]
@@ -58,22 +47,22 @@
 (defn admin+
   "Returns true if user has at least admin privileges"
   [user-type]
-  (<= user-type ADMIN))
+  (<= user-type (:admin env)))
 
 (defn la+
   "Returns true if user has at least lab assistant privileges"
   [user-type]
-  (<= user-type LA))
+  (<= user-type (:lab-assistant env)))
 
 (defn instr+
   "Returns true if user has at least instructor privileges"
   [user-type]
-  (<= user-type INSTR))
+  (<= user-type (:instructor env)))
 
 (defn stud+
   "Returns true if user has at least student privileges"
   [user-type]
-  (<= user-type STUD))
+  (<= user-type (:student env)))
 
 
 (defn is-child?
@@ -93,7 +82,7 @@
     (auth-tokens/DELETE session-id)
     new-session-id))
 
-(defn has-permission
+(defn has-permission-free-for-all
   "Placeholder for real has-permission function. Checks for session-id-bypass or (any) user-id."
   [token route args]
   ;(println "in has-permission")
@@ -103,9 +92,37 @@
       ;(println "user-id: " user-id)
       (not (nil? user-id)))))
 
+(defn has-permission
+  "Checks if user has permission to access route."
+  [token uri req-method args]
+  ;(println "in has-permission")
+  (if (= token (utils/to-uuid (:session-id-bypass env)))
+    true
+    (let [user-id (token-to-user-id token)
+          user-type (get-user-type user-id)
+          route (str req-method ": " uri)]
+      (if (nil? user-id)
+        false
+        (case route
+
+          "get: /api/collections" (or (stud+ user-type) false)
+          "post: /api/collection" (or (la+ user-type) false)
+          "get: /api/collection/{id}" (or (la+ user-type) false)
+          "delete: /api/collection/{id}" (or (admin+ user-type) false)
+          "patch: /api/collection/{id}" (or (la+ user-type) false)
+          "post: /api/collection/{id}/add-user" (or (la+ user-type) false)
+          "post: /api/collection/{id}/remove-user" (or (la+ user-type) false)
+          "post: /api/collection/{id}/add-course" (or (la+ user-type) false)
+          "post: /api/collection/{id}/remove-course" (or (la+ user-type) false)
+          "get: /api/collection/{id}/contents" (or (la+ user-type) false)
+          "get: /api/collection/{id}/courses" (or (la+ user-type) false)
+          "get: /api/collection/{id}/users" (or (la+ user-type) false)
+          true))))) ; will be false when all routes are done
+
+
 (defn req-has-permission
   "Checks for session-id in request header, then calls has-permission"
-  [uri headers body]
+  [uri req-method headers body]
   ;(println "headers=" headers)
   (if (or (clojure.string/starts-with? uri "/api/get-session-id/")
           (clojure.string/starts-with? uri "/api/docs")
@@ -118,7 +135,7 @@
     true
     (if (not (contains? headers :session-id))
       false
-      (has-permission (:session-id headers) uri body))))
+      (has-permission (:session-id headers) uri req-method body))))
 
 (comment
   (defn has-permission

@@ -17,7 +17,8 @@
             [ring-ttl-session.core :refer [ttl-memory-store]]
             [y-video-back.routes.service-handlers.utils.utils :as sh-utils]
             [ring.middleware.cors :refer [wrap-cors]]
-            [y-video-back.routes.service-handlers.utils.role-utils :as ru])
+            [y-video-back.routes.service-handlers.utils.role-utils :as ru]
+            [clojure.data.json :as json])
   (:import [javax.servlet ServletContext]))
 
 (def cors-headers
@@ -115,8 +116,7 @@
   ;handler)
   (fn [request]
     ;(println "checking permission middleware")
-    ;(println "request=" request)
-    (if (ru/req-has-permission (:uri request) (:header (:parameters request)) (:body (:parameters request)))
+    (if (ru/req-has-permission (:template (:reitit.core/match request)) (name (:request-method request)) (:header (:parameters request)) (:parameters request))
       (handler request)
       (error-page {:status 401, :title "401 - Unauthorized",
                    :image "https://www.cheatsheet.com/wp-content/uploads/2020/02/anakin_council_ROTS.jpg", :caption "It's unfair! How can you be on this website and not be an admin?!"}))))

@@ -37,15 +37,23 @@
 
 (defn get-user
   "Creates user, ready to be added to db"
-  []
-  (g/get-random-user-without-id))
+  ([]
+   (g/get-random-user-without-id))
+  ([account-type]
+   (-> (get-user)
+       (dissoc :account-type)
+       (assoc :account-type account-type))))
 
 (defn add-user
   "Creates user, adds to db"
-  []
-  (let [user-one (get-user)
-        user-one-add (users/CREATE user-one)]
-    (assoc user-one :id (:id user-one-add))))
+  ([]
+   (let [user-one (get-user)
+         user-one-add (users/CREATE user-one)]
+     (assoc user-one :id (:id user-one-add))))
+  ([account-type]
+   (let [user-one (get-user account-type)
+         user-one-add (users/CREATE user-one)]
+     (assoc user-one :id (:id user-one-add)))))
 
 (defn get-word
   "Creates word, ready to be added to db"
