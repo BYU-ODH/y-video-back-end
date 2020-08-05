@@ -143,6 +143,17 @@
           "get: /api/collection/{id}/contents" (or (la+ user-type) false)
           "get: /api/collection/{id}/courses" (or (la+ user-type) false)
           "get: /api/collection/{id}/users" (or (la+ user-type) false)
+
+          ; Course routes
+          "post: /api/course" (or (instr+ user-type) false)
+          "get: /api/course/{id}" (or (instr+ user-type) false)
+          "delete: /api/course/{id}" (or (admin+ user-type) false)
+          "patch: /api/course/{id}" (or (admin+ user-type) false)
+          "get: /api/course/{id}/collections" (or (la+ user-type) false)
+          "post: /api/course/{id}/add-user" (or (la+ user-type) false)
+          "post: /api/course/{id}/remove-user" (or (la+ user-type) false)
+          "get: /api/course/{id}/users" (or (la+ user-type) false)
+
           true))))) ; will be false when all routes are done
 
 

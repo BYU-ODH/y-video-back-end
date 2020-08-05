@@ -74,15 +74,6 @@
    (course-id-users (:session-id-bypass env) id)))
 
 
-(defn course-id-users
-  "Reads all users connected to course"
-  ([session-id id]
-   (ap2 (-> (request :get (str "/api/course/" id "/users"))
-            (header :session-id session-id))))
-  ([id]
-   (course-id-users (:session-id-bypass env) id)))
-
-
 (defn course-id-collections
   "Reads all collections connected to course"
   ([session-id id]
