@@ -57,9 +57,22 @@
 
 (defn get-word
   "Creates word, ready to be added to db"
-  []
-  (let [new-user (ut/under-to-hyphen (users/CREATE (get-user)))]
-    (g/get-random-word-without-id (:id new-user))))
+  ([]
+   (let [new-user (ut/under-to-hyphen (users/CREATE (get-user)))]
+     (get-word (:id new-user))))
+  ([user-id]
+   (g/get-random-word-without-id user-id)))
+
+(defn add-word
+  "Creates word, adds to db"
+  ([]
+   (let [word-one (get-word)
+         word-one-add (words/CREATE word-one)]
+     (assoc word-one :id (:id word-one-add))))
+  ([user-id]
+   (let [word-one (get-word user-id)
+         word-one-add (words/CREATE word-one)]
+     (assoc word-one :id (:id word-one-add)))))
 
 (defn get-course
   "Creates course, ready to be added to db"

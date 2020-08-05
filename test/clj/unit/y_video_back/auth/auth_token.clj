@@ -56,7 +56,7 @@
 ; auth-ping with already used valid auth token
 (deftest auth-token-use-twice
   (testing "use auth token twice"
-    (let [user-one (db-pop/add-user)
+    (let [user-one (db-pop/add-user (:admin env))
           token (:id (auth-tokens/CREATE {:user-id (:id user-one)}))
           res-one (rp/auth-ping token)
           res-two (rp/auth-ping token)]

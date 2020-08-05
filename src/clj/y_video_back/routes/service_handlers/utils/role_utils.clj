@@ -124,6 +124,12 @@
           "get: /api/user/{id}/courses" (or (la+ user-type) false)
           "get: /api/user/{id}/words" (or (la+ user-type) false)
 
+          ; Word routes
+          "post: /api/word" (or (la+ user-type) false)
+          "get: /api/word/{id}" (or (la+ user-type) false)
+          "delete: /api/word/{id}" (or (la+ user-type) false)
+          "patch: /api/word/{id}" (or (la+ user-type) false)
+
           ; Collection routes
           "get: /api/collections" (or (stud+ user-type) false)
           "post: /api/collection" (or (la+ user-type) false)
