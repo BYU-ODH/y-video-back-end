@@ -1,19 +1,19 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "5faf8f11df890c63275c794268ecb16d",
+    "revision": "71a828de6f9e7df105d569edc369b0d7",
     "url": "/index.html"
   },
   {
-    "revision": "b84c339417fc74c562ef",
-    "url": "/static/js/2.90b3f7e7.chunk.js"
+    "revision": "2772290e5487dec677f1",
+    "url": "/static/js/2.637858c6.chunk.js"
   },
   {
     "revision": "dce29cb9479f20842c2592abc76494f3",
-    "url": "/static/js/2.90b3f7e7.chunk.js.LICENSE.txt"
+    "url": "/static/js/2.637858c6.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "b8408d83e8551c9ea01b",
-    "url": "/static/js/main.261516fd.chunk.js"
+    "revision": "45163bfe201927179493",
+    "url": "/static/js/main.e9e23f46.chunk.js"
   },
   {
     "revision": "d018355cd979db449cb0",
@@ -172,8 +172,28 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/static/media/radio-unchecked.241ecef5.svg"
   },
   {
+    "revision": "882215d0e58b4098851074c4ac6f7d7a",
+    "url": "/static/media/save.882215d0.svg"
+  },
+  {
     "revision": "a87eca9ea0f39475f2fc7613a3af312f",
     "url": "/static/media/search.a87eca9e.svg"
+  },
+  {
+    "revision": "5727f869509c87f4d25c2225f0968573",
+    "url": "/static/media/te-chevron-left.5727f869.svg"
+  },
+  {
+    "revision": "9c59704b1de34c9fbb54c100b907ac85",
+    "url": "/static/media/te-chevron-right.9c59704b.svg"
+  },
+  {
+    "revision": "4a2a0b47901dbd239c6f5ad4ef14ce0a",
+    "url": "/static/media/te-chevrons-left.4a2a0b47.svg"
+  },
+  {
+    "revision": "7828171283ccd305e7bbc09475d77584",
+    "url": "/static/media/te-chevrons-right.78281712.svg"
   },
   {
     "revision": "8ab3f34681bbd4c1c9bb6779da55cb59",
@@ -184,7 +204,15 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/static/media/translation.dc20c630.svg"
   },
   {
+    "revision": "dfa45393a31a634944531cf606d56edf",
+    "url": "/static/media/trash.dfa45393.svg"
+  },
+  {
     "revision": "e9633493225df68e68491cb67a096a4e",
     "url": "/static/media/trash_icon.e9633493.svg"
+  },
+  {
+    "revision": "f1f4514d5336e74ac1d5f6c367b38dbf",
+    "url": "/static/media/upload.f1f4514d.svg"
   }
 ]);
