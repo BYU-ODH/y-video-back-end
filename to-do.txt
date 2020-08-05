@@ -6,6 +6,7 @@ To do before Sep 2020:
 2. Implement single-use session-id tokens (aka auth-tokens)
     - We are currently just using user-ids directly.
     - Update - implemented on back end, ready for front end to begin using
+    - Update - done
 
 3. Make session-id-bypass testing/development only
 
@@ -14,9 +15,15 @@ To do before Sep 2020:
 
 5. Serve public login screen with access to public data (collections, resources, etc.)
     - Either need to update how we're filtering through CAS, or separately host login page
+    - Low priority
 
-6. Add is-public field to db tables for resources, contents, collections
+6. Add public field to db tables for resources, contents, collections
+    - Low priority
+    - Update - added to database and models
+    - Update - removed until future development
 
 7. Add functionality to access public data without authentication
+    - Low priority
+    - Update - get by id and get all for collections, contents, resources done
 
 8. Potentially add csrf prevention to api routes

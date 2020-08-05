@@ -43,7 +43,7 @@ CREATE TABLE collections (
    ,owner UUID REFERENCES users(id)
    ,published BOOLEAN
    ,archived BOOLEAN
-   ,public BOOLEAN
+   --,public BOOLEAN
    , CONSTRAINT no_duplicate_owner_names UNIQUE (owner, collection_name)
 );
 COMMENT ON TABLE collections IS 'Collections of content/resources';
@@ -78,7 +78,7 @@ CREATE TABLE resources (
    ,views INTEGER
    ,all_file_versions TEXT
    ,metadata TEXT
-   ,public BOOLEAN
+   --,public BOOLEAN
 );
 COMMENT ON TABLE resources IS 'Referenced by contents, hold media in files table';
 
@@ -128,7 +128,7 @@ CREATE TABLE contents (
     ,file_version TEXT
     ,resource_id UUID REFERENCES resources(id)
     ,collection_id UUID REFERENCES collections(id)
-    ,public BOOLEAN
+    --,public BOOLEAN
 );
 COMMENT ON TABLE contents IS 'Contains contents to be applied over resources';
 

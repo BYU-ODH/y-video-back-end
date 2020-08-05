@@ -33,96 +33,97 @@
 (tcore/basic-transaction-fixtures
   (mount.core/start #'y-video-back.handler/app))
 
-; read public collection
-(deftest read-public-collection-by-id
-  (testing "read public collection by id"
-    (let [coll-one (db-pop/add-public-collection)
-          res (rp/public-collection-id-get (:id coll-one))]
-      (is (= 200 (:status res)))
-      (is (= (-> coll-one
-                 (ut/remove-db-only)
-                 (update :id str)
-                 (update :owner str))
-             (ut/remove-db-only (m/decode-response-body res)))))))
-; read all public collections
-(deftest read-public-collections
-  (testing "read all public collections"
-    (let [coll-one (db-pop/add-public-collection)
-          coll-two (db-pop/add-public-collection)
-          res (rp/public-collection-get-all)]
-      (is (= 200 (:status res)))
-      (is (= (map #(-> %
-                       (update :id str)
-                       (update :owner str)
-                       (ut/remove-db-only))
-                  [coll-one coll-two])
-             (map ut/remove-db-only (m/decode-response-body res)))))))
-
-; read public content
-(deftest read-public-content-by-id
-  (testing "read public content by id"
-    (let [cont-one (db-pop/add-public-content)
-          res (rp/public-content-id-get (:id cont-one))]
-      (is (= 200 (:status res)))
-      (is (= (-> cont-one
-                 (ut/remove-db-only)
-                 (update :id str)
-                 (update :collection-id str)
-                 (update :resource-id str))
-             (ut/remove-db-only (m/decode-response-body res)))))))
-
-; read all public contents
-(deftest read-public-contents
-  (testing "read all public contents"
-    (let [cont-one (db-pop/add-public-content)
-          cont-two (db-pop/add-public-content)
-          res (rp/public-content-get-all)]
-      (is (= 200 (:status res)))
-      (is (= (map #(-> %
-                       (update :id str)
-                       (update :collection-id str)
-                       (update :resource-id str))
-                  [cont-one cont-two])
-             (map ut/remove-db-only (m/decode-response-body res)))))))
-
-; read public resource
-(deftest read-public-resource-by-id
-  (testing "read public resource by id"
-    (let [rsrc-one (db-pop/add-public-resource)
-          res (rp/public-resource-id-get (:id rsrc-one))]
-      (is (= 200 (:status res)))
-      (is (= (-> rsrc-one
-                 (ut/remove-db-only)
-                 (update :id str))
-             (ut/remove-db-only (m/decode-response-body res)))))))
-
-; read all public resources
-(deftest read-public-resources
-  (testing "read all public resources"
-    (let [rsrc-one (db-pop/add-public-resource)
-          rsrc-two (db-pop/add-public-resource)
-          res (rp/public-resource-get-all)]
-      (is (= 200 (:status res)))
-      (is (= (map #(-> %
-                       (update :id str))
-                  [rsrc-one rsrc-two])
-             (m/decode-response-body res))))))
-
-; stream public media
-(deftest stream-public-resource
-  (testing "get file-key for file of public resource, then stream"
-    (let [rsrc-one (db-pop/add-public-resource)
-          file-one (files/CREATE {:resource-id (:id rsrc-one)
-                                  :filepath "persistent/test_kitten.mp4" ; move this into github repository?
-                                  :file_version "no-speech"
-                                  :mime "text"
-                                  :metadata "text"})
-          res (rp/get-file-key "00000000-0000-0000-0000-000000000000" (:id file-one))
-          res-body (m/decode-response-body res)]
-      (is (= 200 (:status res)))
-      (is (contains? res-body :file-key))
-      (let [file-key (:file-key res-body)
-            res (rp/stream-media file-key)]
+(comment
+  ; read public collection
+  (deftest read-public-collection-by-id
+    (testing "read public collection by id"
+      (let [coll-one (db-pop/add-public-collection)
+            res (rp/public-collection-id-get (:id coll-one))]
         (is (= 200 (:status res)))
-        (is (= java.io.File (type (:body res))))
-        (is (= (str (-> env :FILES :media-url) (:filepath file-one)) (.getAbsolutePath (:body res))))))))
+        (is (= (-> coll-one
+                   (ut/remove-db-only)
+                   (update :id str)
+                   (update :owner str))
+               (ut/remove-db-only (m/decode-response-body res)))))))
+  ; read all public collections
+  (deftest read-public-collections
+    (testing "read all public collections"
+      (let [coll-one (db-pop/add-public-collection)
+            coll-two (db-pop/add-public-collection)
+            res (rp/public-collection-get-all)]
+        (is (= 200 (:status res)))
+        (is (= (map #(-> %
+                         (update :id str)
+                         (update :owner str)
+                         (ut/remove-db-only))
+                    [coll-one coll-two])
+               (map ut/remove-db-only (m/decode-response-body res)))))))
+
+  ; read public content
+  (deftest read-public-content-by-id
+    (testing "read public content by id"
+      (let [cont-one (db-pop/add-public-content)
+            res (rp/public-content-id-get (:id cont-one))]
+        (is (= 200 (:status res)))
+        (is (= (-> cont-one
+                   (ut/remove-db-only)
+                   (update :id str)
+                   (update :collection-id str)
+                   (update :resource-id str))
+               (ut/remove-db-only (m/decode-response-body res)))))))
+
+  ; read all public contents
+  (deftest read-public-contents
+    (testing "read all public contents"
+      (let [cont-one (db-pop/add-public-content)
+            cont-two (db-pop/add-public-content)
+            res (rp/public-content-get-all)]
+        (is (= 200 (:status res)))
+        (is (= (map #(-> %
+                         (update :id str)
+                         (update :collection-id str)
+                         (update :resource-id str))
+                    [cont-one cont-two])
+               (map ut/remove-db-only (m/decode-response-body res)))))))
+
+  ; read public resource
+  (deftest read-public-resource-by-id
+    (testing "read public resource by id"
+      (let [rsrc-one (db-pop/add-public-resource)
+            res (rp/public-resource-id-get (:id rsrc-one))]
+        (is (= 200 (:status res)))
+        (is (= (-> rsrc-one
+                   (ut/remove-db-only)
+                   (update :id str))
+               (ut/remove-db-only (m/decode-response-body res)))))))
+
+  ; read all public resources
+  (deftest read-public-resources
+    (testing "read all public resources"
+      (let [rsrc-one (db-pop/add-public-resource)
+            rsrc-two (db-pop/add-public-resource)
+            res (rp/public-resource-get-all)]
+        (is (= 200 (:status res)))
+        (is (= (map #(-> %
+                         (update :id str))
+                    [rsrc-one rsrc-two])
+               (m/decode-response-body res))))))
+
+  ; stream public media
+  (deftest stream-public-resource
+    (testing "get file-key for file of public resource, then stream"
+      (let [rsrc-one (db-pop/add-public-resource)
+            file-one (files/CREATE {:resource-id (:id rsrc-one)
+                                    :filepath "persistent/test_kitten.mp4" ; move this into github repository?
+                                    :file_version "no-speech"
+                                    :mime "text"
+                                    :metadata "text"})
+            res (rp/get-file-key "00000000-0000-0000-0000-000000000000" (:id file-one))
+            res-body (m/decode-response-body res)]
+        (is (= 200 (:status res)))
+        (is (contains? res-body :file-key))
+        (let [file-key (:file-key res-body)
+              res (rp/stream-media file-key)]
+          (is (= 200 (:status res)))
+          (is (= java.io.File (type (:body res))))
+          (is (= (str (-> env :FILES :media-url) (:filepath file-one)) (.getAbsolutePath (:body res)))))))))
