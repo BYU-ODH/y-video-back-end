@@ -105,6 +105,26 @@
         false
         (case route
 
+          ; Misc routes
+          "get: /api/auth-ping" (admin+ user-type)
+          "post: /api/surely-a-get-method" (admin+ user-type)
+          "get: /api/jedi-council" false
+          "get: /api/echo" (admin+ user-type)
+          "post: /api/echo" (admin+ user-type)
+          "patch: /api/echo" (admin+ user-type)
+          "get: /api/echo/{word}" (admin+ user-type)
+
+          ; User routes
+          "get: /api/user" (or (stud+ user-type) false)
+          "post: /api/user" (or (admin+ user-type) false)
+          "get: /api/user/{id}" (or (instr+ user-type) false)
+          "delete: /api/user/{id}" (or (admin+ user-type) false)
+          "patch: /api/user/{id}" (or (admin+ user-type) false)
+          "get: /api/user/{id}/collections" (or (la+ user-type) false)
+          "get: /api/user/{id}/courses" (or (la+ user-type) false)
+          "get: /api/user/{id}/words" (or (la+ user-type) false)
+
+          ; Collection routes
           "get: /api/collections" (or (stud+ user-type) false)
           "post: /api/collection" (or (la+ user-type) false)
           "get: /api/collection/{id}" (or (la+ user-type) false)
