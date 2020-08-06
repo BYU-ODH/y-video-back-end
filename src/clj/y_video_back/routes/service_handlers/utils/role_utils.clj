@@ -95,7 +95,6 @@
 (defn has-permission
   "Checks if user has permission to access route."
   [token uri req-method args]
-  ;(println "in has-permission")
   (if (= token (utils/to-uuid (:session-id-bypass env)))
     true
     (let [user-id (token-to-user-id token)
@@ -183,6 +182,12 @@
           "get: /api/file/{id}" (or (instr+ user-type) false)
           "delete: /api/file/{id}" (or (admin+ user-type) false)
           "patch: /api/file/{id}" (or (la+ user-type) false)
+
+          ; Admin routes
+          "get: /api/admin/user/{term}" (or (admin+ user-type) false)
+          "get: /api/admin/collection/{term}" (or (admin+ user-type) false)
+          "get: /api/admin/content/{term}" (or (admin+ user-type) false)
+          "get: /api/admin/resource/{term}" (or (admin+ user-type) false)
 
 
           true))))) ; will be false when all routes are done
