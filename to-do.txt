@@ -29,3 +29,8 @@ To do before Sep 2020:
 8. Potentially add csrf prevention to api routes
 
 9. Change content thumbnail (and other fields?) to default to "" if left blank
+
+10. Use an api to auto-populate courses table
+    - Proof of concept working, need to more smoothly integrate/test
+    - Which term should we fill?
+    - How often should we fill?

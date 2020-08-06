@@ -1,17 +1,60 @@
 (ns y-video-back.routes.service-handlers.handlers.admin-handlers
   (:require
+   [y-video-back.config :refer [env]]
    [y-video-back.db.user-collections-assoc :as user-collections-assoc]
    [y-video-back.db.user-courses-assoc :as user-courses-assoc]
    [y-video-back.db.users :as users]
+   [y-video-back.db.courses :as courses]
    [y-video-back.models :as models]
    [y-video-back.front-end-models :as fmodels]
    [y-video-back.model-specs :as sp]
    [y-video-back.routes.service-handlers.utils.utils :as utils]
    [y-video-back.routes.service-handlers.utils.role-utils :as ru]
    [clojure.spec.alpha :as s]
-   [y-video-back.db.core :as db]))
+   [y-video-back.db.core :as db]
+   [y-video-back.course-data :as cd-api]))
 
 ; TODO - sort results by more than just alphabetical
+
+
+(defn add-course-to-db
+  [dpt course-data cur-sem]
+  (println course-data)
+  (let [sections (cd-api/get-class-sections dpt
+                                            (get course-data "curriculum_id")
+                                            (get course-data "title_code")
+                                            cur-sem)
+        res (map #(if-not (courses/EXISTS-DEP-CAT-SEC? dpt (get course-data "catalog_number") %)
+                    (courses/CREATE {:department dpt
+                                     :catalog-number (get course-data "catalog_number")
+                                     :section-number %}))
+                 sections)]
+    (count res)))
+
+(defn add-teaching-area-to-db
+  [teaching-area cur-sem]
+  (println (get teaching-area "department"))
+  (let [dpt (get teaching-area "department")
+        dpt-courses (cd-api/get-department-classes dpt cur-sem)
+        res (map #(add-course-to-db dpt % cur-sem) dpt-courses)]
+    (reduce + res)))
+
+(def refresh-course-list
+  {:summary "Refreshes courses in database. DANGEROUS - NOT FUNCTIONAL."
+   :parameters {:header {:session-id uuid?}
+                :path {:password uuid?}}
+   :responses {200 {:body {:message string?}}
+               401 {:body {:message string?}}}
+   :handler (fn [{{{:keys [session-id]} :header {:keys [password]} :path} :parameters}]
+              (println "password=" password)
+              (if-not (= (:REFRESH-COURSES-PASSWORD env) (str password))
+                {:status 401
+                 :body {:message "unauthorized"}}
+                (let [cur-sem (cd-api/get-current-sem)
+                      teaching-areas (cd-api/get-teaching-areas cur-sem)
+                      res (map #(add-teaching-area-to-db % cur-sem) teaching-areas)]
+                  {:status 200
+                   :body {:message (str (reduce + res) " courses added to db")}})))})
 
 (def search-by-user ;; Non-functional
   {:summary "Searches users, collections, resources, and courses by search term"
