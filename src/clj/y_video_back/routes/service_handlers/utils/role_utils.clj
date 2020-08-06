@@ -154,6 +154,16 @@
           "post: /api/course/{id}/remove-user" (or (la+ user-type) false)
           "get: /api/course/{id}/users" (or (la+ user-type) false)
 
+          ; Resource routes
+          "post: /api/resource" (or (la+ user-type) false)
+          "get: /api/resource/{id}" (or (instr+ user-type) false)
+          "delete: /api/resource/{id}" (or (admin+ user-type) false)
+          "patch: /api/resource/{id}" (or (la+ user-type) false)
+          "get: /api/resource/{id}/files" (or (instr+ user-type) false)
+          "get: /api/resource/{id}/collections" (or (la+ user-type) false)
+          "get: /api/resource/{id}/contents" (or (la+ user-type) false)
+
+
           true))))) ; will be false when all routes are done
 
 
