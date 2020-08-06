@@ -184,10 +184,10 @@
           "patch: /api/file/{id}" (or (la+ user-type) false)
 
           ; Admin routes
-          "get: /api/admin/user/{term}" (or (admin+ user-type) false)
-          "get: /api/admin/collection/{term}" (or (admin+ user-type) false)
-          "get: /api/admin/content/{term}" (or (admin+ user-type) false)
-          "get: /api/admin/resource/{term}" (or (admin+ user-type) false)
+          "get: /api/admin/user/{term}" (or (instr+ user-type) false)
+          "get: /api/admin/collection/{term}" (or (la+ user-type) false)
+          "get: /api/admin/content/{term}" (or (la+ user-type) false)
+          "get: /api/admin/resource/{term}" (or (instr+ user-type) false)
 
           ; Media routes
           "get: /api/media/get-file-key/{file-id}" (or (la+ user-type) false)

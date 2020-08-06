@@ -52,12 +52,12 @@
     (let [user-one (db-pop/add-user (:lab-assistant env))
           res (rp/search-by-user (uc/user-id-to-session-id (:id user-one))
                                  "test")]
-      (is (= 401 (:status res)))))
+      (is (= 200 (:status res)))))
   (testing "instructor, admin-search-users"
     (let [user-one (db-pop/add-user (:instructor env))
           res (rp/search-by-user (uc/user-id-to-session-id (:id user-one))
                                  "test")]
-      (is (= 401 (:status res)))))
+      (is (= 200 (:status res)))))
   (testing "student, admin-search-users"
     (let [user-one (db-pop/add-user (:student env))
           res (rp/search-by-user (uc/user-id-to-session-id (:id user-one))
@@ -76,7 +76,7 @@
     (let [user-one (db-pop/add-user (:lab-assistant env))
           res (rp/search-by-collection (uc/user-id-to-session-id (:id user-one))
                                        "test")]
-      (is (= 401 (:status res)))))
+      (is (= 200 (:status res)))))
   (testing "instructor, admin-search-collections"
     (let [user-one (db-pop/add-user (:instructor env))
           res (rp/search-by-collection (uc/user-id-to-session-id (:id user-one))
@@ -99,7 +99,7 @@
     (let [user-one (db-pop/add-user (:lab-assistant env))
           res (rp/search-by-content (uc/user-id-to-session-id (:id user-one))
                                     "test")]
-      (is (= 401 (:status res)))))
+      (is (= 200 (:status res)))))
   (testing "instructor, admin-search-contents"
     (let [user-one (db-pop/add-user (:instructor env))
           res (rp/search-by-content (uc/user-id-to-session-id (:id user-one))
@@ -122,12 +122,12 @@
     (let [user-one (db-pop/add-user (:lab-assistant env))
           res (rp/search-by-resource (uc/user-id-to-session-id (:id user-one))
                                      "test")]
-      (is (= 401 (:status res)))))
+      (is (= 200 (:status res)))))
   (testing "instructor, admin-search-resources"
     (let [user-one (db-pop/add-user (:instructor env))
           res (rp/search-by-resource (uc/user-id-to-session-id (:id user-one))
                                      "test")]
-      (is (= 401 (:status res)))))
+      (is (= 200 (:status res)))))
   (testing "student, admin-search-resources"
     (let [user-one (db-pop/add-user (:student env))
           res (rp/search-by-resource (uc/user-id-to-session-id (:id user-one))
