@@ -33,7 +33,8 @@
       [y-video-back.db.words :as words]
       [y-video-back.db.user-collections-assoc :as user-collections-assoc]
       [y-video-back.db.user-courses-assoc :as user-courses-assoc]
-      [y-video-back.db.collections-courses-assoc :as collection-courses-assoc]))
+      [y-video-back.db.collections-courses-assoc :as collection-courses-assoc]
+      [y-video-back.db.content-subtitles-assoc :as content-subtitles-assoc]))
 
 (defn get-user
   "Creates user, ready to be added to db"
@@ -298,3 +299,23 @@
    (let [cca-one (get-coll-crse-assoc)
          cca-one-add (collection-courses-assoc/CREATE cca-one)]
      (assoc cca-one :id (:id cca-one-add)))))
+
+(defn get-cont-sbtl-assoc
+  "Creates cont-sbtl-assoc, ready to be added to db"
+  ([cont-id sbtl-id]
+   (g/get-random-content-subtitles-assoc-without-id cont-id sbtl-id))
+  ([]
+   (let [cont-one (add-content)
+         sbtl-one (add-subtitle (:resource-id cont-one))]
+     (get-cont-sbtl-assoc (:id cont-one) (:id sbtl-one)))))
+
+(defn add-cont-sbtl-assoc
+  "Creates cont-sbtl-assoc, adds to db"
+  ([cont-id sbtl-id]
+   (let [csa-one (get-cont-sbtl-assoc cont-id sbtl-id)
+         csa-one-add (content-subtitles-assoc/CREATE csa-one)]
+     (assoc csa-one :id (:id csa-one-add))))
+  ([]
+   (let [csa-one (get-cont-sbtl-assoc)
+         csa-one-add (content-subtitles-assoc/CREATE csa-one)]
+     (assoc csa-one (:id csa-one-add)))))

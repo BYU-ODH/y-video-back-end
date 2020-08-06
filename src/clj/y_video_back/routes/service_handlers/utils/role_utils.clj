@@ -163,6 +163,15 @@
           "get: /api/resource/{id}/collections" (or (la+ user-type) false)
           "get: /api/resource/{id}/contents" (or (la+ user-type) false)
 
+          ; Content routes
+          "post: /api/content" (or (la+ user-type) false)
+          "get: /api/content/{id}" (or (la+ user-type) false)
+          "delete: /api/content/{id}" (or (admin+ user-type) false)
+          "patch: /api/content/{id}" (or (la+ user-type) false)
+          "post: /api/content/{id}/add-view" (or (la+ user-type) false)
+          "post: /api/content/{id}/add-subtitle" (or (la+ user-type) false)
+          "post: /api/content/{id}/remove-subtitle" (or (la+ user-type) false)
+
 
           true))))) ; will be false when all routes are done
 
