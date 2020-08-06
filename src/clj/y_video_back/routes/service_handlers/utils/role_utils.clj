@@ -172,6 +172,12 @@
           "post: /api/content/{id}/add-subtitle" (or (la+ user-type) false)
           "post: /api/content/{id}/remove-subtitle" (or (la+ user-type) false)
 
+          ; Subtitile routes
+          "post: /api/subtitle" (or (la+ user-type) false)
+          "get: /api/subtitle/{id}" (or (la+ user-type) false)
+          "delete: /api/subtitle/{id}" (or (admin+ user-type) false)
+          "patch: /api/subtitle/{id}" (or (la+ user-type) false)
+
 
           true))))) ; will be false when all routes are done
 
