@@ -178,6 +178,12 @@
           "delete: /api/subtitle/{id}" (or (admin+ user-type) false)
           "patch: /api/subtitle/{id}" (or (la+ user-type) false)
 
+          ; File routes
+          "post: /api/file" (or (la+ user-type) false)
+          "get: /api/file/{id}" (or (instr+ user-type) false)
+          "delete: /api/file/{id}" (or (admin+ user-type) false)
+          "patch: /api/file/{id}" (or (la+ user-type) false)
+
 
           true))))) ; will be false when all routes are done
 
