@@ -189,6 +189,9 @@
           "get: /api/admin/content/{term}" (or (admin+ user-type) false)
           "get: /api/admin/resource/{term}" (or (admin+ user-type) false)
 
+          ; Media routes
+          "get: /api/media/get-file-key/{file-id}" (or (la+ user-type) false)
+
 
           true))))) ; will be false when all routes are done
 
@@ -202,7 +205,7 @@
           (clojure.string/starts-with? uri "/api/swagger")
           (clojure.string/starts-with? uri "/api/video")
           (clojure.string/starts-with? uri "/api/get-video-url");temporary
-          (clojure.string/starts-with? uri "/api/media");temporary
+          (clojure.string/starts-with? uri "/api/media/stream-media/");temporary
           (clojure.string/starts-with? uri "/api/upload");temporary
           (= uri "/api/ping"))
     true
