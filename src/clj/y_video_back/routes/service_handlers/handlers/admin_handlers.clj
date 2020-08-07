@@ -41,6 +41,7 @@
 
 (def refresh-course-list
   {:summary "Refreshes courses in database. DANGEROUS - NOT FUNCTIONAL."
+   :permission-level 0
    :parameters {:header {:session-id uuid?}
                 :path {:password uuid?}}
    :responses {200 {:body {:message string?}}
@@ -58,6 +59,7 @@
 
 (def search-by-user ;; Non-functional
   {:summary "Searches users, collections, resources, and courses by search term"
+   :permission-level 2
    :parameters {:header {:session-id uuid?}
                 :path {:term string?}}
    :responses {200 {:body [models/user]}}
@@ -72,6 +74,7 @@
 
 (def search-by-collection ;; Non-functional
   {:summary "Searches users, collections, resources, and courses by search term"
+   :permission-level 1
    :parameters {:header {:session-id uuid?}
                 :path {:term string?}}
    :responses {200 {:body [(into models/collection {:username string?})]}}
@@ -88,6 +91,7 @@
 
 (def search-by-content
   {:summary "Searches users, collections, contents, and courses by search term"
+   :permission-level 1
    :parameters {:header {:session-id uuid?}
                 :path {:term string?}}
    :responses {200 {:body [models/content]}}
@@ -103,6 +107,7 @@
 
 (def search-by-resource
   {:summary "Searches users, collections, resources, and courses by search term"
+   :permission-level 2
    :parameters {:header {:session-id uuid?}
                 :path {:term string?}}
    :responses {200 {:body [models/resource]}}

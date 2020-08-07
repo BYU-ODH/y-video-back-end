@@ -17,6 +17,7 @@
 
 (def upload-file
   {:summary "Uploads file"
+   :permission-level 0
    :responses {200 {:body {:message string?}}}
    :handler (fn [p]
               (let [file-params (get-in p [:params "file"])
@@ -33,6 +34,7 @@
 
 (def get-file-key ;; Non-functional
   {:summary "Gets volatile url for streaming specified media file. If accessing public file as public user, use '00000000-0000-0000-0000-000000000000' as session-id."
+   :permission-level 1
    :parameters {:header {:session-id uuid?}
                 :path {:file-id uuid?}}
    :responses {200 {:body {:file-key uuid?}}}

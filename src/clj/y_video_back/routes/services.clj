@@ -84,6 +84,7 @@
      {:get (constantly (response/ok {:message "pong"}))}]
     ["/auth-ping"
      {:get {:summary "ping, requires valid session-id"
+            :permission-level (:admin env)
             :parameters {:header {:session-id uuid?}}
             :responses {200 {:body {:message string?}}}
             :handler (fn [req]
@@ -95,6 +96,7 @@
 
     ["/jedi-council"
      {:get {:validate false
+            :permission-level -1
             :handler (fn [] "doesn't matter")}}]
 
     ["/echo"
@@ -102,6 +104,7 @@
 
      [""
       {:get {:summary "echo parameter get"
+             :permission-level (:admin env)
              :parameters {:query {:echo string?}}
              :responses {200 {:body {:echo string?}}}
              :handler (fn [{{{:keys [echo]} :query} :parameters}]
@@ -109,6 +112,7 @@
                         {:status 200
                          :body {:echo echo}})}
        :post {:summary "echo parameter post"
+              :permission-level (:admin env)
               :parameters {:header {:session-id uuid?}
                            :body {:echo string?}}
                            ;:multipart {"file" multipart/temp-file-part}}
@@ -121,6 +125,7 @@
        :patch service-handlers/echo-patch}]
      ["/:word"
       {:get {:summary "echo parameter get"
+             :permission-level (:admin env)
              :parameters {:path {:word string?}
                           :query {:second string?}}
              :responses {200 {:body {:echo string?

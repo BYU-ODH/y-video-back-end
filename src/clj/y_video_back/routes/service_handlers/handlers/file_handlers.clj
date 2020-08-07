@@ -11,6 +11,7 @@
    [reitit.ring.middleware.multipart :as multipart]))
 (def file-create
   {:summary "Creates a new file. MUST INCLUDE FILE AS UPLOAD."
+   :permission-level 1
    :parameters {:header {:session-id uuid?}
                 ;:body {:file-version string?}
                 :multipart {:file multipart/temp-file-part
@@ -45,6 +46,7 @@
 
 (def file-get-by-id
   {:summary "Retrieves specified file"
+   :permission-level 2
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
    :responses {200 {:body models/file}
@@ -60,6 +62,7 @@
 ; Should this be allowed to update the filepath?
 (def file-update
   {:summary "Updates specified file"
+   :permission-level 1
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?} :body ::sp/file}
    :responses {200 {:body {:message string?}}
@@ -90,6 +93,7 @@
 
 (def file-delete
   {:summary "Deletes specified file"
+   :permission-level 0
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
    :responses {200 {:body {:message string?}}

@@ -11,6 +11,7 @@
 
 (def resource-create ;; Non-functional
   {:summary "Creates new resource"
+   :permission-level 1
    :parameters {:header {:session-id uuid?}
                 :body models/resource-without-id}
    :responses {200 {:body {:message string?
@@ -22,6 +23,7 @@
 
 (def resource-get-by-id
   {:summary "Retrieves specified resource"
+   :permission-level 2
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
    :responses {200 {:body models/resource}
@@ -36,6 +38,7 @@
 
 (def resource-update ;; Non-functional
   {:summary "Updates the specified resource"
+   :permission-level 1
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?} :body ::sp/resource}
    :responses {200 {:body {:message string?}}
@@ -62,6 +65,7 @@
 
 (def resource-delete ;; Non-functional
   {:summary "Deletes the specified resource"
+   :permission-level 0
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
    :responses {200 {:body {:message string?}}
@@ -76,6 +80,7 @@
 
 (def resource-get-all-collections ;; Non-functional
   {:summary "Retrieves all collections for specified resource"
+   :permission-level 1
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
    :responses {200 {:body [models/collection]}
@@ -93,6 +98,7 @@
 
 (def resource-get-all-contents ;; Non-functional
   {:summary "Retrieves all contents for specified resource"
+   :permission-level 1
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
    :responses {200 {:body [(into models/content {:resource-id uuid?})]}
@@ -108,6 +114,7 @@
 
 (def resource-get-all-files ;; Non-functional
   {:summary "Retrieves all the files for the specified resource"
+   :permission-level 2
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
    :responses {200 {:body [(into models/file {:resource-id uuid?})]}
@@ -121,20 +128,22 @@
                     {:status 200 ; Not implemented yet
                      :body file-result}))))})
 
-(def resource-add-view ;; Non-functional
-  {:summary "Adds 1 view to specified resource"
-   :parameters {:header {:session-id uuid?}
-                :path {:id uuid?}}
-   :responses {200 {:body {:message string?}}
-               404 {:body {:message string?}}}
-   :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
-              ; We need the current view count, so we might as well pull the whole
-              ; db object to check for existence as well
-              (let [resource-res (resources/READ id)]
-                (if-not resource-res
-                  {:status 404
-                   :body {:message "requested resource not found"}}
-                  (do
-                    (resources/UPDATE id {:views (+ 1 (:views resource-res))})
-                    {:status 200
-                     :body {:message "view successfully added"}}))))})
+(comment
+  (def resource-add-view ;; Non-functional
+    {:summary "Adds 1 view to specified resource"
+     :permission-level 0
+     :parameters {:header {:session-id uuid?}
+                  :path {:id uuid?}}
+     :responses {200 {:body {:message string?}}
+                 404 {:body {:message string?}}}
+     :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
+                ; We need the current view count, so we might as well pull the whole
+                ; db object to check for existence as well
+                (let [resource-res (resources/READ id)]
+                  (if-not resource-res
+                    {:status 404
+                     :body {:message "requested resource not found"}}
+                    (do
+                      (resources/UPDATE id {:views (+ 1 (:views resource-res))})
+                      {:status 200
+                       :body {:message "view successfully added"}}))))}))

@@ -11,6 +11,7 @@
 
 (def course-create ;; Non-functional
   {:summary "Creates a new course"
+   :permission-level 2
    :parameters {:header {:session-id uuid?}
                 :body models/course-without-id}
    :responses {200 {:body {:message string?
@@ -26,6 +27,7 @@
 
 (def course-get-by-id ;; Non-functional
   {:summary "Retrieves specified course"
+   :permission-level 2
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
    :responses {200 {:body models/course}
@@ -40,6 +42,7 @@
 
 (def course-update ;; Non-functional
   {:summary "Updates the specified course"
+   :permission-level 0
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?} :body ::sp/course}
    :responses {200 {:body {:message string?}}
@@ -69,6 +72,7 @@
 
 (def course-delete ;; Non-functional
   {:summary "Deletes the specified course"
+   :permission-level 0
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
    :responses {200 {:body {:message string?}}
@@ -83,6 +87,7 @@
 
 (def course-add-user
   {:summary "Adds user to specified course"
+   :permission-level 1
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?} :body {:user-id uuid? :account-role int?}}
    :responses {200 {:body {:message string? :id string?}}
@@ -108,6 +113,7 @@
 
 (def course-remove-user
   {:summary "Removes user from specified course"
+   :permission-level 1
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?} :body {:user-id uuid?}}
    :responses {200 {:body {:message string?}}
@@ -132,6 +138,7 @@
 
 (def course-get-all-users
   {:summary "Retrieves all users for the specified course"
+   :permission-level 1
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
    :responses {200 {:body [models/user]}
@@ -151,6 +158,7 @@
 
 (def course-get-all-collections ;; Non-functional
   {:summary "Retrieves all collections for specified course"
+   :permission-level 1
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
    :responses {200 {:body [models/collection]}

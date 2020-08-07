@@ -9,6 +9,7 @@
 
 (def word-create
   {:summary "Creates a new word"
+   :permission-level 1
    :parameters {:header {:session-id uuid?}
                 :body models/word-without-id}
    :responses {200 {:body {:message string?
@@ -27,6 +28,7 @@
 
 (def word-get-by-id
   {:summary "Retrieves specified word"
+   :permission-level 1
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
    :responses {200 {:body models/word}
@@ -41,6 +43,7 @@
 
 (def word-update
   {:summary "Updates specified word"
+   :permission-level 1
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?} :body ::sp/word}
    :responses {200 {:body {:message string?}}
@@ -74,6 +77,7 @@
 
 (def word-delete
   {:summary "Deletes specified word"
+   :permission-level 1
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
    :responses {200 {:body {:message string?}}

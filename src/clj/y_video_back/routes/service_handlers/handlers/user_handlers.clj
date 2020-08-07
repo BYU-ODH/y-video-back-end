@@ -1,5 +1,6 @@
 (ns y-video-back.routes.service-handlers.handlers.user-handlers
   (:require
+   [y-video-back.config :refer [env]]
    [y-video-back.db.user-collections-assoc :as user-collections-assoc]
    [y-video-back.db.user-courses-assoc :as user-courses-assoc]
    [y-video-back.db.users :as users]
@@ -14,6 +15,7 @@
 
 (def user-create
   {:summary "Creates a new user - FOR DEVELOPMENT ONLY"
+   :permission-level 0
    :parameters {:header {:session-id uuid?}
                 :body models/user-without-id}
    :responses {200 {:body {:message string?
@@ -29,6 +31,7 @@
 
 (def user-get-by-id
   {:summary "Retrieves specified user"
+   :permission-level 2
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
    :responses {200 {:body models/user}
@@ -44,6 +47,7 @@
 
 (def user-update
   {:summary "Updates specified user"
+   :permission-level 0
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?} :body ::sp/user}
    :responses {200 {:body {:message string?}}
@@ -58,6 +62,7 @@
 
 (def user-delete
   {:summary "Deletes specified user"
+   :permission-level 0
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
    :responses {200 {:body {:message string?}}
@@ -73,6 +78,7 @@
 
 (def user-get-logged-in ;; Non-functional
   {:summary "Retrieves the current logged-in user"
+   :permission-level 3
    :parameters {:header {:session-id uuid?}}
    :responses {200 {:body models/user}
                      ;:header {:Access-Control-Allow-Origin "http://localhost:3000"}}
@@ -95,6 +101,7 @@
 
 (def user-get-all-collections ;; Non-functional
   {:summary "Retrieves all collections the specified user owns"
+   :permission-level 1
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
    :responses {200 {:body [models/collection]}
@@ -114,6 +121,7 @@
 
 (def user-get-all-collections-by-logged-in
   {:summary "Retrieves all collections for session user"
+   :permission-level 3
    :parameters {:header {:session-id uuid?}}
    :responses {200 {:body [(assoc models/collection :content [models/content])]}
                404 {:body {:message string?}}}
@@ -146,6 +154,7 @@
 
 (def user-get-all-courses ;; Non-functional
   {:summary "Retrieves all courses for specified user"
+   :permission-level 1
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
    :responses {200 {:body [models/course]}
@@ -166,6 +175,7 @@
 
 (def user-get-all-words
   {:summary "Retrieves all words under specified user"
+   :permission-level 1
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
    :responses {200 {:body [models/word]}

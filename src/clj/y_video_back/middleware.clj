@@ -123,8 +123,10 @@
       (if (or (= (:session-id-bypass env) (str session-id))
               (ru/bypass-uri (:template (:reitit.core/match request)))
               (and (not (nil? session-id))
-                   (<= (ru/get-user-type (ru/token-to-user-id session-id))
-                       (get-in request [:reitit.core/match :data (:request-method request) :permission-level]))))
+                   (let [user-type (ru/get-user-type (ru/token-to-user-id session-id))]
+                     (and (not (nil? user-type))
+                          (<= user-type
+                              (get-in request [:reitit.core/match :data (:request-method request) :permission-level]))))))
         (handler request)
         (error-page {:status 401, :title "401 - Unauthorized",
                      :image "https://www.cheatsheet.com/wp-content/uploads/2020/02/anakin_council_ROTS.jpg", :caption "It's unfair! How can you be on this website and not be an admin?!"})))))

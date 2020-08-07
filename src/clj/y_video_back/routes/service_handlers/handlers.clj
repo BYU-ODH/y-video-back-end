@@ -50,7 +50,7 @@
 (def resource-get-all-collections resources/resource-get-all-collections)
 (def resource-get-all-contents resources/resource-get-all-contents)
 (def resource-get-all-files resources/resource-get-all-files)
-(def resource-add-view resources/resource-add-view)
+;(def resource-add-view resources/resource-add-view)
 
 ; Subtitle handlers
 (def subtitle-create subtitles/subtitle-create)

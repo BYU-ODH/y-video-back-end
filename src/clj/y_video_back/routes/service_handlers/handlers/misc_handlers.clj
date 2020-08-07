@@ -15,6 +15,7 @@
 
 (def echo-patch
   {:summary "echo parameter post"
+   :permission-level 0
    :parameters {:header {:session-id uuid?}
                 :body ::echo}
    :responses {200 {:body {:message string?}}}
@@ -25,6 +26,7 @@
 
 (def connect-collection-and-course ;; Non-functional
   {:summary "Connects specified collection and course (bidirectional)"
+   :permission-level 0
    :parameters {:header {:session-id uuid?}}
    :responses {200 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header} :parameters}]
@@ -34,6 +36,7 @@
 ;; Searches across users, collections, resources, and courses
 (def search-by-term ;; Non-functional
   {:summary "Searches users, collections, resources, and courses by search term"
+   :permission-level 0
    :parameters {:header {:session-id uuid?}
                 :query {:query-term string?}}
    :responses {200 {:body {:users [models/user]
