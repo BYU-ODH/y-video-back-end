@@ -118,8 +118,9 @@
     ;(println "permission-level=" (get-in request [:reitit.core/match :data (:request-method request) :permission-level]))
     (let [session-id (get-in request [:parameters :header :session-id])]
       ;(println "session-id=" session-id)
+      ;(println "session-id-bypass=" (:session-id-bypass env))
       ;(println "user-type=" (ru/get-user-type (ru/token-to-user-id session-id)))
-      (if (or (= (:session-id-bypass session-id) session-id)
+      (if (or (= (:session-id-bypass env) (str session-id))
               (ru/bypass-uri (:template (:reitit.core/match request)))
               (and (not (nil? session-id))
                    (<= (ru/get-user-type (ru/token-to-user-id session-id))
