@@ -115,11 +115,18 @@
   [handler]
   ;handler)
   (fn [request]
-    ;(println "checking permission middleware")
-    (if (ru/req-has-permission (:template (:reitit.core/match request)) (name (:request-method request)) (:header (:parameters request)) (:parameters request))
-      (handler request)
-      (error-page {:status 401, :title "401 - Unauthorized",
-                   :image "https://www.cheatsheet.com/wp-content/uploads/2020/02/anakin_council_ROTS.jpg", :caption "It's unfair! How can you be on this website and not be an admin?!"}))))
+    ;(println "permission-level=" (get-in request [:reitit.core/match :data (:request-method request) :permission-level]))
+    (let [session-id (get-in request [:parameters :header :session-id])]
+      ;(println "session-id=" session-id)
+      ;(println "user-type=" (ru/get-user-type (ru/token-to-user-id session-id)))
+      (if (or (= (:session-id-bypass session-id) session-id)
+              (ru/bypass-uri (:template (:reitit.core/match request)))
+              (and (not (nil? session-id))
+                   (<= (ru/get-user-type (ru/token-to-user-id session-id))
+                       (get-in request [:reitit.core/match :data (:request-method request) :permission-level]))))
+        (handler request)
+        (error-page {:status 401, :title "401 - Unauthorized",
+                     :image "https://www.cheatsheet.com/wp-content/uploads/2020/02/anakin_council_ROTS.jpg", :caption "It's unfair! How can you be on this website and not be an admin?!"})))))
 
 (defn add-session-id
   "Adds new session-id to response header. Invalidates old session-id."

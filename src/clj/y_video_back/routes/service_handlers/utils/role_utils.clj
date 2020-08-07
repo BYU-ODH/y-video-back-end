@@ -9,6 +9,17 @@
             [y-video-back.routes.service-handlers.utils.db-utils :as dbu]))
             ;[y-video-back.config :refer [env]]))
 
+(defn bypass-uri
+  [uri]
+  (or (clojure.string/starts-with? uri "/api/get-session-id/")
+      (clojure.string/starts-with? uri "/api/docs")
+      (clojure.string/starts-with? uri "/api/swagger")
+      (clojure.string/starts-with? uri "/api/video")
+      (clojure.string/starts-with? uri "/api/get-video-url");temporary
+      (clojure.string/starts-with? uri "/api/media/stream-media/");temporary
+      (clojure.string/starts-with? uri "/api/upload");temporary))
+      (clojure.string/starts-with? uri "/api/ping")));temporary))
+
 (defn token-to-user-id
   "Returns userID associated with token. Returns false if token invalid."
   [token]
