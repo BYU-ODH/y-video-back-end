@@ -262,6 +262,11 @@
 
 (defn get-user-crse-assoc
   "Creates user-crse-assoc, ready to be added to db"
+  ([user-id course-id role]
+   (assoc (dissoc
+            (g/get-random-user-courses-assoc-without-id user-id course-id)
+            :account-role)
+          :account-role role))
   ([user-id course-id]
    (g/get-random-user-courses-assoc-without-id user-id course-id))
   ([]
@@ -271,6 +276,10 @@
 
 (defn add-user-crse-assoc
   "Creates user-crse-assoc, adds to db"
+  ([user-id course-id role]
+   (let [uca-one (get-user-crse-assoc user-id course-id role)
+         uca-one-add (user-courses-assoc/CREATE uca-one)]
+     (assoc uca-one :id (:id uca-one-add))))
   ([user-id course-id]
    (let [uca-one (get-user-crse-assoc user-id course-id)
          uca-one-add (user-courses-assoc/CREATE uca-one)]

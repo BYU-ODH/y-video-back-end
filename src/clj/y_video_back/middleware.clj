@@ -127,9 +127,8 @@
                      (and (not (nil? user-type))
                           (<= user-type
                               (get-in request [:reitit.core/match :data (:request-method request) :permission-level]))))))
-        (handler request)
-        (error-page {:status 401, :title "401 - Unauthorized",
-                     :image "https://www.cheatsheet.com/wp-content/uploads/2020/02/anakin_council_ROTS.jpg", :caption "It's unfair! How can you be on this website and not be an admin?!"})))))
+        (handler (assoc request :has-permission true))
+        (handler (assoc request :has-permission false))))))
 
 (defn add-session-id
   "Adds new session-id to response header. Invalidates old session-id."
