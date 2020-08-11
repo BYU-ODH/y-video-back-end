@@ -43,25 +43,25 @@
 ;post: /api/word
 (deftest word-post
   (testing "admin - not owner, word-post"
-    (let [user-one (db-pop/add-user (:admin env))
+    (let [user-one (db-pop/add-user "admin")
           word-one (db-pop/get-word)
           res (rp/word-post (uc/user-id-to-session-id (:id user-one))
                             word-one)]
       (is (= 200 (:status res)))))
   (testing "lab assistant - not owner, word-post"
-    (let [user-one (db-pop/add-user (:lab-assistant env))
+    (let [user-one (db-pop/add-user "lab-assistant")
           word-one (db-pop/get-word)
           res (rp/word-post (uc/user-id-to-session-id (:id user-one))
                             word-one)]
       (is (= 200 (:status res)))))
   (testing "instructor - not owner, word-post"
-    (let [user-one (db-pop/add-user (:instructor env))
+    (let [user-one (db-pop/add-user "instructor")
           word-one (db-pop/get-word)
           res (rp/word-post (uc/user-id-to-session-id (:id user-one))
                             word-one)]
       (is (= 401 (:status res)))))
   (testing "student - not owner, word-post"
-    (let [user-one (db-pop/add-user (:student env))
+    (let [user-one (db-pop/add-user "student")
           word-one (db-pop/get-word)
           res (rp/word-post (uc/user-id-to-session-id (:id user-one))
                             word-one)]
@@ -70,25 +70,25 @@
 ;get: /api/word/{id}
 (deftest word-get-by-id
   (testing "admin - not owner, word-get-by-id"
-    (let [user-one (db-pop/add-user (:admin env))
+    (let [user-one (db-pop/add-user "admin")
           word-one (db-pop/add-word)
           res (rp/word-id-get (uc/user-id-to-session-id (:id user-one))
                               (:id word-one))]
       (is (= 200 (:status res)))))
   (testing "lab assistant - not owner, word-get-by-id"
-    (let [user-one (db-pop/add-user (:lab-assistant env))
+    (let [user-one (db-pop/add-user "lab-assistant")
           word-one (db-pop/add-word)
           res (rp/word-id-get (uc/user-id-to-session-id (:id user-one))
                               (:id word-one))]
       (is (= 200 (:status res)))))
   (testing "instructor - not owner, word-get-by-id"
-    (let [user-one (db-pop/add-user (:instructor env))
+    (let [user-one (db-pop/add-user "instructor")
           word-one (db-pop/add-word)
           res (rp/word-id-get (uc/user-id-to-session-id (:id user-one))
                               (:id word-one))]
       (is (= 401 (:status res)))))
   (testing "student - not owner, word-get-by-id"
-    (let [user-one (db-pop/add-user (:student env))
+    (let [user-one (db-pop/add-user "student")
           word-one (db-pop/add-word)
           res (rp/word-id-get (uc/user-id-to-session-id (:id user-one))
                               (:id word-one))]
@@ -97,25 +97,25 @@
 ;delete: /api/word/{id}
 (deftest word-delete-by-id
   (testing "admin - not owner, word-delete-by-id"
-    (let [user-one (db-pop/add-user (:admin env))
+    (let [user-one (db-pop/add-user "admin")
           word-one (db-pop/add-word)
           res (rp/word-id-delete (uc/user-id-to-session-id (:id user-one))
                                  (:id word-one))]
       (is (= 200 (:status res)))))
   (testing "lab assistant - not owner, word-delete-by-id"
-    (let [user-one (db-pop/add-user (:lab-assistant env))
+    (let [user-one (db-pop/add-user "lab-assistant")
           word-one (db-pop/add-word)
           res (rp/word-id-delete (uc/user-id-to-session-id (:id user-one))
                                  (:id word-one))]
       (is (= 200 (:status res)))))
   (testing "instructor - not owner, word-delete-by-id"
-    (let [user-one (db-pop/add-user (:instructor env))
+    (let [user-one (db-pop/add-user "instructor")
           word-one (db-pop/add-word)
           res (rp/word-id-delete (uc/user-id-to-session-id (:id user-one))
                                  (:id word-one))]
       (is (= 401 (:status res)))))
   (testing "student - not owner, word-delete-by-id"
-    (let [user-one (db-pop/add-user (:student env))
+    (let [user-one (db-pop/add-user "student")
           word-one (db-pop/add-word)
           res (rp/word-id-delete (uc/user-id-to-session-id (:id user-one))
                                  (:id word-one))]
@@ -124,28 +124,28 @@
 ;patch: /api/word/{id}
 (deftest word-patch-by-id
   (testing "admin - not owner, word-patch-by-id"
-    (let [user-one (db-pop/add-user (:admin env))
+    (let [user-one (db-pop/add-user "admin")
           word-one (db-pop/add-word)
           res (rp/word-id-patch (uc/user-id-to-session-id (:id user-one))
                                 (:id word-one)
                                 word-one)]
       (is (= 200 (:status res)))))
   (testing "lab assistant - not owner, word-patch-by-id"
-    (let [user-one (db-pop/add-user (:lab-assistant env))
+    (let [user-one (db-pop/add-user "lab-assistant")
           word-one (db-pop/add-word)
           res (rp/word-id-patch (uc/user-id-to-session-id (:id user-one))
                                 (:id word-one)
                                 word-one)]
       (is (= 200 (:status res)))))
   (testing "instructor - not owner, word-patch-by-id"
-    (let [user-one (db-pop/add-user (:instructor env))
+    (let [user-one (db-pop/add-user "instructor")
           word-one (db-pop/add-word)
           res (rp/word-id-patch (uc/user-id-to-session-id (:id user-one))
                                 (:id word-one)
                                 word-one)]
       (is (= 401 (:status res)))))
   (testing "student - not owner, word-patch-by-id"
-    (let [user-one (db-pop/add-user (:student env))
+    (let [user-one (db-pop/add-user "student")
           word-one (db-pop/add-word)
           res (rp/word-id-patch (uc/user-id-to-session-id (:id user-one))
                                 (:id word-one)

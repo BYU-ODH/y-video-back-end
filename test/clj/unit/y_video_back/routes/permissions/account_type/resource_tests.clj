@@ -43,25 +43,25 @@
 ;post: /api/resource
 (deftest resource-post
   (testing "admin, resource-post"
-    (let [user-one (db-pop/add-user (:admin env))
+    (let [user-one (db-pop/add-user "admin")
           rsrc-one (db-pop/get-resource)
           res (rp/resource-post (uc/user-id-to-session-id (:id user-one))
                                 rsrc-one)]
       (is (= 200 (:status res)))))
   (testing "lab assistant, resource-post"
-    (let [user-one (db-pop/add-user (:lab-assistant env))
+    (let [user-one (db-pop/add-user "lab-assistant")
           rsrc-one (db-pop/get-resource)
           res (rp/resource-post (uc/user-id-to-session-id (:id user-one))
                                 rsrc-one)]
       (is (= 200 (:status res)))))
   (testing "instructor, resource-post"
-    (let [user-one (db-pop/add-user (:instructor env))
+    (let [user-one (db-pop/add-user "instructor")
           rsrc-one (db-pop/get-resource)
           res (rp/resource-post (uc/user-id-to-session-id (:id user-one))
                                 rsrc-one)]
       (is (= 401 (:status res)))))
   (testing "student, resource-post"
-    (let [user-one (db-pop/add-user (:student env))
+    (let [user-one (db-pop/add-user "student")
           rsrc-one (db-pop/get-resource)
           res (rp/resource-post (uc/user-id-to-session-id (:id user-one))
                                 rsrc-one)]
@@ -70,25 +70,25 @@
 ;get: /api/resource/{id}
 (deftest resource-get-by-id
   (testing "admin - no connection, resource-get-by-id"
-    (let [user-one (db-pop/add-user (:admin env))
+    (let [user-one (db-pop/add-user "admin")
           rsrc-one (db-pop/add-resource)
           res (rp/resource-id-get (uc/user-id-to-session-id (:id user-one))
                                   (:id rsrc-one))]
       (is (= 200 (:status res)))))
   (testing "lab assistant - no connection, resource-get-by-id"
-    (let [user-one (db-pop/add-user (:lab-assistant env))
+    (let [user-one (db-pop/add-user "lab-assistant")
           rsrc-one (db-pop/add-resource)
           res (rp/resource-id-get (uc/user-id-to-session-id (:id user-one))
                                   (:id rsrc-one))]
       (is (= 200 (:status res)))))
   (testing "instructor - no connection, resource-get-by-id"
-    (let [user-one (db-pop/add-user (:instructor env))
+    (let [user-one (db-pop/add-user "instructor")
           rsrc-one (db-pop/add-resource)
           res (rp/resource-id-get (uc/user-id-to-session-id (:id user-one))
                                   (:id rsrc-one))]
       (is (= 200 (:status res)))))
   (testing "student - no connection, resource-get-by-id"
-    (let [user-one (db-pop/add-user (:student env))
+    (let [user-one (db-pop/add-user "student")
           rsrc-one (db-pop/add-resource)
           res (rp/resource-id-get (uc/user-id-to-session-id (:id user-one))
                                   (:id rsrc-one))]
@@ -97,25 +97,25 @@
 ;delete: /api/resource/{id}
 (deftest resource-delete-by-id
   (testing "admin - no connection, resource-delete-by-id"
-    (let [user-one (db-pop/add-user (:admin env))
+    (let [user-one (db-pop/add-user "admin")
           rsrc-one (db-pop/add-resource)
           res (rp/resource-id-delete (uc/user-id-to-session-id (:id user-one))
                                      (:id rsrc-one))]
       (is (= 200 (:status res)))))
   (testing "lab assistant - no connection, resource-delete-by-id"
-    (let [user-one (db-pop/add-user (:lab-assistant env))
+    (let [user-one (db-pop/add-user "lab-assistant")
           rsrc-one (db-pop/add-resource)
           res (rp/resource-id-delete (uc/user-id-to-session-id (:id user-one))
                                      (:id rsrc-one))]
       (is (= 401 (:status res)))))
   (testing "instructor - no connection, resource-delete-by-id"
-    (let [user-one (db-pop/add-user (:instructor env))
+    (let [user-one (db-pop/add-user "instructor")
           rsrc-one (db-pop/add-resource)
           res (rp/resource-id-delete (uc/user-id-to-session-id (:id user-one))
                                      (:id rsrc-one))]
       (is (= 401 (:status res)))))
   (testing "student - no connection, resource-delete-by-id"
-    (let [user-one (db-pop/add-user (:student env))
+    (let [user-one (db-pop/add-user "student")
           rsrc-one (db-pop/add-resource)
           res (rp/resource-id-delete (uc/user-id-to-session-id (:id user-one))
                                      (:id rsrc-one))]
@@ -124,28 +124,28 @@
 ;patch: /api/resource/{id}
 (deftest resource-patch-by-id
   (testing "admin - no connection, resource-patch-by-id"
-    (let [user-one (db-pop/add-user (:admin env))
+    (let [user-one (db-pop/add-user "admin")
           rsrc-one (db-pop/add-resource)
           res (rp/resource-id-patch (uc/user-id-to-session-id (:id user-one))
                                     (:id rsrc-one)
                                     rsrc-one)]
       (is (= 200 (:status res)))))
   (testing "lab assistant - no connection, resource-patch-by-id"
-    (let [user-one (db-pop/add-user (:lab-assistant env))
+    (let [user-one (db-pop/add-user "lab-assistant")
           rsrc-one (db-pop/add-resource)
           res (rp/resource-id-patch (uc/user-id-to-session-id (:id user-one))
                                     (:id rsrc-one)
                                     rsrc-one)]
       (is (= 200 (:status res)))))
   (testing "instructor - no connection, resource-patch-by-id"
-    (let [user-one (db-pop/add-user (:instructor env))
+    (let [user-one (db-pop/add-user "instructor")
           rsrc-one (db-pop/add-resource)
           res (rp/resource-id-patch (uc/user-id-to-session-id (:id user-one))
                                     (:id rsrc-one)
                                     rsrc-one)]
       (is (= 401 (:status res)))))
   (testing "student - no connection, resource-patch-by-id"
-    (let [user-one (db-pop/add-user (:student env))
+    (let [user-one (db-pop/add-user "student")
           rsrc-one (db-pop/add-resource)
           res (rp/resource-id-patch (uc/user-id-to-session-id (:id user-one))
                                     (:id rsrc-one)
@@ -155,25 +155,25 @@
 ;get: /api/resource/{id}/files
 (deftest resource-id-files
   (testing "admin - no connection, resource-id-files"
-    (let [user-one (db-pop/add-user (:admin env))
+    (let [user-one (db-pop/add-user "admin")
           rsrc-one (db-pop/add-resource)
           res (rp/resource-id-files (uc/user-id-to-session-id (:id user-one))
                                     (:id rsrc-one))]
       (is (= 200 (:status res)))))
   (testing "lab assistant - no connection, resource-id-files"
-    (let [user-one (db-pop/add-user (:lab-assistant env))
+    (let [user-one (db-pop/add-user "lab-assistant")
           rsrc-one (db-pop/add-resource)
           res (rp/resource-id-files (uc/user-id-to-session-id (:id user-one))
                                     (:id rsrc-one))]
       (is (= 200 (:status res)))))
   (testing "instructor - no connection, resource-id-files"
-    (let [user-one (db-pop/add-user (:instructor env))
+    (let [user-one (db-pop/add-user "instructor")
           rsrc-one (db-pop/add-resource)
           res (rp/resource-id-files (uc/user-id-to-session-id (:id user-one))
                                     (:id rsrc-one))]
       (is (= 200 (:status res)))))
   (testing "student - no connection, resource-id-files"
-    (let [user-one (db-pop/add-user (:student env))
+    (let [user-one (db-pop/add-user "student")
           rsrc-one (db-pop/add-resource)
           res (rp/resource-id-files (uc/user-id-to-session-id (:id user-one))
                                     (:id rsrc-one))]
@@ -182,25 +182,25 @@
 ;get: /api/resource/{id}/collections
 (deftest resource-id-collections
   (testing "admin - no connection, resource-id-collections"
-    (let [user-one (db-pop/add-user (:admin env))
+    (let [user-one (db-pop/add-user "admin")
           rsrc-one (db-pop/add-resource)
           res (rp/resource-id-collections (uc/user-id-to-session-id (:id user-one))
                                           (:id rsrc-one))]
       (is (= 200 (:status res)))))
   (testing "lab assistant - no connection, resource-id-collections"
-    (let [user-one (db-pop/add-user (:lab-assistant env))
+    (let [user-one (db-pop/add-user "lab-assistant")
           rsrc-one (db-pop/add-resource)
           res (rp/resource-id-collections (uc/user-id-to-session-id (:id user-one))
                                           (:id rsrc-one))]
       (is (= 200 (:status res)))))
   (testing "instructor - no connection, resource-id-collections"
-    (let [user-one (db-pop/add-user (:instructor env))
+    (let [user-one (db-pop/add-user "instructor")
           rsrc-one (db-pop/add-resource)
           res (rp/resource-id-collections (uc/user-id-to-session-id (:id user-one))
                                           (:id rsrc-one))]
       (is (= 401 (:status res)))))
   (testing "student - no connection, resource-id-collections"
-    (let [user-one (db-pop/add-user (:student env))
+    (let [user-one (db-pop/add-user "student")
           rsrc-one (db-pop/add-resource)
           res (rp/resource-id-collections (uc/user-id-to-session-id (:id user-one))
                                           (:id rsrc-one))]
@@ -209,25 +209,25 @@
 ;get: /api/resource/{id}/contents
 (deftest resource-id-contents
   (testing "admin - no connection, resource-id-contents"
-    (let [user-one (db-pop/add-user (:admin env))
+    (let [user-one (db-pop/add-user "admin")
           rsrc-one (db-pop/add-resource)
           res (rp/resource-id-contents (uc/user-id-to-session-id (:id user-one))
                                        (:id rsrc-one))]
       (is (= 200 (:status res)))))
   (testing "lab assistant - no connection, resource-id-contents"
-    (let [user-one (db-pop/add-user (:lab-assistant env))
+    (let [user-one (db-pop/add-user "lab-assistant")
           rsrc-one (db-pop/add-resource)
           res (rp/resource-id-contents (uc/user-id-to-session-id (:id user-one))
                                        (:id rsrc-one))]
       (is (= 200 (:status res)))))
   (testing "instructor - no connection, resource-id-contents"
-    (let [user-one (db-pop/add-user (:instructor env))
+    (let [user-one (db-pop/add-user "instructor")
           rsrc-one (db-pop/add-resource)
           res (rp/resource-id-contents (uc/user-id-to-session-id (:id user-one))
                                        (:id rsrc-one))]
       (is (= 401 (:status res)))))
   (testing "student - no connection, resource-id-contents"
-    (let [user-one (db-pop/add-user (:student env))
+    (let [user-one (db-pop/add-user "student")
           rsrc-one (db-pop/add-resource)
           res (rp/resource-id-contents (uc/user-id-to-session-id (:id user-one))
                                        (:id rsrc-one))]

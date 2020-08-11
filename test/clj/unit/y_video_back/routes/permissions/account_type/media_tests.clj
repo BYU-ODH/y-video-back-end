@@ -38,7 +38,7 @@
     (f)))
 
 (tcore/basic-transaction-fixtures
-  (def admin-one (db-pop/add-user (:admin env)))
+  (def admin-one (db-pop/add-user "admin"))
   (def rsrc-one (db-pop/add-resource))
   (def file-one (files/CREATE {:resource-id (:id rsrc-one)
                                :filepath "persistent/test_kitten.mp4" ; move this into github repository?
@@ -50,7 +50,7 @@
 ;get: /api/media/get-file-key/{file-id}
 (deftest media-get-file-key
   (testing "admin - no connection, media-get-file-key"
-    (let [user-one (db-pop/add-user (:admin env))
+    (let [user-one (db-pop/add-user "admin")
           file-one (db-pop/get-file)
           filecontent (ut/get-filecontent)
           res-file (rp/file-post file-one filecontent)]
@@ -60,7 +60,7 @@
                                  file-id)]
         (is (= 200 (:status res))))))
   (testing "lab assistant - no connection, media-get-file-key"
-    (let [user-one (db-pop/add-user (:lab-assistant env))
+    (let [user-one (db-pop/add-user "lab-assistant")
           file-one (db-pop/get-file)
           filecontent (ut/get-filecontent)
           res-file (rp/file-post file-one filecontent)]
@@ -70,7 +70,7 @@
                                  file-id)]
         (is (= 200 (:status res))))))
   (testing "instructor - no connection, media-get-file-key"
-    (let [user-one (db-pop/add-user (:instructor env))
+    (let [user-one (db-pop/add-user "instructor")
           file-one (db-pop/get-file)
           filecontent (ut/get-filecontent)
           res-file (rp/file-post file-one filecontent)]
@@ -80,7 +80,7 @@
                                  file-id)]
         (is (= 401 (:status res))))))
   (testing "student - no connection, media-get-file-key"
-    (let [user-one (db-pop/add-user (:student env))
+    (let [user-one (db-pop/add-user "student")
           file-one (db-pop/get-file)
           filecontent (ut/get-filecontent)
           res-file (rp/file-post file-one filecontent)]

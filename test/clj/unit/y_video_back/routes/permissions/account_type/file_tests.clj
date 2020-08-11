@@ -43,7 +43,7 @@
 ;post: /api/file
 (deftest file-post
   (testing "admin - no connection, file-post"
-    (let [user-one (db-pop/add-user (:admin env))
+    (let [user-one (db-pop/add-user "admin")
           file-one (db-pop/get-file)
           filecontent (ut/get-filecontent)
           res (rp/file-post (uc/user-id-to-session-id (:id user-one))
@@ -51,7 +51,7 @@
                             filecontent)]
       (is (= 200 (:status res)))))
   (testing "lab assistant - no connection, file-post"
-    (let [user-one (db-pop/add-user (:lab-assistant env))
+    (let [user-one (db-pop/add-user "lab-assistant")
           file-one (db-pop/get-file)
           filecontent (ut/get-filecontent)
           res (rp/file-post (uc/user-id-to-session-id (:id user-one))
@@ -59,7 +59,7 @@
                             filecontent)]
       (is (= 200 (:status res)))))
   (testing "instructor - no connection, file-post"
-    (let [user-one (db-pop/add-user (:instructor env))
+    (let [user-one (db-pop/add-user "instructor")
           file-one (db-pop/get-file)
           filecontent (ut/get-filecontent)
           res (rp/file-post (uc/user-id-to-session-id (:id user-one))
@@ -67,7 +67,7 @@
                             filecontent)]
       (is (= 401 (:status res)))))
   (testing "student - no connection, file-post"
-    (let [user-one (db-pop/add-user (:student env))
+    (let [user-one (db-pop/add-user "student")
           file-one (db-pop/get-file)
           filecontent (ut/get-filecontent)
           res (rp/file-post (uc/user-id-to-session-id (:id user-one))
@@ -78,25 +78,25 @@
 ;get: /api/file/{id}
 (deftest file-get-by-id
   (testing "admin - no connection, file-get-by-id"
-    (let [user-one (db-pop/add-user (:admin env))
+    (let [user-one (db-pop/add-user "admin")
           file-one (db-pop/add-file)
           res (rp/file-id-get (uc/user-id-to-session-id (:id user-one))
                               (:id file-one))]
       (is (= 200 (:status res)))))
   (testing "lab assistant - no connection, file-get-by-id"
-    (let [user-one (db-pop/add-user (:lab-assistant env))
+    (let [user-one (db-pop/add-user "lab-assistant")
           file-one (db-pop/add-file)
           res (rp/file-id-get (uc/user-id-to-session-id (:id user-one))
                               (:id file-one))]
       (is (= 200 (:status res)))))
   (testing "instructor - no connection, file-get-by-id"
-    (let [user-one (db-pop/add-user (:instructor env))
+    (let [user-one (db-pop/add-user "instructor")
           file-one (db-pop/add-file)
           res (rp/file-id-get (uc/user-id-to-session-id (:id user-one))
                               (:id file-one))]
       (is (= 200 (:status res)))))
   (testing "student - no connection, file-get-by-id"
-    (let [user-one (db-pop/add-user (:student env))
+    (let [user-one (db-pop/add-user "student")
           file-one (db-pop/add-file)
           res (rp/file-id-get (uc/user-id-to-session-id (:id user-one))
                               (:id file-one))]
@@ -105,25 +105,25 @@
 ;delete: /api/file/{id}
 (deftest file-delete-by-id
   (testing "admin - no connection, file-delete-by-id"
-    (let [user-one (db-pop/add-user (:admin env))
+    (let [user-one (db-pop/add-user "admin")
           file-one (db-pop/add-file)
           res (rp/file-id-delete (uc/user-id-to-session-id (:id user-one))
                                  (:id file-one))]
       (is (= 200 (:status res)))))
   (testing "lab assistant - no connection, file-delete-by-id"
-    (let [user-one (db-pop/add-user (:lab-assistant env))
+    (let [user-one (db-pop/add-user "lab-assistant")
           file-one (db-pop/add-file)
           res (rp/file-id-delete (uc/user-id-to-session-id (:id user-one))
                                  (:id file-one))]
       (is (= 401 (:status res)))))
   (testing "instructor - no connection, file-delete-by-id"
-    (let [user-one (db-pop/add-user (:instructor env))
+    (let [user-one (db-pop/add-user "instructor")
           file-one (db-pop/add-file)
           res (rp/file-id-delete (uc/user-id-to-session-id (:id user-one))
                                  (:id file-one))]
       (is (= 401 (:status res)))))
   (testing "student - no connection, file-delete-by-id"
-    (let [user-one (db-pop/add-user (:student env))
+    (let [user-one (db-pop/add-user "student")
           file-one (db-pop/add-file)
           res (rp/file-id-delete (uc/user-id-to-session-id (:id user-one))
                                  (:id file-one))]
@@ -132,28 +132,28 @@
 ;patch: /api/file/{id}
 (deftest file-patch-by-id
   (testing "admin - no connection, file-patch-by-id"
-    (let [user-one (db-pop/add-user (:admin env))
+    (let [user-one (db-pop/add-user "admin")
           file-one (db-pop/add-file)
           res (rp/file-id-patch (uc/user-id-to-session-id (:id user-one))
                                 (:id file-one)
                                 file-one)]
       (is (= 200 (:status res)))))
   (testing "lab assistant - no connection, file-patch-by-id"
-    (let [user-one (db-pop/add-user (:lab-assistant env))
+    (let [user-one (db-pop/add-user "lab-assistant")
           file-one (db-pop/add-file)
           res (rp/file-id-patch (uc/user-id-to-session-id (:id user-one))
                                 (:id file-one)
                                 file-one)]
       (is (= 200 (:status res)))))
   (testing "instructor - no connection, file-patch-by-id"
-    (let [user-one (db-pop/add-user (:instructor env))
+    (let [user-one (db-pop/add-user "instructor")
           file-one (db-pop/add-file)
           res (rp/file-id-patch (uc/user-id-to-session-id (:id user-one))
                                 (:id file-one)
                                 file-one)]
       (is (= 401 (:status res)))))
   (testing "student - no connection, file-patch-by-id"
-    (let [user-one (db-pop/add-user (:student env))
+    (let [user-one (db-pop/add-user "student")
           file-one (db-pop/add-file)
           res (rp/file-id-patch (uc/user-id-to-session-id (:id user-one))
                                 (:id file-one)

@@ -39,19 +39,6 @@
 (tcore/basic-transaction-fixtures
   (mount.core/start #'y-video-back.handler/app))
 
-(deftest permission-middleware-temp
-  (testing "check role permissions"
-    (let [user-one (db-pop/add-user 2)
-          ;coll-one (db-pop/add-collection (:id user-one))
-          coll-two (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-two) 2)
-          rsrc-one (db-pop/add-resource)
-          ;cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
-          cont-one (db-pop/add-content (:id coll-two) (:id rsrc-one))
-          res (rp/resource-id-get (uc/user-id-to-session-id (:id user-one))
-                                  (:id rsrc-one))]
-      (is (= 200 (:status res))))))
-
 (deftest test-cont-add-view
   (testing "content add view"
     (let [cont-one (db-pop/add-content)
