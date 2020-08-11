@@ -34,7 +34,8 @@
       [y-video-back.db.user-collections-assoc :as user-collections-assoc]
       [y-video-back.db.user-courses-assoc :as user-courses-assoc]
       [y-video-back.db.collections-courses-assoc :as collection-courses-assoc]
-      [y-video-back.db.content-subtitles-assoc :as content-subtitles-assoc]))
+      [y-video-back.db.content-subtitles-assoc :as content-subtitles-assoc]
+      [y-video-back.utils.account-permissions :as ac]))
 
 (defn get-user
   "Creates user, ready to be added to db"
@@ -43,7 +44,7 @@
   ([account-type]
    (-> (get-user)
        (dissoc :account-type)
-       (assoc :account-type account-type))))
+       (assoc :account-type (ac/to-int-type account-type)))))
 
 (defn add-user
   "Creates user, adds to db"
@@ -246,7 +247,7 @@
    (assoc (dissoc (g/get-random-user-collections-assoc-without-id user-id collection-id)
                   :account-role)
           :account-role
-          role))
+          (ac/to-int-role role)))
   ([user-id collection-id]
    (g/get-random-user-collections-assoc-without-id user-id collection-id))
   ([]
@@ -275,7 +276,7 @@
    (assoc (dissoc
             (g/get-random-user-courses-assoc-without-id user-id course-id)
             :account-role)
-          :account-role role))
+          :account-role (ac/to-int-role role)))
   ([user-id course-id]
    (g/get-random-user-courses-assoc-without-id user-id course-id))
   ([]

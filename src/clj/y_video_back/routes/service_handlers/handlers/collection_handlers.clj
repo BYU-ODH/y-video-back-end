@@ -1,5 +1,6 @@
 (ns y-video-back.routes.service-handlers.handlers.collection-handlers
   (:require
+   [y-video-back.config :refer [env]]
    [y-video-back.db.users-by-collection :as users-by-collection]
    [y-video-back.db.collections-courses-assoc :as collection-courses-assoc]
    [y-video-back.db.user-collections-assoc :as user-collections-assoc]
@@ -11,27 +12,35 @@
    [y-video-back.models :as models]
    [y-video-back.model-specs :as sp]
    [y-video-back.routes.service-handlers.utils.utils :as utils]
-   [y-video-back.routes.service-handlers.utils.role-utils :as ru]))
+   [y-video-back.routes.service-handlers.utils.role-utils :as ru]
+   [y-video-back.utils.account-permissions :as ac]))
 
 (def collection-create ;; Non-functional
   {:summary "Creates a new collection with the given (temp) user as an owner"
    :permission-level 1
+   :bypass-permission true
    :parameters {:header {:session-id uuid?}
                 :body models/collection-without-id}
    :responses {200 {:body {:message string?
                            :id string?}}
                500 {:body {:message string?}}}
-   :handler (fn [{{{:keys [session-id]} :header :keys [body]} :parameters}]
-              (if (not (users/EXISTS? (:owner body)))
-                {:status 500
-                 :body {:message "user (owner) not found, unable to create collection"}}
-                (if (collections/EXISTS-NAME-OWNER? (:collection-name body)
-                                                    (:owner body))
+   :handler (fn [{{{:keys [session-id]} :header :keys [body]} :parameters
+                  p-vals :permission-values}]
+              (if-not (or (= (:session-id-bypass env) (str session-id))
+                          (:valid-type p-vals)
+                          (and (= (ru/get-user-type (ru/token-to-user-id session-id)) (ac/to-int-type "instructor"))
+                               (= (ru/token-to-user-id session-id) (:owner body))))
+                {:status 401 :body {:message "unauthorized"}}
+                (if (not (users/EXISTS? (:owner body)))
                   {:status 500
-                   :body {:message "collection name / owner combination already in use, unable to create collection"}}
-                  {:status 200
-                   :body {:message "1 collection created"
-                          :id (utils/get-id (collections/CREATE body))}})))})
+                   :body {:message "user (owner) not found, unable to create collection"}}
+                  (if (collections/EXISTS-NAME-OWNER? (:collection-name body)
+                                                      (:owner body))
+                    {:status 500
+                     :body {:message "collection name / owner combination already in use, unable to create collection"}}
+                    {:status 200
+                     :body {:message "1 collection created"
+                            :id (utils/get-id (collections/CREATE body))}}))))})
 
 (def collection-get-by-id ;; Not tested
   {:summary "Retrieves specified collection"
