@@ -40,88 +40,117 @@
 (tcore/basic-transaction-fixtures
   (mount.core/start #'y-video-back.handler/app))
 
-(comment
 
-  ;post: /api/word
-  (deftest word-post
-    (testing "instructor, word-post, own word"
-      (let [user-one (db-pop/add-user (:instructor env))
-            res (rp/word-post (uc/user-id-to-session-id (:id user-one))
-                              (db-pop/get-word (:id user-one)))]
-        (is (= 200 (:status res)))))
-    (testing "student, word-post, own word"
-      (let [user-one (db-pop/add-user (:student env))
-            res (rp/word-post (uc/user-id-to-session-id (:id user-one))
-                              (db-pop/get-word (:id user-one)))]
-        (is (= 200 (:status res)))))
-    (testing "instructor/student, word-post, in same class"
-      (let [user-one (db-pop/add-user (:instructor env))
-            user-stud (db-pop/add-user (:student env))
-            crse-one (db-pop/add-course)
-            user-one-crse (db-pop/add-user-crse-assoc (:id user-one) (:id crse-one) (:instructor-role env))
-            user-one-crse (db-pop/add-user-crse-assoc (:id user-stud) (:id crse-one) (:student-role env))
-            res-one (rp/word-post (uc/user-id-to-session-id (:id user-one))
-                                  (db-pop/get-word (:id user-stud)))
-            res-two (rp/word-post (uc/user-id-to-session-id (:id user-stud))
-                                  (db-pop/get-word (:id user-one)))]
-        (is (= 401 (:status res-one)))
-        (is (= 401 (:status res-two))))))
+;post: /api/word
+(deftest word-post
+  (testing "instructor, word-post, own word"
+    (let [user-one (db-pop/add-user (:instructor env))
+          res (rp/word-post (uc/user-id-to-session-id (:id user-one))
+                            (db-pop/get-word (:id user-one)))]
+      (is (= 200 (:status res)))))
+  (testing "student, word-post, own word"
+    (let [user-one (db-pop/add-user (:student env))
+          res (rp/word-post (uc/user-id-to-session-id (:id user-one))
+                            (db-pop/get-word (:id user-one)))]
+      (is (= 200 (:status res)))))
+  (testing "instructor/student, word-post, in same class"
+    (let [user-one (db-pop/add-user (:instructor env))
+          user-stud (db-pop/add-user (:student env))
+          crse-one (db-pop/add-course)
+          user-one-crse (db-pop/add-user-crse-assoc (:id user-one) (:id crse-one) (:instructor-role env))
+          user-one-crse (db-pop/add-user-crse-assoc (:id user-stud) (:id crse-one) (:student-role env))
+          res-one (rp/word-post (uc/user-id-to-session-id (:id user-one))
+                                (db-pop/get-word (:id user-stud)))
+          res-two (rp/word-post (uc/user-id-to-session-id (:id user-stud))
+                                (db-pop/get-word (:id user-one)))]
+      (is (= 401 (:status res-one)))
+      (is (= 401 (:status res-two))))))
 
-  ;get: /api/word/{id}
-  (deftest word-get-by-id
-    (testing "instructor, word-get-by-id, own word"
-      (let [user-one (db-pop/add-user (:instructor env))
-            word-one (db-pop/add-word (:id user-one))
-            res (rp/word-id-get (uc/user-id-to-session-id (:id user-one))
-                                (:id word-one))]
-        (is (= 200 (:status res)))))
-    (testing "student, word-get-by-id, own word"
-      (let [user-one (db-pop/add-user (:student env))
-            word-one (db-pop/add-word (:id user-one))
-            res (rp/word-id-get (uc/user-id-to-session-id (:id user-one))
-                                (:id word-one))]
-        (is (= 200 (:status res)))))
-    (testing "instructor/student, word-get-by-id, in same class"
-      (let [user-instr (db-pop/add-user (:instructor env))
-            user-stud (db-pop/add-user (:student env))
-            crse-one (db-pop/add-course)
-            user-one-crse (db-pop/add-user-crse-assoc (:id user-instr) (:id crse-one) (:instructor-role env))
-            user-one-crse (db-pop/add-user-crse-assoc (:id user-stud) (:id crse-one) (:student-role env))
-            word-instr (db-pop/add-word (:id user-instr))
-            word-stud (db-pop/add-word (:id user-stud))
-            res-one (rp/word-id-get (uc/user-id-to-session-id (:id user-instr))
-                                    (:id word-stud))
-            res-two (rp/word-id-get (uc/user-id-to-session-id (:id user-stud))
-                                    (:id word-instr))]
-        (is (= 401 (:status res-one)))
-        (is (= 401 (:status res-two))))))
+;get: /api/word/{id}
+(deftest word-get-by-id
+  (testing "instructor, word-get-by-id, own word"
+    (let [user-one (db-pop/add-user (:instructor env))
+          word-one (db-pop/add-word (:id user-one))
+          res (rp/word-id-get (uc/user-id-to-session-id (:id user-one))
+                              (:id word-one))]
+      (is (= 200 (:status res)))))
+  (testing "student, word-get-by-id, own word"
+    (let [user-one (db-pop/add-user (:student env))
+          word-one (db-pop/add-word (:id user-one))
+          res (rp/word-id-get (uc/user-id-to-session-id (:id user-one))
+                              (:id word-one))]
+      (is (= 200 (:status res)))))
+  (testing "instructor/student, word-get-by-id, in same class"
+    (let [user-instr (db-pop/add-user (:instructor env))
+          user-stud (db-pop/add-user (:student env))
+          crse-one (db-pop/add-course)
+          user-one-crse (db-pop/add-user-crse-assoc (:id user-instr) (:id crse-one) (:instructor-role env))
+          user-one-crse (db-pop/add-user-crse-assoc (:id user-stud) (:id crse-one) (:student-role env))
+          word-instr (db-pop/add-word (:id user-instr))
+          word-stud (db-pop/add-word (:id user-stud))
+          res-one (rp/word-id-get (uc/user-id-to-session-id (:id user-instr))
+                                  (:id word-stud))
+          res-two (rp/word-id-get (uc/user-id-to-session-id (:id user-stud))
+                                  (:id word-instr))]
+      (is (= 401 (:status res-one)))
+      (is (= 401 (:status res-two))))))
 
-  ;delete: /api/word/{id}
-  (deftest word-delete-by-id
-    (testing "instructor, word-get-by-id, own word"
-      (let [user-one (db-pop/add-user (:instructor env))
-            word-one (db-pop/add-word (:id user-one))
-            res (rp/word-id-get (uc/user-id-to-session-id (:id user-one))
-                                (:id word-one))]
-        (is (= 200 (:status res)))))
-    (testing "student, word-get-by-id, own word"
-      (let [user-one (db-pop/add-user (:student env))
-            word-one (db-pop/add-word (:id user-one))
-            res (rp/word-id-get (uc/user-id-to-session-id (:id user-one))
-                                (:id word-one))]
-        (is (= 200 (:status res)))))
-    (testing "instructor/student, word-get-by-id, in same class"
-      (let [user-instr (db-pop/add-user (:instructor env))
-            user-stud (db-pop/add-user (:student env))
-            crse-one (db-pop/add-course)
-            user-one-crse (db-pop/add-user-crse-assoc (:id user-instr) (:id crse-one) (:instructor-role env))
-            user-one-crse (db-pop/add-user-crse-assoc (:id user-stud) (:id crse-one) (:student-role env))
-            word-intr (db-pop/add-word (:id user-instr))
-            word-stud (db-pop/add-word (:id user-stud))
-            res-one (rp/word-id-get (uc/user-id-to-session-id (:id user-instr))
-                                    (:id word-stud))
-            res-one (rp/word-id-get (uc/user-id-to-session-id (:id user-stud))
-                                    (:id word-instr))]
-        (is (= 401 (:status res-one)))
-        (is (= 401 (:status res-two)))))))
-  ;patch: /api/word/{id}
+;delete: /api/word/{id}
+(deftest word-delete-by-id
+  (testing "instructor, word-delete-by-id, own word"
+    (let [user-one (db-pop/add-user (:instructor env))
+          word-one (db-pop/add-word (:id user-one))
+          res (rp/word-id-delete (uc/user-id-to-session-id (:id user-one))
+                                 (:id word-one))]
+      (is (= 200 (:status res)))))
+  (testing "student, word-delete-by-id, own word"
+    (let [user-one (db-pop/add-user (:student env))
+          word-one (db-pop/add-word (:id user-one))
+          res (rp/word-id-delete (uc/user-id-to-session-id (:id user-one))
+                                 (:id word-one))]
+      (is (= 200 (:status res)))))
+  (testing "instructor/student, word-delete-by-id, in same class"
+    (let [user-instr (db-pop/add-user (:instructor env))
+          user-stud (db-pop/add-user (:student env))
+          crse-one (db-pop/add-course)
+          user-one-crse (db-pop/add-user-crse-assoc (:id user-instr) (:id crse-one) (:instructor-role env))
+          user-one-crse (db-pop/add-user-crse-assoc (:id user-stud) (:id crse-one) (:student-role env))
+          word-instr (db-pop/add-word (:id user-instr))
+          word-stud (db-pop/add-word (:id user-stud))
+          res-one (rp/word-id-delete (uc/user-id-to-session-id (:id user-instr))
+                                     (:id word-stud))
+          res-two (rp/word-id-delete (uc/user-id-to-session-id (:id user-stud))
+                                     (:id word-instr))]
+      (is (= 401 (:status res-one)))
+      (is (= 401 (:status res-two))))))
+
+;patch: /api/word/{id}
+(deftest word-patch-by-id
+  (testing "instructor, word-patch-by-id, own word"
+    (let [user-one (db-pop/add-user (:instructor env))
+          word-one (db-pop/add-word (:id user-one))
+          res (rp/word-id-get (uc/user-id-to-session-id (:id user-one))
+                              (:id word-one))]
+      (is (= 200 (:status res)))))
+  (testing "student, word-patch-by-id, own word"
+    (let [user-one (db-pop/add-user (:student env))
+          word-one (db-pop/add-word (:id user-one))
+          res (rp/word-id-get (uc/user-id-to-session-id (:id user-one))
+                              (:id word-one))]
+      (is (= 200 (:status res)))))
+  (testing "instructor/student, word-patch-by-id, in same class"
+    (let [user-instr (db-pop/add-user (:instructor env))
+          user-stud (db-pop/add-user (:student env))
+          crse-one (db-pop/add-course)
+          user-one-crse (db-pop/add-user-crse-assoc (:id user-instr) (:id crse-one) (:instructor-role env))
+          user-one-crse (db-pop/add-user-crse-assoc (:id user-stud) (:id crse-one) (:student-role env))
+          word-instr (db-pop/add-word (:id user-instr))
+          word-stud (db-pop/add-word (:id user-stud))
+          res-one (rp/word-id-patch (uc/user-id-to-session-id (:id user-instr))
+                                    (:id word-stud)
+                                    word-stud)
+          res-two (rp/word-id-patch (uc/user-id-to-session-id (:id user-stud))
+                                    (:id word-instr)
+                                    word-instr)]
+      (is (= 401 (:status res-one)))
+      (is (= 401 (:status res-two))))))
