@@ -5,8 +5,10 @@
             [y-video-back.routes.service-handlers.utils.utils :as utils]
             [y-video-back.db.user-courses-assoc :as user-courses-assoc]
             [y-video-back.db.users :as users]
+            [y-video-back.db.permissions :as permissions]
             [y-video-back.db.auth-tokens :as auth-tokens]
-            [y-video-back.routes.service-handlers.utils.db-utils :as dbu]))
+            [y-video-back.routes.service-handlers.utils.db-utils :as dbu]
+            [y-video-back.utils.account-permissions :as ac]))
             ;[y-video-back.config :refer [env]]))
 
 (defn bypass-uri
@@ -30,11 +32,24 @@
     (:user-id res)))
   ;(:user-id (auth-tokens/READ token)))
 
+(defn check-user-role
+  "Checks if user has sufficient role in collection for id."
+  [user-id obj-id role]
+  (let [int-role (ac/to-int-role role)
+        object-collections (set (map #(:collection-id %) (permissions/READ-ALL-BY-OBJ-ID obj-id [:collection-id])))
+        user-collections (set (map #(:collection-id %) (filter #(<= (:role %) int-role) (permissions/READ-BY-USER user-id [:collection-id :role]))))]
+    ;(println "in check-user-role with: " user-id obj-id int-role)
+    ;(println "object-collections: " object-collections)
+    ;(println "user-collections: " user-collections)
+    ;(println "intersection: " (clojure.set/intersection object-collections user-collections))
+    (> (count (clojure.set/intersection object-collections user-collections))
+       0)))
+
 (defn get-user-type
-  "Returns user type from DB"
+  "Returns user type from DB. Returns ##Inf if user not in DB."
   [user-id]
   (let [account-type (db/READ :users user-id [:account-type])]
-    account-type))
+    (first (remove nil? [account-type ##Inf]))))
 
 (defn get-user-role-coll
   "Returns user role for collection from DB"

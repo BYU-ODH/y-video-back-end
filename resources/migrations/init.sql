@@ -397,6 +397,81 @@ CREATE VIEW cont_res_sub AS
     JOIN subtitles_undeleted AS s
     ON s.resource_id = r.id;
 
+DROP VIEW IF EXISTS user_collection_roles;
+CREATE VIEW user_collection_roles AS
+    SELECT c.id AS collection_id, u.id AS user_id, uca.account_role AS role
+    FROM users_undeleted AS u
+    JOIN user_collections_assoc_undeleted AS uca
+    ON u.id = uca.user_id
+    JOIN collections_undeleted AS c
+    ON c.id = uca.collection_id
+
+    UNION
+
+    SELECT c.id AS collection_id, u.id AS user_id, ucsa.account_role AS role
+    FROM users_undeleted AS u
+    JOIN user_courses_assoc_undeleted AS ucsa
+    ON u.id = ucsa.user_id
+    JOIN courses_undeleted AS cs
+    ON cs.id = ucsa.course_id
+    JOIN collection_courses_assoc_undeleted AS ucca
+    ON cs.id = ucca.course_id
+    JOIN collections AS c
+    ON c.id = ucca.collection_id
+
+    UNION
+
+    SELECT c.id AS collection_id, c.owner AS user_id, 0 AS role
+    FROM collections_undeleted AS c;
+
+COMMENT ON VIEW user_collection_roles IS 'Tracks what role each user plays in the collections to which they are connected';
+
+
+DROP VIEW IF EXISTS parent_collections;
+CREATE VIEW parent_collections AS
+    SELECT c.id AS collection_id, c.id AS object_id
+    FROM collections_undeleted AS c
+
+    UNION
+
+    SELECT c.id AS collection_id, cont.id AS object_id
+    FROM collections_undeleted AS c
+    JOIN contents_undeleted AS cont
+    ON cont.collection_id = c.id
+
+    UNION
+
+    SELECT c.id AS collection_id, r.id AS object_id
+    FROM collections_undeleted AS c
+    JOIN contents_undeleted AS cont
+    ON cont.collection_id = c.id
+    JOIN resources_undeleted AS r
+    ON r.id = cont.resource_id
+
+    UNION
+
+    SELECT c.id AS collection_id, s.id AS object_id
+    FROM collections_undeleted AS c
+    JOIN contents_undeleted AS cont
+    ON cont.collection_id = c.id
+    JOIN resources_undeleted AS r
+    ON r.id = cont.resource_id
+    JOIN subtitles_undeleted AS s
+    ON r.id = s.resource_id
+
+    UNION
+
+    SELECT c.id AS collection_id, f.id AS object_id
+    FROM collections_undeleted AS c
+    JOIN contents_undeleted AS cont
+    ON cont.collection_id = c.id
+    JOIN resources_undeleted AS r
+    ON r.id = cont.resource_id
+    JOIN files_undeleted AS f
+    ON r.id = f.resource_id;
+
+COMMENT ON VIEW parent_collections IS 'Tracks which collections each content, resource, subtitle, and file are connected to (possibly more than one)';
+
 --------------------------------------------------
 -- Set up resource placeholder for online media --
 --------------------------------------------------

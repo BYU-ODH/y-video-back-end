@@ -110,25 +110,67 @@
   [req]
   (:session-id (:header (:parameters req))))
 
+
+(defn get-permission-level
+  "Returns permission level from request, nil if not found."
+  [request]
+  (get-in request [:reitit.core/match :data (:request-method request) :permission-level]))
+
+(defn get-role-level
+  "Returns role level from request, nil if not found."
+  [request]
+  (get-in request [:reitit.core/match :data (:request-method request) :role-level]))
+
+(defn get-path-to-id
+  "Returns path to id from request, nil if not found."
+  [request]
+  (get-in request [:reitit.core/match :data (:request-method request) :path-to-id]))
+
+(defn get-obj-id
+  "Returns obj id for checking permission. Relies on :path-to-id field in request,
+  or defaults to [:parameters :path :id]. Returns nil if no id found."
+  [request]
+  (get-in request (first (remove nil? [
+                                       (get-path-to-id request)
+                                       [:parameters :path :id]]))))
+
+(defn get-bypass-permission
+  "Returns true if :bypass-permission set to true, else false."
+  [request]
+  (first (remove nil? [
+                       (get-in request [:reitit.core/match :data (:request-method request) :bypass-permission])
+                       false])))
+
 (defn check-permission
   "Checks user has permission for route"
   [handler]
   ;handler)
   (fn [request]
-    ;(println "permission-level=" (get-in request [:reitit.core/match :data (:request-method request) :permission-level]))
-    (let [session-id (get-in request [:parameters :header :session-id])]
-      ;(println "session-id=" session-id)
-      ;(println "session-id-bypass=" (:session-id-bypass env))
-      ;(println "user-type=" (ru/get-user-type (ru/token-to-user-id session-id)))
-      (if (or (= (:session-id-bypass env) (str session-id))
-              (ru/bypass-uri (:template (:reitit.core/match request)))
-              (and (not (nil? session-id))
-                   (let [user-type (ru/get-user-type (ru/token-to-user-id session-id))]
-                     (and (not (nil? user-type))
-                          (<= user-type
-                              (get-in request [:reitit.core/match :data (:request-method request) :permission-level]))))))
-        (handler (assoc request :has-permission true))
-        (handler (assoc request :has-permission false))))))
+    ;(println "permission-level=" (get-permission-level request))
+    ;(println "role-level=" (get-role-level request))
+    ;(println "path-to-id=" (get-path-to-id request))
+    (if (ru/bypass-uri (:uri request))
+      (handler request)
+      (let [session-id (get-in request [:parameters :header :session-id])]
+        (if (or (nil? session-id)
+                (and (not (= (:session-id-bypass env) (str session-id)))
+                     (nil? (ru/token-to-user-id session-id))))
+          {:status 401 :body {:message "unauthorized"}}
+          (if (= (:session-id-bypass env) (str session-id))
+            (handler request)
+            (let [valid-type (and (not (nil? (get-permission-level request)))
+                                  (<= (ru/get-user-type (ru/token-to-user-id session-id))
+                                      (get-permission-level request)))
+                  valid-role (and (not (nil? (get-role-level request)))
+                                  (ru/check-user-role (ru/token-to-user-id session-id)
+                                                      (get-obj-id request)
+                                                      (get-role-level request)))
+                  bypass-permission (get-bypass-permission request)]
+              ;(println "valid-type, valid-role, bypass-permission: " valid-type valid-role bypass-permission)
+              (if (or valid-type valid-role bypass-permission)
+                (handler (assoc request :permission-values {:valid-type valid-type
+                                                            :valid-role valid-role}))
+                {:status 401 :body {:message "unauthorized"}}))))))))
 
 (defn add-session-id
   "Adds new session-id to response header. Invalidates old session-id."
@@ -143,9 +185,10 @@
       (handler request)
       (if (= (get-session-id request) (sh-utils/to-uuid (:session-id-bypass env)))
         (assoc-in (handler request) [:headers "session-id"] (get-session-id request))
-        (let [response (handler request)
-              new-id (ru/get-new-session-id (get-session-id request))]
-          (assoc-in response [:headers "session-id"] new-id))))))
+        (let [response (handler request)]
+          (if (= 200 (:status response))
+            (assoc-in response [:headers "session-id"] (ru/get-new-session-id (get-session-id request)))
+            (assoc-in response [:headers "session-id"] (get-session-id request))))))))
 
 (defn wrap-api [handler]
   (let [check-csrf  (if-not (:test env) wrap-csrf identity)]
@@ -168,8 +211,8 @@
 
 (defn wrap-api-post [handler]
   (-> handler
-      add-session-id ; Why are these evaluated backwards?
-      check-permission))
+      check-permission
+      add-session-id)) ; Why are these evaluated backwards?
 
 (defn wrap-base [handler]
   (-> ((:middleware defaults) handler)

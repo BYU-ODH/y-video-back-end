@@ -13,7 +13,6 @@
    [y-video-back.routes.service-handlers.utils.utils :as utils]
    [y-video-back.routes.service-handlers.utils.role-utils :as ru]))
 
-
 (def collection-create ;; Non-functional
   {:summary "Creates a new collection with the given (temp) user as an owner"
    :permission-level 1
@@ -37,6 +36,8 @@
 (def collection-get-by-id ;; Not tested
   {:summary "Retrieves specified collection"
    :permission-level 1
+   :role-level "auditing"
+   :path-to-id [:parameters :path :id]
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
    :responses {200 {:body models/collection}

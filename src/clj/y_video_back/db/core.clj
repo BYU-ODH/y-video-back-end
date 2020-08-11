@@ -218,9 +218,9 @@
            :from [table-keyword]}
     id (assoc :where [:= column-keyword id])
     true sql/format
-    true dbr
-    (= 1 (count select-field-keys))
-    (#((first select-field-keys) %))))
+    ;true (spy)
+    true dbr))
+    ;(= 1 (count select-field-keys)) (#((first select-field-keys) %))))
 
 (defn read-all-pattern
   "Get all entries from table by column and pattern"

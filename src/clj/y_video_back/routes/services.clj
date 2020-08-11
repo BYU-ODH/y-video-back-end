@@ -84,7 +84,7 @@
      {:get (constantly (response/ok {:message "pong"}))}]
     ["/auth-ping"
      {:get {:summary "ping, requires valid session-id"
-            :permission-level (:admin env)
+            :permission-level 0
             :parameters {:header {:session-id uuid?}}
             :responses {200 {:body {:message string?}}}
             :handler (fn [req]

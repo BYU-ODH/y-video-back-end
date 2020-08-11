@@ -50,8 +50,8 @@
           token (java.util.UUID/randomUUID)
           res (rp/auth-ping token)]
       (is (= 401 (:status res)))
-      ; Check no auth token provided in response headers
-      (is (nil? (get-in res [:headers "session-id"]))))))
+      ; Check old auth token provided in response headers
+      (is (= token (get-in res [:headers "session-id"]))))))
 
 ; auth-ping with already used valid auth token
 (deftest auth-token-use-twice
@@ -62,16 +62,16 @@
           res-two (rp/auth-ping token)]
       (is (= 200 (:status res-one)))
       (is (= 401 (:status res-two)))
-      ; Check no auth token provided in response headers
-      (is (nil? (get-in res-two [:headers "session-id"]))))))
+      ; Check old auth token provided in response headers
+      (is (= token (get-in res-two [:headers "session-id"]))))))
 
 ; auth-ping with expired valid auth token
 (deftest auth-token-valid
   (testing "expired auth token"
-    (let [user-one (db-pop/add-user)
+    (let [user-one (db-pop/add-user 0)
           token (:id (auth-tokens/CREATE {:user-id (:id user-one)}))]
       (Thread/sleep (-> env :auth :timeout))
       (let [res (rp/auth-ping token)]
         (is (= 401 (:status res)))
-        ; Check no auth token provided in response headers
-        (is (nil? (get-in res [:headers "session-id"])))))))
+        ; Check old auth token provided in response headers
+        (is (= token (get-in res [:headers "session-id"])))))))

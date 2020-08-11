@@ -24,6 +24,7 @@
 (def resource-get-by-id
   {:summary "Retrieves specified resource"
    :permission-level 2
+   :role-level "ta"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
    :responses {200 {:body models/resource}

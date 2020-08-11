@@ -21,16 +21,13 @@
    :responses {200 {:body {:message string?
                            :id string?}}
                500 {:body {:message string?}}}
-   :handler (fn [{{{:keys [session-id]} :header :keys [body]} :parameters,
-                  has-permission :has-permission, :or {has-permission false}}]
-              (if-not has-permission
-                {:status 401 :body {:message "unauthorized"}}
-                (if-not (= '() (users/READ-BY-EMAIL [(:email body)]))
-                  {:status 500
-                   :body {:message "email already taken"}}
-                  {:status 200
-                   :body {:message "1 user created"
-                          :id (utils/get-id (users/CREATE body))}})))})
+   :handler (fn [{{{:keys [session-id]} :header :keys [body]} :parameters,}]
+              (if-not (= '() (users/READ-BY-EMAIL [(:email body)]))
+                {:status 500
+                 :body {:message "email already taken"}}
+                {:status 200
+                 :body {:message "1 user created"
+                        :id (utils/get-id (users/CREATE body))}}))})
 
 (def user-get-by-id
   {:summary "Retrieves specified user"
@@ -39,16 +36,13 @@
                 :path {:id uuid?}}
    :responses {200 {:body models/user}
                404 {:body {:message string?}}}
-   :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters
-                  has-permission :has-permission, :or {has-permission false}}]
-              (if-not has-permission
-                {:status 401 :body {:message "unauthorized"}}
-                (let [user-result (users/READ id)]
-                  (if (nil? user-result)
-                    {:status 404
-                     :body {:message "user not found"}}
-                    {:status 200
-                     :body user-result}))))})
+   :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
+              (let [user-result (users/READ id)]
+                (if (nil? user-result)
+                  {:status 404
+                   :body {:message "user not found"}}
+                  {:status 200
+                   :body user-result})))})
 
 
 (def user-update
@@ -58,16 +52,13 @@
                 :path {:id uuid?} :body ::sp/user}
    :responses {200 {:body {:message string?}}
                404 {:body {:message string?}}}
-   :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters
-                  has-permission :has-permission, :or {has-permission false}}]
-              (if-not has-permission
-                {:status 401 :body {:message "unauthorized"}})
-                (let [result (users/UPDATE id body)]
-                  (if (nil? result)
-                    {:status 404
-                     :body {:message "requested user not found"}}
-                    {:status 200
-                     :body {:message (str 1 " users updated")}})))})  ; I know, hard coded. Will change later.
+   :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
+              (let [result (users/UPDATE id body)]
+                (if (nil? result)
+                  {:status 404
+                   :body {:message "requested user not found"}}
+                  {:status 200
+                   :body {:message (str 1 " users updated")}})))})  ; I know, hard coded. Will change later.
 
 (def user-delete
   {:summary "Deletes specified user"
@@ -76,54 +67,52 @@
                 :path {:id uuid?}}
    :responses {200 {:body {:message string?}}
                404 {:body {:message string?}}}
-   :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters
-                  has-permission :has-permission, :or {has-permission false}}]
-              (if-not has-permission
-                {:status 401 :body {:message "unauthorized"}})
-                (let [result (users/DELETE id)]
-                  (if (nil? result)
-                    {:status 404
-                     :body {:message "requested user not found"}}
-                    {:status 200
-                     :body {:message (str result " users deleted")}})))})
+   :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
+              (let [result (users/DELETE id)]
+                (if (nil? result)
+                  {:status 404
+                   :body {:message "requested user not found"}}
+                  {:status 200
+                   :body {:message (str result " users deleted")}})))})
 
 
 (def user-get-logged-in ;; Non-functional
   {:summary "Retrieves the current logged-in user"
    :permission-level 3
+   :bypass-permission true
    :parameters {:header {:session-id uuid?}}
    :responses {200 {:body models/user}
                      ;:header {:Access-Control-Allow-Origin "http://localhost:3000"}}
+               401 {:body {:message string?}}
                404 {:body {:message string?}}
                500 {:body {:message string?}}}
-   :handler (fn [{{{:keys [session-id]} :header} :parameters
-                  has-permission :has-permission, :or {has-permission false}}]
-              (if-not has-permission
-                {:status 401 :body {:message "unauthorized"}}
-                (let [user-id (ru/token-to-user-id session-id)]
-                  (if-not (users/EXISTS? user-id) ; this should only be true if using session-id-bypass
-                    {:status 404
-                     :body {:message "user not found"}}
-                    (let [user-result (users/READ user-id)]
-                      (if (nil? user-result)
-                        {:status 500
-                         :body {:message "user not found, not sure why"}}
-                        (do
-                          (users/UPDATE user-id {:last-login (str (utils/now))})
-                          {:status 200
-                           :body user-result})))))))})
+   :handler (fn [{{{:keys [session-id]} :header} :parameters}]
+              (let [user-id (ru/token-to-user-id session-id)]
+                (if-not (users/EXISTS? user-id) ; this should only be true if using session-id-bypass
+                  {:status 404
+                   :body {:message "user not found"}}
+                  (let [user-result (users/READ user-id)]
+                    (if (nil? user-result)
+                      {:status 500
+                       :body {:message "user not found, not sure why"}}
+                      (do
+                        (users/UPDATE user-id {:last-login (str (utils/now))})
+                        {:status 200
+                         :body user-result}))))))})
 
 
 (def user-get-all-collections ;; Non-functional
   {:summary "Retrieves all collections the specified user owns"
    :permission-level 1
+   :bypass-permission true
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
    :responses {200 {:body [models/collection]}
                404 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters
-                  has-permission :has-permission, :or {has-permission false}}]
-              (if-not (or has-permission
+                  p-vals :permission-values}]
+              (if-not (or (:valid-type p-vals)
+                          (= (:session-id-bypass env) (str session-id))
                           (= (ru/token-to-user-id session-id) id))
                 {:status 401 :body {:message "unauthorized"}}
                 (if-not (users/EXISTS? id)
@@ -144,8 +133,7 @@
    :parameters {:header {:session-id uuid?}}
    :responses {200 {:body [(assoc models/collection :content [models/content])]}
                404 {:body {:message string?}}}
-   :handler (fn [{{{:keys [session-id]} :header} :parameters
-                  has-permission :has-permission, :or {has-permission false}}]
+   :handler (fn [{{{:keys [session-id]} :header} :parameters}]
               (let [user-id (ru/token-to-user-id session-id)]
                 (if-not (users/EXISTS? user-id)
                   {:status 404
@@ -175,38 +163,48 @@
 (def user-get-all-courses ;; Non-functional
   {:summary "Retrieves all courses for specified user"
    :permission-level 1
+   :bypass-permission true
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
    :responses {200 {:body [models/course]}
                404 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters
-                  has-permission :has-permission, :or {has-permission false}}]
-              (if-not (users/EXISTS? id)
-                {:status 404
-                 :body {:message "user not found"}}
-                (let [user-courses-result (user-courses-assoc/READ-COURSES-BY-USER id)]
-                  (let [course-result (map #(-> %
-                                                (utils/remove-db-only)
-                                                (dissoc :user-id)
-                                                (dissoc :account-role))
-                                           user-courses-result)]
-                      {:status 200
-                       :body course-result}))))})
+                  p-vals :permission-values}]
+              (if-not (or (:valid-type p-vals)
+                          (= (:session-id-bypass env) (str session-id))
+                          (= (ru/token-to-user-id session-id) id))
+                {:status 401 :body {:message "unauthorized"}}
+                (if-not (users/EXISTS? id)
+                  {:status 404
+                   :body {:message "user not found"}}
+                  (let [user-courses-result (user-courses-assoc/READ-COURSES-BY-USER id)]
+                    (let [course-result (map #(-> %
+                                                  (utils/remove-db-only)
+                                                  (dissoc :user-id)
+                                                  (dissoc :account-role))
+                                             user-courses-result)]
+                        {:status 200
+                         :body course-result})))))})
 
 
 (def user-get-all-words
   {:summary "Retrieves all words under specified user"
    :permission-level 1
+   :bypass-permission true
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
    :responses {200 {:body [models/word]}
                404 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters
-                  has-permission :has-permission, :or {has-permission false}}]
-              (if-not (users/EXISTS? id)
-                {:status 404
-                 :body {:message "user not found"}}
-                (let [user-words-result (users/READ-WORDS id)]
-                  (let [word-result (map #(utils/remove-db-only %) user-words-result)]
-                      {:status 200
-                       :body word-result}))))})
+                  p-vals :permission-values}]
+              (if-not (or (:valid-type p-vals)
+                          (= (:session-id-bypass env) (str session-id))
+                          (= (ru/token-to-user-id session-id) id))
+                {:status 401 :body {:message "unauthorized"}}
+                (if-not (users/EXISTS? id)
+                  {:status 404
+                   :body {:message "user not found"}}
+                  (let [user-words-result (users/READ-WORDS id)]
+                    (let [word-result (map #(utils/remove-db-only %) user-words-result)]
+                        {:status 200
+                         :body word-result})))))})

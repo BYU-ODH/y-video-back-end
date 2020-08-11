@@ -242,6 +242,11 @@
 
 (defn get-user-coll-assoc
   "Creates user-coll-assoc, ready to be added to db"
+  ([user-id collection-id role]
+   (assoc (dissoc (g/get-random-user-collections-assoc-without-id user-id collection-id)
+                  :account-role)
+          :account-role
+          role))
   ([user-id collection-id]
    (g/get-random-user-collections-assoc-without-id user-id collection-id))
   ([]
@@ -251,6 +256,10 @@
 
 (defn add-user-coll-assoc
   "Creates user-coll-assoc, adds to db"
+  ([user-id collection-id role]
+   (let [uca-one (get-user-coll-assoc user-id collection-id role)
+         uca-one-add (user-collections-assoc/CREATE uca-one)]
+     (assoc uca-one :id (:id uca-one-add))))
   ([user-id collection-id]
    (let [uca-one (get-user-coll-assoc user-id collection-id)
          uca-one-add (user-collections-assoc/CREATE uca-one)]
