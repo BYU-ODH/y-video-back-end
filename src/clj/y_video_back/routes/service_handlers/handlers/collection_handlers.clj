@@ -62,6 +62,7 @@
 (def collection-update ;; Non-functional
   {:summary "Updates the specified collection"
    :permission-level 1
+   :role-level "ta"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?} :body ::sp/collection}
    :responses {200 {:body {:message string?}}
@@ -109,6 +110,7 @@
 (def collection-add-user
   {:summary "Adds user to specified collection"
    :permission-level 1
+   :role-level "instructor"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?} :body {:username string? :account-role int?}}
    :responses {200 {:body {:message string? :id string?}}
@@ -136,6 +138,7 @@
 (def collection-remove-user
   {:summary "Removes user from specified collection"
    :permission-level 1
+   :role-level "instructor"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?} :body {:username string?}}
    :responses {200 {:body {:message string?}}
@@ -163,6 +166,7 @@
 (def collection-add-course
   {:summary "Adds course to specified collection"
    :permission-level 1
+   :role-level "instructor"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?} :body {:course-id uuid?}}
    :responses {200 {:body {:message string? :id string?}}
@@ -189,6 +193,7 @@
 (def collection-remove-course
   {:summary "Removes course from specified collection"
    :permission-level 1
+   :role-level "instructor"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?} :body {:course-id uuid?}}
    :responses {200 {:body {:message string?}}
@@ -215,6 +220,7 @@
 (def collection-get-all-contents ;; Non-functional
   {:summary "Retrieves all the resources for the specified collection"
    :permission-level 1
+   :role-level "auditing"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
    :responses {200 {:body [models/content]}
@@ -231,6 +237,7 @@
 (def collection-get-all-courses ;; Non-functional
   {:summary "Retrieves all the courses for the specified collection"
    :permission-level 1
+   :role-level "instructor"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
    :responses {200 {:body [models/course]}
@@ -250,6 +257,7 @@
 (def collection-get-all-users
   {:summary "Retrieves all users for the specified collection"
    :permission-level 1
+   :role-level "instructor"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
    :responses {200 {:body [models/user]}
