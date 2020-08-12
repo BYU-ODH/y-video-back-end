@@ -59,8 +59,8 @@
 (def collection-without-id-or-owner
   {:collection-name string?
    :published boolean?
-   :archived boolean?})
-   ;:public boolean?})
+   :archived boolean?
+   :public boolean?})
 
 (def collection-without-id
   (into collection-without-id-or-owner {:owner uuid?}))
@@ -92,8 +92,8 @@
    :date-validated string?
    :views int?
    :all-file-versions string?
-   :metadata string?})
-   ;:public boolean?})
+   :metadata string?
+   :public boolean?})
 
 (def resource
   (into resource-without-id {:id uuid?}))
@@ -110,8 +110,8 @@
    :allow-notes boolean?
    :allow-captions boolean?
    :views integer?
-   :file-version string?})
-   ;:public boolean?})
+   :file-version string?
+   :public boolean?})
 
 (def content-without-id
   (into content-without-any-ids {:resource-id uuid?
