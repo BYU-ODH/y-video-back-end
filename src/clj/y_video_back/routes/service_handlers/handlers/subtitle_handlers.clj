@@ -10,6 +10,8 @@
 (def subtitle-create
   {:summary "Creates a new subtitle"
    :permission-level 1
+   :role-level "ta"
+   :path-to-id [:parameters :body :resource-id]
    :parameters {:header {:session-id uuid?}
                 :body models/subtitle-without-id}
    :responses {200 {:body {:message string?
@@ -28,6 +30,7 @@
 (def subtitle-get-by-id
   {:summary "Retrieves specified subtitle"
    :permission-level 1
+   :role-level "auditing"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
    :responses {200 {:body models/subtitle}
@@ -43,6 +46,7 @@
 (def subtitle-update
   {:summary "Updates specified subtitle"
    :permission-level 1
+   :role-level "ta"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?} :body ::sp/subtitle}
    :responses {200 {:body {:message string?}}
