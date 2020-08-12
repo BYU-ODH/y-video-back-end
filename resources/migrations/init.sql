@@ -434,6 +434,15 @@ CREATE VIEW parent_collections AS
 
     UNION
 
+    SELECT c.id AS collection_id, crse.id AS object_id
+    FROM collections_undeleted AS c
+    JOIN collection_courses_assoc_undeleted AS cca
+    ON c.id = cca.collection_id
+    JOIN courses_undeleted AS crse
+    ON crse.id = cca.course_id
+
+    UNION
+
     SELECT c.id AS collection_id, cont.id AS object_id
     FROM collections_undeleted AS c
     JOIN contents_undeleted AS cont

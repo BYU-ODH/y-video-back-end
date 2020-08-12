@@ -14,3 +14,4 @@
 (def READ-USERS-BY-COURSE (partial db/read-all-where :users-by-course :course-id))
 (def READ-COURSES-BY-USER (partial db/read-all-where :courses-by-user :user-id))
 (defn EXISTS-CRSE-USER? [course-id user-id] (not (empty? (db/read-where-and :user-courses-assoc-undeleted [:course-id :user-id] [course-id user-id]))))
+(defn EXISTS-CRSE-USER-ROLE? [course-id user-id role] (not (empty? (db/read-where-and :user-courses-assoc-undeleted [:course-id :user-id :account-role] [course-id user-id role]))))
