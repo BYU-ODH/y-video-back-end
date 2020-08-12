@@ -14,6 +14,8 @@
 (def content-create ;; Non-functional
   {:summary "Creates new content"
    :permission-level 1
+   :role-level "instructor"
+   :path-to-id [:parameters :body :collection-id]
    :parameters {:header {:session-id uuid?}
                 :body models/content-without-id}
    :responses {200 {:body {:message string?
@@ -38,6 +40,7 @@
 (def content-get-by-id
   {:summary "Retrieves specified content"
    :permission-level 1
+   :role-level "auditing"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
    :responses {200 {:body models/content}
@@ -53,6 +56,7 @@
 (def content-update ;; Non-functional
   {:summary "Updates the specified content"
    :permission-level 1
+   :role-level "ta"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?} :body ::sp/content}
    :responses {200 {:body {:message string?}}
@@ -92,6 +96,7 @@
 (def content-add-view
   {:summary "Adds view to content and resource"
    :permission-level 1
+   :role-level "auditing"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
    :responses {200 {:body {:message string?}}
@@ -115,6 +120,7 @@
 (def content-add-subtitle
   {:summary "Adds subtitle to specified content"
    :permission-level 1
+   :role-level "ta"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?} :body {:subtitle-id uuid?}}
    :responses {200 {:body {:message string? :id string?}}
@@ -144,6 +150,7 @@
 (def content-remove-subtitle
   {:summary "Removes subtitle from specified content"
    :permission-level 1
+   :role-level "ta"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?} :body {:subtitle-id uuid?}}
    :responses {200 {:body {:message string?}}
