@@ -24,7 +24,7 @@
 (def resource-get-by-id
   {:summary "Retrieves specified resource"
    :permission-level 2
-   :role-level "ta"
+   :role-level "auditing"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
    :responses {200 {:body models/resource}
@@ -116,6 +116,7 @@
 (def resource-get-all-files ;; Non-functional
   {:summary "Retrieves all the files for the specified resource"
    :permission-level 2
+   :role-level "auditing"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
    :responses {200 {:body [(into models/file {:resource-id uuid?})]}
