@@ -310,6 +310,12 @@ CREATE VIEW courses_by_user AS
     FROM courses_undeleted JOIN user_courses_assoc_undeleted AS uca
     ON courses_undeleted.id = uca.course_id;
 
+DROP VIEW IF EXISTS subtitles_by_content;
+CREATE VIEW subtitles_by_content AS
+    SELECT subtitles_undeleted.*, csa.content_id AS content_id
+    FROM subtitles_undeleted JOIN content_subtitles_assoc_undeleted AS csa
+    ON subtitles_undeleted.id = csa.subtitle_id;
+
 
 DROP VIEW IF EXISTS collections_by_content;
 /*

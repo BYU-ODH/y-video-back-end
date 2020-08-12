@@ -8,8 +8,8 @@
    [y-video-back.models :as models]
    [y-video-back.model-specs :as sp]
    [y-video-back.routes.service-handlers.utils.utils :as utils]
-   [y-video-back.routes.service-handlers.utils.role-utils :as ru]))
-
+   [y-video-back.routes.service-handlers.utils.role-utils :as ru]
+   [y-video-back.routes.service-handlers.utils.utils :as ut]))
 
 (def content-create ;; Non-functional
   {:summary "Creates new content"
@@ -172,3 +172,23 @@
                          :body {:message "unable to remove subtitle"}}
                         {:status 200
                          :body {:message (str result " subtitles removed from content")}}))))))})
+
+
+(def content-subtitles
+  {:summary "Retrieve all subtitles connected to content"
+   :permission-level 1
+   :role-level "auditing"
+   :parameters {:header {:session-id uuid?}
+                :path {:id uuid?}}
+   :responses {200 {:body [models/subtitle]}
+               404 {:body {:message string?}}}
+   :handler (fn [{{{:keys [id]} :path} :parameters}]
+              (if (not (contents/EXISTS? id))
+                {:status 404
+                 :body {:message "content not found"}}
+                (let [result (content-subtitles-assoc/READ-SUBTITLES-BY-CONTENT id)]
+                  {:status 200
+                   :body (map #(-> %
+                                   (ut/remove-db-only)
+                                   (dissoc :content-id))
+                              result)})))})

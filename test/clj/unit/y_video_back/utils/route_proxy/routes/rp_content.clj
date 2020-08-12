@@ -71,3 +71,11 @@
             (header :session-id session-id))))
   ([content-id subtitle-id]
    (content-id-remove-subtitle (:session-id-bypass env) content-id subtitle-id)))
+
+(defn content-id-subtitles
+  "Retrieves all subtitles for content via app's get (id) request"
+  ([session-id id]
+   (ap2 (-> (request :get (str "/api/content/" id "/subtitles"))
+            (header :session-id session-id))))
+  ([id]
+   (content-id-subtitles (:session-id-bypass env) id)))

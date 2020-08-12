@@ -250,11 +250,13 @@
        :patch service-handlers/content-update
        :delete service-handlers/content-delete}]
      ["/{id}/add-view"
-       {:post service-handlers/content-add-view}]
+      {:post service-handlers/content-add-view}]
      ["/{id}/add-subtitle"
-       {:post service-handlers/content-add-subtitle}]
+      {:post service-handlers/content-add-subtitle}]
      ["/{id}/remove-subtitle"
-       {:post service-handlers/content-remove-subtitle}]]
+      {:post service-handlers/content-remove-subtitle}]
+     ["/{id}/subtitles"
+      {:get service-handlers/content-subtitles}]]
 
     ["/subtitle"
      {:swagger {:tags ["subtitle"]}}

@@ -20,7 +20,8 @@
       [y-video-back.db.user-collections-assoc :as user-collections-assoc]
       [y-video-back.db.users :as users]
       [y-video-back.db.words :as words]
-      [y-video-back.utils.utils :as ut]))
+      [y-video-back.utils.utils :as ut]
+      [y-video-back.utils.db-populator :as db-pop]))
 
 (declare ^:dynamic *txn*)
 
@@ -103,3 +104,12 @@
   (testing "add view to nonexistent content"
     (let [res (rp/content-id-add-view (java.util.UUID/randomUUID))]
       (is (= 404 (:status res))))))
+
+(deftest content-subtitles
+  (testing "invalid content"
+    (let [res (rp/content-id-subtitles (java.util.UUID/randomUUID))]
+      (is (= 404 (:status res)))))
+  (testing "no subtitles"
+    (let [cont-one (db-pop/add-content)
+          res (rp/content-id-subtitles (:id cont-one))]
+      (is (= 200 (:status res))))))

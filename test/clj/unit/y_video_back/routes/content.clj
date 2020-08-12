@@ -86,3 +86,35 @@
       (let [res (rp/content-id-remove-subtitle (:id cont-one) (:id sbtl-one))]
         (is (= 200 (:status res)))
         (is (= '() (content-subtitles-assoc/READ-BY-IDS [(:id cont-one) (:id sbtl-one)])))))))
+(deftest cont-get-all-subtitles
+  (testing "get subtitles for content (0)"
+    (let [cont-one (db-pop/add-content)
+          res (rp/content-id-subtitles (:id cont-one))]
+      (is (= 200 (:status res)))
+      (is (= []
+             (m/decode-response-body res)))))
+  (testing "get subtitles for content (1)"
+    (let [cont-one (db-pop/add-content)
+          sbtl-one (db-pop/add-subtitle (:resource-id cont-one))
+          cont-sbtl-add (db-pop/add-cont-sbtl-assoc (:id cont-one) (:id sbtl-one))
+          res (rp/content-id-subtitles (:id cont-one))]
+      (is (= 200 (:status res)))
+      (is (= [(-> sbtl-one
+                  (update :id str)
+                  (update :resource-id str))]
+             (m/decode-response-body res)))))
+  (testing "get subtitles for content (2)"
+    (let [cont-one (db-pop/add-content)
+          sbtl-one (db-pop/add-subtitle (:resource-id cont-one))
+          sbtl-two (db-pop/add-subtitle (:resource-id cont-one))
+          sbtl-thr (db-pop/add-subtitle (:resource-id cont-one))
+          sbtl-fou (db-pop/add-subtitle)
+          cont-sbtl-add (db-pop/add-cont-sbtl-assoc (:id cont-one) (:id sbtl-one))
+          cont-sbtl-add (db-pop/add-cont-sbtl-assoc (:id cont-one) (:id sbtl-two))
+          res (rp/content-id-subtitles (:id cont-one))]
+      (is (= 200 (:status res)))
+      (is (= (frequencies (map #(-> %
+                                    (update :id str)
+                                    (update :resource-id str))
+                               [sbtl-one sbtl-two]))
+             (frequencies (m/decode-response-body res)))))))
