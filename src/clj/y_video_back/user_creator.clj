@@ -1,19 +1,13 @@
 (ns y-video-back.user-creator
   (:require
     [y-video-back.config :refer [env]]
-    [y-video-back.db.user-collections-assoc :as user-collections-assoc]
-    [y-video-back.db.user-courses-assoc :as user-courses-assoc]
     [y-video-back.db.users :as users]
     [y-video-back.db.auth-tokens :as auth-tokens]
-    [y-video-back.models :as models]
-    [y-video-back.front-end-models :as fmodels]
-    [y-video-back.model-specs :as sp]
-    [y-video-back.routes.service-handlers.utils.utils :as utils]
-    [y-video-back.routes.service-handlers.utils.role-utils :as ru]
     [clj-http.client :as client]
     [java-time :as t]
-    [cheshire.core :as cheshire]
-    [clojure.data.json :as json]))
+    [clojure.data.json :as json]
+    [clojure.string :as str]
+    [clojure.walk :as walk]))
 
 (defn get-current-sem
   "Returns current semester in format YYYYT (Y=year, T=term)"
@@ -33,7 +27,7 @@
         (client/get)
         (:body)
         (json/read-str)
-        (clojure.walk/keywordize-keys)
+        (walk/keywordize-keys)
         (:ControldateswsService)
         (:response)
         (:date_list)
@@ -81,9 +75,9 @@
              :last-name netid
              :email (str netid "@yvideobeta.byu.edu")}
             {:full-name full-name
-             :first-name (first (clojure.string/split (last (clojure.string/split full-name #", ")) #" "))
-             :last-name (first (clojure.string/split full-name #", "))
-             :email (clojure.string/lower-case (get-in json-res ["StudentStatusInfoService" "response" "email_address"]))}))))))
+             :first-name (first (str/split (last (str/split full-name #", ")) #" "))
+             :last-name (first (str/split full-name #", "))
+             :email (str/lower-case (get-in json-res ["StudentStatusInfoService" "response" "email_address"]))}))))))
 
 (defn create-user
   "Creates user with data from BYU api"
@@ -116,4 +110,5 @@
   [user-id]
   (let [user-res (users/READ user-id)]
     (if-not (nil? user-res)
-      (get-auth-token user-id))))
+      (get-auth-token user-id)
+      nil)))

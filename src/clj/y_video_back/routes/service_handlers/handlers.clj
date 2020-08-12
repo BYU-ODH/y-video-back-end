@@ -15,7 +15,6 @@
 
 ; Misc handlers
 (def echo-patch miscs/echo-patch)
-(def connect-collection-and-course miscs/connect-collection-and-course)
 (def search-by-term miscs/search-by-term)
 
 ; User handlers

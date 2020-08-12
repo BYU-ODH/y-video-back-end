@@ -4,7 +4,6 @@
     [reitit.swagger :as swagger]
     [reitit.swagger-ui :as swagger-ui]
     [reitit.ring.coercion :as coercion]
-    [reitit.ring :as ring]
     [reitit.coercion.spec :as spec-coercion]
     [reitit.ring.middleware.muuntaja :as muuntaja]
     [reitit.ring.middleware.multipart :as multipart]
@@ -12,14 +11,9 @@
     [y-video-back.middleware.formats :as formats]
     [y-video-back.middleware.exception :as exception]
     [y-video-back.middleware :as middleware]
-;    [y-video-back.dbaccess.access :as db-access]
     [y-video-back.routes.service-handlers.handlers :as service-handlers]
     [ring.util.http-response :as response]
-    [clojure.java.io :as io]
-    [y-video-back.routes.service-handlers.utils.utils :as utils]
-    [y-video-back.routes.service-handlers.utils.role-utils :as ru]
     [y-video-back.user-creator :as uc]
-    [clojure.java.io :as io]
     [ring.middleware.multipart-params :refer [wrap-multipart-params]]))
 (defn service-routes []
    ["/api"
@@ -87,9 +81,8 @@
             :permission-level 0
             :parameters {:header {:session-id uuid?}}
             :responses {200 {:body {:message string?}}}
-            :handler (fn [req]
-                       {:status 200
-                        :body {:message "ping"}})}}]
+            :handler {:status 200
+                      :body {:message "ping"}}}}]
 
     ["/surely-a-get-method"
      {:post (constantly (response/ok {:message "pong"}))}]

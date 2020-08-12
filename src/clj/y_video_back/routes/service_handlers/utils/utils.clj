@@ -1,8 +1,7 @@
 (ns y-video-back.routes.service-handlers.utils.utils
   (:require [y-video-back.config :refer [env]]
-            [y-video-back.layout :refer [error-page]]
-            [y-video-back.db.core :as db]
-            [y-video-back.db.files :as files]))
+            [y-video-back.db.files :as files]
+            [clojure.string :as str]))
 (defn remove-db-only
   "Removes created, updated, and deleted fields from map"
   [my-map]
@@ -16,7 +15,7 @@
            {
             (keyword
               namespace
-              (clojure.string/replace
+              (str/replace
                 (str
                   (get val 0))
                 ":"
@@ -42,11 +41,13 @@
 
 (defn get-thumbnail
   [url]
-  (if (clojure.string/includes? url "youtube")
-    (let [video-args (get (clojure.string/split url #"v=") 1)]
+  (if (str/includes? url "youtube")
+    (let [video-args (get (str/split url #"v=") 1)]
       (if-not (nil? video-args)
-        (let [video-id (get (clojure.string/split video-args #"&") 0)]
-          (str "https://img.youtube.com/vi/" video-id "/0.jpg"))))))
+        (let [video-id (get (str/split video-args #"&") 0)]
+          (str "https://img.youtube.com/vi/" video-id "/0.jpg"))
+        nil))
+    nil))
 
 (defn file-id-to-path
   "Returns absolute version of filepath for file-id"
@@ -55,7 +56,7 @@
        (:filepath (files/READ file-id))))
 
 (defn split-first [re s]
-  (clojure.string/split s re 2))
+  (str/split s re 2))
 
 (defn split-last [re s]
   (let [pattern (re-pattern (str re "(?!.*" re ")"))]
@@ -85,7 +86,7 @@
   "Generates random file name with extension"
   [given-name]
   (str (rand-str 8)
-       (str "." (last (clojure.string/split given-name #"\.")))))
+       (str "." (last (str/split given-name #"\.")))))
 
 (defn user-db-to-front
   "Replace keywords with what the front end expects"
@@ -123,12 +124,6 @@
    :dateValidated (:date-validated cont)
    :views (:views cont)
    :metadata (:metadata cont)})
-
-(defn run-tests
-  "Runs arg 0 of each test. If any evaluates false, returns arg 1 of failing test.
-  tests: test0 arg0 test1 arg1 test2 arg2"
-  [& tests])
-
 
 
 (defn temp

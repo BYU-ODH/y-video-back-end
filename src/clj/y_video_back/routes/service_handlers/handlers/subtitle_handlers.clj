@@ -4,8 +4,7 @@
    [y-video-back.db.resources :as resources]
    [y-video-back.models :as models]
    [y-video-back.model-specs :as sp]
-   [y-video-back.routes.service-handlers.utils.utils :as utils]
-   [y-video-back.routes.service-handlers.utils.role-utils :as ru]))
+   [y-video-back.routes.service-handlers.utils.utils :as utils]))
 
 (def subtitle-create
   {:summary "Creates a new subtitle"
@@ -17,7 +16,7 @@
    :responses {200 {:body {:message string?
                            :id string?}}
                500 {:body {:message string?}}}
-   :handler (fn [{{{:keys [session-id]} :header :keys [body]} :parameters}]
+   :handler (fn [{{:keys [body]} :parameters}]
               (if-not (resources/EXISTS? (:resource-id body))
                 {:status 500
                  :body {:message "resource not found"}}
@@ -35,7 +34,7 @@
                 :path {:id uuid?}}
    :responses {200 {:body models/subtitle}
                404 {:body {:message string?}}}
-   :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
+   :handler (fn [{{{:keys [id]} :path} :parameters}]
               (let [res (subtitles/READ id)]
                 (if (nil? res)
                   {:status 404
@@ -52,7 +51,7 @@
    :responses {200 {:body {:message string?}}
                404 {:body {:message string?}}
                500 {:body {:message string?}}}
-   :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
+   :handler (fn [{{{:keys [id]} :path :keys [body]} :parameters}]
               (if-not (subtitles/EXISTS? id)
                 {:status 404
                  :body {:message "subtitle not found"}}
@@ -83,7 +82,7 @@
                 :path {:id uuid?}}
    :responses {200 {:body {:message string?}}
                404 {:body {:message string?}}}
-   :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
+   :handler (fn [{{{:keys [id]} :path} :parameters}]
               (let [result (subtitles/DELETE id)]
                 (if (nil? result)
                   {:status 404

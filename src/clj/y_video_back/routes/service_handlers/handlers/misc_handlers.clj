@@ -43,7 +43,7 @@
                            :collections [models/collection]
                            :resources [models/resource]
                            :courses [models/course]}}}
-   :handler (fn [{{{:keys [session-id]} :header {:keys [query-term]} :query} :parameters}]
+   :handler (fn [{{{:keys [query-term]} :query} :parameters}]
               (let [user-result (map utils/remove-db-only
                                      (db/read-all-pattern :users
                                                           [:email :account-name :username]
