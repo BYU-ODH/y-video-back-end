@@ -47,6 +47,7 @@
 (def file-get-by-id
   {:summary "Retrieves specified file"
    :permission-level 2
+   :role-level "auditing"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
    :responses {200 {:body models/file}
