@@ -7,8 +7,7 @@
    [y-video-back.db.content-subtitles-assoc :as content-subtitles-assoc]
    [y-video-back.models :as models]
    [y-video-back.model-specs :as sp]
-   [y-video-back.routes.service-handlers.utils.utils :as utils]
-   [y-video-back.routes.service-handlers.utils.role-utils :as ru]))
+   [y-video-back.routes.service-handlers.utils.utils :as utils]))
 
 
 (def content-create ;; Non-functional
@@ -21,7 +20,7 @@
    :responses {200 {:body {:message string?
                            :id string?}}
                500 {:body {:message string?}}}
-   :handler (fn [{{{:keys [session-id]} :header :keys [body]} :parameters}]
+   :handler (fn [{{:keys [body]} :parameters}]
               (if-not (collections/EXISTS? (:collection-id body))
                 {:status 500
                  :body {:message "collection not found"}}
@@ -45,7 +44,7 @@
                 :path {:id uuid?}}
    :responses {200 {:body models/content}
                404 {:body {:message string?}}}
-   :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
+   :handler (fn [{{{:keys [id]} :path} :parameters}]
               (let [res (contents/READ id)]
                 (if (nil? res)
                   {:status 404
@@ -62,7 +61,7 @@
    :responses {200 {:body {:message string?}}
                404 {:body {:message string?}}
                500 {:body {:message string?}}}
-   :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
+   :handler (fn [{{{:keys [id]} :path :keys [body]} :parameters}]
               (if-not (contents/EXISTS? id)
                 {:status 404
                  :body {:message "content not found"}}
@@ -85,7 +84,7 @@
                 :path {:id uuid?}}
    :responses {200 {:body {:message string?}}
                404 {:body {:message string?}}}
-   :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
+   :handler (fn [{{{:keys [id]} :path} :parameters}]
               (let [result (contents/DELETE id)]
                 (if (nil? result)
                   {:status 404
@@ -101,7 +100,7 @@
                 :path {:id uuid?}}
    :responses {200 {:body {:message string?}}
                404 {:body {:message string?}}}
-   :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
+   :handler (fn [{{{:keys [id]} :path} :parameters}]
               (let [this-content (contents/READ id)]
                 (if (nil? this-content)
                   {:status 404
@@ -126,7 +125,7 @@
    :responses {200 {:body {:message string? :id string?}}
                404 {:body {:message string?}}
                500 {:body {:message string?}}}
-   :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
+   :handler (fn [{{{:keys [id]} :path :keys [body]} :parameters}]
               (if (not (contents/EXISTS? id))
                 {:status 404
                  :body {:message "content not found"}}
@@ -156,7 +155,7 @@
    :responses {200 {:body {:message string?}}
                404 {:body {:message string?}}
                500 {:body {:message string?}}}
-   :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
+   :handler (fn [{{{:keys [id]} :path :keys [body]} :parameters}]
               (if (not (contents/EXISTS? id))
                 {:status 404
                  :body {:message "content not found"}}

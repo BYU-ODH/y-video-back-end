@@ -15,7 +15,6 @@
 
 ; Misc handlers
 (def echo-patch miscs/echo-patch)
-(def search-by-term miscs/search-by-term)
 
 ; User handlers
 (def user-create users/user-create)
@@ -93,7 +92,7 @@
 (def search-by-collection admin/search-by-collection)
 (def search-by-content admin/search-by-content)
 (def search-by-resource admin/search-by-resource)
-(def refresh-course-list admin/refresh-course-list)
+;(def refresh-course-list admin/refresh-course-list)
 
 ; Media handlers
 (def upload-file media/upload-file)

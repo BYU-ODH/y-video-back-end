@@ -12,4 +12,4 @@
 (def DELETE-BY-IDS "[column-vals]\ncolumn-vals must be a content containing content-id then subtitle-id." (partial db/delete-where-and :content-subtitles-assoc-undeleted [:content-id :subtitle-id]))
 (def READ-SUBTITLES-BY-CONTENT (partial db/read-all-where :subtitles-by-content :content-id))
 (def READ-CONTENTS-BY-SUBTITLE (partial db/read-all-where :contents-by-subtitle :subtitle-id))
-(defn EXISTS-CONT-SBTL? [content-id subtitle-id] (not (empty? (db/read-where-and :content-subtitles-assoc-undeleted [:content-id :subtitle-id] [content-id subtitle-id]))))
+(defn EXISTS-CONT-SBTL? [content-id subtitle-id] (seq (db/read-where-and :content-subtitles-assoc-undeleted [:content-id :subtitle-id] [content-id subtitle-id])))

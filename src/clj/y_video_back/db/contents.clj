@@ -8,15 +8,11 @@
 (def DELETE (partial db/mark-deleted :contents))
 (def CLONE (partial db/CLONE :contents))
 (def PERMANENT-DELETE (partial db/DELETE :contents))
-;(def READ-BY-IDS (partial db/read-where-and :contents-undeleted [:collection-id :resource-id]))
-;(def DELETE-BY-IDS "[column-vals]\ncolumn-vals must be a collection containing collection-id then resource-id." (partial db/delete-where-and :contents-undeleted [:collection-id :resource-id]))
-;(def READ-CONTENTS-BY-COLLECTION (partial db/read-all-where :resources-by-collection :collection-id))
-;(def READ-COLLECTIONS-BY-CONTENT (partial db/read-all-where :collections-by-resource :resource-id))
-(defn EXISTS-COLL-CONT? [collection-id resource-id] (not (empty? (db/read-where-and :contents-undeleted [:collection-id :resource-id] [collection-id resource-id]))))
+(defn EXISTS-COLL-CONT? [collection-id resource-id] (seq (db/read-where-and :contents-undeleted [:collection-id :resource-id] [collection-id resource-id])))
 (defn EXISTS? [id] (not (nil? (db/READ :contents-undeleted id))))
 (def READ-BY-COLLECTION (partial db/read-all-where :contents-undeleted :collection-id))
 (def INCR-VIEWS (partial db/increment-field :contents :views))
-(defn ELIGIBLE-CONT-SUB? [content-id subtitle-id] (not (empty? (db/read-where-and :cont_res_sub [:content-id :subtitle-id] [content-id subtitle-id]))))
+(defn ELIGIBLE-CONT-SUB? [content-id subtitle-id] (seq (db/read-where-and :cont_res_sub [:content-id :subtitle-id] [content-id subtitle-id])))
 (defn READ-PUBLIC
   "Read by id, restrict to public results only"
   [id]

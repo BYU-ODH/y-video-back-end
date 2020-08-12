@@ -1,7 +1,6 @@
 (ns y-video-back.model-specs
   (:require
-   [clojure.spec.alpha :as s]
-   [spec-tools.core :as st]))
+   [clojure.spec.alpha :as s]))
 
 
 (s/def :user/email string?)

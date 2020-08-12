@@ -19,7 +19,7 @@
    :responses {200 {:body {:message string?
                            :id string?}}
                500 {:body {:message string?}}}
-   :handler (fn [{{{:keys [session-id]} :header :keys [body]} :parameters}]
+   :handler (fn [{{:keys [body]} :parameters}]
               (if (courses/EXISTS-DEP-CAT-SEC? (:department body) (:catalog-number body) (:section-number body))
                 {:status 500
                  :body {:message "department / catalog number / section number combination already in use, unable to create course"}}
@@ -58,7 +58,7 @@
    :responses {200 {:body {:message string?}}
                404 {:body {:message string?}}
                500 {:body {:message string?}}}
-   :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
+   :handler (fn [{{{:keys [id]} :path :keys [body]} :parameters}]
               (if-not (courses/EXISTS? id)
                 {:status 404
                  :body {:message "course not found"}}
@@ -87,7 +87,7 @@
                 :path {:id uuid?}}
    :responses {200 {:body {:message string?}}
                404 {:body {:message string?}}}
-   :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
+   :handler (fn [{{{:keys [id]} :path} :parameters}]
               (let [result (courses/DELETE id)]
                 (if (nil? result)
                   {:status 404
@@ -187,14 +187,14 @@
                 (if-not (courses/EXISTS? id)
                   {:status 404
                    :body {:message "course not found"}}
-                  (let [user-courses-result (user-courses-assoc/READ-USERS-BY-COURSE id)]
-                    (let [user-result (map #(-> %
-                                                (utils/remove-db-only)
-                                                (dissoc :course-id)
-                                                (dissoc :account-role))
-                                           user-courses-result)]
-                      {:status 200
-                       :body user-result})))))})
+                  (let [user-courses-result (user-courses-assoc/READ-USERS-BY-COURSE id)
+                        user-result (map #(-> %
+                                              (utils/remove-db-only)
+                                              (dissoc :course-id)
+                                              (dissoc :account-role))
+                                         user-courses-result)]
+                    {:status 200
+                     :body user-result}))))})
 
 (def course-get-all-collections ;; Non-functional
   {:summary "Retrieves all collections for specified course"
@@ -215,8 +215,8 @@
                 (if-not (courses/EXISTS? id)
                   {:status 404
                    :body {:message "course not found"}}
-                  (let [course-collections-result (collection-courses-assoc/READ-COLLECTIONS-BY-COURSE id)]
-                    (let [collection-result (map #(utils/remove-db-only %) course-collections-result)
-                          remove-extra (map #(dissoc % :course-id) collection-result)]
-                      {:status 200
-                       :body remove-extra})))))})
+                  (let [course-collections-result (collection-courses-assoc/READ-COLLECTIONS-BY-COURSE id)
+                        collection-result (map #(utils/remove-db-only %) course-collections-result)
+                        remove-extra (map #(dissoc % :course-id) collection-result)]
+                    {:status 200
+                     :body remove-extra}))))})

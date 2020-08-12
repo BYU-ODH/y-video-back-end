@@ -81,8 +81,9 @@
             :permission-level 0
             :parameters {:header {:session-id uuid?}}
             :responses {200 {:body {:message string?}}}
-            :handler {:status 200
-                      :body {:message "ping"}}}}]
+            :handler (fn [req]
+                       {:status 200
+                        :body {:message "ping"}})}}]
 
     ["/surely-a-get-method"
      {:post (constantly (response/ok {:message "pong"}))}]
@@ -285,9 +286,9 @@
      ["/content/{term}"
       {:get service-handlers/search-by-content}]
      ["/resource/{term}"
-      {:get service-handlers/search-by-resource}]
-     ["/refresh-course-list/{password}"
-      {:post service-handlers/refresh-course-list}]]
+      {:get service-handlers/search-by-resource}]]
+     ;["/refresh-course-list/{password}"
+     ; {:post service-handlers/refresh-course-list}]]
 
 
     ["/media"

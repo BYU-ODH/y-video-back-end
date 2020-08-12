@@ -1,11 +1,9 @@
 (ns y-video-back.routes.home
     (:require
      [y-video-back.layout :as layout]
-     [clojure.java.io :as io]
      [ring.util.http-response :as response]
      [y-video-back.middleware :as middleware]
      [y-video-back.user-creator :as uc]
-     [reitit.ring :as ring]
      [byu-cas.core :as cas]))
 
 (defn home-page [request-map]
@@ -21,9 +19,6 @@
       (println (str "user from CAS: " (:username request)))
       (println (str "serving session-id from home.clj: " session-id))
       (layout/render (into request {:session-id session-id}) "index.html"))))
-
-(defn video-page [request]
-  (ring/create-resource-handler {:root "/videos/"}))
 
 (def ^{:private true} home-paths
   ["/"])
@@ -45,7 +40,8 @@
          ["/show-request" {:get (fn [request] {:status 200 :body {:request (str request)
                                                                   :cas-info (:cas-info request)}})}]
 
-         ["/logout" {:get {:handler (fn [req] (cas/logout-resp "https://cheneycreations.com"))}}] ; placeholder url until we get a login page going
+         ;["/logout" {:get {:handler (fn [req] (cas/logout-resp "https://cheneycreations.com"))}}] ; placeholder url until we get a login page going
+         ["/logout" {:get {:handler (cas/logout-resp "https://cheneycreations.com")}}] ; placeholder url until we get a login page going
          ; serving videos routes
 
          ; React BrowserRouter support
