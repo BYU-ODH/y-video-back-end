@@ -126,6 +126,7 @@ CREATE TABLE contents (
     ,allow_captions BOOLEAN
     ,views INTEGER
     ,file_version TEXT
+    ,published BOOLEAN
     ,resource_id UUID REFERENCES resources(id)
     ,collection_id UUID REFERENCES collections(id)
     --,public BOOLEAN

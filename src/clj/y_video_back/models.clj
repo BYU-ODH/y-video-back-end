@@ -108,7 +108,8 @@
    :allow-notes boolean?
    :allow-captions boolean?
    :views integer?
-   :file-version string?})
+   :file-version string?
+   :published boolean?})
    ;:public boolean?})
 
 (def content-without-id
