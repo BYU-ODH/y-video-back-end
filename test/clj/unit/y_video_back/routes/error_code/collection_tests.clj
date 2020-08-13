@@ -20,7 +20,8 @@
       [y-video-back.db.user-collections-assoc :as user-collections-assoc]
       [y-video-back.db.users :as users]
       [y-video-back.db.words :as words]
-      [y-video-back.utils.utils :as ut]))
+      [y-video-back.utils.utils :as ut]
+      [y-video-back.utils.db-populator :as db-pop]))
 
 (declare ^:dynamic *txn*)
 
@@ -144,17 +145,27 @@
 
 
 (deftest collection-add-course
-  (testing "add nonexistent course to collection"
-    (let [res (rp/collection-id-add-course (:id test-coll-one) (java.util.UUID/randomUUID))]
-      (is (= 500 (:status res)))))
+  (testing "add existing course to collection"
+    (let [course-one (db-pop/add-course)
+          res (rp/collection-id-add-course (:id test-coll-one)
+                                           (:department course-one)
+                                           (:catalog-number course-one)
+                                           (:section-number course-one))]
+      (is (= 200 (:status res)))))
   (testing "add course to nonexistent collection"
-    (let [res (rp/collection-id-add-course (java.util.UUID/randomUUID) (:id test-crse-one))]
+    (let [res (rp/collection-id-add-course (java.util.UUID/randomUUID)
+                                           (:department test-crse-one)
+                                           (:catalog-number test-crse-one)
+                                           (:section-number test-crse-one))]
       (is (= 404 (:status res)))))
   (testing "add course to collection, already connected"
-    (let [new-course (courses/CREATE (g/get-random-course-without-id))
+    (let [new-course (db-pop/add-course)
           add-course-res (collection-courses-assoc/CREATE {:course-id (:id new-course)
                                                            :collection-id (:id test-coll-one)})
-          res (rp/collection-id-add-course (:id test-coll-one) (:id new-course))]
+          res (rp/collection-id-add-course (:id test-coll-one)
+                                           (:department new-course)
+                                           (:catalog-number new-course)
+                                           (:section-number new-course))]
       (is (= 500 (:status res))))))
 
 (deftest collection-remove-course

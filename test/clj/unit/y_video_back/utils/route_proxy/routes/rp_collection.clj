@@ -76,12 +76,14 @@
 
 (defn collection-id-add-course
   "Connects course and collection"
-  ([session-id collection-id course-id]
+  ([session-id collection-id dept ctlg sctn]
    (ap2 (-> (request :post (str "/api/collection/" collection-id "/add-course"))
-            (json-body {:course-id course-id})
+            (json-body {:department dept
+                        :catalog-number ctlg
+                        :section-number sctn})
             (header :session-id session-id))))
-  ([collection-id course-id]
-   (collection-id-add-course (:session-id-bypass env) collection-id course-id)))
+  ([collection-id dept ctlg sctn]
+   (collection-id-add-course (:session-id-bypass env) collection-id dept ctlg sctn)))
 
 (defn collection-id-remove-course
   "Connects course and collection"

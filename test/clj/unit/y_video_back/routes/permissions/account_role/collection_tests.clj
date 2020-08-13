@@ -491,94 +491,112 @@
       (is (= 401 (:status res))))))
 
 ;post: /api/collection/{id}/add-course
-(deftest collection-remove-course
-  (testing "instructor, collection-remove-course, owner"
+(deftest collection-id-add-course
+  (testing "instructor, collection-id-add-course, owner"
     (let [user-one (db-pop/add-user "instructor")
           coll-one (db-pop/add-collection (:id user-one))
-          crse-two (db-pop/add-course)
+          crse-two (db-pop/get-course)
           res (rp/collection-id-add-course (uc/user-id-to-session-id (:id user-one))
                                            (:id coll-one)
-                                           (:id crse-two))]
+                                           (:department crse-two)
+                                           (:catalog-number crse-two)
+                                           (:section-number crse-two))]
       (is (= 200 (:status res)))))
-  (testing "instructor, collection-remove-course, instructor via user-coll"
+  (testing "instructor, collection-id-add-course, instructor via user-coll"
     (let [user-one (db-pop/add-user "instructor")
           coll-one (db-pop/add-collection)
           user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "instructor")
-          crse-two (db-pop/add-course)
+          crse-two (db-pop/get-course)
           res (rp/collection-id-add-course (uc/user-id-to-session-id (:id user-one))
                                            (:id coll-one)
-                                           (:id crse-two))]
+                                           (:department crse-two)
+                                           (:catalog-number crse-two)
+                                           (:section-number crse-two))]
       (is (= 200 (:status res)))))
-  (testing "instructor, collection-remove-course, instructor via course"
+  (testing "instructor, collection-id-add-course, instructor via course"
     (let [user-one (db-pop/add-user "instructor")
           coll-one (db-pop/add-collection)
           crse-one (db-pop/add-course)
           user-crse-add (db-pop/add-user-crse-assoc (:id user-one) (:id crse-one) "instructor")
           coll-crse-add (db-pop/add-coll-crse-assoc (:id coll-one) (:id crse-one))
-          crse-two (db-pop/add-course)
+          crse-two (db-pop/get-course)
           res (rp/collection-id-add-course (uc/user-id-to-session-id (:id user-one))
                                            (:id coll-one)
-                                           (:id crse-two))]
+                                           (:department crse-two)
+                                           (:catalog-number crse-two)
+                                           (:section-number crse-two))]
       (is (= 200 (:status res)))))
-  (testing "student, collection-remove-course, ta via user-coll"
+  (testing "student, collection-id-add-course, ta via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
           user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "ta")
-          crse-two (db-pop/add-course)
+          crse-two (db-pop/get-course)
           res (rp/collection-id-add-course (uc/user-id-to-session-id (:id user-one))
                                            (:id coll-one)
-                                           (:id crse-two))]
+                                           (:department crse-two)
+                                           (:catalog-number crse-two)
+                                           (:section-number crse-two))]
       (is (= 401 (:status res)))))
-  (testing "student, collection-remove-course, ta via course"
+  (testing "student, collection-id-add-course, ta via course"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
           crse-one (db-pop/add-course)
           user-crse-add (db-pop/add-user-crse-assoc (:id user-one) (:id crse-one) "ta")
           coll-crse-add (db-pop/add-coll-crse-assoc (:id coll-one) (:id crse-one))
-          crse-two (db-pop/add-course)
+          crse-two (db-pop/get-course)
           res (rp/collection-id-add-course (uc/user-id-to-session-id (:id user-one))
                                            (:id coll-one)
-                                           (:id crse-two))]
+                                           (:department crse-two)
+                                           (:catalog-number crse-two)
+                                           (:section-number crse-two))]
       (is (= 401 (:status res)))))
-  (testing "student, collection-remove-course, student via user-coll"
+  (testing "student, collection-id-add-course, student via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
           user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "student")
-          crse-two (db-pop/add-course)
+          crse-two (db-pop/get-course)
           res (rp/collection-id-add-course (uc/user-id-to-session-id (:id user-one))
                                            (:id coll-one)
-                                           (:id crse-two))]
+                                           (:department crse-two)
+                                           (:catalog-number crse-two)
+                                           (:section-number crse-two))]
       (is (= 401 (:status res)))))
-  (testing "student, collection-remove-course, student via course"
+  (testing "student, collection-id-add-course, student via course"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
           crse-one (db-pop/add-course)
           user-crse-add (db-pop/add-user-crse-assoc (:id user-one) (:id crse-one) "student")
           coll-crse-add (db-pop/add-coll-crse-assoc (:id coll-one) (:id crse-one))
-          crse-two (db-pop/add-course)
+          crse-two (db-pop/get-course)
           res (rp/collection-id-add-course (uc/user-id-to-session-id (:id user-one))
                                            (:id coll-one)
-                                           (:id crse-two))]
+                                           (:department crse-two)
+                                           (:catalog-number crse-two)
+                                           (:section-number crse-two))]
       (is (= 401 (:status res)))))
-  (testing "student, collection-remove-course, auditing via user-coll"
+  (testing "student, collection-id-add-course, auditing via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
           user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "auditing")
-          crse-two (db-pop/add-course)
+          crse-two (db-pop/get-course)
           res (rp/collection-id-add-course (uc/user-id-to-session-id (:id user-one))
                                            (:id coll-one)
-                                           (:id crse-two))]
+                                           (:department crse-two)
+                                           (:catalog-number crse-two)
+                                           (:section-number crse-two))]
       (is (= 401 (:status res)))))
-  (testing "student, collection-remove-course, auditing via course"
+  (testing "student, collection-id-add-course, auditing via course"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
           crse-one (db-pop/add-course)
           user-crse-add (db-pop/add-user-crse-assoc (:id user-one) (:id crse-one) "auditing")
           coll-crse-add (db-pop/add-coll-crse-assoc (:id coll-one) (:id crse-one))
-          crse-two (db-pop/add-course)
+          crse-two (db-pop/get-course)
           res (rp/collection-id-add-course (uc/user-id-to-session-id (:id user-one))
                                            (:id coll-one)
-                                           (:id crse-two))]
+                                           (:department crse-two)
+                                           (:catalog-number crse-two)
+                                           (:section-number crse-two))]
       (is (= 401 (:status res))))))
 
 ;post: /api/collection/{id}/remove-course

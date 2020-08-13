@@ -258,35 +258,43 @@
 (deftest collection-add-course
   (testing "admin - no connection, collection-add-course"
     (let [user-one (db-pop/add-user "admin")
-          crse-one (db-pop/add-course)
+          crse-one (db-pop/get-course)
           coll-one (db-pop/add-collection)
           res (rp/collection-id-add-course (uc/user-id-to-session-id (:id user-one))
                                            (:id coll-one)
-                                           (:id crse-one))]
+                                           (:department crse-one)
+                                           (:catalog-number crse-one)
+                                           (:section-number crse-one))]
       (is (= 200 (:status res)))))
   (testing "lab assistant - no connection, collection-add-course"
     (let [user-one (db-pop/add-user "lab-assistant")
-          crse-one (db-pop/add-course)
+          crse-one (db-pop/get-course)
           coll-one (db-pop/add-collection)
           res (rp/collection-id-add-course (uc/user-id-to-session-id (:id user-one))
                                            (:id coll-one)
-                                           (:id crse-one))]
+                                           (:department crse-one)
+                                           (:catalog-number crse-one)
+                                           (:section-number crse-one))]
       (is (= 200 (:status res)))))
   (testing "instructor - no connection, collection-add-course"
     (let [user-one (db-pop/add-user "instructor")
-          crse-one (db-pop/add-course)
+          crse-one (db-pop/get-course)
           coll-one (db-pop/add-collection)
           res (rp/collection-id-add-course (uc/user-id-to-session-id (:id user-one))
                                            (:id coll-one)
-                                           (:id crse-one))]
+                                           (:department crse-one)
+                                           (:catalog-number crse-one)
+                                           (:section-number crse-one))]
       (is (= 401 (:status res)))))
   (testing "student - no connection, collection-add-course"
     (let [user-one (db-pop/add-user "student")
-          crse-one (db-pop/add-course)
+          crse-one (db-pop/get-course)
           coll-one (db-pop/add-collection)
           res (rp/collection-id-add-course (uc/user-id-to-session-id (:id user-one))
                                            (:id coll-one)
-                                           (:id crse-one))]
+                                           (:department crse-one)
+                                           (:catalog-number crse-one)
+                                           (:section-number crse-one))]
       (is (= 401 (:status res))))))
 
 ;post: /api/collection/{id}/remove-course

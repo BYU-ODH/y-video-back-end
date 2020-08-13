@@ -162,31 +162,35 @@
                            :body {:message (str result " users removed from collection")}})))))))})
 
 (def collection-add-course
-  {:summary "Adds course to specified collection"
+  {:summary "Adds course to specified collection. Creates course in database if does not already exist."
    :permission-level 1
    :role-level "instructor"
    :parameters {:header {:session-id uuid?}
-                :path {:id uuid?} :body {:course-id uuid?}}
+                :path {:id uuid?}
+                :body {:department string?
+                       :catalog-number string?
+                       :section-number string?}}
    :responses {200 {:body {:message string? :id string?}}
                404 (:body {:message string?})
                500 (:body {:message string?})}
-   :handler (fn [{{{:keys [id]} :path :keys [body]} :parameters}]
+   :handler (fn [{{{:keys [id]} :path {:keys [department catalog-number section-number]} :body} :parameters}]
               (if (not (collections/EXISTS? id))
                 {:status 404
                  :body {:message "collection not found"}}
-                (if (not (courses/EXISTS? (:course-id body)))
-                  {:status 500
-                   :body {:message "course not found"}}
-                  (if (collection-courses-assoc/EXISTS-COLL-CRSE? id (:course-id body))
-                    {:status 500
-                     :body {:message "course already connected to collection"}}
-                    (let [result (utils/get-id (collection-courses-assoc/CREATE (into body {:collection-id id})))]
-                      (if (= nil result)
-                        {:status 500
-                         :body {:message "unable to add course"}}
-                        {:status 200
-                         :body {:message (str 1 " courses added to collection")
-                                :id result}}))))))})
+                (do
+                  (if-not (courses/EXISTS-DEP-CAT-SEC? department catalog-number section-number)
+                    (courses/CREATE {:department department :catalog-number catalog-number :section-number section-number}))
+                  (let [course-id (:id (first (courses/READ-ALL-BY-DEP-CAT-SEC [department catalog-number section-number])))]
+                    (if (collection-courses-assoc/EXISTS-COLL-CRSE? id course-id)
+                      {:status 500
+                       :body {:message "course already connected to collection"}}
+                      (let [result (utils/get-id (collection-courses-assoc/CREATE {:collection-id id :course-id course-id}))]
+                        (if (= nil result)
+                          {:status 500
+                           :body {:message "unable to add course"}}
+                          {:status 200
+                           :body {:message (str 1 " courses added to collection")
+                                  :id (str course-id)}})))))))})
 
 (def collection-remove-course
   {:summary "Removes course from specified collection"

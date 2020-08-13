@@ -99,15 +99,18 @@
 (deftest coll-add-crse
   (testing "add course to collection"
     (let [coll-one (db-pop/add-collection)
-          crse-one (db-pop/add-course)]
+          crse-one (db-pop/get-course)]
       (is (= '() (collection-courses-assoc/READ-BY-IDS [(:id coll-one) (:id crse-one)])))
-      (let [res (rp/collection-id-add-course (:id coll-one) (:id crse-one))]
+      (let [res (rp/collection-id-add-course (:id coll-one)
+                                             (:department crse-one)
+                                             (:catalog-number crse-one)
+                                             (:section-number crse-one))]
         (is (= 200 (:status res)))
         (let [id (ut/to-uuid (:id (m/decode-response-body res)))]
-          (is (= (list {:id id
-                        :collection-id (:id coll-one)
-                        :course-id (:id crse-one)})
-                 (map ut/remove-db-only (collection-courses-assoc/READ-BY-IDS [(:id coll-one) (:id crse-one)])))))))))
+          (is (= (assoc crse-one :id id)
+                 (ut/remove-db-only (courses/READ id))))
+          (is (= 1
+                 (count (map ut/remove-db-only (collection-courses-assoc/READ-BY-IDS [(:id coll-one) id]))))))))))
 
 (deftest coll-remove-crse
   (testing "remove course from collection"
