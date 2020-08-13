@@ -1,17 +1,10 @@
 (ns y-video-back.routes.public-handlers.handlers
   (:require
-   [y-video-back.db.users-by-collection :as users-by-collection]
-   [y-video-back.db.collections-courses-assoc :as collection-courses-assoc]
-   [y-video-back.db.user-collections-assoc :as user-collections-assoc]
    [y-video-back.db.collections :as collections]
-   [y-video-back.db.users :as users]
    [y-video-back.db.resources :as resources]
-   [y-video-back.db.courses :as courses]
    [y-video-back.db.contents :as contents]
    [y-video-back.models :as models]
-   [y-video-back.model-specs :as sp]
-   [y-video-back.routes.service-handlers.utils.utils :as utils]
-   [y-video-back.routes.service-handlers.utils.role-utils :as ru]))
+   [y-video-back.routes.service-handlers.utils.utils :as utils]))
 
 
 (def public-collection-get-by-id ;; Not tested
@@ -31,7 +24,8 @@
   {:summary "Retrieves all the resources for the specified collection"
    :responses {200 {:body [models/collection]}
                404 (:body {:message string?})}
-   :handler (fn [req]
+   ;:handler (fn [req]
+   :handler (fn []
               (let [raw-res (collections/READ-ALL-PUBLIC)
                     res (map #(utils/remove-db-only %) raw-res)]
                 {:status 200
@@ -54,7 +48,8 @@
   {:summary "Retrieves all the resources for the specified content"
    :responses {200 {:body [models/content]}
                404 (:body {:message string?})}
-   :handler (fn [req]
+   ;:handler (fn [req]
+   :handler (fn []
               (let [raw-res (contents/READ-ALL-PUBLIC)
                     res (map #(utils/remove-db-only %) raw-res)]
                 {:status 200
@@ -77,7 +72,8 @@
   {:summary "Retrieves all the resources for the specified resource"
    :responses {200 {:body [models/resource]}
                404 (:body {:message string?})}
-   :handler (fn [req]
+   ;:handler (fn [req]
+   :handler (fn []
               (let [raw-res (resources/READ-ALL-PUBLIC)
                     res (map #(utils/remove-db-only %) raw-res)]
                 {:status 200

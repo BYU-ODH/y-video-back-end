@@ -6,9 +6,8 @@
    [y-video-back.models :as models]
    [y-video-back.model-specs :as sp]
    [y-video-back.routes.service-handlers.utils.utils :as utils]
-   [y-video-back.routes.service-handlers.utils.role-utils :as ru]
-   [ring.swagger.upload :as upload]
-   [reitit.ring.middleware.multipart :as multipart]))
+   [reitit.ring.middleware.multipart :as multipart]
+   [clojure.java.io :as io]))
 (def file-create
   {:summary "Creates a new file. MUST INCLUDE FILE AS UPLOAD."
    :permission-level 1
@@ -23,7 +22,7 @@
    :responses {200 {:body {:message string?
                            :id string?}}
                500 {:body {:message string?}}}
-   :handler (fn [{{{:keys [session-id]} :header {:keys [file resource-id file-version mime metadata]} :multipart} :parameters}]
+   :handler (fn [{{{:keys [file resource-id file-version mime metadata]} :multipart} :parameters}]
               ;(println "req=" req)
               ;(if (nil? (get-in req [:multipart-params "file"]))
               ;  {:status 394
@@ -37,8 +36,8 @@
                                                         :mime mime
                                                         :metadata metadata
                                                         :resource-id resource-id}))]
-                    (clojure.java.io/copy (:tempfile file)
-                                          (clojure.java.io/file (str (-> env :FILES :media-url) file-name)))
+                    (io/copy (:tempfile file)
+                             (io/file (str (-> env :FILES :media-url) file-name)))
                     {:status 200
                      :body {:message "1 file created"
                             :id id}}))))})
@@ -52,7 +51,7 @@
                 :path {:id uuid?}}
    :responses {200 {:body models/file}
                404 {:body {:message string?}}}
-   :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
+   :handler (fn [{{{:keys [id]} :path} :parameters}]
               (let [res (files/READ id)]
                 (if (nil? res)
                   {:status 404
@@ -69,7 +68,7 @@
    :responses {200 {:body {:message string?}}
                404 {:body {:message string?}}
                500 {:body {:message string?}}}
-   :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
+   :handler (fn [{{{:keys [id]} :path :keys [body]} :parameters}]
               (if-not (files/EXISTS? id)
                 {:status 404
                  :body {:message "file not found"}}
@@ -99,7 +98,7 @@
                 :path {:id uuid?}}
    :responses {200 {:body {:message string?}}
                404 {:body {:message string?}}}
-   :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
+   :handler (fn [{{{:keys [id]} :path} :parameters}]
               (let [result (files/DELETE id)]
                 (if (nil? result)
                   {:status 404

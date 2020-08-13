@@ -1,19 +1,12 @@
 (ns y-video-back.routes.service-handlers.handlers.media-handlers
   (:require
    [y-video-back.config :refer [env]]
-   [y-video-back.db.user-collections-assoc :as user-collections-assoc]
-   [y-video-back.db.user-courses-assoc :as user-courses-assoc]
-   [y-video-back.db.users :as users]
-   [y-video-back.db.files :as files]
    [y-video-back.db.file-keys :as file-keys]
-   [y-video-back.models :as models]
-   [y-video-back.front-end-models :as fmodels]
-   [y-video-back.model-specs :as sp]
    [y-video-back.routes.service-handlers.utils.utils :as utils]
    [y-video-back.routes.service-handlers.utils.role-utils :as ru]
-   [clojure.spec.alpha :as s]
-   ;[y-video-back.db.core :as db]
-   [ring.swagger.upload :as swagger-upload]))
+   [ring.swagger.upload :as swagger-upload]
+   [ring.util.response :refer [file-response]]
+   [clojure.java.io :as io]))
 
 (def upload-file
   {:summary "Uploads file"
@@ -24,8 +17,8 @@
                     body (:body p)]
                 (println "DEBUG: file-params=" file-params)
                 (println "DEBUG: body=" body)
-                (clojure.java.io/copy (:tempfile file-params)
-                                      (clojure.java.io/file (str (-> env :FILES :media-url) (:filename file-params)))))
+                (io/copy (:tempfile file-params)
+                         (io/file (str (-> env :FILES :media-url) (:filename file-params)))))
               {:status 200
                :schema swagger-upload/TempFileUpload})})
 
@@ -59,4 +52,4 @@
                 (if (nil? file-key-res)
                   {:status 404
                    :body {:message "file-key not found"}}
-                  (ring.util.response/file-response (utils/file-id-to-path (:file-id file-key-res))))))})
+                  (file-response (utils/file-id-to-path (:file-id file-key-res))))))})

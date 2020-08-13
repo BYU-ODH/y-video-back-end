@@ -1,12 +1,10 @@
 (ns y-video-back.routes.service-handlers.handlers.collection-handlers
   (:require
    [y-video-back.config :refer [env]]
-   [y-video-back.db.users-by-collection :as users-by-collection]
    [y-video-back.db.collections-courses-assoc :as collection-courses-assoc]
    [y-video-back.db.user-collections-assoc :as user-collections-assoc]
    [y-video-back.db.collections :as collections]
    [y-video-back.db.users :as users]
-   [y-video-back.db.resources :as resources]
    [y-video-back.db.courses :as courses]
    [y-video-back.db.contents :as contents]
    [y-video-back.models :as models]
@@ -51,7 +49,7 @@
                 :path {:id uuid?}}
    :responses {200 {:body models/collection}
                404 {:body {:message string?}}}
-   :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
+   :handler (fn [{{{:keys [id]} :path} :parameters}]
               (let [res (collections/READ id)]
                 (if (nil? res)
                   {:status 404
@@ -68,7 +66,7 @@
    :responses {200 {:body {:message string?}}
                404 (:body {:message string?})
                500 (:body {:message string?})}
-   :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
+   :handler (fn [{{{:keys [id]} :path :keys [body]} :parameters}]
               (if-not (collections/EXISTS? id)
                 {:status 404
                  :body {:message "collection not found"}}
@@ -99,7 +97,7 @@
                 :path {:id uuid?}}
    :responses {200 {:body {:message string?}}
                404 (:body {:message string?})}
-   :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
+   :handler (fn [{{{:keys [id]} :path} :parameters}]
               (let [result (collections/DELETE id)]
                 (if (nil? result)
                   {:status 404
@@ -116,7 +114,7 @@
    :responses {200 {:body {:message string? :id string?}}
                404 (:body {:message string?})
                500 (:body {:message string?})}
-   :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
+   :handler (fn [{{{:keys [id]} :path :keys [body]} :parameters}]
               (if (not (collections/EXISTS? id))
                 {:status 404
                  :body {:message "collection not found"}}
@@ -144,7 +142,7 @@
    :responses {200 {:body {:message string?}}
                404 (:body {:message string?})
                500 (:body {:message string?})}
-   :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
+   :handler (fn [{{{:keys [id]} :path :keys [body]} :parameters}]
               (if (not (collections/EXISTS? id))
                 {:status 404
                  :body {:message "collection not found"}}
@@ -172,7 +170,7 @@
    :responses {200 {:body {:message string? :id string?}}
                404 (:body {:message string?})
                500 (:body {:message string?})}
-   :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
+   :handler (fn [{{{:keys [id]} :path :keys [body]} :parameters}]
               (if (not (collections/EXISTS? id))
                 {:status 404
                  :body {:message "collection not found"}}
@@ -199,7 +197,7 @@
    :responses {200 {:body {:message string?}}
                404 (:body {:message string?})
                500 (:body {:message string?})}
-   :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
+   :handler (fn [{{{:keys [id]} :path :keys [body]} :parameters}]
               (if (not (collections/EXISTS? id))
                 {:status 404
                  :body {:message "collection not found"}}
@@ -225,7 +223,7 @@
                 :path {:id uuid?}}
    :responses {200 {:body [models/content]}
                404 (:body {:message string?})}
-   :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
+   :handler (fn [{{{:keys [id]} :path} :parameters}]
               (if (not (collections/EXISTS? id))
                 {:status 404
                  :body {:message "collection not found"}}
@@ -242,17 +240,17 @@
                 :path {:id uuid?}}
    :responses {200 {:body [models/course]}
                404 (:body {:message string?})}
-   :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
+   :handler (fn [{{{:keys [id]} :path} :parameters}]
               (if (not (collections/EXISTS? id))
                 {:status 404
                  :body {:message "collection not found"}}
-                (let [course-collections-result (collection-courses-assoc/READ-COURSES-BY-COLLECTION id)]
-                  (let [course-result (map #(-> %
-                                                (utils/remove-db-only)
-                                                (dissoc :collection-id))
-                                           course-collections-result)]
+                (let [course-collections-result (collection-courses-assoc/READ-COURSES-BY-COLLECTION id)
+                      course-result (map #(-> %
+                                              (utils/remove-db-only)
+                                              (dissoc :collection-id))
+                                         course-collections-result)]
                     {:status 200
-                     :body course-result}))))})
+                     :body course-result})))})
 
 (def collection-get-all-users
   {:summary "Retrieves all users for the specified collection"
@@ -262,15 +260,15 @@
                 :path {:id uuid?}}
    :responses {200 {:body [models/user]}
                404 (:body {:message string?})}
-   :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters}]
+   :handler (fn [{{{:keys [id]} :path} :parameters}]
               (if (not (collections/EXISTS? id))
                 {:status 404
                  :body {:message "collection not found"}}
-                (let [user-collections-result (user-collections-assoc/READ-USERS-BY-COLLECTION id)]
-                  (let [user-result (map #(-> %
-                                              (utils/remove-db-only)
-                                              (dissoc :collection-id)
-                                              (dissoc :account-role))
-                                         user-collections-result)]
+                (let [user-collections-result (user-collections-assoc/READ-USERS-BY-COLLECTION id)
+                      user-result (map #(-> %
+                                            (utils/remove-db-only)
+                                            (dissoc :collection-id)
+                                            (dissoc :account-role))
+                                       user-collections-result)]
                     {:status 200
-                     :body user-result}))))})
+                     :body user-result})))})

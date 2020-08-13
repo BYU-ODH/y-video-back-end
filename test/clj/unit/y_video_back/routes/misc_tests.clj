@@ -22,7 +22,6 @@
       [y-video-back.db.users :as users]
       [y-video-back.db.words :as words]
       [y-video-back.utils.utils :as ut]
-      [y-video-back.routes.service-handlers.utils.db-utils :as dbu]
       [y-video-back.utils.db-populator :as db-pop]
       [y-video-back.user-creator :as uc]))
 

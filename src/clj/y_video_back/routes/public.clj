@@ -1,22 +1,16 @@
 (ns y-video-back.routes.public
   (:require
-    [y-video-back.config :refer [env]]
     [reitit.swagger :as swagger]
     [reitit.swagger-ui :as swagger-ui]
     [reitit.ring.coercion :as coercion]
-    ;[reitit.ring :as ring]
     [reitit.coercion.spec :as spec-coercion]
     [reitit.ring.middleware.muuntaja :as muuntaja]
     [reitit.ring.middleware.multipart :as multipart]
     [reitit.ring.middleware.parameters :as parameters]
     [y-video-back.middleware.formats :as formats]
     [y-video-back.middleware.exception :as exception]
-    [y-video-back.middleware :as middleware]
-;    [y-video-back.dbaccess.access :as db-access]
     [y-video-back.routes.public-handlers.handlers :as public-handlers]
     [ring.util.http-response :as response]
-    [clojure.java.io :as io]
-    ;[y-video-back.user-creator :as uc]
     [ring.middleware.multipart-params :refer [wrap-multipart-params]]))
 (defn public-routes []
    ["/public"

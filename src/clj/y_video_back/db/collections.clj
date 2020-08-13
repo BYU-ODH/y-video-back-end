@@ -11,7 +11,7 @@
 (def READ-ANNOTATIONS (partial db/read-all-where :contents :collection-id))
 (def READ-ALL-BY-NAME-OWNER (partial db/read-where-and :collections-undeleted [:collection-name :owner]))
 (defn EXISTS? [id] (not (nil? (db/READ :collections-undeleted id))))
-(defn EXISTS-NAME-OWNER? [name owner] (not (empty? (db/read-where-and :collections-undeleted [:collection-name :owner] [name owner]))))
+(defn EXISTS-NAME-OWNER? [name owner] (seq (db/read-where-and :collections-undeleted [:collection-name :owner] [name owner])))
 (def READ-ALL-BY-OWNER (partial db/read-where-and :collections-undeleted [:owner]))
 (defn READ-PUBLIC
   "Read by id, restrict to public results only"

@@ -41,7 +41,7 @@
                 :path {:id uuid?}}
    :responses {200 {:body models/word}
                404 {:body {:message string?}}}
-   :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters
+   :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters
                   p-vals :permission-values}]
               (let [word-result (words/READ id)]
                 (if-not (or (:valid-type p-vals)
