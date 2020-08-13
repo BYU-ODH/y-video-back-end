@@ -1,5 +1,5 @@
 (ns y-video-back.models
-  (:require [clojure.string :refer [replace]]))
+  (:require [clojure.string :as str]))
 
 (defn add-namespace
   "Converts all keywords to namespace-keywords, returns vector of keywords"
@@ -8,7 +8,7 @@
     (map (fn [val]
             (keyword
               namespace
-              (replace
+              (str/replace
                 (str
                   (get val 0))
                 ":"
