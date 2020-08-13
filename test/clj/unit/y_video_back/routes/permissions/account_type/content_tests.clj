@@ -180,7 +180,7 @@
       (is (= 401 (:status res))))))
 
 ;post: /api/content/{id}/add-subtitle
-(deftest content-id-add-subtitle
+(comment (deftest content-id-add-subtitle)
   (testing "admin - no connection, content-id-add-subtitle"
     (let [user-one (db-pop/add-user "admin")
           cont-one (db-pop/add-content)
@@ -215,7 +215,7 @@
       (is (= 401 (:status res))))))
 
 ;post: /api/content/{id}/remove-subtitle
-(deftest content-id-remove-subtitle
+(comment (deftest content-id-remove-subtitle)
   (testing "admin - no connection, content-id-remove-subtitle"
     (let [user-one (db-pop/add-user "admin")
           cont-one (db-pop/add-content)

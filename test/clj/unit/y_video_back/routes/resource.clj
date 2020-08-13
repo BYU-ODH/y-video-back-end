@@ -81,6 +81,31 @@
                  (list))
              (map ut/remove-db-only (m/decode-response-body res)))))))
 
+(deftest rsrc-all-sbtls
+  (testing "find all subtitles by resource (1 content)"
+    (let [cont-one (db-pop/add-content)
+          sbtl-one (db-pop/add-subtitle (:id cont-one))
+          res (rp/resource-id-subtitles (:resource-id cont-one))]
+      (is (= 200 (:status res)))
+      (is (= (map #(-> %
+                       (update :id str)
+                       (update :content-id str))
+                  [sbtl-one])
+             (m/decode-response-body res)))))
+  (testing "find all subtitles by resource (2 contents)"
+    (let [cont-one (db-pop/add-content)
+          coll-one (db-pop/add-collection)
+          cont-two (db-pop/add-content (:id coll-one) (:resource-id cont-one))
+          sbtl-one (db-pop/add-subtitle (:id cont-one))
+          sbtl-two (db-pop/add-subtitle (:id cont-two))
+          res (rp/resource-id-subtitles (:resource-id cont-one))]
+      (is (= 200 (:status res)))
+      (is (= (frequencies (map #(-> %
+                                    (update :id str)
+                                    (update :content-id str))
+                               [sbtl-one sbtl-two]))
+             (frequencies (m/decode-response-body res)))))))
+
 (deftest rsrc-all-files
   (testing "find all files by resource"
     (let [file-one (db-pop/add-file)

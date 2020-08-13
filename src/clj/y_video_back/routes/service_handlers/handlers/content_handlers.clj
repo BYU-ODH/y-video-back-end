@@ -117,7 +117,7 @@
                           {:status 200
                            :body {:message "incremented views on content and resource"}})))))))})
 
-(def content-add-subtitle
+(comment (def content-add-subtitle)
   {:summary "Adds subtitle to specified content"
    :permission-level 1
    :role-level "ta"
@@ -133,21 +133,21 @@
                 (if (not (subtitles/EXISTS? (:subtitle-id body)))
                   {:status 500
                    :body {:message "subtitle not found"}}
-                  (if (not (contents/ELIGIBLE-CONT-SUB? id (:subtitle-id body)))
-                    {:status 500
-                     :body {:message "content and subtitle not eligible for connection"}}
-                    (if (content-subtitles-assoc/EXISTS-CONT-SBTL? id (:subtitle-id body))
+                  ;(if (not (contents/ELIGIBLE-CONT-SUB? id (:subtitle-id body)))
+                  ;  {:status 500
+                  ;   :body {:message "content and subtitle not eligible for connection"}
+                  ;(if (content-subtitles-assoc/EXISTS-CONT-SBTL? id (:subtitle-id body))
+                  ;  {:status 500
+                  ;   :body {:message "subtitle already connected to content"}
+                  (let [result (utils/get-id (content-subtitles-assoc/CREATE (into body {:content-id id})))]
+                    (if (= nil result)
                       {:status 500
-                       :body {:message "subtitle already connected to content"}}
-                      (let [result (utils/get-id (content-subtitles-assoc/CREATE (into body {:content-id id})))]
-                        (if (= nil result)
-                          {:status 500
-                           :body {:message "unable to add subtitle"}}
-                          {:status 200
-                           :body {:message (str 1 " subtitles added to content")
-                                  :id result}})))))))})
+                       :body {:message "unable to add subtitle"}}
+                      {:status 200
+                       :body {:message (str 1 " subtitles added to content")
+                              :id result}})))))})
 
-(def content-remove-subtitle
+(comment (def content-remove-subtitle)
   {:summary "Removes subtitle from specified content"
    :permission-level 1
    :role-level "ta"
@@ -186,9 +186,8 @@
               (if (not (contents/EXISTS? id))
                 {:status 404
                  :body {:message "content not found"}}
-                (let [result (content-subtitles-assoc/READ-SUBTITLES-BY-CONTENT id)]
+                (let [result (subtitles/READ-BY-CONTENT-ID id)]
                   {:status 200
                    :body (map #(-> %
-                                   (ut/remove-db-only)
-                                   (dissoc :content-id))
+                                   (ut/remove-db-only))
                               result)})))})

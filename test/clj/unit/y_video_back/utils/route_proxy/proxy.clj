@@ -64,6 +64,7 @@
 (def resource-id-collections resource/resource-id-collections)
 (def resource-id-files resource/resource-id-files)
 (def resource-id-contents resource/resource-id-contents)
+(def resource-id-subtitles resource/resource-id-subtitles)
 
 ; content routes
 (def content-id-add-view content/content-id-add-view)

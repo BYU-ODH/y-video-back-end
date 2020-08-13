@@ -48,7 +48,7 @@
           user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "instructor")
           rsrc-one (db-pop/add-resource)
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
-          sbtl-one (db-pop/get-subtitle (:id rsrc-one))
+          sbtl-one (db-pop/get-subtitle (:id cont-one))
           res (rp/subtitle-post (uc/user-id-to-session-id (:id user-one))
                                 sbtl-one)]
       (is (= 200 (:status res)))))
@@ -60,7 +60,7 @@
           coll-crse-add (db-pop/add-coll-crse-assoc (:id coll-one) (:id crse-one))
           rsrc-one (db-pop/add-resource)
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
-          sbtl-one (db-pop/get-subtitle (:id rsrc-one))
+          sbtl-one (db-pop/get-subtitle (:id cont-one))
           res (rp/subtitle-post (uc/user-id-to-session-id (:id user-one))
                                 sbtl-one)]
       (is (= 200 (:status res)))))
@@ -70,7 +70,7 @@
           user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "ta")
           rsrc-one (db-pop/add-resource)
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
-          sbtl-one (db-pop/get-subtitle (:id rsrc-one))
+          sbtl-one (db-pop/get-subtitle (:id cont-one))
           res (rp/subtitle-post (uc/user-id-to-session-id (:id user-one))
                                 sbtl-one)]
       (is (= 200 (:status res)))))
@@ -82,7 +82,7 @@
           coll-crse-add (db-pop/add-coll-crse-assoc (:id coll-one) (:id crse-one))
           rsrc-one (db-pop/add-resource)
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
-          sbtl-one (db-pop/get-subtitle (:id rsrc-one))
+          sbtl-one (db-pop/get-subtitle (:id cont-one))
           res (rp/subtitle-post (uc/user-id-to-session-id (:id user-one))
                                 sbtl-one)]
       (is (= 200 (:status res)))))
@@ -92,7 +92,7 @@
           user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "student")
           rsrc-one (db-pop/add-resource)
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
-          sbtl-one (db-pop/get-subtitle (:id rsrc-one))
+          sbtl-one (db-pop/get-subtitle (:id cont-one))
           res (rp/subtitle-post (uc/user-id-to-session-id (:id user-one))
                                 sbtl-one)]
       (is (= 401 (:status res)))))
@@ -104,7 +104,7 @@
           coll-crse-add (db-pop/add-coll-crse-assoc (:id coll-one) (:id crse-one))
           rsrc-one (db-pop/add-resource)
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
-          sbtl-one (db-pop/get-subtitle (:id rsrc-one))
+          sbtl-one (db-pop/get-subtitle (:id cont-one))
           res (rp/subtitle-post (uc/user-id-to-session-id (:id user-one))
                                 sbtl-one)]
       (is (= 401 (:status res)))))
@@ -114,7 +114,7 @@
           user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "auditing")
           rsrc-one (db-pop/add-resource)
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
-          sbtl-one (db-pop/get-subtitle (:id rsrc-one))
+          sbtl-one (db-pop/get-subtitle (:id cont-one))
           res (rp/subtitle-post (uc/user-id-to-session-id (:id user-one))
                                 sbtl-one)]
       (is (= 401 (:status res)))))
@@ -126,7 +126,7 @@
           coll-crse-add (db-pop/add-coll-crse-assoc (:id coll-one) (:id crse-one))
           rsrc-one (db-pop/add-resource)
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
-          sbtl-one (db-pop/get-subtitle (:id rsrc-one))
+          sbtl-one (db-pop/get-subtitle (:id cont-one))
           res (rp/subtitle-post (uc/user-id-to-session-id (:id user-one))
                                 sbtl-one)]
       (is (= 401 (:status res))))))
@@ -139,7 +139,7 @@
           user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "instructor")
           rsrc-one (db-pop/add-resource)
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
-          sbtl-one (db-pop/add-subtitle (:id rsrc-one))
+          sbtl-one (db-pop/add-subtitle (:id cont-one))
           res (rp/subtitle-id-get (uc/user-id-to-session-id (:id user-one))
                                   (:id sbtl-one))]
       (is (= 200 (:status res)))))
@@ -151,7 +151,7 @@
           coll-crse-add (db-pop/add-coll-crse-assoc (:id coll-one) (:id crse-one))
           rsrc-one (db-pop/add-resource)
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
-          sbtl-one (db-pop/add-subtitle (:id rsrc-one))
+          sbtl-one (db-pop/add-subtitle (:id cont-one))
           res (rp/subtitle-id-get (uc/user-id-to-session-id (:id user-one))
                                   (:id sbtl-one))]
       (is (= 200 (:status res)))))
@@ -161,7 +161,7 @@
           user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "ta")
           rsrc-one (db-pop/add-resource)
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
-          sbtl-one (db-pop/add-subtitle (:id rsrc-one))
+          sbtl-one (db-pop/add-subtitle (:id cont-one))
           res (rp/subtitle-id-get (uc/user-id-to-session-id (:id user-one))
                                   (:id sbtl-one))]
       (is (= 200 (:status res)))))
@@ -173,7 +173,7 @@
           coll-crse-add (db-pop/add-coll-crse-assoc (:id coll-one) (:id crse-one))
           rsrc-one (db-pop/add-resource)
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
-          sbtl-one (db-pop/add-subtitle (:id rsrc-one))
+          sbtl-one (db-pop/add-subtitle (:id cont-one))
           res (rp/subtitle-id-get (uc/user-id-to-session-id (:id user-one))
                                   (:id sbtl-one))]
       (is (= 200 (:status res)))))
@@ -183,7 +183,7 @@
           user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "student")
           rsrc-one (db-pop/add-resource)
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
-          sbtl-one (db-pop/add-subtitle (:id rsrc-one))
+          sbtl-one (db-pop/add-subtitle (:id cont-one))
           res (rp/subtitle-id-get (uc/user-id-to-session-id (:id user-one))
                                   (:id sbtl-one))]
       (is (= 200 (:status res)))))
@@ -195,7 +195,7 @@
           coll-crse-add (db-pop/add-coll-crse-assoc (:id coll-one) (:id crse-one))
           rsrc-one (db-pop/add-resource)
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
-          sbtl-one (db-pop/add-subtitle (:id rsrc-one))
+          sbtl-one (db-pop/add-subtitle (:id cont-one))
           res (rp/subtitle-id-get (uc/user-id-to-session-id (:id user-one))
                                   (:id sbtl-one))]
       (is (= 200 (:status res)))))
@@ -205,7 +205,7 @@
           user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "auditing")
           rsrc-one (db-pop/add-resource)
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
-          sbtl-one (db-pop/add-subtitle (:id rsrc-one))
+          sbtl-one (db-pop/add-subtitle (:id cont-one))
           res (rp/subtitle-id-get (uc/user-id-to-session-id (:id user-one))
                                   (:id sbtl-one))]
       (is (= 200 (:status res)))))
@@ -217,7 +217,7 @@
           coll-crse-add (db-pop/add-coll-crse-assoc (:id coll-one) (:id crse-one))
           rsrc-one (db-pop/add-resource)
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
-          sbtl-one (db-pop/add-subtitle (:id rsrc-one))
+          sbtl-one (db-pop/add-subtitle (:id cont-one))
           res (rp/subtitle-id-get (uc/user-id-to-session-id (:id user-one))
                                   (:id sbtl-one))]
       (is (= 200 (:status res))))))
@@ -230,7 +230,7 @@
           user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "instructor")
           rsrc-one (db-pop/add-resource)
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
-          sbtl-one (db-pop/add-subtitle (:id rsrc-one))
+          sbtl-one (db-pop/add-subtitle (:id cont-one))
           res (rp/subtitle-id-delete (uc/user-id-to-session-id (:id user-one))
                                      (:id sbtl-one))]
       (is (= 401 (:status res)))))
@@ -242,7 +242,7 @@
           coll-crse-add (db-pop/add-coll-crse-assoc (:id coll-one) (:id crse-one))
           rsrc-one (db-pop/add-resource)
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
-          sbtl-one (db-pop/add-subtitle (:id rsrc-one))
+          sbtl-one (db-pop/add-subtitle (:id cont-one))
           res (rp/subtitle-id-delete (uc/user-id-to-session-id (:id user-one))
                                      (:id sbtl-one))]
       (is (= 401 (:status res)))))
@@ -252,7 +252,7 @@
           user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "ta")
           rsrc-one (db-pop/add-resource)
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
-          sbtl-one (db-pop/add-subtitle (:id rsrc-one))
+          sbtl-one (db-pop/add-subtitle (:id cont-one))
           res (rp/subtitle-id-delete (uc/user-id-to-session-id (:id user-one))
                                      (:id sbtl-one))]
       (is (= 401 (:status res)))))
@@ -264,7 +264,7 @@
           coll-crse-add (db-pop/add-coll-crse-assoc (:id coll-one) (:id crse-one))
           rsrc-one (db-pop/add-resource)
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
-          sbtl-one (db-pop/add-subtitle (:id rsrc-one))
+          sbtl-one (db-pop/add-subtitle (:id cont-one))
           res (rp/subtitle-id-delete (uc/user-id-to-session-id (:id user-one))
                                      (:id sbtl-one))]
       (is (= 401 (:status res)))))
@@ -274,7 +274,7 @@
           user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "student")
           rsrc-one (db-pop/add-resource)
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
-          sbtl-one (db-pop/add-subtitle (:id rsrc-one))
+          sbtl-one (db-pop/add-subtitle (:id cont-one))
           res (rp/subtitle-id-delete (uc/user-id-to-session-id (:id user-one))
                                      (:id sbtl-one))]
       (is (= 401 (:status res)))))
@@ -286,7 +286,7 @@
           coll-crse-add (db-pop/add-coll-crse-assoc (:id coll-one) (:id crse-one))
           rsrc-one (db-pop/add-resource)
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
-          sbtl-one (db-pop/add-subtitle (:id rsrc-one))
+          sbtl-one (db-pop/add-subtitle (:id cont-one))
           res (rp/subtitle-id-delete (uc/user-id-to-session-id (:id user-one))
                                      (:id sbtl-one))]
       (is (= 401 (:status res)))))
@@ -296,7 +296,7 @@
           user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "auditing")
           rsrc-one (db-pop/add-resource)
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
-          sbtl-one (db-pop/add-subtitle (:id rsrc-one))
+          sbtl-one (db-pop/add-subtitle (:id cont-one))
           res (rp/subtitle-id-delete (uc/user-id-to-session-id (:id user-one))
                                      (:id sbtl-one))]
       (is (= 401 (:status res)))))
@@ -308,7 +308,7 @@
           coll-crse-add (db-pop/add-coll-crse-assoc (:id coll-one) (:id crse-one))
           rsrc-one (db-pop/add-resource)
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
-          sbtl-one (db-pop/add-subtitle (:id rsrc-one))
+          sbtl-one (db-pop/add-subtitle (:id cont-one))
           res (rp/subtitle-id-delete (uc/user-id-to-session-id (:id user-one))
                                      (:id sbtl-one))]
       (is (= 401 (:status res))))))
@@ -321,7 +321,7 @@
           user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "instructor")
           rsrc-one (db-pop/add-resource)
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
-          sbtl-one (db-pop/add-subtitle (:id rsrc-one))
+          sbtl-one (db-pop/add-subtitle (:id cont-one))
           res (rp/subtitle-id-patch (uc/user-id-to-session-id (:id user-one))
                                     (:id sbtl-one)
                                     sbtl-one)]
@@ -334,7 +334,7 @@
           coll-crse-add (db-pop/add-coll-crse-assoc (:id coll-one) (:id crse-one))
           rsrc-one (db-pop/add-resource)
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
-          sbtl-one (db-pop/add-subtitle (:id rsrc-one))
+          sbtl-one (db-pop/add-subtitle (:id cont-one))
           res (rp/subtitle-id-patch (uc/user-id-to-session-id (:id user-one))
                                     (:id sbtl-one)
                                     sbtl-one)]
@@ -345,7 +345,7 @@
           user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "ta")
           rsrc-one (db-pop/add-resource)
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
-          sbtl-one (db-pop/add-subtitle (:id rsrc-one))
+          sbtl-one (db-pop/add-subtitle (:id cont-one))
           res (rp/subtitle-id-patch (uc/user-id-to-session-id (:id user-one))
                                     (:id sbtl-one)
                                     sbtl-one)]
@@ -358,7 +358,7 @@
           coll-crse-add (db-pop/add-coll-crse-assoc (:id coll-one) (:id crse-one))
           rsrc-one (db-pop/add-resource)
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
-          sbtl-one (db-pop/add-subtitle (:id rsrc-one))
+          sbtl-one (db-pop/add-subtitle (:id cont-one))
           res (rp/subtitle-id-patch (uc/user-id-to-session-id (:id user-one))
                                     (:id sbtl-one)
                                     sbtl-one)]
@@ -369,7 +369,7 @@
           user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "student")
           rsrc-one (db-pop/add-resource)
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
-          sbtl-one (db-pop/add-subtitle (:id rsrc-one))
+          sbtl-one (db-pop/add-subtitle (:id cont-one))
           res (rp/subtitle-id-patch (uc/user-id-to-session-id (:id user-one))
                                     (:id sbtl-one)
                                     sbtl-one)]
@@ -382,7 +382,7 @@
           coll-crse-add (db-pop/add-coll-crse-assoc (:id coll-one) (:id crse-one))
           rsrc-one (db-pop/add-resource)
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
-          sbtl-one (db-pop/add-subtitle (:id rsrc-one))
+          sbtl-one (db-pop/add-subtitle (:id cont-one))
           res (rp/subtitle-id-patch (uc/user-id-to-session-id (:id user-one))
                                     (:id sbtl-one)
                                     sbtl-one)]
@@ -393,7 +393,7 @@
           user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "auditing")
           rsrc-one (db-pop/add-resource)
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
-          sbtl-one (db-pop/add-subtitle (:id rsrc-one))
+          sbtl-one (db-pop/add-subtitle (:id cont-one))
           res (rp/subtitle-id-patch (uc/user-id-to-session-id (:id user-one))
                                     (:id sbtl-one)
                                     sbtl-one)]
@@ -406,7 +406,7 @@
           coll-crse-add (db-pop/add-coll-crse-assoc (:id coll-one) (:id crse-one))
           rsrc-one (db-pop/add-resource)
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
-          sbtl-one (db-pop/add-subtitle (:id rsrc-one))
+          sbtl-one (db-pop/add-subtitle (:id cont-one))
           res (rp/subtitle-id-patch (uc/user-id-to-session-id (:id user-one))
                                     (:id sbtl-one)
                                     sbtl-one)]

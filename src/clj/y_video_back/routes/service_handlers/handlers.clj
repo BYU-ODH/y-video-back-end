@@ -47,6 +47,7 @@
 (def resource-delete resources/resource-delete)
 (def resource-get-all-collections resources/resource-get-all-collections)
 (def resource-get-all-contents resources/resource-get-all-contents)
+(def resource-get-all-subtitles resources/resource-get-all-subtitles)
 (def resource-get-all-files resources/resource-get-all-files)
 ;(def resource-add-view resources/resource-add-view)
 
@@ -84,8 +85,8 @@
 (def content-update contents/content-update)
 (def content-delete contents/content-delete)
 (def content-add-view contents/content-add-view)
-(def content-add-subtitle contents/content-add-subtitle)
-(def content-remove-subtitle contents/content-remove-subtitle)
+;(def content-add-subtitle contents/content-add-subtitle)
+;(def content-remove-subtitle contents/content-remove-subtitle)
 (def content-subtitles contents/content-subtitles)
 
 ; Admin handlers

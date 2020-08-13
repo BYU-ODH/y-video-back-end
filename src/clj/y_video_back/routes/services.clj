@@ -232,7 +232,9 @@
      ["/{id}/collections"
       {:get service-handlers/resource-get-all-collections}]
      ["/{id}/contents"
-      {:get service-handlers/resource-get-all-contents}]]
+      {:get service-handlers/resource-get-all-contents}]
+     ["/{id}/subtitles"
+      {:get service-handlers/resource-get-all-subtitles}]]
 
 
     ["/content"
@@ -245,10 +247,10 @@
        :delete service-handlers/content-delete}]
      ["/{id}/add-view"
       {:post service-handlers/content-add-view}]
-     ["/{id}/add-subtitle"
-      {:post service-handlers/content-add-subtitle}]
-     ["/{id}/remove-subtitle"
-      {:post service-handlers/content-remove-subtitle}]
+     ;["/{id}/add-subtitle"
+     ; {:post service-handlers/content-add-subtitle}]
+     ;["/{id}/remove-subtitle"
+     ; {:post service-handlers/content-remove-subtitle}]
      ["/{id}/subtitles"
       {:get service-handlers/content-subtitles}]]
 

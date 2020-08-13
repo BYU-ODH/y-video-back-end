@@ -1,6 +1,7 @@
 (ns y-video-back.routes.service-handlers.handlers.resource-handlers
   (:require
    [y-video-back.db.resources :as resources]
+   [y-video-back.db.subtitles :as subtitles]
    [y-video-back.models :as models]
    [y-video-back.model-specs :as sp]
    [y-video-back.routes.service-handlers.utils.utils :as utils]))
@@ -100,6 +101,26 @@
                       content-result (map #(utils/remove-db-only %) content-resources-result)]
                   {:status 200 ; Not implemented yet
                    :body content-result})))})
+
+(def resource-get-all-subtitles ;; Non-functional
+  {:summary "Retrieves all subtitles connected to resource"
+   :permission-level 2
+   :role-level "ta"
+   :parameters {:header {:session-id uuid?}
+                :path {:id uuid?}}
+   :responses {200 {:body [models/subtitle]}
+               404 {:body {:message string?}}}
+   :handler (fn [{{{:keys [id]} :path} :parameters}]
+              (if (not (resources/EXISTS? id))
+                {:status 404
+                 :body {:message "resource not found"}}
+                (let [res (resources/READ-SBTL-BY-RSRC id)]
+                  {:status 200 ; Not implemented yet
+                   :body (map #(-> %
+                                   (dissoc :resource-id)
+                                   (utils/remove-db-only))
+                              res)})))})
+
 
 (def resource-get-all-files ;; Non-functional
   {:summary "Retrieves all the files for the specified resource"

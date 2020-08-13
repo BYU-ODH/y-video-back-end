@@ -101,12 +101,12 @@
 (s/def :subtitle/title string?)
 (s/def :subtitle/language string?)
 (s/def :subtitle/content string?)
-(s/def :subtitle/resource-id uuid?)
+(s/def :subtitle/content-id uuid?)
 (s/def ::subtitle
   (s/keys :opt-un [:subtitle/title
                    :subtitle/language
                    :subtitle/content
-                   :subtitle/resource-id]))
+                   :subtitle/content-id]))
 
 
 (s/def :file/filepath string?)

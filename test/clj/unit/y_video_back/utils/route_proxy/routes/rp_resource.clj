@@ -70,3 +70,11 @@
             (header :session-id session-id))))
   ([id]
    (resource-id-contents (:session-id-bypass env) id)))
+
+(defn resource-id-subtitles
+  "Reads all subtitles connected to resource"
+  ([session-id id]
+   (ap2 (-> (request :get (str "/api/resource/" id "/subtitles"))
+            (header :session-id session-id))))
+  ([id]
+   (resource-id-subtitles (:session-id-bypass env) id)))

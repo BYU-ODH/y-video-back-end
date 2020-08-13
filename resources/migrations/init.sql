@@ -142,10 +142,9 @@ CREATE TABLE subtitles (
     ,title TEXT
     ,language TEXT
     ,content TEXT
-    ,resource_id UUID REFERENCES resources(id)
-   , CONSTRAINT no_duplicate_resource_subtitles UNIQUE (title, resource_id)
+    ,content_id UUID REFERENCES contents(id)
 );
-COMMENT ON TABLE subtitles IS 'Contains subtitles to be applied over resources';
+COMMENT ON TABLE subtitles IS 'Contains subtitles to be applied over contents';
 
 DROP TABLE IF EXISTS auth_tokens CASCADE;
 CREATE TABLE auth_tokens (
@@ -158,16 +157,6 @@ CREATE TABLE auth_tokens (
 COMMENT ON TABLE auth_tokens IS 'Contains auth_tokens (stored in id) mapped to user ids';
 
 DROP TABLE IF EXISTS content_subtitles_assoc CASCADE;
-CREATE TABLE content_subtitles_assoc (
-   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY
-   ,deleted TIMESTAMP DEFAULT NULL
-   ,updated TIMESTAMP DEFAULT NULL
-   ,created  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-   ,content_id UUID REFERENCES contents(id) ON DELETE CASCADE
-   ,subtitle_id UUID REFERENCES subtitles(id) ON DELETE CASCADE
-   , CONSTRAINT no_duplicate_content_subtitles UNIQUE (content_id, subtitle_id)
-);
-COMMENT ON TABLE content_subtitles_assoc IS 'Many-to-many table connecting contents and subtitles';
 
 DROP TABLE IF EXISTS user_collections_assoc CASCADE;
 CREATE TABLE user_collections_assoc (
@@ -311,11 +300,15 @@ CREATE VIEW courses_by_user AS
     FROM courses_undeleted JOIN user_courses_assoc_undeleted AS uca
     ON courses_undeleted.id = uca.course_id;
 
+DROP VIEW IF EXISTS subtitles_by_resource;
+CREATE VIEW subtitles_by_resource AS
+    SELECT subtitles_undeleted.*, r.id AS resource_id
+    FROM subtitles_undeleted JOIN contents_undeleted
+    ON subtitles_undeleted.content_id = contents_undeleted.id
+    JOIN resources_undeleted AS r
+    ON r.id = contents_undeleted.resource_id;
+
 DROP VIEW IF EXISTS subtitles_by_content;
-CREATE VIEW subtitles_by_content AS
-    SELECT subtitles_undeleted.*, csa.content_id AS content_id
-    FROM subtitles_undeleted JOIN content_subtitles_assoc_undeleted AS csa
-    ON subtitles_undeleted.id = csa.subtitle_id;
 
 
 DROP VIEW IF EXISTS collections_by_content;
@@ -396,13 +389,7 @@ CREATE VIEW collections_by_resource AS
     JOIN resources_undeleted ON contents_undeleted.resource_id = resources_undeleted.id;
 
 DROP VIEW IF EXISTS cont_res_sub;
-CREATE VIEW cont_res_sub AS
-    SELECT c.id AS content_id, r.id AS resource_id, s.id AS subtitle_id
-    FROM contents_undeleted AS c
-    JOIN resources_undeleted AS r
-    ON c.resource_id = r.id
-    JOIN subtitles_undeleted AS s
-    ON s.resource_id = r.id;
+
 
 DROP VIEW IF EXISTS user_collection_roles;
 CREATE VIEW user_collection_roles AS
@@ -470,10 +457,8 @@ CREATE VIEW parent_collections AS
     FROM collections_undeleted AS c
     JOIN contents_undeleted AS cont
     ON cont.collection_id = c.id
-    JOIN resources_undeleted AS r
-    ON r.id = cont.resource_id
     JOIN subtitles_undeleted AS s
-    ON r.id = s.resource_id
+    ON cont.id = s.content_id
 
     UNION
 

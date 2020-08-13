@@ -125,7 +125,7 @@
    :content string?})
 
 (def subtitle-without-id
-  (into subtitle-without-any-ids {:resource-id uuid?}))
+  (into subtitle-without-any-ids {:content-id uuid?}))
 
 (def subtitle
   (into subtitle-without-id {:id uuid?}))
@@ -178,15 +178,6 @@
 
 (def collection-courses-assoc
   (into collection-courses-assoc-without-id {:id uuid?}))
-
-(def content-subtitles-assoc-without-any-ids
-  {})
-
-(def content-subtitles-assoc-without-id
-  (into content-subtitles-assoc-without-any-ids {:content-id uuid? :subtitle-id uuid?}))
-
-(def content-subtitles-assoc
-  (into content-subtitles-assoc-without-id {:id uuid?}))
 
 
 ;(def resource-files-assoc-without-any-ids

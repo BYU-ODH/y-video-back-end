@@ -447,7 +447,7 @@
       (is (= 200 (:status res))))))
 
 ;post: /api/content/{id}/add-subtitle
-(deftest content-id-add-subtitle
+(comment (deftest content-id-add-subtitle)
   (testing "instructor, content-id-add-subtitle, instructor via user-coll"
     (let [user-one (db-pop/add-user "instructor")
           coll-one (db-pop/add-collection)
@@ -546,7 +546,7 @@
       (is (= 401 (:status res))))))
 
 ;post: /api/content/{id}/remove-subtitle
-(deftest content-id-remove-subtitle
+(comment (deftest content-id-remove-subtitle)
   (testing "instructor, content-id-remove-subtitle, instructor via user-coll"
     (let [user-one (db-pop/add-user "instructor")
           coll-one (db-pop/add-collection)
