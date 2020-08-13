@@ -88,6 +88,7 @@
 ;(def content-add-subtitle contents/content-add-subtitle)
 ;(def content-remove-subtitle contents/content-remove-subtitle)
 (def content-subtitles contents/content-subtitles)
+(def content-clone-subtitle contents/content-clone-subtitle)
 
 ; Admin handlers
 (def search-by-user admin/search-by-user)

@@ -12,7 +12,8 @@
       [y-video-back.db.core :refer [*db*] :as db]
       [y-video-back.utils.utils :as ut]
       [y-video-back.utils.db-populator :as db-pop]
-      [y-video-back.db.contents :as contents]))
+      [y-video-back.db.contents :as contents]
+      [y-video-back.db.subtitles :as subtitles]))
 
 (declare ^:dynamic *txn*)
 
@@ -87,3 +88,38 @@
                                     (update :content-id str))
                                [sbtl-one sbtl-two]))
              (frequencies (m/decode-response-body res)))))))
+
+(deftest content-clone-subtitle
+  (testing "clone subtitle to content with 0 subtitles"
+    (let [coll-one (db-pop/add-collection)
+          coll-two (db-pop/add-collection)
+          rsrc-one (db-pop/add-resource)
+          cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
+          cont-two (db-pop/add-content (:id coll-two) (:id rsrc-one))
+          sbtl-one (db-pop/add-subtitle (:id cont-one))
+          res (rp/content-id-clone-subtitle (:id cont-two) (:id sbtl-one))]
+      (is (= 200 (:status res)))
+      (let [new-id (ut/to-uuid (:id (m/decode-response-body res)))]
+        (is (= (-> sbtl-one
+                   (dissoc :id)
+                   (dissoc :content-id)
+                   (assoc :id new-id)
+                   (assoc :content-id (:id cont-two)))
+               (ut/remove-db-only (subtitles/READ new-id)))))))
+  (testing "clone subtitle to content with 1 subtitle already"
+    (let [coll-one (db-pop/add-collection)
+          coll-two (db-pop/add-collection)
+          rsrc-one (db-pop/add-resource)
+          cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
+          cont-two (db-pop/add-content (:id coll-two) (:id rsrc-one))
+          sbtl-one (db-pop/add-subtitle (:id cont-one))
+          sbtl-two (db-pop/add-subtitle (:id cont-two))
+          res (rp/content-id-clone-subtitle (:id cont-two) (:id sbtl-one))]
+      (is (= 200 (:status res)))
+      (let [new-id (ut/to-uuid (:id (m/decode-response-body res)))]
+        (is (= (-> sbtl-one
+                   (dissoc :id)
+                   (dissoc :content-id)
+                   (assoc :id new-id)
+                   (assoc :content-id (:id cont-two)))
+               (ut/remove-db-only (subtitles/READ new-id))))))))

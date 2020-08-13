@@ -79,3 +79,12 @@
             (header :session-id session-id))))
   ([id]
    (content-id-subtitles (:session-id-bypass env) id)))
+
+(defn content-id-clone-subtitle
+  "Copies subtitle with id as child of content"
+  ([session-id content-id subtitle-id]
+   (ap2 (-> (request :post (str "/api/content/" content-id "/clone-subtitle"))
+            (json-body {:subtitle-id subtitle-id})
+            (header :session-id session-id))))
+  ([content-id subtitle-id]
+   (content-id-clone-subtitle (:session-id-bypass env) content-id subtitle-id)))

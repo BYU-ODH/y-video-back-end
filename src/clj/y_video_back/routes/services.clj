@@ -252,7 +252,9 @@
      ;["/{id}/remove-subtitle"
      ; {:post service-handlers/content-remove-subtitle}]
      ["/{id}/subtitles"
-      {:get service-handlers/content-subtitles}]]
+      {:get service-handlers/content-subtitles}]
+     ["/{id}/clone-subtitle"
+      {:post service-handlers/content-clone-subtitle}]]
 
     ["/subtitle"
      {:swagger {:tags ["subtitle"]}}

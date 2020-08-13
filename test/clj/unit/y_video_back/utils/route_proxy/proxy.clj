@@ -75,6 +75,7 @@
 (def content-id-add-subtitle content/content-id-add-subtitle)
 (def content-id-remove-subtitle content/content-id-remove-subtitle)
 (def content-id-subtitles content/content-id-subtitles)
+(def content-id-clone-subtitle content/content-id-clone-subtitle)
 
 ; subtitle routes
 (def subtitle-post subtitle/subtitle-post)

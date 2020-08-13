@@ -191,3 +191,30 @@
                    :body (map #(-> %
                                    (ut/remove-db-only))
                               result)})))})
+
+(def content-clone-subtitle
+  {:summary "Clone subtitle to content"
+   :permission-level 1
+   :role-level "ta"
+   :parameters {:header {:session-id uuid?}
+                :path {:id uuid?}
+                :body {:subtitle-id uuid?}}
+   :responses {200 {:body {:message string?
+                           :id string?}}
+               404 {:body {:message string?}}}
+   :handler (fn [{{{:keys [id]} :path {:keys [subtitle-id]} :body} :parameters}]
+              (if (not (contents/EXISTS? id))
+                {:status 404
+                 :body {:message "content not found"}}
+                (if (not (subtitles/EXISTS? subtitle-id))
+                  {:status 404
+                   :body {:message "subtitle not found"}}
+                  (let [sbtl-one (subtitles/READ subtitle-id)
+                        add-res (subtitles/CREATE (-> sbtl-one
+                                                      (ut/remove-db-only)
+                                                      (dissoc :id)
+                                                      (dissoc :content-id)
+                                                      (assoc :content-id id)))]
+                    {:status 200
+                     :body {:message "1 subtitle cloned"
+                            :id (utils/get-id add-res)}}))))})
