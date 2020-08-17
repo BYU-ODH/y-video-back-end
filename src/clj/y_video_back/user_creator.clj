@@ -42,7 +42,7 @@
 ; Only check on create account - will probably change this to check periodically
 ; (maybe beginning of each term?)
 
-(defn get-oauth-token
+(defn get-oauth-token  ; TODO - store token locally, only query new one when needed
   "Gets oauth token from api"
   []
   (let [url "https://api.byu.edu/token"
@@ -52,42 +52,78 @@
                                    :content-type "application/x-www-form-urlencoded"})]
     (get (json/read-str (:body tokenRes)) "access_token")))
 
+(defn get-cats-from-json
+  [js]
+  ;(println "get-cats-js=" js)
+  (first (get-in js ["values"])))
+
+
+(defn get-email-from-json
+  [js]
+  (if (= 0 (count (get-in (get-cats-from-json js) ["email_addresses" "values"])))
+    nil
+    (first (filter #(not (nil? %))
+                   (map #(get-in % ["email_address" "value"])
+                        (get-in (get-cats-from-json js) ["email_addresses" "values"]))))))
+
+
+
+
+(defn get-account-type-from-json
+  [js]
+  ;(println "get-account-type-js" js)
+  (if (= "FAC" (str/upper-case (get-in (get-cats-from-json js) ["employee_summary" "employee_classification_code" "value"])))
+    2
+    3))
+
 (defn get-user-data
   "Gets data from AcademicRecordsStudentStatusInfo"
   [netid]
   (if (:test env)
     {:full-name (str "Mr. " netid)
-     :first-name "Mr."
-     :last-name netid
-     :email (str netid "@yvideobeta.byu.edu")}
-    (let [url (str "https://api.byu.edu:443/domains/legacy/academic/records/studentstatusinfo/v1/netid/" netid)
+     :byu-id nil
+     :email (str netid "@yvideobeta.byu.edu")
+     :account-type 0}
+    (let [url (str "https://api.byu.edu:443/byuapi/persons/v3/?net_ids=" netid "&field_sets=basic%2Cemployee_summary%2Cstudent_summary%2Cemail_addresses")
           res (client/get url {:oauth-token (get-oauth-token)})]
       (if-not (= 200 (:status res))
         {:full-name (str netid ", no_name")
-         :first-name "no_name"
-         :last-name netid
-         :email (str netid "@yvideobeta.byu.edu")}
+         :byu-id nil
+         :email (str netid "@yvideobeta.byu.edu")
+         :account-type 4}
         (let [json-res (json/read-str (:body res))
-              full-name (get-in json-res ["StudentStatusInfoService" "response" "student_name"])]
-          (if (nil? full-name)
-            {:full-name (str netid ", no_name")
-             :first-name "no_name"
-             :last-name netid
-             :email (str netid "@yvideobeta.byu.edu")}
-            {:full-name full-name
-             :first-name (first (str/split (last (str/split full-name #", ")) #" "))
-             :last-name (first (str/split full-name #", "))
-             :email (str/lower-case (get-in json-res ["StudentStatusInfoService" "response" "email_address"]))}))))))
+              ; tra (println "res=" res)
+              ; tar (println "json-res=" json-res)
+              full-name (get-in (get-cats-from-json json-res) ["basic" "preferred_name" "value"])
+              byu-id (get-in (get-cats-from-json json-res) ["basic" "byu_id" "value"])
+              email (first (filter #(not (nil? %)) [(get-email-from-json json-res), "none"]))
+              account-type (get-account-type-from-json json-res)]
+          {:full-name full-name
+           :byu-id byu-id
+           :email email
+           :account-type account-type})))))
 
 (defn create-user
   "Creates user with data from BYU api"
   [username]
+  ; (println "creating user " username)
   (let [user-data (get-user-data username)]
     (users/CREATE {:username username
                    :email (:email user-data)
                    :last-login "today"
-                   :account-type 0
-                   :account-name (str (:first-name user-data) " " (:last-name user-data))})))
+                   :account-type (:account-type user-data)
+                   :account-name (:full-name user-data)})))
+
+(defn update-user
+  "Updates user with data from BYU api"
+  [username user-id]
+  (println "updating user " username)
+  (let [user-data (get-user-data username)]
+    (users/UPDATE user-id
+                  {:email (:email user-data)
+                   :account-type (:account-type user-data)
+                   :account-name (:full-name user-data)})))
+
 
 (defn get-auth-token
   "Adds auth token to database and returns it"
@@ -96,15 +132,20 @@
 
 (defn get-session-id
   "Generates session id for user with given username. If user does not exist, first creates user."
-  [username]
-  (let [user-res (users/READ-BY-USERNAME [username])]
-    ;(println "getting session id - - - - - - - - - - - ")
-    ;(println username)
-    ;(println user-res)
-    (if-not (= 0 (count user-res))
-      (get-auth-token (:id (first user-res)))
-      (let [user-create-res (create-user username)]
-        (get-auth-token (:id user-create-res))))))
+  ([username]
+   (get-session-id username false))
+  ([username force-api]
+   (println (str "username=" username "; force-api=" force-api))
+   (let [user-res (users/READ-BY-USERNAME [username])]
+     (println "getting session id - - - - - - - - - - - ")
+     (println username)
+     (println user-res)
+     (if-not (= 0 (count user-res))
+       (do
+         (if force-api (update-user username (:id (first user-res))))
+         (get-auth-token (:id (first user-res))))
+       (let [user-create-res (create-user username)]
+         (get-auth-token (:id user-create-res)))))))
 (defn user-id-to-session-id
   "Generates session id for user with given id. If user does not exist, returns nil."
   [user-id]

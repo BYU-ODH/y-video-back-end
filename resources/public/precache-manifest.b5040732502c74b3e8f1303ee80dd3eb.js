@@ -1,19 +1,19 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "4952b28712d850aa2bdeca07df734775",
+    "revision": "09cad351a9612e0709eb9a422b017592",
     "url": "/index.html"
   },
   {
-    "revision": "3f0e05ce32699a9451eb",
-    "url": "/static/js/2.af5a38bd.chunk.js"
+    "revision": "b11133b5f67e9001ab6c",
+    "url": "/static/js/2.50b19aab.chunk.js"
   },
   {
     "revision": "dce29cb9479f20842c2592abc76494f3",
-    "url": "/static/js/2.af5a38bd.chunk.js.LICENSE.txt"
+    "url": "/static/js/2.50b19aab.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "8d02da22646583ad4a38",
-    "url": "/static/js/main.145f9b4f.chunk.js"
+    "revision": "571e1f53988454e80a2b",
+    "url": "/static/js/main.7dc37c4e.chunk.js"
   },
   {
     "revision": "d018355cd979db449cb0",
@@ -144,6 +144,10 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/static/media/list-view.411001d1.svg"
   },
   {
+    "revision": "a217347ffcb76aae5aee5d7c426354c2",
+    "url": "/static/media/manage-collection-help-circle.a217347f.svg"
+  },
+  {
     "revision": "9bd7f9a91bed5f05a83754bf7458d6b2",
     "url": "/static/media/menu-white.9bd7f9a9.svg"
   },
@@ -194,6 +198,10 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
     "revision": "7828171283ccd305e7bbc09475d77584",
     "url": "/static/media/te-chevrons-right.78281712.svg"
+  },
+  {
+    "revision": "a71c454b3d1696c36f794f8b724bf6b6",
+    "url": "/static/media/te-clock.a71c454b.svg"
   },
   {
     "revision": "8ab3f34681bbd4c1c9bb6779da55cb59",

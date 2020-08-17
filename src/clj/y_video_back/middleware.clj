@@ -9,7 +9,8 @@
             [ring.middleware.flash :refer [wrap-flash]]
             [immutant.web.middleware :refer [wrap-session]]
             [ring.middleware.defaults :refer [site-defaults wrap-defaults]]
-            [byu-cas.core :as cas]
+            [y-video-back.middleware.cas :as cas]
+            ;[byu-cas.core :as cas]
             ;[cheshire.generate :as cheshire]
             ;[cognitect.transit :as transit]
             [y-video-back.middleware.formats :as formats]
@@ -34,6 +35,15 @@
      request)))
     ;((cas/wrap-cas handler (str (-> env :y-video-back :site-url) (str (:uri request))))
     ; request))
+
+(defn wrap-pre-cas [handler]
+  (fn [request]
+    ;(println "request-in-pre-cas=" request)
+    (handler request)))
+
+(defn wrap-post-cas [handler]
+  (fn [request]
+    (handler request)))
 
 (defn wrap-cas-to-request-url
   "redirects user to BYU cas login"
@@ -217,7 +227,9 @@
 (defn wrap-base [handler]
   (-> ((:middleware defaults) handler)
       wrap-flash
+      ;wrap-post-cas
       wrap-cas
+      ;wrap-pre-cas
       ;wrap-csrf
       (wrap-session {:cookie-attrs {:http-only true}})
       (wrap-defaults
