@@ -2,6 +2,7 @@
   (:require
     [y-video-back.config :refer [env]]
     [y-video-back.db.users :as users]
+    [y-video-back.db.user-type-exceptions :as user-type-exceptions]
     [y-video-back.db.auth-tokens :as auth-tokens]
     [clj-http.client :as client]
     [java-time :as t]
@@ -66,15 +67,20 @@
                    (map #(get-in % ["email_address" "value"])
                         (get-in (get-cats-from-json js) ["email_addresses" "values"]))))))
 
-
-
-
 (defn get-account-type-from-json
   [js]
   ;(println "get-account-type-js" js)
   (if (= "FAC" (str/upper-case (get-in (get-cats-from-json js) ["employee_summary" "employee_classification_code" "value"])))
     2
     3))
+
+(defn get-account-type
+  "If username in user-type-exceptions, returns that value. Else, returns value from json."
+  [username js]
+  (let [exc-res (user-type-exceptions/READ-BY-USERNAME [username])]
+    (if (= 0 (count exc-res))
+      (get-account-type-from-json js)
+      (:account-type (first exc-res)))))
 
 (defn get-user-data
   "Gets data from AcademicRecordsStudentStatusInfo"
@@ -97,7 +103,7 @@
               full-name (get-in (get-cats-from-json json-res) ["basic" "preferred_name" "value"])
               byu-id (get-in (get-cats-from-json json-res) ["basic" "byu_id" "value"])
               email (first (filter #(not (nil? %)) [(get-email-from-json json-res), "none"]))
-              account-type (get-account-type-from-json json-res)]
+              account-type (get-account-type netid json-res)]
           {:full-name full-name
            :byu-id byu-id
            :email email
