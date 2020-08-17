@@ -1,5 +1,6 @@
 (ns y-video-back.functions.user-creator-tests
     (:require
+      [y-video-back.config :refer [env]]
       [clojure.test :refer :all]
       [ring.mock.request :refer :all]
       [y-video-back.handler :refer :all]
@@ -34,23 +35,41 @@
     (f)))
 
 (tcore/basic-transaction-fixtures
-  (def test-user-one (ut/under-to-hyphen (users/CREATE (g/get-random-user-without-id))))
-  (def test-user-two (ut/under-to-hyphen (users/CREATE (g/get-random-user-without-id))))
-  (def test-user-thr (ut/under-to-hyphen (users/CREATE (g/get-random-user-without-id))))
   (mount.core/start #'y-video-back.handler/app))
 
-(deftest test-user-exists
-  (testing "username already in db"
-    (let [res (uc/get-session-id (:username test-user-one) false)]
-      (is (not (nil? res))))
-    (let [res (uc/get-session-id (:username test-user-two) false)]
-      (is (not (nil? res))))
-    (let [res (uc/get-session-id (:username test-user-one) false)]
-      (is (not (nil? res))))))
-
-(deftest test-user-not-exists
-  (testing "username already in db"
-    (let [res (uc/get-session-id "other-username!" false)]
-      (is (not (= (:id test-user-one) res)))
-      (let [res-two (uc/get-session-id "other-username!" false)]
-        (is (not (nil? res)))))))
+(deftest test-create-user-on-get-session-id
+  (testing "test-user username"
+    (let [res (uc/get-session-id (get-in env [:test-user :username]))
+          user-res (first (users/READ-BY-USERNAME [(get-in env [:test-user :username])]))]
+      (is (= {:username (get-in env [:test-user :username])
+              :email (get-in env [:test-user :email])
+              :account-name (get-in env [:test-user :full-name])
+              :account-type (get-in env [:test-user :account-type])}
+             {:username (get-in user-res [:username])
+              :email (get-in user-res [:email])
+              :account-name (get-in user-res [:account-name])
+              :account-type (get-in user-res [:account-type])}))))
+  (testing "hopefully invalid username"
+    (let [bad-username "cig4sowe"
+          res (uc/get-session-id bad-username)
+          user-res (first (users/READ-BY-USERNAME [bad-username]))]
+      (is (= {:username bad-username
+              :email (str bad-username "@yvideobeta.byu.edu")
+              :account-name (str bad-username " no_name")
+              :account-type 4}
+             {:username (get-in user-res [:username])
+              :email (get-in user-res [:email])
+              :account-name (get-in user-res [:account-name])
+              :account-type (get-in user-res [:account-type])}))))
+  (testing "too-long invalid username" ; BYU-CAS limit is 8 characters in netid
+    (let [bad-username "1234567890"
+          res (uc/get-session-id bad-username)
+          user-res (first (users/READ-BY-USERNAME [bad-username]))]
+      (is (= {:username bad-username
+              :email (str bad-username "@yvideobeta.byu.edu")
+              :account-name (str bad-username " no_name")
+              :account-type 4}
+             {:username (get-in user-res [:username])
+              :email (get-in user-res [:email])
+              :account-name (get-in user-res [:account-name])
+              :account-type (get-in user-res [:account-type])})))))

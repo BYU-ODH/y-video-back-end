@@ -4,6 +4,7 @@
     [clojure.test :refer :all]
     [ring.mock.request :refer :all]
     [y-video-back.handler :refer :all]
+    [y-video-back.utils.route-proxy.routes.rp-home :as home]
     [y-video-back.utils.route-proxy.routes.rp-admin :as admin]
     [y-video-back.utils.route-proxy.routes.rp-collection :as collection]
     [y-video-back.utils.route-proxy.routes.rp-content :as content]
@@ -24,6 +25,9 @@
             (json-body {:echo word}))))
   ([word]
    (echo-post (:session-id-bypass env) word)))
+
+; home routes
+(def home-page home/home-page)
 
 ; user routes
 (def user-post user/user-post)

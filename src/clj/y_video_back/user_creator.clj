@@ -85,30 +85,33 @@
 (defn get-user-data
   "Gets data from AcademicRecordsStudentStatusInfo"
   [netid]
-  (if (:test env)
-    {:full-name (str "Mr. " netid)
+  (if (and false
+           (:test env)
+           (not (= (get-in env [:test-user :username])
+                   netid)))
+    {:full-name (str netid " no_name")
      :byu-id nil
      :email (str netid "@yvideobeta.byu.edu")
-     :account-type 0}
-    (let [url (str "https://api.byu.edu:443/byuapi/persons/v3/?net_ids=" netid "&field_sets=basic%2Cemployee_summary%2Cstudent_summary%2Cemail_addresses")
-          res (client/get url {:oauth-token (get-oauth-token)})]
-      (if-not (= 200 (:status res))
-        {:full-name (str netid ", no_name")
+     :account-type 4}
+    (try
+      (let [url (str "https://api.byu.edu:443/byuapi/persons/v3/?net_ids=" netid "&field_sets=basic%2Cemployee_summary%2Cstudent_summary%2Cemail_addresses")
+            res (client/get url {:oauth-token (get-oauth-token)})
+            json-res (json/read-str (:body res))
+            ; tra (println "res=" res)
+            ; tar (println "json-res=" json-res)
+            full-name (get-in (get-cats-from-json json-res) ["basic" "preferred_name" "value"])
+            byu-id (get-in (get-cats-from-json json-res) ["basic" "byu_id" "value"])
+            email (first (filter #(not (nil? %)) [(get-email-from-json json-res), "none"]))
+            account-type (get-account-type netid json-res)]
+        {:full-name full-name
+         :byu-id byu-id
+         :email email
+         :account-type account-type})
+      (catch Exception e
+        {:full-name (str netid " no_name")
          :byu-id nil
          :email (str netid "@yvideobeta.byu.edu")
-         :account-type 4}
-        (let [json-res (json/read-str (:body res))
-              ; tra (println "res=" res)
-              ; tar (println "json-res=" json-res)
-              full-name (get-in (get-cats-from-json json-res) ["basic" "preferred_name" "value"])
-              byu-id (get-in (get-cats-from-json json-res) ["basic" "byu_id" "value"])
-              email (first (filter #(not (nil? %)) [(get-email-from-json json-res), "none"]))
-              account-type (get-account-type netid json-res)]
-          {:full-name full-name
-           :byu-id byu-id
-           :email email
-           :account-type account-type})))))
-
+         :account-type 4}))))
 (defn create-user
   "Creates user with data from BYU api"
   [username]
