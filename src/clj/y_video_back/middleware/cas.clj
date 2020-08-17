@@ -1,5 +1,6 @@
 (ns y-video-back.middleware.cas
   (:require [clojure.tools.logging :as log]
+            [y-video-back.config :refer [env]]
             [ring.util.response :refer [redirect]]
             [clojure.pprint :as pprint]
             [clojure.string :refer [join] :as s]
@@ -70,10 +71,10 @@
 
 
 (defn create-redirect-url [req service remove-ticket?]
-  (let [host (get-in req [:headers "host"])
+  (let [host (:host env) ;(get-in req [:headers "host"])
         {:keys [uri query-params]} req
         query-params (cond-> query-params remove-ticket? (dissoc "ticket"))
-        without-params (cond-> (str "http://" host uri)
+        without-params (cond-> (str host uri)
                          (string? service) ((constantly service))
                          (fn? service) (service))]
     (add-query-params without-params query-params)))
