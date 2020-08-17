@@ -17,7 +17,7 @@
   (println (get-in request [:query-params]))
   (if (nil? (:username request))
     (response/ok {:message "CAS failed to provide username"})
-    (let [session-id (uc/get-session-id (:username request) true)] ; temporary fix
+    (let [session-id (uc/get-session-id (:username request))] ; temporary fix
       (println (str "user from CAS: " (:username request)))
       (println (str "serving session-id from home.clj: " session-id))
       (layout/render (into request {:session-id session-id}) "index.html"))))

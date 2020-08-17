@@ -10,6 +10,7 @@ CREATE TABLE users (
    ,deleted TIMESTAMP DEFAULT NULL
    ,updated TIMESTAMP DEFAULT NULL
    ,created  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+   ,last_person_api TIMESTAMP DEFAULT CURRENT_TIMESTAMP
    ,email TEXT UNIQUE
    ,last_login TEXT
    ,account_name TEXT

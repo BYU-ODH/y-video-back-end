@@ -30,7 +30,7 @@
 (defn remove-db-only
   "Removes created, updated, and deleted fields"
   [my-map]
-  (dissoc my-map :created :updated :deleted))
+  (dissoc my-map :created :updated :deleted :last-person-api))
 
 (defn to-uuid
   [text-in]

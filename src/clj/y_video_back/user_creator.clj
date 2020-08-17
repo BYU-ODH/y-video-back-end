@@ -112,26 +112,27 @@
          :byu-id nil
          :email (str netid "@yvideobeta.byu.edu")
          :account-type 4}))))
+
 (defn create-user
   "Creates user with data from BYU api"
   [username]
-  ; (println "creating user " username)
   (let [user-data (get-user-data username)]
     (users/CREATE {:username username
                    :email (:email user-data)
                    :last-login "today"
                    :account-type (:account-type user-data)
-                   :account-name (:full-name user-data)})))
+                   :account-name (:full-name user-data)
+                   :last-person-api (java.sql.Timestamp. (System/currentTimeMillis))})))
 
 (defn update-user
   "Updates user with data from BYU api"
   [username user-id]
-  (println "updating user " username)
   (let [user-data (get-user-data username)]
     (users/UPDATE user-id
                   {:email (:email user-data)
                    :account-type (:account-type user-data)
-                   :account-name (:full-name user-data)})))
+                   :account-name (:full-name user-data)
+                   :last-person-api (java.sql.Timestamp. (System/currentTimeMillis))})))
 
 
 (defn get-auth-token
@@ -141,20 +142,17 @@
 
 (defn get-session-id
   "Generates session id for user with given username. If user does not exist, first creates user."
-  ([username]
-   (get-session-id username false))
-  ([username force-api]
-   (println (str "username=" username "; force-api=" force-api))
-   (let [user-res (users/READ-BY-USERNAME [username])]
-     (println "getting session id - - - - - - - - - - - ")
-     (println username)
-     (println user-res)
-     (if-not (= 0 (count user-res))
-       (do
-         (if force-api (update-user username (:id (first user-res))))
-         (get-auth-token (:id (first user-res))))
-       (let [user-create-res (create-user username)]
-         (get-auth-token (:id user-create-res)))))))
+  [username]
+  (let [user-res (users/READ-BY-USERNAME [username])]
+    (if-not (= 0 (count user-res))
+      (do
+        (if (< (inst-ms (:last-person-api (first user-res)))
+               (- (System/currentTimeMillis) (* 3600000 (-> env :user-data-refresh-after))))
+          (update-user username (:id (first user-res))))
+        (get-auth-token (:id (first user-res))))
+      (let [user-create-res (create-user username)]
+        (get-auth-token (:id user-create-res))))))
+
 (defn user-id-to-session-id
   "Generates session id for user with given id. If user does not exist, returns nil."
   [user-id]
