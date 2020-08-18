@@ -1,0 +1,3 @@
+[submodule "yvideo-client"]
+	path = yvideo-client
+	url = https://github.com/BYU-ODH/yvideo-client.git
