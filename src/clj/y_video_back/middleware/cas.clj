@@ -70,8 +70,8 @@
                    (t/new-duration duration :minutes)))))
 
 
-(defn create-redirect-url [req service remove-ticket?]
-  (let [host (:host env) ;(get-in req [:headers "host"])
+(defn create-redirect-url [req service remove-ticket? host-override]
+  (let [host (first (filter #(not (nil? %)) [host-override (get-in req [:headers "host"])]))
         {:keys [uri query-params]} req
         query-params (cond-> query-params remove-ticket? (dissoc "ticket"))
         without-params (cond-> (str host uri)
@@ -89,7 +89,7 @@
       (if ((options :no-redirect?) request)
         {:status 403}
         (redirect (str (options :cas-server BYU-CAS-server) "/login?service="
-                       (create-redirect-url request (:service options) false)))))))
+                       (create-redirect-url request (:service options) false (:host-override options))))))))
 
 (defn adds-assertion-to-response [resp assertion]
   (assoc-in resp [:session const-cas-assertion] assertion))
@@ -105,7 +105,7 @@
       (if-let [t (ticket request)]
         (try
           (let [{:keys [query-params uri]} request
-                redirect-url (create-redirect-url request (options :service) true)
+                redirect-url (create-redirect-url request (options :service) true (options :host-override))
                 assertion (validate ticket-validator t redirect-url)]
             (-> (redirect redirect-url)
                 (adds-assertion-to-response assertion)
@@ -220,6 +220,7 @@ see ring.middleware.session/bare-session-response if curious how ring sessions w
                     Found redirect
     :server 	  - the target cas server
     :timeout      - takes a number representing the  length (in minutes) of the timeout period.  BYU recommends 120 (two hours), see README
+    :host-override - host to redirect to after CAS authentication (if nil, host is obtained from request header)
   "
   ([& args]
    (apply cas args)))

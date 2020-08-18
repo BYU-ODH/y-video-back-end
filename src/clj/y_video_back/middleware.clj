@@ -31,7 +31,7 @@
 
 (defn wrap-cas [handler]
   (fn [request]
-    ((cas/wrap-cas handler {:timeout 120})
+    ((cas/wrap-cas handler {:timeout 120 :host-override (:host env)})
      request)))
     ;((cas/wrap-cas handler (str (-> env :y-video-back :site-url) (str (:uri request))))
     ; request))
