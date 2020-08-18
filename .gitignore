@@ -8,7 +8,7 @@ db_connect.sh
 logs
 _project.clj
 src/clj/y_video_back/routes/service_handlers/db_front_converter.clj
-*.sh
+to-clojure.sh
 /target
 /lib
 /classes
