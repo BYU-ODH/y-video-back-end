@@ -71,7 +71,9 @@
 
 
 (defn create-redirect-url [req service remove-ticket? host-override]
-  (let [host (first (filter #(not (nil? %)) [host-override (get-in req [:headers "host"])]))
+  (let [host (if (nil? host-override)
+               (str "http://" (get-in req [:headers "host"]))
+               host-override)
         {:keys [uri query-params]} req
         query-params (cond-> query-params remove-ticket? (dissoc "ticket"))
         without-params (cond-> (str host uri)
