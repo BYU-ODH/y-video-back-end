@@ -85,10 +85,7 @@
 (defn get-user-data
   "Gets data from AcademicRecordsStudentStatusInfo"
   [netid]
-  (if (and false
-           (:test env)
-           (not (= (get-in env [:test-user :username])
-                   netid)))
+  (if (= (:front-end-netid env) netid)
     {:full-name (str netid " no_name")
      :byu-id nil
      :email (str netid "@yvideobeta.byu.edu")

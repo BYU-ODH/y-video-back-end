@@ -2,6 +2,7 @@
     (:require
      [y-video-back.layout :as layout]
      [ring.util.http-response :as response]
+     [ring.util.response :refer [redirect]]
      [y-video-back.middleware :as middleware]
      [y-video-back.user-creator :as uc]
      [byu-cas.core :as cas]))
@@ -43,7 +44,7 @@
                                                                   :cas-info (:cas-info request)}})}]
 
          ;["/logout" {:get {:handler (fn [req] (cas/logout-resp "https://cheneycreations.com"))}}] ; placeholder url until we get a login page going
-         ["/logout" {:get {:handler (cas/logout-resp "https://cheneycreations.com")}}] ; placeholder url until we get a login page going
+         ["/logout" {:get {:handler (redirect (str "/?logout=true"))}}]
          ; serving videos routes
 
          ; React BrowserRouter support
