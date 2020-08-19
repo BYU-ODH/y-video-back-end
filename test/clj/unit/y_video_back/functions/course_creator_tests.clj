@@ -63,6 +63,7 @@
       (is (= [] (user-courses-assoc/READ-COURSES-BY-USER (:id user-one-add))))
       (cc/check-courses-with-api (:username user-one) true)
       (check-against-test-user (:id user-one-add)))))
+
 (deftest create-courses-2
   (testing "existing user, missing courses"
     (let [user-one (-> (db-pop/get-user)
@@ -97,6 +98,7 @@
              (frequencies (map remove-course-db-fields (user-courses-assoc/READ-COURSES-BY-USER (:id user-one-add))))))
       (cc/check-courses-with-api (:username user-one) true)
       (check-against-test-user (:id user-one-add)))))
+
 (deftest delete-courses-2
   (testing "existing user, 1 correct course"
     (let [user-one (-> (db-pop/get-user)
@@ -116,4 +118,80 @@
       (is (= (frequencies (map remove-course-db-fields [crse-one crse-two crse-thr]))
              (frequencies (map remove-course-db-fields (user-courses-assoc/READ-COURSES-BY-USER (:id user-one-add))))))
       (cc/check-courses-with-api (:username user-one) true)
+      (check-against-test-user (:id user-one-add)))))
+
+(deftest auditing-course
+  (testing "existing user, auditing non-related course"
+    (let [user-one (-> (db-pop/get-user)
+                       (dissoc :username)
+                       (assoc :username (get-in env [:test-user :username]))
+                       (assoc :byu-person-id (get-in env [:test-user :byu-person-id])))
+          user-one-add (users/CREATE user-one)
+          crse-one (db-pop/add-course)
+          user-crse-one (db-pop/add-user-crse-assoc (:id user-one-add) (:id crse-one) "auditing")]
+      (is (= (frequencies (map remove-course-db-fields [crse-one]))
+             (frequencies (map remove-course-db-fields (user-courses-assoc/READ-COURSES-BY-USER (:id user-one-add))))))
+      (cc/check-courses-with-api (:username user-one) true)
+      (is (= (frequencies (into (get-in env [:test-user
+                                             :courses])
+                                [{:department (:department crse-one)
+                                  :catalog-number (:catalog-number crse-one)
+                                  :section-number (:section-number crse-one)}]))
+             (frequencies (map remove-course-db-fields (user-courses-assoc/READ-COURSES-BY-USER (:id user-one-add)))))))))
+
+(deftest user-shares-course
+  (testing "user in db already connected to test course"
+    (let [user-one (-> (db-pop/get-user)
+                       (dissoc :username)
+                       (assoc :username (get-in env [:test-user :username]))
+                       (assoc :byu-person-id (get-in env [:test-user :byu-person-id])))
+          user-one-add (users/CREATE user-one)
+          test-crse-one (first (get-in env [:test-user :courses]))
+          crse-one (db-pop/add-course (:department test-crse-one)
+                                      (:catalog-number test-crse-one)
+                                      (:section-number test-crse-one))
+          user-two (db-pop/add-user)
+          user-crse-two (db-pop/add-user-crse-assoc (:id user-two) (:id crse-one) "student")]
+      (is (= (frequencies [(into crse-one {:account-role (ac/to-int-role "student") :user-id (:id user-two)})])
+             (frequencies (map ut/remove-db-only (user-courses-assoc/READ-COURSES-BY-USER (:id user-two))))))
+      (cc/check-courses-with-api (:username user-one) true)
+      (is (= (frequencies [(into crse-one {:account-role (ac/to-int-role "student") :user-id (:id user-two)})])
+             (frequencies (map ut/remove-db-only (user-courses-assoc/READ-COURSES-BY-USER (:id user-two))))))
+      (check-against-test-user (:id user-one-add)))))
+
+(deftest user-shares-course-student-drops
+  (testing "user in db and test user both connected to cource (not test course)"
+    (let [user-one (-> (db-pop/get-user)
+                       (dissoc :username)
+                       (assoc :username (get-in env [:test-user :username]))
+                       (assoc :byu-person-id (get-in env [:test-user :byu-person-id])))
+          user-one-add (users/CREATE user-one)
+          test-crse-one (first (get-in env [:test-user :courses]))
+          crse-one (db-pop/add-course)
+          user-two (db-pop/add-user)
+          user-crse-two (db-pop/add-user-crse-assoc (:id user-one) (:id crse-one) "student")
+          user-crse-two (db-pop/add-user-crse-assoc (:id user-two) (:id crse-one) "student")]
+      (is (= (frequencies [(into crse-one {:account-role (ac/to-int-role "student") :user-id (:id user-two)})])
+             (frequencies (map ut/remove-db-only (user-courses-assoc/READ-COURSES-BY-USER (:id user-two))))))
+      (cc/check-courses-with-api (:username user-one) true)
+      (is (= (frequencies [(into crse-one {:account-role (ac/to-int-role "student") :user-id (:id user-two)})])
+             (frequencies (map ut/remove-db-only (user-courses-assoc/READ-COURSES-BY-USER (:id user-two))))))
+      (check-against-test-user (:id user-one-add)))))
+
+(deftest coll-claims-course
+  (testing "collection in db already connected to course"
+    (let [user-one (-> (db-pop/get-user)
+                       (dissoc :username)
+                       (assoc :username (get-in env [:test-user :username]))
+                       (assoc :byu-person-id (get-in env [:test-user :byu-person-id])))
+          user-one-add (users/CREATE user-one)
+          test-crse-one (first (get-in env [:test-user :courses]))
+          crse-one (db-pop/add-course (:department test-crse-one)
+                                      (:catalog-number test-crse-one)
+                                      (:section-number test-crse-one))
+          coll-one (db-pop/add-collection)
+          coll-crse-add (db-pop/add-coll-crse-assoc (:id coll-one) (:id crse-one))]
+      (is (collection-courses-assoc/EXISTS-COLL-CRSE? (:id coll-one) (:id crse-one)))
+      (cc/check-courses-with-api (:username user-one) true)
+      (is (collection-courses-assoc/EXISTS-COLL-CRSE? (:id coll-one) (:id crse-one)))
       (check-against-test-user (:id user-one-add)))))
