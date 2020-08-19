@@ -11,11 +11,13 @@ CREATE TABLE users (
    ,updated TIMESTAMP DEFAULT NULL
    ,created  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
    ,last_person_api TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+   ,last_course_api TIMESTAMP DEFAULT CURRENT_TIMESTAMP
    ,email TEXT UNIQUE
    ,last_login TEXT
    ,account_name TEXT
    ,account_type INTEGER
    ,username TEXT
+   ,byu_person_id TEXT DEFAULT '000000000'
 );
 COMMENT ON TABLE users IS 'User-accounts matching netid';
 

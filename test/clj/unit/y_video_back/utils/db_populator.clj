@@ -77,15 +77,23 @@
 
 (defn get-course
   "Creates course, ready to be added to db"
-  []
-  (g/get-random-course-without-id))
+  ([]
+   (g/get-random-course-without-id))
+  ([dep cat sec]
+   (-> (get-course)
+       (dissoc :department :catalog-number :section-number)
+       (assoc :department dep :catalog-number cat :section-number sec))))
 
 (defn add-course
   "Creates course, adds to db"
-  []
-  (let [coll-one (get-course)
-        coll-one-add (courses/CREATE coll-one)]
-    (assoc coll-one :id (:id coll-one-add))))
+  ([]
+   (let [crse-one (get-course)
+         crse-one-add (courses/CREATE crse-one)]
+     (assoc crse-one :id (:id crse-one-add))))
+  ([dep cat sec]
+   (let [crse-one (get-course dep cat sec)
+         crse-one-add (courses/CREATE crse-one)]
+     (assoc crse-one :id (:id crse-one-add)))))
 
 (defn get-collection
   "Creates collection, ready to be added to db"

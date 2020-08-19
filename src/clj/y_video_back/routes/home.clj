@@ -5,6 +5,7 @@
      [ring.util.response :refer [redirect]]
      [y-video-back.middleware :as middleware]
      [y-video-back.user-creator :as uc]
+     [y-video-back.course-creator :refer [check-courses-with-api]]
      [byu-cas.core :as cas]))
 
 (defn home-page [request-map]
@@ -19,6 +20,8 @@
   (if (nil? (:username request))
     (response/ok {:message "CAS failed to provide username"})
     (let [session-id (uc/get-session-id (:username request))] ; temporary fix
+      (println "checking user courses")
+      (check-courses-with-api (:username request))
       (println (str "user from CAS: " (:username request)))
       (println (str "serving session-id from home.clj: " session-id))
       (layout/render (into request {:session-id session-id}) "index.html"))))
