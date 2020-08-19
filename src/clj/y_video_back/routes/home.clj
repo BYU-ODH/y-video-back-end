@@ -44,7 +44,7 @@
                                                                   :cas-info (:cas-info request)}})}]
 
          ;["/logout" {:get {:handler (fn [req] (cas/logout-resp "https://cheneycreations.com"))}}] ; placeholder url until we get a login page going
-         ["/logout" {:get {:handler (redirect (str "/?logout=true"))}}]
+         ;["/logout" {:get {:handler (redirect (str "/?logout=true"))}}]
          ; serving videos routes
 
          ; React BrowserRouter support
