@@ -128,3 +128,10 @@
   [session-id]
   (app (-> (request :get "/api/auth-ping")
            (header :session-id session-id))))
+
+(defn refresh-courses
+  "use api to refresh which courses user is enrolled in"
+  [session-id]
+  (println "querying /api/refresh-courses")
+  (app (-> (request :post "/api/refresh-courses")
+           (header :session-id session-id))))

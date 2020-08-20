@@ -26,6 +26,7 @@
 (def user-get-all-collections-by-logged-in users/user-get-all-collections-by-logged-in)
 (def user-get-all-courses users/user-get-all-courses)
 (def user-get-all-words users/user-get-all-words)
+(def refresh-courses users/refresh-courses)
 
 ; Collection handlers
 (def collection-create collections/collection-create)

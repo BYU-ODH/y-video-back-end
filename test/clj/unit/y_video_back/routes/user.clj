@@ -1,5 +1,6 @@
 (ns y-video-back.routes.user
     (:require
+      [y-video-back.config :refer [env]]
       [clojure.test :refer :all]
       [ring.mock.request :refer :all]
       [y-video-back.handler :refer :all]
@@ -12,7 +13,9 @@
       [y-video-back.db.core :refer [*db*] :as db]
       [y-video-back.utils.utils :as ut]
       [y-video-back.utils.db-populator :as db-pop]
-      [y-video-back.db.users :as users]))
+      [y-video-back.db.users :as users]
+      [y-video-back.db.user-courses-assoc :as user-courses-assoc]
+      [y-video-back.user-creator :as uc]))
 
 (declare ^:dynamic *txn*)
 
@@ -104,3 +107,33 @@
                  ;                :account-role (:account-role user-crse-two))
                  (list))
              (map ut/remove-db-only (m/decode-response-body res-two)))))))
+
+(defn remove-course-db-fields
+  [course]
+  (-> course
+      (ut/remove-db-only)
+      (dissoc :id :account-role :user-id)))
+
+(defn check-against-test-user
+  [user-id]
+  (is (= (frequencies (get-in env [:test-user
+                                   :courses]))
+         (frequencies (map remove-course-db-fields (user-courses-assoc/READ-COURSES-BY-USER user-id))))))
+
+
+(deftest user-refresh-courses
+  (testing "refresh courses - no course enrollments, student"
+    (let [pre-log (System/currentTimeMillis)
+          user-one (db-pop/get-user "student")
+          user-one-add (users/CREATE (assoc (dissoc user-one :username :byu-person-id)
+                                            :username (get-in env [:test-user :username])
+                                            :byu-person-id (get-in env [:test-user :byu-person-id])))
+          user-res (users/READ (:id user-one-add))]
+      (is (= []
+             (user-courses-assoc/READ-COURSES-BY-USER (:id user-one-add))))
+      (let [res (rp/refresh-courses (uc/user-id-to-session-id (:id user-one-add)))
+            post-log (System/currentTimeMillis)]
+        (is (= 200 (:status res)))
+        (is (< pre-log (inst-ms (:last-course-api user-res))))
+        (is (> post-log (inst-ms (:last-course-api user-res))))
+        (check-against-test-user (:id user-one-add))))))

@@ -48,6 +48,10 @@
         db-courses (get-db-courses user-id)
         to-delete (set (filter #(not (lazy-contains? api-courses (remove-course-db-fields %))) db-courses))
         to-add (set (filter #(not (lazy-contains? (map remove-course-db-fields db-courses) %)) api-courses))]
+    ;(println "api-courses=" api-courses)
+    ;(println "db-courses=" db-courses)
+    ;(println "to-delete" to-delete)
+    ;(println "to-add" to-add)
     (doall (map #(delete-course-assoc user-id %) to-delete))
     (doall (map #(add-course-assoc user-id %) to-add))))
 

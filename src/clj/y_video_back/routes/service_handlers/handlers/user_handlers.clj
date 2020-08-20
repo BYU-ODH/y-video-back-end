@@ -9,8 +9,8 @@
    [y-video-back.models :as models]
    [y-video-back.model-specs :as sp]
    [y-video-back.routes.service-handlers.utils.utils :as utils]
-   [y-video-back.routes.service-handlers.utils.role-utils :as ru]))
-
+   [y-video-back.routes.service-handlers.utils.role-utils :as ru]
+   [y-video-back.course-creator :as cc]))
 
 (def user-create
   {:summary "Creates a new user - FOR DEVELOPMENT ONLY"
@@ -207,3 +207,21 @@
                         word-result (map #(utils/remove-db-only %) user-words-result)]
                     {:status 200
                      :body word-result}))))})
+
+(def refresh-courses
+  {:summary "Queries api to refresh courses is enrolled in"
+   :permission-level 3
+   :bypass-permission true
+   :parameters {:header {:session-id uuid?}}
+   :responses {200 {:body {:message string?}}
+               404 {:body {:message string?}}}
+   :handler (fn [{{{:keys [session-id]} :header } :parameters}]
+              (let [user-id (ru/token-to-user-id session-id)
+                    user-res (users/READ user-id)]
+                (if (nil? user-res)
+                  {:status 404
+                   :body {:message "user not found"}}
+                  (do
+                    (cc/check-courses-with-api (:username user-res) true)
+                    {:status 200
+                     :body {:message "courses updated"}}))))})

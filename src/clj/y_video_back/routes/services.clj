@@ -170,6 +170,12 @@
      [""
       {:get service-handlers/user-get-all-collections-by-logged-in}]]  ;; This method is a place holder - it is used elsewhere
 
+    ["/refresh-courses"
+     {:swagger {:tags ["refresh-courses"]}}
+
+     [""
+      {:post service-handlers/refresh-courses}]]  ;; This method is a place holder - it is used elsewhere
+
     ["/collection"
      {:swagger {:tags ["collection"]}}
      [""
