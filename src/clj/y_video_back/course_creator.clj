@@ -46,8 +46,8 @@
   [user-id person-id]
   (let [api-courses (schedule-api/get-api-courses person-id)
         db-courses (get-db-courses user-id)
-        to-delete (filter #(not (lazy-contains? api-courses (remove-course-db-fields %))) db-courses)
-        to-add (filter #(not (lazy-contains? (map remove-course-db-fields db-courses) %)) api-courses)]
+        to-delete (set (filter #(not (lazy-contains? api-courses (remove-course-db-fields %))) db-courses))
+        to-add (set (filter #(not (lazy-contains? (map remove-course-db-fields db-courses) %)) api-courses))]
     (doall (map #(delete-course-assoc user-id %) to-delete))
     (doall (map #(add-course-assoc user-id %) to-add))))
 
