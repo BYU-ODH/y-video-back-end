@@ -15,6 +15,8 @@
     [ring.util.http-response :as response]
     [y-video-back.user-creator :as uc]
     [ring.middleware.multipart-params :refer [wrap-multipart-params]]))
+
+
 (defn service-routes []
    ["/api"
     {:coercion spec-coercion/coercion
@@ -75,7 +77,14 @@
                           {:status 200
                            :body {:session-id (str (uc/get-session-id username))}}))}}]]
     ["/ping"
-     {:get (constantly (response/ok {:message "pong"}))}]
+     {:get {:summary "ping, requires valid session-id"
+            :permission-level 0
+            :bypass-permission true
+            :responses {200 {:body {:message string?}}}
+            :handler (fn [req]
+                       {:status 200
+                        :body {:message "ping 2"}})}}]
+     ;{:get (constantly (response/ok {:message "pong"}))}]
     ["/auth-ping"
      {:get {:summary "ping, requires valid session-id"
             :permission-level 0

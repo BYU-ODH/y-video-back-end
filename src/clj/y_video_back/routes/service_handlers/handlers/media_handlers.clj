@@ -2,11 +2,15 @@
   (:require
    [y-video-back.config :refer [env]]
    [y-video-back.db.file-keys :as file-keys]
+   [y-video-back.db.files :as files]
+   [y-video-back.db.resources :as resources]
+   [y-video-back.db.users :as users]
    [y-video-back.routes.service-handlers.utils.utils :as utils]
    [y-video-back.routes.service-handlers.utils.role-utils :as ru]
    [ring.swagger.upload :as swagger-upload]
    [ring.util.response :refer [file-response]]
-   [clojure.java.io :as io]))
+   [clojure.java.io :as io]
+   [y-video-back.log :as log-ut]))
 
 (def upload-file
   {:summary "Uploads file"
@@ -52,4 +56,12 @@
                 (if (nil? file-key-res)
                   {:status 404
                    :body {:message "file-key not found"}}
-                  (file-response (utils/file-id-to-path (:file-id file-key-res))))))})
+                  (let [file-res (files/READ (:file-id file-key-res))
+                        resource-res (resources/READ (:resource-id file-res))
+                        user-res (users/READ (:user-id file-key-res))]
+                    (log-ut/log-media-access {:resource-name (:resource-name resource-res)
+                                              :file-version (:file-version file-res)
+                                              :file-id (str (:file-id file-key-res))
+                                              :user-id (str (:user-id file-key-res))
+                                              :username (:username user-res)})
+                    (file-response (utils/file-id-to-path (:file-id file-key-res)))))))})
