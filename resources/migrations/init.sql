@@ -278,6 +278,23 @@ CREATE TRIGGER delete_expired_auth_tokens_trigger
     AFTER INSERT ON auth_tokens
     EXECUTE PROCEDURE delete_expired_auth_tokens();
 
+-------------------------
+-- EXPIRED FILE-KEYS --
+-------------------------
+CREATE OR REPLACE FUNCTION delete_expired_file_keys() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+  DELETE FROM file_keys WHERE created < NOW() - INTERVAL '4 hours';
+  RETURN NEW;
+END;
+$$;
+
+DROP TRIGGER IF EXISTS delete_expired_file_keys_trigger ON file_keys;
+CREATE TRIGGER delete_expired_file_keys_trigger
+    AFTER INSERT ON file_keys
+    EXECUTE PROCEDURE delete_expired_file_keys();
+
 ---------------------
 -- UNDELETED VIEWS --
 ---------------------
