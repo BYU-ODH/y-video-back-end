@@ -195,7 +195,7 @@ CREATE TABLE user_courses_assoc (
    ,user_id UUID REFERENCES users(id) ON DELETE CASCADE
    ,course_id UUID REFERENCES courses(id) ON DELETE CASCADE
    ,account_role INTEGER
-   , CONSTRAINT no_duplicate_user_courses UNIQUE (user_id, course_id)
+   --, CONSTRAINT no_duplicate_user_courses UNIQUE (user_id, course_id)
 );
 COMMENT ON TABLE user_courses_assoc IS 'Many-to-many table connecting users and courses, incl. user roles in courses';
 
@@ -260,6 +260,23 @@ BEGIN
       t,t);
    END LOOP;
 END;
+
+-------------------------
+-- EXPIRED AUTH-TOKENS --
+-------------------------
+CREATE OR REPLACE FUNCTION delete_expired_auth_tokens() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+  DELETE FROM auth_tokens WHERE created < NOW() - INTERVAL '1 hour';
+  RETURN NEW;
+END;
+$$;
+
+DROP TRIGGER IF EXISTS delete_expired_auth_tokens_trigger ON auth_tokens;
+CREATE TRIGGER delete_expired_auth_tokens_trigger
+    AFTER INSERT ON auth_tokens
+    EXECUTE PROCEDURE delete_expired_auth_tokens();
 
 ---------------------
 -- UNDELETED VIEWS --
