@@ -115,7 +115,7 @@
           file-one (db-pop/add-file)
           res (rp/file-id-delete (uc/user-id-to-session-id (:id user-one))
                                  (:id file-one))]
-      (is (= 401 (:status res)))))
+      (is (= 200 (:status res)))))
   (testing "instructor - no connection, file-delete-by-id"
     (let [user-one (db-pop/add-user "instructor")
           file-one (db-pop/add-file)

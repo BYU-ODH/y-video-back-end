@@ -91,7 +91,7 @@
 
 (def file-delete
   {:summary "Deletes specified file"
-   :permission-level 0
+   :permission-level 1
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
    :responses {200 {:body {:message string?}}
