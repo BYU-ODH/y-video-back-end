@@ -35,3 +35,4 @@ perfect_api.json
 Clojure REPL
 trash
 _project.clj
+python/stress_test_api.py

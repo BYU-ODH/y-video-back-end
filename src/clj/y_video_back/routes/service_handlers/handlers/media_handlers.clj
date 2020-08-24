@@ -56,12 +56,7 @@
                 (if (nil? file-key-res)
                   {:status 404
                    :body {:message "file-key not found"}}
-                  (let [file-res (files/READ (:file-id file-key-res))
-                        resource-res (resources/READ (:resource-id file-res))
-                        user-res (users/READ (:user-id file-key-res))]
-                    (log-ut/log-media-access {:resource-name (:resource-name resource-res)
-                                              :file-version (:file-version file-res)
-                                              :file-id (str (:file-id file-key-res))
-                                              :user-id (str (:user-id file-key-res))
+                  (let [user-res (users/READ (:user-id file-key-res))]
+                    (log-ut/log-media-access {:file-id (str (:file-id file-key-res))
                                               :username (:username user-res)})
                     (file-response (utils/file-id-to-path (:file-id file-key-res)))))))})
