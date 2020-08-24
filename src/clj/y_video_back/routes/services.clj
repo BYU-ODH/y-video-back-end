@@ -289,14 +289,18 @@
        :patch service-handlers/file-update
        :delete service-handlers/file-delete}]]
 
-    ; ["/language"
-    ;  {:swagger {:tags ["language"]}}
-    ;  [""
-    ;   {:post service-handlers/language-create}]
-    ;  ["/{id}"
-    ;   {:get service-handlers/language-get-by-id
-    ;    :patch service-handlers/language-update
-    ;    :delete service-handlers/language-delete}]]
+    ["/languages"
+     {:swagger {:tags ["languages"]}}
+     [""
+      {:get service-handlers/language-get-all}]]
+    ["/language"
+     {:swagger {:tags ["language"]}}
+     [""
+      {:post service-handlers/language-create}]
+     ["/{id}"
+      {:get service-handlers/language-get-by-id
+       :patch service-handlers/language-update
+       :delete service-handlers/language-delete}]]
 
     ;["/connect-collection-and-course"
     ; {:swagger {:tags ["connect"]}}

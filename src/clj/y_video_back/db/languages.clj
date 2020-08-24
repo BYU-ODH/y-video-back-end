@@ -8,4 +8,5 @@
 (def DELETE (partial db/mark-deleted :languages))
 (def CLONE (partial db/CLONE :languages))
 (def PERMANENT-DELETE (partial db/DELETE :languages))
+(defn EXISTS? [id] (not (nil? (db/READ :languages-undeleted id))))
 (def GET-ALL (partial db/read-all :languages-undeleted))

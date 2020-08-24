@@ -11,6 +11,7 @@
     [y-video-back.utils.route-proxy.routes.rp-course :as course]
     [y-video-back.utils.route-proxy.routes.rp-file :as file]
     [y-video-back.utils.route-proxy.routes.rp-media :as media]
+    [y-video-back.utils.route-proxy.routes.rp-language :as language]
     [y-video-back.utils.route-proxy.routes.rp-subtitle :as subtitle]
     [y-video-back.utils.route-proxy.routes.rp-resource :as resource]
     [y-video-back.utils.route-proxy.routes.rp-user :as user]
@@ -80,6 +81,13 @@
 (def content-id-remove-subtitle content/content-id-remove-subtitle)
 (def content-id-subtitles content/content-id-subtitles)
 (def content-id-clone-subtitle content/content-id-clone-subtitle)
+
+; language routes
+(def language-post language/language-post)
+(def language-id-get language/language-id-get)
+(def language-id-patch language/language-id-patch)
+(def language-id-delete language/language-id-delete)
+(def language-get-all language/language-get-all)
 
 ; subtitle routes
 (def subtitle-post subtitle/subtitle-post)

@@ -1,0 +1,81 @@
+(ns y-video-back.routes.service-handlers.handlers.language-handlers
+  (:require
+   [y-video-back.db.languages :as languages]
+   [y-video-back.db.resources :as resources]
+   [y-video-back.db.contents :as contents]
+   [y-video-back.models :as models]
+   [y-video-back.model-specs :as sp]
+   [y-video-back.routes.service-handlers.utils.utils :as utils]))
+
+(def language-create
+  {:summary "Creates a new language"
+   :permission-level 1
+   :parameters {:header {:session-id uuid?}
+                :body models/language-without-id}
+   :responses {200 {:body {:message string?
+                           :id string?}}
+               500 {:body {:message string?}}}
+   :handler (fn [{{:keys [body]} :parameters}]
+              {:status 200
+               :body {:message "1 language created"
+                      :id (utils/get-id (languages/CREATE body))}})})
+
+
+
+(def language-get-by-id
+  {:summary "Retrieves specified language"
+   :permission-level 3
+   :parameters {:header {:session-id uuid?}
+                :path {:id uuid?}}
+   :responses {200 {:body models/language}
+               404 {:body {:message string?}}}
+   :handler (fn [{{{:keys [id]} :path} :parameters}]
+              (let [res (languages/READ id)]
+                (if (nil? res)
+                  {:status 404
+                   :body {:message "requested language not found"}}
+                  {:status 200
+                   :body res})))})
+
+(def language-update
+  {:summary "Updates specified language"
+   :permission-level 1
+   :parameters {:header {:session-id uuid?}
+                :path {:id uuid?} :body ::sp/language}
+   :responses {200 {:body {:message string?}}
+               404 {:body {:message string?}}
+               500 {:body {:message string?}}}
+   :handler (fn [{{{:keys [id]} :path :keys [body]} :parameters}]
+              (if-not (languages/EXISTS? id)
+                {:status 404
+                 :body {:message "language not found"}}
+                (let [result (languages/UPDATE id body)]
+                  (if (= 0 result)
+                    {:status 500
+                     :body {:message "unable to update language"}}
+                    {:status 200
+                     :body {:message (str result " languages updated")}}))))})
+
+(def language-delete
+  {:summary "Deletes specified language"
+   :permission-level 0
+   :parameters {:header {:session-id uuid?}
+                :path {:id uuid?}}
+   :responses {200 {:body {:message string?}}
+               404 {:body {:message string?}}}
+   :handler (fn [{{{:keys [id]} :path} :parameters}]
+              (let [result (languages/DELETE id)]
+                (if (nil? result)
+                  {:status 404
+                   :body {:message "requested language not found"}}
+                  {:status 200
+                   :body {:message (str result " languages deleted")}})))})
+
+(def language-get-all
+  {:summary "Retrieves all languages"
+   :permission-level 3
+   :parameters {:header {:session-id uuid?}}
+   :responses {200 {:body [models/language]}}
+   :handler (fn [req]
+              {:status 200
+               :body (map utils/remove-db-only (languages/GET-ALL))})})

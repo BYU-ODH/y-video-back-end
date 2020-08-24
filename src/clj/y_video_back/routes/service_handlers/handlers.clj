@@ -6,6 +6,7 @@
    [y-video-back.routes.service-handlers.handlers.resource-handlers :as resources]
    [y-video-back.routes.service-handlers.handlers.course-handlers :as courses]
    [y-video-back.routes.service-handlers.handlers.file-handlers :as files]
+   [y-video-back.routes.service-handlers.handlers.language-handlers :as languages]
    [y-video-back.routes.service-handlers.handlers.subtitle-handlers :as subtitles]
    [y-video-back.routes.service-handlers.handlers.content-handlers :as contents]
    [y-video-back.routes.service-handlers.handlers.word-handlers :as words]
@@ -51,6 +52,13 @@
 (def resource-get-all-subtitles resources/resource-get-all-subtitles)
 (def resource-get-all-files resources/resource-get-all-files)
 ;(def resource-add-view resources/resource-add-view)
+
+; Subtitle handlers
+(def language-create languages/language-create)
+(def language-get-by-id languages/language-get-by-id)
+(def language-update languages/language-update)
+(def language-delete languages/language-delete)
+(def language-get-all languages/language-get-all)
 
 ; Subtitle handlers
 (def subtitle-create subtitles/subtitle-create)
