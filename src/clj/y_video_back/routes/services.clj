@@ -46,9 +46,9 @@
 
     ;; swagger documentation
     ["" {:no-doc true
-         :swagger {:info {:title "my-api"
-                          :description "https://cljdoc.org/d/metosin/reitit"}}}
-
+         :swagger {:info {:title "Y-Video"
+                          :version "beta"
+                          :description "A media serving application for BYU"}}}
      ["/swagger.json"
       {:get (swagger/create-swagger-handler)}]
 
@@ -87,6 +87,7 @@
      ;{:get (constantly (response/ok {:message "pong"}))}]
     ["/auth-ping"
      {:get {:summary "ping, requires valid session-id"
+            :security :admin
             :permission-level "admin"
             :parameters {:header {:session-id uuid?}}
             :responses {200 {:body {:message string?}}}
