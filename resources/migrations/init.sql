@@ -106,7 +106,6 @@ CREATE TABLE files (
    ,resource_id UUID REFERENCES resources(id)
    ,filepath TEXT
    ,file_version TEXT
-   ,mime TEXT
    ,metadata TEXT
    , CONSTRAINT no_duplicate_filepaths UNIQUE (filepath)
 );

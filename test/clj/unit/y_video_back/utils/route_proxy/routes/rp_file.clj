@@ -22,7 +22,6 @@
             (assoc :multipart-params {"file" filecontent
                                       :file-version (:file-version file-db)
                                       :metadata (:metadata file-db)
-                                      :mime (:mime file-db)
                                       :resource-id (:resource-id file-db)}))))
   ([file-db filecontent]
    (file-post (:session-id-bypass env) file-db filecontent)))

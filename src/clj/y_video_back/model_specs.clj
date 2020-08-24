@@ -111,13 +111,11 @@
 
 (s/def :file/filepath string?)
 (s/def :file/file-version string?)
-(s/def :file/mime string?)
 (s/def :file/resource-id uuid?)
 (s/def :file/metadata string?)
 (s/def ::file
   (s/keys :opt-un [:file/filepath
                    :file/file-version
-                   :file/mime
                    :file/resource-id
                    :file/metadata]))
 

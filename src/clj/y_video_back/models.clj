@@ -133,7 +133,6 @@
 (def file-without-any-ids
   {:filepath string?
    :file-version string?
-   :mime string?
    :metadata string?})
 
 (def file-without-id

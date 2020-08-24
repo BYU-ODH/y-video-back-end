@@ -16,13 +16,12 @@
                 :multipart {:file multipart/temp-file-part
                             :resource-id uuid?
                             :file-version string?
-                            :mime string?
                             :metadata string?}}
                 ;:body (dissoc models/file-without-id :filepath)
    :responses {200 {:body {:message string?
                            :id string?}}
                500 {:body {:message string?}}}
-   :handler (fn [{{{:keys [file resource-id file-version mime metadata]} :multipart} :parameters}]
+   :handler (fn [{{{:keys [file resource-id file-version metadata]} :multipart} :parameters}]
               ;(println "req=" req)
               ;(if (nil? (get-in req [:multipart-params "file"]))
               ;  {:status 394
@@ -33,7 +32,6 @@
                    :body {:message "resource not found"}}
                   (let [id (utils/get-id (files/CREATE {:filepath file-name
                                                         :file-version file-version
-                                                        :mime mime
                                                         :metadata metadata
                                                         :resource-id resource-id}))]
                     (io/copy (:tempfile file)

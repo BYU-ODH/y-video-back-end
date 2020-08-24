@@ -116,7 +116,6 @@
             file-one (files/CREATE {:resource-id (:id rsrc-one)
                                     :filepath "persistent/test_kitten.mp4" ; move this into github repository?
                                     :file_version "no-speech"
-                                    :mime "text"
                                     :metadata "text"})
             res (rp/get-file-key "00000000-0000-0000-0000-000000000000" (:id file-one))
             res-body (m/decode-response-body res)]
