@@ -226,7 +226,12 @@
   (testing "only a space"
     (test-search-table :users
                        " "
-                       [test-user-one test-user-two test-user-thr])))
+                       [test-user-one test-user-two test-user-thr]))
+  (testing "case insensitive"
+    (test-search-table :users
+                       "mIniSTer"
+                       [test-user-thr])))
+
 (deftest test-search-collections
   (testing "all colls name"
     (test-search-table :collections
@@ -247,7 +252,11 @@
                        " "
                        [(assoc test-coll-one :username (:username test-user-one))
                         (assoc test-coll-two :username (:username test-user-two))
-                        (assoc test-coll-thr :username (:username test-user-thr))])))
+                        (assoc test-coll-thr :username (:username test-user-thr))]))
+  (testing "case insensitive"
+    (test-search-table :collections
+                       "FICTION"
+                       [(assoc test-coll-thr :username (:username test-user-thr))])))
 (deftest test-search-resources
   (testing "all conts name"
     (test-search-table :resources
@@ -288,9 +297,12 @@
   (testing "only a space"
     (test-search-table :resources
                        " "
-                       [test-rsrc-one test-rsrc-two test-rsrc-thr])))
+                       [test-rsrc-one test-rsrc-two test-rsrc-thr]))
+  (testing "case insensitive"
+    (test-search-table :resources
+                       "WhAt"
+                       [test-rsrc-one])))
 
-;; Need more tests here - this is bare minimum
 (deftest test-search-contents
   (testing "all conts"
     (test-search-table :contents
@@ -305,4 +317,8 @@
   (testing "no conts"
     (test-search-table :contents
                        "z"
-                       [])))
+                       []))
+  (testing "case insensitive"
+    (test-search-table :contents
+                       "adfwE"
+                       [(update (update test-cont-two :resource-id str) :collection-id str)])))

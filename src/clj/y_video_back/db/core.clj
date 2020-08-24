@@ -10,6 +10,7 @@
    [camel-snake-kebab.extras :refer [transform-keys]]
    [honeysql.core :as sql]
    [honeysql.helpers :as helpers]
+   [honeysql-postgres.format :refer :all]
    [clojure.string :refer [join]]
    [tick.alpha.api :as t]
    [y-video-back.utils.utils :as ut])
@@ -227,10 +228,9 @@
   [table-keyword column-keywords pattern &[select-field-keys]]
   (cond-> (helpers/select (or select-field-keys :*))
           true (helpers/from table-keyword)
-          (> (count column-keywords) 0) (helpers/where [:!= :id ut/nil-uuid] (into [:or] (map #(vector "LIKE" %1 pattern) column-keywords)))
+          (> (count column-keywords) 0) (helpers/where [:!= :id ut/nil-uuid] (into [:or] (map #(vector :ilike %1 pattern) column-keywords)))
           true sql/format
-          ;true (clojure.string/replace "=" "LIKE")
-          false (spy)
+          ;true (spy)
           true dbr))
 
 (defn increment-field

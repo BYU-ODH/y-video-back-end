@@ -38,7 +38,8 @@
                  [ring-cors "0.1.9"]
                  [clj-http "3.10.1"]
                  [clojure.java-time "0.3.1"]
-                 [org.clojure/data.json "1.0.0"]]
+                 [org.clojure/data.json "1.0.0"]
+                 [nilenso/honeysql-postgres "0.2.6"]]
                  ;[ring/ring-ssl "0.3.0"]]
 
   :min-lein-version "2.0.0"
