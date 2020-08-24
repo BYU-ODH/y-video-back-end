@@ -89,8 +89,8 @@
 (defn get-random-subtitle-without-id
   ([]
    (get-random-model models/subtitle-without-id))
-  ([content-id language-id]
-   (into (get-random-model models/subtitle-without-any-ids) {:content-id content-id :language-id language-id})))
+  ([content-id]
+   (into (get-random-model models/subtitle-without-any-ids) {:content-id content-id})))
 
 (defn get-random-file-without-id
   ([]

@@ -121,10 +121,11 @@
 
 (def subtitle-without-any-ids
   {:title string?
-   :content string?})
+   :content string?
+   :language string?})
 
 (def subtitle-without-id
-  (into subtitle-without-any-ids {:content-id uuid? :language-id uuid?}))
+  (into subtitle-without-any-ids {:content-id uuid?}))
 
 (def subtitle
   (into subtitle-without-id {:id uuid?}))

@@ -99,12 +99,12 @@
 
 
 (s/def :subtitle/title string?)
-(s/def :subtitle/language-id uuid?)
+(s/def :subtitle/language string?)
 (s/def :subtitle/content string?)
 (s/def :subtitle/content-id uuid?)
 (s/def ::subtitle
   (s/keys :opt-un [:subtitle/title
-                   :subtitle/language-id
+                   :subtitle/language
                    :subtitle/content
                    :subtitle/content-id]))
 

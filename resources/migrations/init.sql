@@ -164,7 +164,7 @@ CREATE TABLE subtitles (
     ,updated TIMESTAMP DEFAULT NULL
     ,created  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     ,title TEXT
-    ,language_id UUID REFERENCES languages(id)
+    ,language TEXT
     ,content TEXT
     ,content_id UUID REFERENCES contents(id)
 );

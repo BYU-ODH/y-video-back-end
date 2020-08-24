@@ -227,11 +227,9 @@
 (defn get-subtitle
   "Creates subtitle, ready to be added to db"
   ([]
-   (get-subtitle (:id (add-content)) (:id (add-language))))
+   (get-subtitle (:id (add-content))))
   ([content-id]
-   (get-subtitle content-id (:id (add-language))))
-  ([content-id language-id]
-   (g/get-random-subtitle-without-id content-id language-id)))
+   (g/get-random-subtitle-without-id content-id)))
 
 (defn add-subtitle
   "Creates subtitle, adds to db"
