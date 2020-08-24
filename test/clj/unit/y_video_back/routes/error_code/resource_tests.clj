@@ -20,6 +20,7 @@
       [y-video-back.db.user-collections-assoc :as user-collections-assoc]
       [y-video-back.db.users :as users]
       [y-video-back.db.words :as words]
+      [y-video-back.utils.db-populator :as db-pop]
       [y-video-back.utils.utils :as ut]))
 
 (declare ^:dynamic *txn*)
@@ -39,7 +40,7 @@
   ;(def test-rsrc-one (ut/under-to-hyphen (resources/CREATE (g/get-random-resource-without-id))))
   ;(def test-crse-one (ut/under-to-hyphen (courses/CREATE (g/get-random-course-without-id))))
   (def test-rsrc-one (ut/under-to-hyphen (resources/CREATE (g/get-random-resource-without-id))))
-  (def test-file-one (ut/under-to-hyphen (files/CREATE (g/get-random-file-without-id (:id test-rsrc-one)))))
+  (def test-file-one (db-pop/add-file (:id test-rsrc-one)))
   (mount.core/start #'y-video-back.handler/app))
 
 ; The only error thrown for resource-post is request body coercion (400)

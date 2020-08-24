@@ -290,18 +290,13 @@
        :patch service-handlers/file-update
        :delete service-handlers/file-delete}]]
 
-    ["/languages"
-     {:swagger {:tags ["languages"]}}
-     [""
-      {:get service-handlers/language-get-all}]]
     ["/language"
      {:swagger {:tags ["language"]}}
      [""
-      {:post service-handlers/language-create}]
+      {:post service-handlers/language-create
+       :get service-handlers/language-get-all}]
      ["/{id}"
-      {:get service-handlers/language-get-by-id
-       :patch service-handlers/language-update
-       :delete service-handlers/language-delete}]]
+      {:delete service-handlers/language-delete}]]
 
     ;["/connect-collection-and-course"
     ; {:swagger {:tags ["connect"]}}

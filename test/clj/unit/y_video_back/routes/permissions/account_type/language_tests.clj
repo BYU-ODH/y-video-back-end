@@ -67,33 +67,6 @@
                                 lang-one)]
       (is (= 401 (:status res))))))
 
-;get: /api/language/{id}
-(deftest language-id-get
-  (testing "admin - no connection, language-id-get"
-    (let [user-one (db-pop/add-user "admin")
-          lang-one (db-pop/add-language)
-          res (rp/language-id-get (uc/user-id-to-session-id (:id user-one))
-                                  (:id lang-one))]
-      (is (= 200 (:status res)))))
-  (testing "lab assistant - no connection, language-id-get"
-    (let [user-one (db-pop/add-user "lab-assistant")
-          lang-one (db-pop/add-language)
-          res (rp/language-id-get (uc/user-id-to-session-id (:id user-one))
-                                  (:id lang-one))]
-      (is (= 200 (:status res)))))
-  (testing "instructor - no connection, language-id-get"
-    (let [user-one (db-pop/add-user "instructor")
-          lang-one (db-pop/add-language)
-          res (rp/language-id-get (uc/user-id-to-session-id (:id user-one))
-                                  (:id lang-one))]
-      (is (= 200 (:status res)))))
-  (testing "student - no connection, language-id-get"
-    (let [user-one (db-pop/add-user "student")
-          lang-one (db-pop/add-language)
-          res (rp/language-id-get (uc/user-id-to-session-id (:id user-one))
-                                  (:id lang-one))]
-      (is (= 200 (:status res))))))
-
 ;delete: /api/language/{id}
 (deftest language-id-delete
   (testing "admin - no connection, language-id-delete"
@@ -119,37 +92,6 @@
           lang-one (db-pop/add-language)
           res (rp/language-id-delete (uc/user-id-to-session-id (:id user-one))
                                      (:id lang-one))]
-      (is (= 401 (:status res))))))
-
-;patch: /api/language/{id}
-(deftest language-id-patch
-  (testing "admin - no connection, language-id-patch"
-    (let [user-one (db-pop/add-user "admin")
-          lang-one (db-pop/add-language)
-          res (rp/language-id-patch (uc/user-id-to-session-id (:id user-one))
-                                    (:id lang-one)
-                                    lang-one)]
-      (is (= 200 (:status res)))))
-  (testing "lab assistant - no connection, language-id-patch"
-    (let [user-one (db-pop/add-user "lab-assistant")
-          lang-one (db-pop/add-language)
-          res (rp/language-id-patch (uc/user-id-to-session-id (:id user-one))
-                                    (:id lang-one)
-                                    lang-one)]
-      (is (= 200 (:status res)))))
-  (testing "instructor - no connection, language-id-patch"
-    (let [user-one (db-pop/add-user "instructor")
-          lang-one (db-pop/add-language)
-          res (rp/language-id-patch (uc/user-id-to-session-id (:id user-one))
-                                    (:id lang-one)
-                                    lang-one)]
-      (is (= 401 (:status res)))))
-  (testing "student - no connection, language-id-patch"
-    (let [user-one (db-pop/add-user "student")
-          lang-one (db-pop/add-language)
-          res (rp/language-id-patch (uc/user-id-to-session-id (:id user-one))
-                                    (:id lang-one)
-                                    lang-one)]
       (is (= 401 (:status res))))))
 
 ;get: /api/languages

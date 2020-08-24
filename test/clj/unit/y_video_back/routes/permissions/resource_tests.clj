@@ -22,6 +22,7 @@
     [y-video-back.db.user-courses-assoc :as user-courses-assoc]
     [y-video-back.db.users :as users]
     [y-video-back.db.words :as words]
+    [y-video-back.utils.db-populator :as db-pop]
     [y-video-back.utils.utils :as ut]))
 
 (comment
@@ -75,7 +76,7 @@
     (def test-coll-one (ut/under-to-hyphen (collections/CREATE (g/get-random-collection-without-id))))
     (def test-crse-one (ut/under-to-hyphen (courses/CREATE (g/get-random-course-without-id))))
     (def test-cont-one (ut/under-to-hyphen (resources/CREATE (g/get-random-resource-without-id))))
-    (def test-file-one (ut/under-to-hyphen (files/CREATE (g/get-random-file-without-id))))
+    (def test-file-one (db-pop/add-file))
     (def test-user-crse-one (ut/under-to-hyphen (user-courses-assoc/CREATE {:user-id (:id user-stud-stud)
                                                                             :course-id (:id test-crse-one)
                                                                             :account-role 2}))) ; student in course

@@ -32,23 +32,9 @@
     (let [lang-one (db-pop/get-language)]
       (let [res (rp/language-post lang-one)]
         (is (= 200 (:status res)))
-        (let [id (ut/to-uuid (:id (m/decode-response-body res)))]
-          (is (= (into lang-one {:id id})
+        (let [id (:id (m/decode-response-body res))]
+          (is (= lang-one
                  (ut/remove-db-only (languages/READ id))))))))
-  (testing "lang READ"
-    (let [lang-one (ut/under-to-hyphen (languages/CREATE (db-pop/get-language)))
-          res (rp/language-id-get (:id lang-one))]
-      (is (= 200 (:status res)))
-      (is (= (-> lang-one
-                 (ut/remove-db-only)
-                 (update :id str))
-             (ut/remove-db-only (m/decode-response-body res))))))
-  (testing "language UPDATE"
-    (let [lang-one (languages/CREATE (db-pop/get-language))
-          lang-two (db-pop/get-language)]
-      (let [res (rp/language-id-patch (:id lang-one) lang-two)]
-        (is (= 200 (:status res)))
-        (is (= (into lang-two {:id (:id lang-one)}) (ut/remove-db-only (languages/READ (:id lang-one))))))))
   (testing "language DELETE"
     (let [lang-one (languages/CREATE (db-pop/get-language))
           res (rp/language-id-delete (:id lang-one))]

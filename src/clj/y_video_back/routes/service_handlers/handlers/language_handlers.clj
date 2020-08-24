@@ -12,7 +12,7 @@
   {:summary "Creates a new language"
    :permission-level "lab-assistant"
    :parameters {:header {:session-id uuid?}
-                :body models/language-without-id}
+                :body models/language}
    :responses {200 {:body {:message string?
                            :id string?}}
                500 {:body {:message string?}}}
@@ -21,47 +21,11 @@
                :body {:message "1 language created"
                       :id (utils/get-id (languages/CREATE body))}})})
 
-
-
-(def language-get-by-id
-  {:summary "Retrieves specified language"
-   :permission-level "student"
-   :parameters {:header {:session-id uuid?}
-                :path {:id uuid?}}
-   :responses {200 {:body models/language}
-               404 {:body {:message string?}}}
-   :handler (fn [{{{:keys [id]} :path} :parameters}]
-              (let [res (languages/READ id)]
-                (if (nil? res)
-                  {:status 404
-                   :body {:message "requested language not found"}}
-                  {:status 200
-                   :body res})))})
-
-(def language-update
-  {:summary "Updates specified language"
-   :permission-level "lab-assistant"
-   :parameters {:header {:session-id uuid?}
-                :path {:id uuid?} :body ::sp/language}
-   :responses {200 {:body {:message string?}}
-               404 {:body {:message string?}}
-               500 {:body {:message string?}}}
-   :handler (fn [{{{:keys [id]} :path :keys [body]} :parameters}]
-              (if-not (languages/EXISTS? id)
-                {:status 404
-                 :body {:message "language not found"}}
-                (let [result (languages/UPDATE id body)]
-                  (if (= 0 result)
-                    {:status 500
-                     :body {:message "unable to update language"}}
-                    {:status 200
-                     :body {:message (str result " languages updated")}}))))})
-
 (def language-delete
   {:summary "Deletes specified language"
    :permission-level "admin"
    :parameters {:header {:session-id uuid?}
-                :path {:id uuid?}}
+                :path {:id string?}}
    :responses {200 {:body {:message string?}}
                404 {:body {:message string?}}}
    :handler (fn [{{{:keys [id]} :path} :parameters}]

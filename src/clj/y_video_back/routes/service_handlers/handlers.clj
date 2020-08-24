@@ -55,8 +55,6 @@
 
 ; Subtitle handlers
 (def language-create languages/language-create)
-(def language-get-by-id languages/language-get-by-id)
-(def language-update languages/language-update)
 (def language-delete languages/language-delete)
 (def language-get-all languages/language-get-all)
 

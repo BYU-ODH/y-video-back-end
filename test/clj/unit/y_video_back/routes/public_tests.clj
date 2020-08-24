@@ -113,9 +113,10 @@
   (deftest stream-public-resource
     (testing "get file-key for file of public resource, then stream"
       (let [rsrc-one (db-pop/add-public-resource)
+            lang-one (db-pop/add-language)
             file-one (files/CREATE {:resource-id (:id rsrc-one)
                                     :filepath "persistent/test_kitten.mp4" ; move this into github repository?
-                                    :file_version "no-speech"
+                                    :file_version (:id lang-one)
                                     :metadata "text"})
             res (rp/get-file-key "00000000-0000-0000-0000-000000000000" (:id file-one))
             res-body (m/decode-response-body res)]

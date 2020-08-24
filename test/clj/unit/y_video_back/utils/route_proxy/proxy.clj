@@ -84,8 +84,6 @@
 
 ; language routes
 (def language-post language/language-post)
-(def language-id-get language/language-id-get)
-(def language-id-patch language/language-id-patch)
 (def language-id-delete language/language-id-delete)
 (def language-get-all language/language-get-all)
 

@@ -44,7 +44,7 @@
   (def test-coll-one (ut/under-to-hyphen (collections/CREATE (into (g/get-random-collection-without-id-or-owner) {:owner (:id test-user-one)}))))
   (def test-rsrc-one (ut/under-to-hyphen (resources/CREATE (g/get-random-resource-without-id))))
   (def test-crse-one (ut/under-to-hyphen (courses/CREATE (g/get-random-course-without-id))))
-  (def test-file-one (ut/under-to-hyphen (files/CREATE (g/get-random-file-without-id (:id test-rsrc-one)))))
+  (def test-file-one (db-pop/add-file (:id test-rsrc-one)))
   (mount.core/start #'y-video-back.handler/app))
 
 (deftest file-post
@@ -68,30 +68,30 @@
 
 (deftest file-id-patch
   (testing "update nonexistent file"
-    (let [res (rp/file-id-patch (java.util.UUID/randomUUID) (g/get-random-file-without-id (:id test-rsrc-one)))]
+    (let [res (rp/file-id-patch (java.util.UUID/randomUUID) (db-pop/get-file (:id test-rsrc-one)))]
       (is (= 404 (:status res)))))
   (testing "update file to taken filepath (all fields)"
-    (let [file-one (g/get-random-file-without-id (:id test-rsrc-one))
-          file-two (g/get-random-file-without-id (:id test-rsrc-one))
+    (let [file-one (db-pop/get-file (:id test-rsrc-one))
+          file-two (db-pop/get-file (:id test-rsrc-one))
           file-one-res (files/CREATE file-one)
           file-two-res (files/CREATE file-two)
           res (rp/file-id-patch (:id file-two-res) file-one)]
       (is (= 500 (:status res)))))
   (testing "update file to taken filepath (filepath)"
-    (let [file-one (g/get-random-file-without-id (:id test-rsrc-one))
-          file-two (g/get-random-file-without-id (:id test-rsrc-one))
+    (let [file-one (db-pop/get-file (:id test-rsrc-one))
+          file-two (db-pop/get-file (:id test-rsrc-one))
           file-one-res (files/CREATE file-one)
           file-two-res (files/CREATE file-two)
           res (rp/file-id-patch (:id file-two-res) {:filepath (:filepath file-one)})]
       (is (= 500 (:status res)))))
   (testing "update file to nonexistent resource (all fields)"
-    (let [file-one (g/get-random-file-without-id (:id test-rsrc-one))
-          file-two (g/get-random-file-without-id (java.util.UUID/randomUUID))
+    (let [file-one (db-pop/get-file (:id test-rsrc-one))
+          file-two (db-pop/get-file (java.util.UUID/randomUUID))
           file-one-res (files/CREATE file-one)
           res (rp/file-id-patch (:id file-one-res) file-two)]
       (is (= 500 (:status res)))))
   (testing "update file to nonexistent resource (resource-id only)"
-    (let [file-one (g/get-random-file-without-id (:id test-rsrc-one))
+    (let [file-one (db-pop/get-file (:id test-rsrc-one))
           file-one-res (files/CREATE file-one)
           res (rp/file-id-patch (:id file-one-res) {:resource-id (java.util.UUID/randomUUID)})]
       (is (= 500 (:status res))))))

@@ -126,7 +126,3 @@
   (s/keys :opt-un [:course/department
                    :course/catalog-number
                    :course/section-number]))
-
-(s/def :language/language string?)
-(s/def ::language
-  (s/keys :opt-un [:language/language]))

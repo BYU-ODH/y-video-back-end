@@ -34,7 +34,7 @@
   (def rsrc-one (db-pop/add-resource))
   (def file-one (files/CREATE {:resource-id (:id rsrc-one)
                                :filepath "persistent/test_kitten.mp4" ; move this into github repository?
-                               :file_version "no-speech"
+                               :file_version (:id (db-pop/add-language))
                                :metadata "text"}))
   (mount.core/start #'y-video-back.handler/app))
 

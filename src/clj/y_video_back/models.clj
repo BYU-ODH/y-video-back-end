@@ -142,10 +142,10 @@
   (into file-without-id {:id uuid?}))
 
 (def language-without-id
-  {:language string?})
+  {:id string?})
 
 (def language
-  (into language-without-id {:id uuid?}))
+  language-without-id)
 
 (def user-collections-assoc-without-any-ids
   {:account-role int?})

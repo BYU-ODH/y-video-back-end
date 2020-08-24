@@ -26,6 +26,7 @@
     [y-video-back.db.user-collections-assoc :as user-collections-assoc]
     [y-video-back.db.users :as users]
     [y-video-back.db.words :as words]
+    [y-video-back.utils.db-populator :as db-pop]
     [y-video-back.utils.utils :as ut]))
 
 (declare ^:dynamic *txn*)
@@ -60,9 +61,9 @@
   (def test-crse-one (ut/under-to-hyphen (courses/CREATE (g/get-random-course-without-id))))
   (def test-crse-two (ut/under-to-hyphen (courses/CREATE (g/get-random-course-without-id))))
   (def test-crse-thr (ut/under-to-hyphen (courses/CREATE (g/get-random-course-without-id))))
-  (def test-file-one (ut/under-to-hyphen (files/CREATE (g/get-random-file-without-id (:id test-rsrc-one)))))
-  (def test-file-two (ut/under-to-hyphen (files/CREATE (g/get-random-file-without-id (:id test-rsrc-two)))))
-  (def test-file-thr (ut/under-to-hyphen (files/CREATE (g/get-random-file-without-id (:id test-rsrc-thr)))))
+  (def test-file-one (db-pop/add-file (:id test-rsrc-one)))
+  (def test-file-two (db-pop/add-file (:id test-rsrc-two)))
+  (def test-file-thr (db-pop/add-file (:id test-rsrc-thr)))
   (def test-word-one (ut/under-to-hyphen (words/CREATE (g/get-random-word-without-id (:id test-user-one)))))
   (def test-word-two (ut/under-to-hyphen (words/CREATE (g/get-random-word-without-id (:id test-user-two)))))
   (def test-word-thr (ut/under-to-hyphen (words/CREATE (g/get-random-word-without-id (:id test-user-thr)))))
@@ -296,7 +297,7 @@
 
 (deftest test-file-patch
   (testing "file fields one at a time"
-    (let [new-file (g/get-random-file-without-id (:id test-rsrc-two))
+    (let [new-file (db-pop/get-file (:id test-rsrc-two))
           id (:id test-file-one)]
       (is (= (ut/remove-db-only test-file-one) (ut/remove-db-only (files/READ id))))
       (doseq [val (seq new-file)]
@@ -306,7 +307,7 @@
                 (is (= ((get val 0) new-file) ((get val 0) (files/READ id)))))])
       (is (= (into new-file {:id id}) (ut/remove-db-only (files/READ id))))))
   (testing "file multiple fields at once"
-    (let [new-file (g/get-random-file-without-id (:id test-rsrc-thr))
+    (let [new-file (db-pop/get-file (:id test-rsrc-thr))
           id (:id test-file-two)]
       (is (= (ut/remove-db-only test-file-two) (ut/remove-db-only (files/READ id))))
       (let [fields-to-change (ut/random-submap new-file)]
@@ -315,7 +316,7 @@
         (is (= (ut/remove-db-only (merge test-file-two fields-to-change))
                (ut/remove-db-only (files/READ id)))))))
   (testing "file all fields at once"
-    (let [new-file (g/get-random-file-without-id (:id test-rsrc-one))
+    (let [new-file (db-pop/get-file (:id test-rsrc-one))
           id (:id test-file-thr)]
       (is (= (ut/remove-db-only test-file-thr) (ut/remove-db-only (files/READ id))))
       (let [res (rp/file-id-patch id new-file)]
@@ -323,7 +324,7 @@
       (is (= (ut/remove-db-only (merge test-file-thr new-file))
              (ut/remove-db-only (files/READ id))))))
   (testing "file to self (each field)"
-    (let [new-file (g/get-random-file-without-id (:id test-rsrc-one))
+    (let [new-file (db-pop/get-file (:id test-rsrc-one))
           new-file-res (files/CREATE new-file)
           id (:id new-file-res)]
       (doseq [val (seq new-file)]
@@ -333,7 +334,7 @@
                 (is (= ((get val 0) new-file) ((get val 0) (files/READ id)))))])
       (is (= (into new-file {:id id}) (ut/remove-db-only (files/READ id))))))
   (testing "file to self (some fields)"
-    (let [new-file (g/get-random-file-without-id (:id test-rsrc-one))
+    (let [new-file (db-pop/get-file (:id test-rsrc-one))
           new-file-res (files/CREATE new-file)
           id (:id new-file-res)]
       (let [fields-to-change (ut/random-submap new-file)]
@@ -342,7 +343,7 @@
         (is (= (ut/remove-db-only (into (merge new-file fields-to-change) {:id id}))
                (ut/remove-db-only (files/READ id)))))))
   (testing "file to self (all field)"
-      (let [new-file (g/get-random-file-without-id (:id test-rsrc-one))
+      (let [new-file (db-pop/get-file (:id test-rsrc-one))
             new-file-res (files/CREATE new-file)
             id (:id new-file-res)]
         (let [res (rp/file-id-patch id new-file)]

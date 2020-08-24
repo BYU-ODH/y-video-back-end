@@ -97,6 +97,15 @@ CREATE TABLE resources (
 );
 COMMENT ON TABLE resources IS 'Referenced by contents, hold media in files table';
 
+DROP TABLE IF EXISTS languages CASCADE;
+CREATE TABLE languages (
+    id TEXT NOT NULL PRIMARY KEY
+    ,deleted TIMESTAMP DEFAULT NULL
+    ,updated TIMESTAMP DEFAULT NULL
+    ,created  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+COMMENT ON TABLE languages IS 'List of language options for file-versions';
+
 DROP TABLE IF EXISTS files CASCADE;
 CREATE TABLE files (
    id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY
@@ -105,7 +114,7 @@ CREATE TABLE files (
    ,created  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
    ,resource_id UUID REFERENCES resources(id)
    ,filepath TEXT
-   ,file_version TEXT
+   ,file_version TEXT REFERENCES languages(id)
    ,metadata TEXT
    , CONSTRAINT no_duplicate_filepaths UNIQUE (filepath)
 );
@@ -146,16 +155,6 @@ CREATE TABLE contents (
     --,public BOOLEAN
 );
 COMMENT ON TABLE contents IS 'Contains contents to be applied over resources';
-
-DROP TABLE IF EXISTS languages CASCADE;
-CREATE TABLE languages (
-    id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY
-    ,deleted TIMESTAMP DEFAULT NULL
-    ,updated TIMESTAMP DEFAULT NULL
-    ,created  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    ,language TEXT
-);
-COMMENT ON TABLE languages IS 'List of language options for subtitles';
 
 DROP TABLE IF EXISTS subtitles CASCADE;
 CREATE TABLE subtitles (

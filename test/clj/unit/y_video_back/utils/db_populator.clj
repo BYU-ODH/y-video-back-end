@@ -243,11 +243,12 @@
 (defn get-file
   "Creates file, ready to be added to db. Contains random filepath."
   ([]
-   (let [new-rsrc (ut/under-to-hyphen (resources/CREATE (get-resource)))]
-     (g/get-random-file-without-id (:id new-rsrc))))
+   (get-file (:id (add-resource))))
   ([resource-id]
-   (g/get-random-file-without-id resource-id)))
-
+   (assoc (dissoc (g/get-random-file-without-id resource-id)
+                  :file-version)
+          :file-version
+          (:id (add-language)))))
 
 (defn add-file
   "Creates file, adds to db. Contains random filepath."
