@@ -19,7 +19,9 @@
             [y-video-back.routes.service-handlers.utils.utils :as sh-utils]
             [ring.middleware.cors :refer [wrap-cors]]
             [y-video-back.routes.service-handlers.utils.role-utils :as ru]
-            [clojure.data.json :as json])
+            [clojure.data.json :as json]
+            [y-video-back.utils.account-permissions :as ac])
+
   (:import [javax.servlet ServletContext]))
 
 (def cors-headers
@@ -124,7 +126,7 @@
 (defn get-permission-level
   "Returns permission level from request, nil if not found."
   [request]
-  (get-in request [:reitit.core/match :data (:request-method request) :permission-level]))
+  (ac/to-int-type (get-in request [:reitit.core/match :data (:request-method request) :permission-level])))
 
 (defn get-role-level
   "Returns role level from request, nil if not found."

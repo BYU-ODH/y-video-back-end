@@ -10,11 +10,12 @@
    [y-video-back.model-specs :as sp]
    [y-video-back.routes.service-handlers.utils.utils :as utils]
    [y-video-back.routes.service-handlers.utils.role-utils :as ru]
-   [y-video-back.course-creator :as cc]))
+   [y-video-back.course-creator :as cc]
+   [y-video-back.utils.account-permissions :as ac]))
 
 (def user-create
   {:summary "Creates a new user - FOR DEVELOPMENT ONLY"
-   :permission-level 0
+   :permission-level "admin"
    :parameters {:header {:session-id uuid?}
                 :body models/user-without-id}
    :responses {200 {:body {:message string?
@@ -30,7 +31,7 @@
 
 (def user-get-by-id
   {:summary "Retrieves specified user"
-   :permission-level 2
+   :permission-level "instructor"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
    :responses {200 {:body models/user}
@@ -46,7 +47,7 @@
 
 (def user-update
   {:summary "Updates specified user"
-   :permission-level 0
+   :permission-level "admin"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?} :body ::sp/user}
    :responses {200 {:body {:message string?}}
@@ -61,7 +62,7 @@
 
 (def user-delete
   {:summary "Deletes specified user"
-   :permission-level 0
+   :permission-level "admin"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
    :responses {200 {:body {:message string?}}
@@ -77,7 +78,7 @@
 
 (def user-get-logged-in ;; Non-functional
   {:summary "Retrieves the current logged-in user"
-   :permission-level 3
+   :permission-level "student"
    :bypass-permission true
    :parameters {:header {:session-id uuid?}}
    :responses {200 {:body models/user}
@@ -102,7 +103,7 @@
 
 (def user-get-all-collections ;; Non-functional
   {:summary "Retrieves all collections the specified user owns"
-   :permission-level 1
+   :permission-level "lab-assistant"
    :bypass-permission true
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
@@ -128,7 +129,7 @@
 
 (def user-get-all-collections-by-logged-in
   {:summary "Retrieves all collections for session user"
-   :permission-level 3
+   :permission-level "student"
    :parameters {:header {:session-id uuid?}}
    :responses {200 {:body [(assoc models/collection :content [models/content])]}
                404 {:body {:message string?}}}
@@ -161,7 +162,7 @@
 
 (def user-get-all-courses ;; Non-functional
   {:summary "Retrieves all courses for specified user"
-   :permission-level 1
+   :permission-level "lab-assistant"
    :bypass-permission true
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
@@ -188,7 +189,7 @@
 
 (def user-get-all-words
   {:summary "Retrieves all words under specified user"
-   :permission-level 1
+   :permission-level "lab-assistant"
    :bypass-permission true
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
@@ -210,7 +211,7 @@
 
 (def refresh-courses
   {:summary "Queries api to refresh courses is enrolled in"
-   :permission-level 3
+   :permission-level "student"
    :bypass-permission true
    :parameters {:header {:session-id uuid?}}
    :responses {200 {:body {:message string?}}

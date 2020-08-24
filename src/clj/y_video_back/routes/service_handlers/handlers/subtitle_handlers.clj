@@ -9,7 +9,7 @@
 
 (def subtitle-create
   {:summary "Creates a new subtitle"
-   :permission-level 1
+   :permission-level "lab-assistant"
    :role-level "ta"
    :path-to-id [:parameters :body :resource-id]
    :parameters {:header {:session-id uuid?}
@@ -29,7 +29,7 @@
 
 (def subtitle-get-by-id
   {:summary "Retrieves specified subtitle"
-   :permission-level 1
+   :permission-level "lab-assistant"
    :role-level "auditing"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
@@ -45,7 +45,7 @@
 
 (def subtitle-update
   {:summary "Updates specified subtitle"
-   :permission-level 1
+   :permission-level "lab-assistant"
    :role-level "ta"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?} :body ::sp/subtitle}
@@ -70,7 +70,7 @@
 
 (def subtitle-delete
   {:summary "Deletes specified subtitle"
-   :permission-level 0
+   :permission-level "admin"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
    :responses {200 {:body {:message string?}}

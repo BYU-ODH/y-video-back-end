@@ -9,11 +9,12 @@
    [y-video-back.model-specs :as sp]
    [y-video-back.routes.service-handlers.utils.utils :as utils]
    [y-video-back.routes.service-handlers.utils.role-utils :as ru]
-   [y-video-back.routes.service-handlers.utils.utils :as ut]))
+   [y-video-back.routes.service-handlers.utils.utils :as ut]
+   [y-video-back.utils.account-permissions :as ac]))
 
 (def content-create ;; Non-functional
   {:summary "Creates new content"
-   :permission-level 1
+   :permission-level "lab-assistant"
    :role-level "instructor"
    :path-to-id [:parameters :body :collection-id]
    :parameters {:header {:session-id uuid?}
@@ -39,7 +40,7 @@
 
 (def content-get-by-id
   {:summary "Retrieves specified content"
-   :permission-level 1
+   :permission-level "lab-assistant"
    :role-level "auditing"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
@@ -55,7 +56,7 @@
 
 (def content-update ;; Non-functional
   {:summary "Updates the specified content"
-   :permission-level 1
+   :permission-level "lab-assistant"
    :role-level "ta"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?} :body ::sp/content}
@@ -80,7 +81,7 @@
 
 (def content-delete ;; Non-functional
   {:summary "Deletes the specified content"
-   :permission-level 0
+   :permission-level "admin"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
    :responses {200 {:body {:message string?}}
@@ -95,7 +96,7 @@
 
 (def content-add-view
   {:summary "Adds view to content and resource"
-   :permission-level 1
+   :permission-level "lab-assistant"
    :role-level "auditing"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
@@ -119,7 +120,7 @@
 
 (comment (def content-add-subtitle)
   {:summary "Adds subtitle to specified content"
-   :permission-level 1
+   :permission-level "lab-assistant"
    :role-level "ta"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?} :body {:subtitle-id uuid?}}
@@ -149,7 +150,7 @@
 
 (comment (def content-remove-subtitle)
   {:summary "Removes subtitle from specified content"
-   :permission-level 1
+   :permission-level "lab-assistant"
    :role-level "ta"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?} :body {:subtitle-id uuid?}}
@@ -176,7 +177,7 @@
 
 (def content-subtitles
   {:summary "Retrieve all subtitles connected to content"
-   :permission-level 1
+   :permission-level "lab-assistant"
    :role-level "auditing"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
@@ -194,7 +195,7 @@
 
 (def content-clone-subtitle
   {:summary "Clone subtitle to content"
-   :permission-level 1
+   :permission-level "lab-assistant"
    :role-level "ta"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}

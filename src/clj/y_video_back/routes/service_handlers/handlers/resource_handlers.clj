@@ -4,12 +4,13 @@
    [y-video-back.db.subtitles :as subtitles]
    [y-video-back.models :as models]
    [y-video-back.model-specs :as sp]
-   [y-video-back.routes.service-handlers.utils.utils :as utils]))
+   [y-video-back.routes.service-handlers.utils.utils :as utils]
+   [y-video-back.utils.account-permissions :as ac]))
 
 
 (def resource-create ;; Non-functional
   {:summary "Creates new resource"
-   :permission-level 1
+   :permission-level "lab-assistant"
    :parameters {:header {:session-id uuid?}
                 :body models/resource-without-id}
    :responses {200 {:body {:message string?
@@ -21,7 +22,7 @@
 
 (def resource-get-by-id
   {:summary "Retrieves specified resource"
-   :permission-level 2
+   :permission-level "instructor"
    :role-level "auditing"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
@@ -37,7 +38,7 @@
 
 (def resource-update ;; Non-functional
   {:summary "Updates the specified resource"
-   :permission-level 1
+   :permission-level "lab-assistant"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?} :body ::sp/resource}
    :responses {200 {:body {:message string?}}
@@ -55,7 +56,7 @@
 
 (def resource-delete ;; Non-functional
   {:summary "Deletes the specified resource"
-   :permission-level 0
+   :permission-level "admin"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
    :responses {200 {:body {:message string?}}
@@ -70,7 +71,7 @@
 
 (def resource-get-all-collections ;; Non-functional
   {:summary "Retrieves all collections for specified resource"
-   :permission-level 1
+   :permission-level "lab-assistant"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
    :responses {200 {:body [models/collection]}
@@ -88,7 +89,7 @@
 
 (def resource-get-all-contents ;; Non-functional
   {:summary "Retrieves all contents for specified resource"
-   :permission-level 1
+   :permission-level "lab-assistant"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
    :responses {200 {:body [(into models/content {:resource-id uuid?})]}
@@ -104,7 +105,7 @@
 
 (def resource-get-all-subtitles ;; Non-functional
   {:summary "Retrieves all subtitles connected to resource"
-   :permission-level 2
+   :permission-level "instructor"
    :role-level "ta"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
@@ -124,7 +125,7 @@
 
 (def resource-get-all-files ;; Non-functional
   {:summary "Retrieves all the files for the specified resource"
-   :permission-level 2
+   :permission-level "instructor"
    :role-level "auditing"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}

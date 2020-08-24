@@ -5,11 +5,12 @@
    [y-video-back.db.contents :as contents]
    [y-video-back.models :as models]
    [y-video-back.model-specs :as sp]
-   [y-video-back.routes.service-handlers.utils.utils :as utils]))
+   [y-video-back.routes.service-handlers.utils.utils :as utils]
+   [y-video-back.utils.account-permissions :as ac]))
 
 (def language-create
   {:summary "Creates a new language"
-   :permission-level 1
+   :permission-level "lab-assistant"
    :parameters {:header {:session-id uuid?}
                 :body models/language-without-id}
    :responses {200 {:body {:message string?
@@ -24,7 +25,7 @@
 
 (def language-get-by-id
   {:summary "Retrieves specified language"
-   :permission-level 3
+   :permission-level "student"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
    :responses {200 {:body models/language}
@@ -39,7 +40,7 @@
 
 (def language-update
   {:summary "Updates specified language"
-   :permission-level 1
+   :permission-level "lab-assistant"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?} :body ::sp/language}
    :responses {200 {:body {:message string?}}
@@ -58,7 +59,7 @@
 
 (def language-delete
   {:summary "Deletes specified language"
-   :permission-level 0
+   :permission-level "admin"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
    :responses {200 {:body {:message string?}}
@@ -73,7 +74,7 @@
 
 (def language-get-all
   {:summary "Retrieves all languages"
-   :permission-level 3
+   :permission-level "student"
    :parameters {:header {:session-id uuid?}}
    :responses {200 {:body [models/language]}}
    :handler (fn [req]

@@ -1,6 +1,7 @@
 (ns y-video-back.routes.service-handlers.handlers.misc-handlers
   (:require
-   [clojure.spec.alpha :as s]))
+   [clojure.spec.alpha :as s]
+   [y-video-back.utils.account-permissions :as ac]))
 
 
 (s/def :echo/first string?)
@@ -10,7 +11,7 @@
 
 (def echo-patch
   {:summary "echo parameter post"
-   :permission-level 0
+   :permission-level "admin"
    :parameters {:header {:session-id uuid?}
                 :body ::echo}
    :responses {200 {:body {:message string?}}}

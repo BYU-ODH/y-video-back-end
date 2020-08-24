@@ -78,7 +78,7 @@
                            :body {:session-id (str (uc/get-session-id username))}}))}}]]
     ["/ping"
      {:get {:summary "ping, requires valid session-id"
-            :permission-level 0
+            :permission-level "admin"
             :bypass-permission true
             :responses {200 {:body {:message string?}}}
             :handler (fn [req]
@@ -87,7 +87,7 @@
      ;{:get (constantly (response/ok {:message "pong"}))}]
     ["/auth-ping"
      {:get {:summary "ping, requires valid session-id"
-            :permission-level 0
+            :permission-level "admin"
             :parameters {:header {:session-id uuid?}}
             :responses {200 {:body {:message string?}}}
             :handler (fn [req]

@@ -5,7 +5,8 @@
    [y-video-back.db.courses :as courses]
    [y-video-back.models :as models]
    [y-video-back.routes.service-handlers.utils.utils :as utils]
-   [y-video-back.db.core :as db]))
+   [y-video-back.db.core :as db]
+   [y-video-back.utils.account-permissions :as ac]))
    ;[y-video-back.course-data :as cd-api]))
 
 ; TODO - sort results by more than just alphabetical
@@ -37,7 +38,7 @@
 
   (def refresh-course-list
     {:summary "Refreshes courses in database. DANGEROUS - NOT FUNCTIONAL."
-     :permission-level 0
+     :permission-level "admin"
      :parameters {:header {:session-id uuid?}
                   :path {:password uuid?}}
      :responses {200 {:body {:message string?}}
@@ -55,7 +56,7 @@
 
 (def search-by-user ;; Non-functional
   {:summary "Searches users, collections, resources, and courses by search term"
-   :permission-level 2
+   :permission-level "instructor"
    :parameters {:header {:session-id uuid?}
                 :path {:term string?}}
    :responses {200 {:body [models/user]}}
@@ -70,7 +71,7 @@
 
 (def search-by-collection ;; Non-functional
   {:summary "Searches users, collections, resources, and courses by search term"
-   :permission-level 1
+   :permission-level "lab-assistant"
    :parameters {:header {:session-id uuid?}
                 :path {:term string?}}
    :responses {200 {:body [(into models/collection {:username string?})]}}
@@ -87,7 +88,7 @@
 
 (def search-by-content
   {:summary "Searches users, collections, contents, and courses by search term"
-   :permission-level 1
+   :permission-level "lab-assistant"
    :parameters {:header {:session-id uuid?}
                 :path {:term string?}}
    :responses {200 {:body [models/content]}}
@@ -103,7 +104,7 @@
 
 (def search-by-resource
   {:summary "Searches users, collections, resources, and courses by search term"
-   :permission-level 2
+   :permission-level "instructor"
    :parameters {:header {:session-id uuid?}
                 :path {:term string?}}
    :responses {200 {:body [models/resource]}}

@@ -7,10 +7,12 @@
    [y-video-back.model-specs :as sp]
    [y-video-back.routes.service-handlers.utils.utils :as utils]
    [reitit.ring.middleware.multipart :as multipart]
-   [clojure.java.io :as io]))
+   [clojure.java.io :as io]
+   [y-video-back.utils.account-permissions :as ac]))
+
 (def file-create
   {:summary "Creates a new file. MUST INCLUDE FILE AS UPLOAD."
-   :permission-level 1
+   :permission-level "lab-assistant"
    :parameters {:header {:session-id uuid?}
                 ;:body {:file-version string?}
                 :multipart {:file multipart/temp-file-part
@@ -43,7 +45,7 @@
 
 (def file-get-by-id
   {:summary "Retrieves specified file"
-   :permission-level 2
+   :permission-level "instructor"
    :role-level "auditing"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
@@ -60,7 +62,7 @@
 ; Should this be allowed to update the filepath?
 (def file-update
   {:summary "Updates specified file"
-   :permission-level 1
+   :permission-level "lab-assistant"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?} :body ::sp/file}
    :responses {200 {:body {:message string?}}
@@ -91,7 +93,7 @@
 
 (def file-delete
   {:summary "Deletes specified file"
-   :permission-level 1
+   :permission-level "lab-assistant"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
    :responses {200 {:body {:message string?}}

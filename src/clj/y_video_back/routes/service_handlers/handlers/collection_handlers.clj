@@ -15,7 +15,7 @@
 
 (def collection-create ;; Non-functional
   {:summary "Creates a new collection with the given (temp) user as an owner"
-   :permission-level 1
+   :permission-level "lab-assistant"
    :bypass-permission true
    :parameters {:header {:session-id uuid?}
                 :body models/collection-without-id}
@@ -42,7 +42,7 @@
 
 (def collection-get-by-id ;; Not tested
   {:summary "Retrieves specified collection"
-   :permission-level 1
+   :permission-level "lab-assistant"
    :role-level "auditing"
    :path-to-id [:parameters :path :id]
    :parameters {:header {:session-id uuid?}
@@ -59,7 +59,7 @@
 
 (def collection-update ;; Non-functional
   {:summary "Updates the specified collection"
-   :permission-level 1
+   :permission-level "lab-assistant"
    :role-level "ta"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?} :body ::sp/collection}
@@ -92,7 +92,7 @@
 
 (def collection-delete ;; Non-functional
   {:summary "Deletes the specified collection"
-   :permission-level 0
+   :permission-level "admin"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
    :responses {200 {:body {:message string?}}
@@ -107,7 +107,7 @@
 
 (def collection-add-user
   {:summary "Adds user to specified collection"
-   :permission-level 1
+   :permission-level "lab-assistant"
    :role-level "instructor"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?} :body {:username string? :account-role int?}}
@@ -135,7 +135,7 @@
 
 (def collection-remove-user
   {:summary "Removes user from specified collection"
-   :permission-level 1
+   :permission-level "lab-assistant"
    :role-level "instructor"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?} :body {:username string?}}
@@ -163,7 +163,7 @@
 
 (def collection-add-course
   {:summary "Adds course to specified collection. Creates course in database if does not already exist."
-   :permission-level 1
+   :permission-level "lab-assistant"
    :role-level "instructor"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}
@@ -194,7 +194,7 @@
 
 (def collection-remove-course
   {:summary "Removes course from specified collection"
-   :permission-level 1
+   :permission-level "lab-assistant"
    :role-level "instructor"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?} :body {:course-id uuid?}}
@@ -221,7 +221,7 @@
 
 (def collection-get-all-contents ;; Non-functional
   {:summary "Retrieves all the resources for the specified collection"
-   :permission-level 1
+   :permission-level "lab-assistant"
    :role-level "auditing"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
@@ -238,7 +238,7 @@
 
 (def collection-get-all-courses ;; Non-functional
   {:summary "Retrieves all the courses for the specified collection"
-   :permission-level 1
+   :permission-level "lab-assistant"
    :role-level "instructor"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
@@ -258,7 +258,7 @@
 
 (def collection-get-all-users
   {:summary "Retrieves all users for the specified collection"
-   :permission-level 1
+   :permission-level "lab-assistant"
    :role-level "instructor"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}

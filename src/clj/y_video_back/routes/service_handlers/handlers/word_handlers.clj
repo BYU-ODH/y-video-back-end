@@ -6,11 +6,12 @@
    [y-video-back.models :as models]
    [y-video-back.model-specs :as sp]
    [y-video-back.routes.service-handlers.utils.utils :as utils]
-   [y-video-back.routes.service-handlers.utils.role-utils :as ru]))
+   [y-video-back.routes.service-handlers.utils.role-utils :as ru]
+   [y-video-back.utils.account-permissions :as ac]))
 
 (def word-create
   {:summary "Creates a new word"
-   :permission-level 1
+   :permission-level "lab-assistant"
    :bypass-permission true
    :parameters {:header {:session-id uuid?}
                 :body models/word-without-id}
@@ -35,7 +36,7 @@
 
 (def word-get-by-id
   {:summary "Retrieves specified word"
-   :permission-level 1
+   :permission-level "lab-assistant"
    :bypass-permission true
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
@@ -56,7 +57,7 @@
 
 (def word-update
   {:summary "Updates specified word"
-   :permission-level 1
+   :permission-level "lab-assistant"
    :bypass-permission true
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?} :body ::sp/word}
@@ -96,7 +97,7 @@
 
 (def word-delete
   {:summary "Deletes specified word"
-   :permission-level 1
+   :permission-level "lab-assistant"
    :bypass-permission true
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
