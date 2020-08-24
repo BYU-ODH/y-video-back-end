@@ -43,7 +43,8 @@
       (is (= (-> sbtl-one
                  (ut/remove-db-only)
                  (update :id str)
-                 (update :content-id str))
+                 (update :content-id str)
+                 (update :language-id str))
              (ut/remove-db-only (m/decode-response-body res))))))
   (testing "subtitle UPDATE"
     (let [sbtl-one (subtitles/CREATE (db-pop/get-subtitle))

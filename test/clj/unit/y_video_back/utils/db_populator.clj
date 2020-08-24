@@ -27,6 +27,7 @@
       [y-video-back.db.collections :as collections]
       [y-video-back.db.resources :as resources]
       [y-video-back.db.courses :as courses]
+      [y-video-back.db.languages :as languages]
       [y-video-back.db.subtitles :as subtitles]
       [y-video-back.db.files :as files]
       [y-video-back.db.users :as users]
@@ -212,13 +213,26 @@
          cont-one-add (contents/CREATE cont-one)]
      (assoc cont-one :id (:id cont-one-add)))))
 
+(defn get-language
+  "Creates language, ready to be added to db"
+  ([]
+   (g/get-random-language-without-id)))
+(defn add-language
+  "Creates language, adds to db"
+  []
+  (let [lang-one (get-language)
+        lang-one-add (languages/CREATE lang-one)]
+    (assoc lang-one :id (:id lang-one-add))))
+
 (defn get-subtitle
   "Creates subtitle, ready to be added to db"
   ([]
-   (let [new-cont (add-content)]
-     (g/get-random-subtitle-without-id (:id new-cont))))
+   (get-subtitle (:id (add-content)) (:id (add-language))))
   ([content-id]
-   (g/get-random-subtitle-without-id content-id)))
+   (get-subtitle content-id (:id (add-language))))
+  ([content-id language-id]
+   (g/get-random-subtitle-without-id content-id language-id)))
+
 (defn add-subtitle
   "Creates subtitle, adds to db"
   ([]

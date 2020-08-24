@@ -89,7 +89,8 @@
       (is (= 200 (:status res)))
       (is (= (map #(-> %
                        (update :id str)
-                       (update :content-id str))
+                       (update :content-id str)
+                       (update :language-id str))
                   [sbtl-one])
              (m/decode-response-body res)))))
   (testing "find all subtitles by resource (2 contents)"
@@ -102,7 +103,8 @@
       (is (= 200 (:status res)))
       (is (= (frequencies (map #(-> %
                                     (update :id str)
-                                    (update :content-id str))
+                                    (update :content-id str)
+                                    (update :language-id str))
                                [sbtl-one sbtl-two]))
              (frequencies (m/decode-response-body res)))))))
 

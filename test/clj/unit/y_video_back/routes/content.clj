@@ -72,7 +72,8 @@
       (is (= 200 (:status res)))
       (is (= [(-> sbtl-one
                   (update :id str)
-                  (update :content-id str))]
+                  (update :content-id str)
+                  (update :language-id str))]
              (m/decode-response-body res)))))
   (testing "get subtitles for content (2)"
     (let [cont-one (db-pop/add-content)
@@ -85,7 +86,8 @@
       (is (= 200 (:status res)))
       (is (= (frequencies (map #(-> %
                                     (update :id str)
-                                    (update :content-id str))
+                                    (update :content-id str)
+                                    (update :language-id str))
                                [sbtl-one sbtl-two]))
              (frequencies (m/decode-response-body res)))))))
 

@@ -147,6 +147,16 @@ CREATE TABLE contents (
 );
 COMMENT ON TABLE contents IS 'Contains contents to be applied over resources';
 
+DROP TABLE IF EXISTS languages CASCADE;
+CREATE TABLE languages (
+    id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY
+    ,deleted TIMESTAMP DEFAULT NULL
+    ,updated TIMESTAMP DEFAULT NULL
+    ,created  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    ,language TEXT
+);
+COMMENT ON TABLE languages IS 'List of language options for subtitles';
+
 DROP TABLE IF EXISTS subtitles CASCADE;
 CREATE TABLE subtitles (
     id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY
@@ -154,7 +164,7 @@ CREATE TABLE subtitles (
     ,updated TIMESTAMP DEFAULT NULL
     ,created  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     ,title TEXT
-    ,language TEXT
+    ,language_id UUID REFERENCES languages(id)
     ,content TEXT
     ,content_id UUID REFERENCES contents(id)
 );
@@ -259,6 +269,7 @@ BEGIN
       t,t);
    END LOOP;
 END;
+$$ LANGUAGE plpgsql;
 
 -------------------------
 -- EXPIRED AUTH-TOKENS --
@@ -297,7 +308,6 @@ CREATE TRIGGER delete_expired_file_keys_trigger
 ---------------------
 -- UNDELETED VIEWS --
 ---------------------
-$$ LANGUAGE plpgsql;
 
 DO $$
 DECLARE

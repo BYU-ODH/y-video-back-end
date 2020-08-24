@@ -121,11 +121,10 @@
 
 (def subtitle-without-any-ids
   {:title string?
-   :language string?
    :content string?})
 
 (def subtitle-without-id
-  (into subtitle-without-any-ids {:content-id uuid?}))
+  (into subtitle-without-any-ids {:content-id uuid? :language-id uuid?}))
 
 (def subtitle
   (into subtitle-without-id {:id uuid?}))
@@ -140,6 +139,12 @@
 
 (def file
   (into file-without-id {:id uuid?}))
+
+(def language-without-id
+  {:language string?})
+
+(def language
+  (into language-without-id {:id uuid?}))
 
 (def user-collections-assoc-without-any-ids
   {:account-role int?})

@@ -243,6 +243,15 @@
           ;true (spy)
           true dbdo!))
 
+(defn read-all
+  "Get all entries from table"
+  [table-keyword &[select-field-keys]]
+  (cond-> {:select (or select-field-keys [:*])
+           :from [table-keyword]}
+    true sql/format
+    ;true (spy)
+    true dbr))
+
 ; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ;
 
 (defn DELETE
