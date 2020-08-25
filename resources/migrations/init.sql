@@ -114,9 +114,9 @@ CREATE TABLE files (
    ,created  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
    ,resource_id UUID REFERENCES resources(id)
    ,filepath TEXT
-   ,file_version TEXT REFERENCES languages(id)
+   ,file_version TEXT-- REFERENCES languages(id)
    ,metadata TEXT
-   , CONSTRAINT no_duplicate_filepaths UNIQUE (filepath)
+   --, CONSTRAINT no_duplicate_filepaths UNIQUE (filepath)
 );
 COMMENT ON TABLE files IS 'Files represent media (i.e. videos) with path to file and metadata';
 

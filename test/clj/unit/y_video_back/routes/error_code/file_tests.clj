@@ -59,6 +59,12 @@
     (let [filecontent (ut/get-filecontent)
           file-one (dissoc (db-pop/get-file (java.util.UUID/randomUUID)) :filepath)
           res(rp/file-post file-one filecontent)]
+      (is (= 500 (:status res)))))
+  (testing "add file with nonexistent language"
+    (let [filecontent (ut/get-filecontent)
+          lang-one (db-pop/get-language)
+          file-one (dissoc (db-pop/get-file) :filepath)
+          res(rp/file-post (assoc (dissoc file-one :file-version) :file-version (:id lang-one)) filecontent)]
       (is (= 500 (:status res))))))
 
 (deftest file-id-get
@@ -94,6 +100,19 @@
     (let [file-one (db-pop/get-file (:id test-rsrc-one))
           file-one-res (files/CREATE file-one)
           res (rp/file-id-patch (:id file-one-res) {:resource-id (java.util.UUID/randomUUID)})]
+      (is (= 500 (:status res)))))
+  (testing "update file to nonexistent language (all fields)"
+    (let [file-one (db-pop/get-file (:id test-rsrc-one))
+          file-two (db-pop/get-file (java.util.UUID/randomUUID))
+          lang-one (db-pop/get-language)
+          file-one-res (files/CREATE file-one)
+          res (rp/file-id-patch (:id file-one-res) (assoc (dissoc file-two :file-version) :file-version (:id lang-one)))]
+      (is (= 500 (:status res)))))
+  (testing "update file to nonexistent language (language only)"
+    (let [file-one (db-pop/get-file (:id test-rsrc-one))
+          lang-one (db-pop/get-language)
+          file-one-res (files/CREATE file-one)
+          res (rp/file-id-patch (:id file-one-res) {:file-version (:id lang-one)})]
       (is (= 500 (:status res))))))
 
 (deftest file-id-delete

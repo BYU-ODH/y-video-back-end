@@ -3,6 +3,7 @@
    [y-video-back.config :refer [env]]
    [y-video-back.db.files :as files]
    [y-video-back.db.resources :as resources]
+   [y-video-back.db.languages :as languages]
    [y-video-back.models :as models]
    [y-video-back.model-specs :as sp]
    [y-video-back.routes.service-handlers.utils.utils :as utils]
@@ -32,15 +33,18 @@
                 (if-not (resources/EXISTS? resource-id)
                   {:status 500
                    :body {:message "resource not found"}}
-                  (let [id (utils/get-id (files/CREATE {:filepath file-name
-                                                        :file-version file-version
-                                                        :metadata metadata
-                                                        :resource-id resource-id}))]
-                    (io/copy (:tempfile file)
-                             (io/file (str (-> env :FILES :media-url) file-name)))
-                    {:status 200
-                     :body {:message "1 file created"
-                            :id id}}))))})
+                  (if-not (languages/EXISTS? file-version)
+                    {:status 500
+                     :body {:message "file-version not found in language table"}}
+                    (let [id (utils/get-id (files/CREATE {:filepath file-name
+                                                          :file-version file-version
+                                                          :metadata metadata
+                                                          :resource-id resource-id}))]
+                      (io/copy (:tempfile file)
+                               (io/file (str (-> env :FILES :media-url) file-name)))
+                      {:status 200
+                       :body {:message "1 file created"
+                              :id id}})))))})
 
 
 (def file-get-by-id
@@ -79,17 +83,20 @@
                   (if-not (resources/EXISTS? (:resource-id proposed-file))
                     {:status 500
                      :body {:message "resource not found"}}
-                    (if (and (not (nil? same-name-file))
-                             (not (= (:id current-file)
-                                     (:id same-name-file))))
+                    (if-not (languages/EXISTS? (:file-version proposed-file))
                       {:status 500
-                       :body {:message "unable to update file, filepath likely in use"}}
-                      (let [result (files/UPDATE id body)]
-                        (if (= 0 result)
-                          {:status 500
-                           :body {:message "unable to update file"}}
-                          {:status 200
-                           :body {:message (str result " files updated")}})))))))})
+                       :body {:message "file-version not found in languages table"}}
+                      (if (and (not (nil? same-name-file))
+                               (not (= (:id current-file)
+                                       (:id same-name-file))))
+                        {:status 500
+                         :body {:message "unable to update file, filepath likely in use"}}
+                        (let [result (files/UPDATE id body)]
+                          (if (= 0 result)
+                            {:status 500
+                             :body {:message "unable to update file"}}
+                            {:status 200
+                             :body {:message (str result " files updated")}}))))))))})
 
 (def file-delete
   {:summary "Deletes specified file"
