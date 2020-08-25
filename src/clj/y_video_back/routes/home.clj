@@ -6,7 +6,8 @@
      [y-video-back.middleware :as middleware]
      [y-video-back.user-creator :as uc]
      [y-video-back.course-creator :refer [check-courses-with-api]]
-     [byu-cas.core :as cas]))
+     [byu-cas.core :as cas]
+     [y-video-back.routes.services :refer [service-routes]]))
 
 (defn home-page [request-map]
   (layout/hiccup-render-cljs-base {:username request-map}))
@@ -26,6 +27,10 @@
       (println (str "serving session-id from home.clj: " session-id))
       (layout/render (into request {:session-id session-id}) "index.html"))))
 
+(defn permission-docs-page [request]
+  (layout/render request "permissions.html" {:routes (service-routes)
+                                             :message "test message!"}))
+
 (def ^{:private true} home-paths
   ["/"])
 
@@ -43,8 +48,8 @@
          ["/ping" {:get (constantly (response/ok {:message "pong"}))}]
          ["/hello" {:get hello-page}]
          ["/who-am-i" {:get (fn [request] {:status 200 :body {:username (:username request)}})}]
-         ["/show-request" {:get (fn [request] {:status 200 :body {:request (str request)
-                                                                  :cas-info (:cas-info request)}})}]
+         ;["/show-request" {:get (fn [request] {:status 200 :body {:request (str request)}})}]
+         ;["/permission-docs" {:get permission-docs-page}]
 
          ;["/logout" {:get {:handler (fn [req] (cas/logout-resp "https://cheneycreations.com"))}}] ; placeholder url until we get a login page going
          ;["/logout" {:get {:handler (redirect (str "/?logout=true"))}}]

@@ -1,0 +1,21 @@
+<html>
+
+<style>
+.center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+</style>
+
+<body>
+    {% for route in routes %}
+        {% if route|first|string? %}
+        {{ route }}
+        <hr/>
+        {% endif %}
+    {% endfor %}
+</body>
+
+
+</html>

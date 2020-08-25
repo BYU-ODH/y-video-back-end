@@ -22,9 +22,9 @@
                            :id string?}}
                500 {:body {:message string?}}}
    :handler (fn [{{:keys [body]} :parameters,}]
-              (if-not (= '() (users/READ-BY-EMAIL [(:email body)]))
+              (if-not (= '() (users/READ-BY-USERNAME [(:username body)]))
                 {:status 500
-                 :body {:message "email already taken"}}
+                 :body {:message "username already taken"}}
                 {:status 200
                  :body {:message "1 user created"
                         :id (utils/get-id (users/CREATE body))}}))})

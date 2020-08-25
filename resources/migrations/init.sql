@@ -12,12 +12,13 @@ CREATE TABLE users (
    ,created  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
    ,last_person_api TIMESTAMP DEFAULT CURRENT_TIMESTAMP
    ,last_course_api TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-   ,email TEXT UNIQUE
+   ,email TEXT
    ,last_login TEXT
    ,account_name TEXT
    ,account_type INTEGER
    ,username TEXT
    ,byu_person_id TEXT DEFAULT '000000000'
+   , CONSTRAINT no_duplicate_user_emails UNIQUE (deleted, username)
 );
 COMMENT ON TABLE users IS 'User-accounts matching netid';
 
@@ -29,7 +30,7 @@ CREATE TABLE user_type_exceptions (
    ,created  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
    ,username TEXT
    ,account_type INTEGER
-   , CONSTRAINT no_duplicate_user_type_exceptions UNIQUE (username)
+   , CONSTRAINT no_duplicate_user_type_exceptions UNIQUE (deleted, username)
 );
 COMMENT ON TABLE user_type_exceptions IS 'Marks users as lab assistants or admins. Overrides account-type from api on user creation.';
 
@@ -43,7 +44,7 @@ CREATE TABLE words (
    ,word TEXT
    ,src_lang TEXT
    ,dest_lang TEXT
-   , CONSTRAINT no_duplicate_user_words UNIQUE (user_id, word, src_lang, dest_lang)
+   , CONSTRAINT no_duplicate_user_words UNIQUE (deleted, user_id, word, src_lang, dest_lang)
 );
 COMMENT ON TABLE words IS 'Vocab words with source and destination language codes';
 
@@ -59,7 +60,7 @@ CREATE TABLE collections (
    ,published BOOLEAN
    ,archived BOOLEAN
    --,public BOOLEAN
-   , CONSTRAINT no_duplicate_owner_names UNIQUE (owner, collection_name)
+   , CONSTRAINT no_duplicate_owner_names UNIQUE (deleted, owner, collection_name)
 );
 COMMENT ON TABLE collections IS 'Collections of content/resources';
 
@@ -72,7 +73,7 @@ CREATE TABLE courses (
    ,department TEXT -- should this be a foreign key?
    ,catalog_number TEXT
    ,section_number TEXT
-   , CONSTRAINT no_duplicate_courses UNIQUE (department, catalog_number, section_number)
+   , CONSTRAINT no_duplicate_courses UNIQUE (deleted, department, catalog_number, section_number)
 );
 COMMENT ON TABLE courses IS 'Courses (or classes) at BYU';
 
@@ -114,9 +115,9 @@ CREATE TABLE files (
    ,created  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
    ,resource_id UUID REFERENCES resources(id)
    ,filepath TEXT
-   ,file_version TEXT-- REFERENCES languages(id)
+   ,file_version TEXT REFERENCES languages(id)
    ,metadata TEXT
-   --, CONSTRAINT no_duplicate_filepaths UNIQUE (filepath)
+   , CONSTRAINT no_duplicate_filepaths UNIQUE (deleted, filepath)
 );
 COMMENT ON TABLE files IS 'Files represent media (i.e. videos) with path to file and metadata';
 
@@ -190,7 +191,7 @@ CREATE TABLE user_collections_assoc (
    ,user_id UUID REFERENCES users(id) ON DELETE CASCADE
    ,collection_id UUID REFERENCES collections(id) ON DELETE CASCADE
    ,account_role INTEGER
-   , CONSTRAINT no_duplicate_user_collections UNIQUE (user_id, collection_id)
+   , CONSTRAINT no_duplicate_user_collections UNIQUE (deleted, user_id, collection_id)
 );
 COMMENT ON TABLE user_collections_assoc IS 'Many-to-many table connecting users and collections, incl. user roles in collections';
 
@@ -203,7 +204,7 @@ CREATE TABLE user_courses_assoc (
    ,user_id UUID REFERENCES users(id) ON DELETE CASCADE
    ,course_id UUID REFERENCES courses(id) ON DELETE CASCADE
    ,account_role INTEGER
-   --, CONSTRAINT no_duplicate_user_courses UNIQUE (user_id, course_id)
+   , CONSTRAINT no_duplicate_user_courses UNIQUE (deleted, user_id, course_id)
 );
 COMMENT ON TABLE user_courses_assoc IS 'Many-to-many table connecting users and courses, incl. user roles in courses';
 
@@ -216,7 +217,7 @@ CREATE TABLE collection_courses_assoc (
    ,created  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
    ,collection_id UUID REFERENCES collections(id)
    ,course_id UUID REFERENCES courses(id)
-   , CONSTRAINT no_duplicate_course_collections UNIQUE (course_id, collection_id)
+   , CONSTRAINT no_duplicate_course_collections UNIQUE (deleted, course_id, collection_id)
 );
 COMMENT ON TABLE collection_courses_assoc IS 'Many-to-many table connecting collections and courses';
 

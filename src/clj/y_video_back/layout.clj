@@ -6,7 +6,8 @@
    [selmer.parser :as parser] ;; Probably a temporary fix
    [ring.util.anti-forgery :refer [anti-forgery-field]]
    [ring.middleware.anti-forgery :refer [*anti-forgery-token*]]
-   [ring.util.http-response :refer [content-type ok]])) ;; Probably a temporary fix
+   [ring.util.http-response :refer [content-type ok]] ;; Probably a temporary fix
+   [selmer.filters :as filters]))
 
 
 (parser/set-resource-path!  (clojure.java.io/resource "html"))
@@ -129,6 +130,9 @@
     "text/html; charset=utf-8")))
 
 ;; Probably a temporary fix \/ \/ \/
+
+(filters/add-filter! :string? string?)
+
 
 (defn render
   "renders the HTML template located relative to resources/html"
