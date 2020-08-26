@@ -83,7 +83,7 @@
    :parameters {:header {:session-id uuid?}}
    :responses {200 {:body models/user}
                      ;:header {:Access-Control-Allow-Origin "http://localhost:3000"}}
-               401 {:body {:message string?}}
+               ;401 {:body {:message string?}}
                404 {:body {:message string?}}
                500 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header} :parameters}]

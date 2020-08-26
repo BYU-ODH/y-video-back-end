@@ -152,6 +152,11 @@
                        (get-in request [:reitit.core/match :data (:request-method request) :bypass-permission])
                        false])))
 
+(def forbidden-page
+  (error-page {:status 401, :title "401 - Unauthorized",
+               :image "https://www.cheatsheet.com/wp-content/uploads/2020/02/anakin_council_ROTS.jpg", :caption "It's unfair! How can you be on this website and not be an admin?!"}))
+
+
 (defn check-permission
   "Checks user has permission for route"
   [handler]
@@ -166,7 +171,7 @@
         (if (or (nil? session-id)
                 (and (not (= (:session-id-bypass env) (str session-id)))
                      (nil? (ru/token-to-user-id session-id))))
-          {:status 401 :body {:message "forbidden"}}
+          forbidden-page
           (if (= (:session-id-bypass env) (str session-id))
             (handler request)
             (let [valid-type (and (not (nil? (get-permission-level request)))
@@ -181,7 +186,7 @@
               (if (or valid-type valid-role bypass-permission)
                 (handler (assoc request :permission-values {:valid-type valid-type
                                                             :valid-role valid-role}))
-                {:status 401 :body {:message "forbidden"}}))))))))
+                forbidden-page))))))))
 
 (defn add-session-id
   "Adds new session-id to response header. Invalidates old session-id."
