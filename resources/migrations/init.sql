@@ -1,9 +1,10 @@
--- This DB implements UUID ids on every table, constraints for composite keys, soft-deletes and 'updated' for data audit
+-- This DB implements UUID ids on (almost) every table, constraints for composite keys, soft-deletes and 'updated' for data audit
 
 DROP TABLE IF EXISTS annotations CASCADE;
 
--- DROP EXTENSION IF EXISTS pgcrypto CASCADE;
--- CREATE EXTENSION pgcrypto;
+-- DROP EXTENSION IF EXISTS pgcrypto CASCADE; -- uncomment for new db
+-- CREATE EXTENSION pgcrypto; -- uncomment for new db
+
 DROP TABLE IF EXISTS users CASCADE;
 CREATE TABLE users (
    id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY

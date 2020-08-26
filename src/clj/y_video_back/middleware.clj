@@ -167,7 +167,7 @@
         (if (or (nil? session-id)
                 (and (not (= (:session-id-bypass env) (str session-id)))
                      (nil? (ru/token-to-user-id session-id))))
-          {:status 401 :body {:message "unauthorized"}}
+          {:status 401 :body {:message "forbidden"}}
           (if (= (:session-id-bypass env) (str session-id))
             (handler request)
             (let [valid-type (and (not (nil? (get-permission-level request)))
@@ -182,7 +182,7 @@
               (if (or valid-type valid-role bypass-permission)
                 (handler (assoc request :permission-values {:valid-type valid-type
                                                             :valid-role valid-role}))
-                {:status 401 :body {:message "unauthorized"}}))))))))
+                {:status 401 :body {:message "forbidden"}}))))))))
 
 (defn add-session-id
   "Adds new session-id to response header. Invalidates old session-id."

@@ -40,7 +40,7 @@
   {:summary "Retrieves all languages"
    :permission-level "student"
    :parameters {:header {:session-id uuid?}}
-   :responses {200 {:body [models/language]}}
+   :responses {200 {:body [string?]}}
    :handler (fn [req]
               {:status 200
-               :body (map utils/remove-db-only (languages/GET-ALL))})})
+               :body (map #(:id %) (languages/GET-ALL))})})

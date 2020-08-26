@@ -42,26 +42,26 @@
       (is (= nil (languages/READ (:id lang-one)))))))
 
 (deftest lang-get-all-0
-  "get all languages from db (0)"
+  (testing "get all languages from db (0)")
   (let [res (rp/language-get-all)]
     (is (= 200 (:status res)))
     (is (= []
            (m/decode-response-body res)))))
 
 (deftest lang-get-all-1
-  "get all languages from db (1)"
+  (testing "get all languages from db (1)")
   (let [lang-one (db-pop/add-language)
         res (rp/language-get-all)]
     (is (= 200 (:status res)))
-    (is (= (frequencies (map #(update % :id str) [lang-one]))
+    (is (= (frequencies (map #(:id %) [lang-one]))
            (frequencies (m/decode-response-body res))))))
 
 (deftest lang-get-all-3
-  "get all languages from db (3)"
+  (testing "get all languages from db (3)")
   (let [lang-one (db-pop/add-language)
         lang-two (db-pop/add-language)
         lang-thr (db-pop/add-language)
         res (rp/language-get-all)]
     (is (= 200 (:status res)))
-    (is (= (frequencies (map #(update % :id str) [lang-one lang-two lang-thr]))
+    (is (= (frequencies (map #(:id %) [lang-one lang-two lang-thr]))
            (frequencies (m/decode-response-body res))))))

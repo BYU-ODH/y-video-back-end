@@ -195,3 +195,6 @@
       (cc/check-courses-with-api (:username user-one) true)
       (is (collection-courses-assoc/EXISTS-COLL-CRSE? (:id coll-one) (:id crse-one)))
       (check-against-test-user (:id user-one-add)))))
+
+
+;; add test for api returning empty list sometimes
