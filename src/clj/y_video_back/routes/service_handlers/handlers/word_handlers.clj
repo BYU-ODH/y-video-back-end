@@ -13,6 +13,7 @@
   {:summary "Creates a new word"
    :permission-level "lab-assistant"
    :bypass-permission true
+   :permission-note "Any user may create a word with own user-id as word's user-id."
    :parameters {:header {:session-id uuid?}
                 :body models/word-without-id}
    :responses {200 {:body {:message string?
@@ -38,6 +39,7 @@
   {:summary "Retrieves specified word"
    :permission-level "lab-assistant"
    :bypass-permission true
+   :permission-note "Any user may retrieve a word with own user-id as word's user-id."
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
    :responses {200 {:body models/word}
@@ -59,6 +61,7 @@
   {:summary "Updates specified word"
    :permission-level "lab-assistant"
    :bypass-permission true
+   :permission-note "Any user may update a word with own user-id as word's user-id."
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?} :body ::sp/word}
    :responses {200 {:body {:message string?}}
@@ -99,6 +102,7 @@
   {:summary "Deletes specified word"
    :permission-level "lab-assistant"
    :bypass-permission true
+   :permission-note "Any user may delete a word with own user-id as word's user-id."
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
    :responses {200 {:body {:message string?}}

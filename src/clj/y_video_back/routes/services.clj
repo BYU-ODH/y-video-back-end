@@ -62,7 +62,6 @@
 
      ["/ping"
       {:get {:summary "ping, requires valid session-id"
-             :permission-level "admin"
              :bypass-permission true
              :responses {200 {:body {:message string?}}}
              :handler (fn [req]
@@ -109,7 +108,7 @@
 
      [""
       {:get {:summary "echo parameter get"
-             :permission-level (:admin env)
+             :permission-level "admin"
              :parameters {:query {:echo string?}}
              :responses {200 {:body {:echo string?}}}
              :handler (fn [{{{:keys [echo]} :query} :parameters}]
@@ -117,7 +116,7 @@
                         {:status 200
                          :body {:echo echo}})}
        :post {:summary "echo parameter post"
-              :permission-level (:admin env)
+              :permission-level "admin"
               :parameters {:header {:session-id uuid?}
                            :body {:echo string?}}
                            ;:multipart {"file" multipart/temp-file-part}}
@@ -130,7 +129,7 @@
        :patch service-handlers/echo-patch}]
      ["/:word"
       {:get {:summary "echo parameter get"
-             :permission-level (:admin env)
+             :permission-level "admin"
              :parameters {:path {:word string?}
                           :query {:second string?}}
              :responses {200 {:body {:echo string?

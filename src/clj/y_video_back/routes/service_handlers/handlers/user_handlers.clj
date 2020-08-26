@@ -79,7 +79,7 @@
 (def user-get-logged-in ;; Non-functional
   {:summary "Retrieves the current logged-in user"
    :permission-level "student"
-   :bypass-permission true
+   ;:bypass-permission true
    :parameters {:header {:session-id uuid?}}
    :responses {200 {:body models/user}
                      ;:header {:Access-Control-Allow-Origin "http://localhost:3000"}}
@@ -105,6 +105,7 @@
   {:summary "Retrieves all collections the specified user owns"
    :permission-level "lab-assistant"
    :bypass-permission true
+   :permission-note "Any user may access this endpoint if their own user-id is the {id} in path."
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
    :responses {200 {:body [models/collection]}
@@ -164,6 +165,7 @@
   {:summary "Retrieves all courses for specified user"
    :permission-level "lab-assistant"
    :bypass-permission true
+   :permission-note "Any user may access this endpoint if their own user-id is the {id} in path."
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
    :responses {200 {:body [models/course]}
@@ -191,6 +193,7 @@
   {:summary "Retrieves all words under specified user"
    :permission-level "lab-assistant"
    :bypass-permission true
+   :permission-note "Any user may access this endpoint if their own user-id is the {id} in path."
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
    :responses {200 {:body [models/word]}
@@ -212,7 +215,7 @@
 (def refresh-courses
   {:summary "Queries api to refresh courses is enrolled in"
    :permission-level "student"
-   :bypass-permission true
+   ;:bypass-permission true
    :parameters {:header {:session-id uuid?}}
    :responses {200 {:body {:message string?}}
                404 {:body {:message string?}}}

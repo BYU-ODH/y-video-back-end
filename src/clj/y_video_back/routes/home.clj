@@ -59,7 +59,8 @@
   "Gets only route-specific information from arg"
   [arg]
   (let [all-routes (map #(vec (get-routes-r %)) (subvec arg 2))]
-    (reduce concat all-routes)))
+    (sort #(compare (first %1) (first %2))
+          (reduce concat all-routes))))
   ; (map #(list (str (get arg 0) (get % 0))
   ;             (get-routes-r %))
   ;       (subvec arg 2)))

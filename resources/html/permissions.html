@@ -9,17 +9,27 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
 </header>
 
-<body>
+<body style="max-width: 1200px; margin: auto;">
     <div class="row">
-        <div class="col-12-lg">
-    <table class="table">
+        <div class="col-sm-12">
+    <table class="table table-striped">
+        <thead class="thead-dark">
+            <tr>
+                <th>endpoint</th>
+                <th>method</th>
+                <th>account-type</th>
+                <th>account-role</th>
+                <th>notes</th>
+            </tr>
+        </thead>
         <tbody>
         {% for route in routes %}
             <tr>
-                <td>{{ route|get-i:0 }}</td>
+                <td>/api{{ route|get-i:0 }}</td>
                 <td>{{ route|get-i:1 }}</td>
                 <td>{{ route|get-i:2|get-k:permission-level }}</td>
                 <td>{{ route|get-i:2|get-k:role-level }}</td>
+                <td>{{ route|get-i:2|get-k:permission-note }}</td>
             </tr>
         {% endfor %}
         </tbody>

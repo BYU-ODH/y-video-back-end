@@ -17,6 +17,7 @@
   {:summary "Creates a new collection with the given (temp) user as an owner"
    :permission-level "lab-assistant"
    :bypass-permission true
+   :permission-note "Instructors may create a collection with their own user-id as the collection's owner."
    :parameters {:header {:session-id uuid?}
                 :body models/collection-without-id}
    :responses {200 {:body {:message string?
