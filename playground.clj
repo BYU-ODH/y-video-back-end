@@ -92,3 +92,9 @@
 
 
 (first (filter #(not (= "" %)) [(:thumbnail body) (get-thumbnail ("https://www.youtube.com/watch?v=eYYUAib5EWo") "none")]))
+
+
+(as-> 10 n    ; n = 10
+      (+ n 2) ; n = 2 + n
+      (* 3 n) ; n = 3 * n
+      (str "The final number is " n "."))

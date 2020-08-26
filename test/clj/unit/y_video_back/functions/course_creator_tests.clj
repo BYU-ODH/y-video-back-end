@@ -26,7 +26,8 @@
       [y-video-back.user-creator :as uc]
       [y-video-back.course-creator :as cc]
       [y-video-back.utils.db-populator :as db-pop]
-      [y-video-back.utils.account-permissions :as ac]))
+      [y-video-back.utils.account-permissions :as ac]
+      [y-video-back.apis.student-schedule :as schedule-api]))
 
 (declare ^:dynamic *txn*)
 
@@ -195,6 +196,3 @@
       (cc/check-courses-with-api (:username user-one) true)
       (is (collection-courses-assoc/EXISTS-COLL-CRSE? (:id coll-one) (:id crse-one)))
       (check-against-test-user (:id user-one-add)))))
-
-
-;; add test for api returning empty list sometimes

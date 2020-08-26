@@ -107,21 +107,21 @@
           ; Read collections by session-id
           res (rp/collections-by-logged-in (uc/user-id-to-session-id user-id))]
       (is (= 200 (:status res)))
-      (is (= [(-> coll-one
-                   (ut/remove-db-only)
-                   (update :id str)
-                   (update :owner str)
-                   (assoc :content '[]))
-              (-> coll-two
-                           (ut/remove-db-only)
-                           (update :id str)
-                           (update :owner str)
-                           (assoc :content [(-> cont-one
-                                                (ut/remove-db-only)
-                                                (update :id str)
-                                                (update :collection-id str)
-                                                (update :resource-id str))]))]
-             (map ut/remove-db-only (m/decode-response-body res))))))
+      (is (= (frequencies [(-> coll-one
+                               (ut/remove-db-only)
+                               (update :id str)
+                               (update :owner str)
+                               (assoc :content '[]))
+                           (-> coll-two
+                                        (ut/remove-db-only)
+                                        (update :id str)
+                                        (update :owner str)
+                                        (assoc :content [(-> cont-one
+                                                             (ut/remove-db-only)
+                                                             (update :id str)
+                                                             (update :collection-id str)
+                                                             (update :resource-id str))]))])
+             (frequencies (map ut/remove-db-only (m/decode-response-body res)))))))
 
   (testing "get collections - direct user-coll assoc and owner of same"
           ; Create user
@@ -143,21 +143,21 @@
           ; Read collections by session-id
           res (rp/collections-by-logged-in (uc/user-id-to-session-id user-id))]
       (is (= 200 (:status res)))
-      (is (= [(-> coll-one
-                   (ut/remove-db-only)
-                   (update :id str)
-                   (update :owner str)
-                   (assoc :content '[]))
-              (-> coll-two
-                           (ut/remove-db-only)
-                           (update :id str)
-                           (update :owner str)
-                           (assoc :content [(-> cont-one
-                                                (ut/remove-db-only)
-                                                (update :id str)
-                                                (update :collection-id str)
-                                                (update :resource-id str))]))]
-             (map ut/remove-db-only (m/decode-response-body res))))))
+      (is (= (frequencies [(-> coll-one
+                               (ut/remove-db-only)
+                               (update :id str)
+                               (update :owner str)
+                               (assoc :content '[]))
+                           (-> coll-two
+                                        (ut/remove-db-only)
+                                        (update :id str)
+                                        (update :owner str)
+                                        (assoc :content [(-> cont-one
+                                                             (ut/remove-db-only)
+                                                             (update :id str)
+                                                             (update :collection-id str)
+                                                             (update :resource-id str))]))])
+             (frequencies (map ut/remove-db-only (m/decode-response-body res)))))))
 
   (testing "get collections - indirect via course only"
     (let [user-one (users/CREATE (g/get-random-user-without-id))
@@ -185,21 +185,21 @@
           ; Read collections by sessio-id
           res (rp/collections-by-logged-in (uc/user-id-to-session-id user-id))]
         (is (= 200 (:status res)))
-        (is (= [(-> coll-one
-                     (ut/remove-db-only)
-                     (update :id str)
-                     (update :owner str)
-                     (assoc :content '[]))
-                (-> coll-two
-                             (ut/remove-db-only)
-                             (update :id str)
-                             (update :owner str)
-                             (assoc :content [(-> cont-one
-                                                  (ut/remove-db-only)
-                                                  (update :id str)
-                                                  (update :collection-id str)
-                                                  (update :resource-id str))]))]
-               (map ut/remove-db-only (m/decode-response-body res))))))
+        (is (= (frequencies [(-> coll-one
+                                 (ut/remove-db-only)
+                                 (update :id str)
+                                 (update :owner str)
+                                 (assoc :content '[]))
+                             (-> coll-two
+                                          (ut/remove-db-only)
+                                          (update :id str)
+                                          (update :owner str)
+                                          (assoc :content [(-> cont-one
+                                                               (ut/remove-db-only)
+                                                               (update :id str)
+                                                               (update :collection-id str)
+                                                               (update :resource-id str))]))])
+               (frequencies (map ut/remove-db-only (m/decode-response-body res)))))))
   (testing "get collections - user-coll and via course"
     (let [user-one (users/CREATE (g/get-random-user-without-id))
           user-two (db-pop/add-user)
