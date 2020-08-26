@@ -73,14 +73,14 @@
       (is (= 200 (:status res-two)))
       (is (= '()
              (map ut/remove-db-only (m/decode-response-body res-one))))
-      (is (= (map #(-> %
-                       (update :id str)
-                       (update :owner str)
-                       ;(into {:user-id (str (:id user-two))
-                       ;                :account-role (:account-role user-coll-two))
-                       (ut/remove-db-only))
-                  [coll-thr coll-fou])
-             (map ut/remove-db-only (m/decode-response-body res-two)))))))
+      (is (= (frequencies (map #(-> %
+                                    (update :id str)
+                                    (update :owner str)
+                                    ;(into {:user-id (str (:id user-two))
+                                    ;                :account-role (:account-role user-coll-two))
+                                    (ut/remove-db-only))
+                               [coll-thr coll-fou]))
+             (frequencies (map ut/remove-db-only (m/decode-response-body res-two))))))))
 
 (deftest user-all-crses
   (testing "find all courses by user"

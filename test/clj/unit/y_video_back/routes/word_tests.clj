@@ -57,15 +57,15 @@
   (testing "user with two words"
     (let [res (rp/user-id-get-words (:id test-user-two))]
       (is (= 200 (:status res)))
-      (is (= [(-> test-word-two
-                  (ut/remove-db-only)
-                  (update :id str)
-                  (update :user-id str))
-              (-> test-word-thr
-                          (ut/remove-db-only)
-                          (update :id str)
-                          (update :user-id str))]
-             (map ut/remove-db-only (m/decode-response-body res))))))
+      (is (= (frequencies [(-> test-word-two
+                               (ut/remove-db-only)
+                               (update :id str)
+                               (update :user-id str))
+                           (-> test-word-thr
+                                       (ut/remove-db-only)
+                                       (update :id str)
+                                       (update :user-id str))])
+             (frequencies (map ut/remove-db-only (m/decode-response-body res)))))))
   (testing "user with no words"
     (let [res (rp/user-id-get-words (:id test-user-thr))]
       (is (= 200 (:status res)))

@@ -3,7 +3,7 @@
   :description "Default template for a BYU ODH Clojure Program"
   :url "http://example.com/FIXME"
 
-  :dependencies [[byu-odh/byu-cas "4"]
+  :dependencies [[byu-odh/byu-cas "5"]
                  [camel-snake-kebab "0.4.1"]
                  [cheshire "5.10.0"]
                  [clj-http "3.10.0"]
@@ -86,4 +86,4 @@
    :project/test {:resource-paths ["env/test/resources"]}
    :profiles/dev {:repl-options {:init-ns user}}
    :profiles/test {:integration (fn [m]
-                                  (:integration (meta m)))}}) 
+                                  (:integration (meta m)))}})
