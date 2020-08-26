@@ -132,7 +132,10 @@
 ;; Probably a temporary fix \/ \/ \/
 
 (filters/add-filter! :string? string?)
-
+(filters/add-filter! :get-i (fn [data i]
+                              (get (vec data) (Integer/parseInt i))))
+(filters/add-filter! :get-k (fn [data i]
+                              ((keyword i) data)))
 
 (defn render
   "renders the HTML template located relative to resources/html"

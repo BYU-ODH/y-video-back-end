@@ -27,8 +27,45 @@
       (println (str "serving session-id from home.clj: " session-id))
       (layout/render (into request {:session-id session-id}) "index.html"))))
 
+(defn get-routes-r
+  "Recursive helper for get-routes"
+  [arg]
+  ;(println "arg=" arg)
+  (let [key (get arg 0) ; string uri piece
+        val (get arg 1)] ; map - potentially endpoint info
+    ;(println "key=" key)
+    ;(println "val=" val)
+    (if (contains? val :swagger)
+      (do
+        ;(println "swagger")
+        (reduce concat
+          (map (fn [a] (let [res (get-routes-r a)]
+                         (vec (map (fn [b] (list (str key (get b 0))
+                                                 (get b 1)
+                                                 (get b 2)))
+                                   res))))
+               (subvec arg 2))))
+      (map (fn [c] (vec (list key c (get val c))))
+           (keys val)))))
+
+
+        ; (map #(let [res (get-routes-r %)]
+        ;         (list (str key (get res 0))
+        ;               (get res 1)))
+        ;      (subvec arg 2))]])))
+
+
+(defn get-routes
+  "Gets only route-specific information from arg"
+  [arg]
+  (let [all-routes (map #(vec (get-routes-r %)) (subvec arg 2))]
+    (reduce concat all-routes)))
+  ; (map #(list (str (get arg 0) (get % 0))
+  ;             (get-routes-r %))
+  ;       (subvec arg 2)))
+
 (defn permission-docs-page [request]
-  (layout/render request "permissions.html" {:routes (service-routes)
+  (layout/render request "permissions.html" {:routes (get-routes (service-routes))
                                              :message "test message!"}))
 
 (def ^{:private true} home-paths
@@ -49,7 +86,7 @@
          ["/hello" {:get hello-page}]
          ["/who-am-i" {:get (fn [request] {:status 200 :body {:username (:username request)}})}]
          ;["/show-request" {:get (fn [request] {:status 200 :body {:request (str request)}})}]
-         ;["/permission-docs" {:get permission-docs-page}]
+         ["/permission-docs" {:get permission-docs-page}]
 
          ;["/logout" {:get {:handler (fn [req] (cas/logout-resp "https://cheneycreations.com"))}}] ; placeholder url until we get a login page going
          ;["/logout" {:get {:handler (redirect (str "/?logout=true"))}}]

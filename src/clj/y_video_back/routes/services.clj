@@ -58,7 +58,34 @@
      ["/docs"
       {:get (swagger-ui/create-swagger-ui-handler
              {:url "/api/swagger.json"
-              :config {:validator-url nil}})}]]
+              :config {:validator-url nil}})}]
+
+     ["/ping"
+      {:get {:summary "ping, requires valid session-id"
+             :permission-level "admin"
+             :bypass-permission true
+             :responses {200 {:body {:message string?}}}
+             :handler (fn [req]
+                        {:status 200
+                         :body {:message "pong"}})}}]
+      ;{:get (constantly (response/ok {:message "pong"}))}]
+     ["/auth-ping"
+      {:get {:summary "ping, requires valid session-id"
+             :security :admin
+             :permission-level "admin"
+             :parameters {:header {:session-id uuid?}}
+             :responses {200 {:body {:message string?}}}
+             :handler (fn [req]
+                        {:status 200
+                         :body {:message "ping"}})}}]
+
+     ["/surely-a-get-method"
+      {:post (constantly (response/ok {:message "pong"}))}]
+
+     ["/jedi-council"
+      {:get {:validate false
+             :permission-level -1
+             :handler (fn [] "doesn't matter")}}]]
 
     ["/get-session-id/{username}/{password}"
      {:swagger {:tags ["auth"]}}
@@ -75,32 +102,7 @@
                            :body {:message "incorrect password"}}
                           {:status 200
                            :body {:session-id (str (uc/get-session-id username))}}))}}]]
-    ["/ping"
-     {:get {:summary "ping, requires valid session-id"
-            :permission-level "admin"
-            :bypass-permission true
-            :responses {200 {:body {:message string?}}}
-            :handler (fn [req]
-                       {:status 200
-                        :body {:message "pong"}})}}]
-     ;{:get (constantly (response/ok {:message "pong"}))}]
-    ["/auth-ping"
-     {:get {:summary "ping, requires valid session-id"
-            :security :admin
-            :permission-level "admin"
-            :parameters {:header {:session-id uuid?}}
-            :responses {200 {:body {:message string?}}}
-            :handler (fn [req]
-                       {:status 200
-                        :body {:message "ping"}})}}]
 
-    ["/surely-a-get-method"
-     {:post (constantly (response/ok {:message "pong"}))}]
-
-    ["/jedi-council"
-     {:get {:validate false
-            :permission-level -1
-            :handler (fn [] "doesn't matter")}}]
 
     ["/echo"
      {:swagger {:tags ["echo"]}}
@@ -302,10 +304,6 @@
     ; [""
     ;  {:post service-handlers/connect-collection-and-course}]]
 
-    ["/search"
-     {:swagger {:tags ["search"]}}
-     [""]]
-      ;{:get service-handlers/search-by-term}]] ; Searches all tables at once
     ["/admin"
      {:swagger {:tags ["admin"]}}
      ["/user/{term}"

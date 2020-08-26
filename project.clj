@@ -85,4 +85,5 @@
                                (pjstadig.humane-test-output/activate!)]}
    :project/test {:resource-paths ["env/test/resources"]}
    :profiles/dev {:repl-options {:init-ns user}}
-   :profiles/test {}})
+   :profiles/test {:integration (fn [m]
+                                  (:integration (meta m)))}}) 
