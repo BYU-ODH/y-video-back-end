@@ -83,7 +83,7 @@
 
      ["/jedi-council"
       {:get {:validate false
-             :permission-level -1
+             :permission-level "master"
              :handler (fn [] "doesn't matter")}}]]
 
     ["/get-session-id/{username}/{password}"

@@ -10,8 +10,26 @@
 </header>
 
 <body style="max-width: 1200px; margin: auto;">
+
     <div class="row">
-        <div class="col-sm-12">
+        <div class="col-lg-12">
+            <h2>Explanation:</h2>
+            <p>This page describes what type of user is allowed to access each endpoint.</p>
+            <h3>Account-type</h3>
+            <p>The account-type column specifies the minimum account <em>type</em> required to access each endpoint. So, if an endpoint has <em>lab-assistant</em> in the account-type column, then a user must either be a lab assistant or admin to access the endpoint.</p>
+            <p>If this column is blank, then anyone may access the route without authentication.</p>
+            <h3>Account-role</h3>
+            <p>The account-role column provides a second method of accessing an endpoint. This column specifies what <em>role</em> the user must play in the target data. So, if an endpoint has <em>ta</em> in the account-role column, then a user must be a ta for the target collection, content, etc.</p>
+            <p>Account-roles cascade downstream. In other words, if a user is an instructor for a collection (perhaps they are listed as the collection's owner), then that user is automatically an instructor for every content that belongs to that collection, every resource that those contents belong to, every file that connects to those resources, etc.</p>
+            <p>If this column is blank, then a user must satisfy the account-type requirement to access the endpoint.</p>
+            <p>To be clear, a user must satisfy either account-type OR account-role to access the endpoint.</p>
+            <h3>Notes</h3>
+            <p>Some routes have more options for accessing a route (again, another OR condition). These are described in the notes column.</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12">
     <table class="table table-striped">
         <thead class="thead-dark">
             <tr>
