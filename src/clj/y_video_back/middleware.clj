@@ -169,7 +169,8 @@
       (handler request)
       (let [session-id (get-in request [:parameters :header :session-id])]
         (if (or (nil? session-id)
-                (and (not (= (:session-id-bypass env) (str session-id)))
+                (and (not (and (or (:dev env) (:test env))
+                               (= (:session-id-bypass env) (str session-id))))
                      (nil? (ru/token-to-user-id session-id))))
           forbidden-page
           (if (= (:session-id-bypass env) (str session-id))

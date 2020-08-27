@@ -60,8 +60,8 @@
 
   :immutant {:war {:context-path "/"
                    :name "y-video-back%t"}}
-  :test-selectors {:default (complement :integration)
-                   :integration :integration}
+  :test-selectors {:integration :integration
+                   :mock-prod :mock-prod}
 
   :profiles
   {:uberjar {:omit-source true
@@ -85,5 +85,4 @@
                                (pjstadig.humane-test-output/activate!)]}
    :project/test {:resource-paths ["env/test/resources"]}
    :profiles/dev {:repl-options {:init-ns user}}
-   :profiles/test {:integration (fn [m]
-                                  (:integration (meta m)))}})
+   :profiles/test {}})

@@ -34,6 +34,6 @@ else:
     raw_in = '\n'.join(raw_in)
     js = json.loads(raw_in)
 
-for path in js.get('paths').keys():
+for path in sorted(js.get('paths').keys()):
     for path_method in js.get('paths').get(path).keys():
         print(path_method.lower(), path, sep=':\t')
