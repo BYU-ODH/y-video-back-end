@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.js": "/static/js/main.daf0a0e7.chunk.js",
-    "main.js.map": "/static/js/main.daf0a0e7.chunk.js.map",
+    "main.js": "/static/js/main.0c5a5102.chunk.js",
+    "main.js.map": "/static/js/main.0c5a5102.chunk.js.map",
     "runtime-main.js": "/static/js/runtime-main.78e6bb37.js",
     "runtime-main.js.map": "/static/js/runtime-main.78e6bb37.js.map",
-    "static/js/2.de200698.chunk.js": "/static/js/2.de200698.chunk.js",
-    "static/js/2.de200698.chunk.js.map": "/static/js/2.de200698.chunk.js.map",
+    "static/js/2.7e8f8329.chunk.js": "/static/js/2.7e8f8329.chunk.js",
+    "static/js/2.7e8f8329.chunk.js.map": "/static/js/2.7e8f8329.chunk.js.map",
     "index.html": "/index.html",
-    "precache-manifest.4538b22b7dd9c4b711e8b6c860cddd69.js": "/precache-manifest.4538b22b7dd9c4b711e8b6c860cddd69.js",
+    "precache-manifest.0976ded0681494f80a003161f25b4865.js": "/precache-manifest.0976ded0681494f80a003161f25b4865.js",
     "service-worker.js": "/service-worker.js",
-    "static/js/2.de200698.chunk.js.LICENSE.txt": "/static/js/2.de200698.chunk.js.LICENSE.txt",
+    "static/js/2.7e8f8329.chunk.js.LICENSE.txt": "/static/js/2.7e8f8329.chunk.js.LICENSE.txt",
     "static/media/CometsLeft.svg": "/static/media/CometsLeft.15e0bbfb.svg",
     "static/media/CometsRight.svg": "/static/media/CometsRight.9625e200.svg",
     "static/media/admin-icon-edit.svg": "/static/media/admin-icon-edit.e405f6cd.svg",
@@ -39,6 +39,7 @@
     "static/media/event_mute.svg": "/static/media/event_mute.ba25733d.svg",
     "static/media/event_pause.svg": "/static/media/event_pause.f0719471.svg",
     "static/media/event_skip.svg": "/static/media/event_skip.cbe8f9bf.svg",
+    "static/media/help-content.png": "/static/media/help-content.ca042eac.png",
     "static/media/hexborder.svg": "/static/media/hexborder.418c1fbb.svg",
     "static/media/list-view.svg": "/static/media/list-view.411001d1.svg",
     "static/media/manage-collection-help-circle.svg": "/static/media/manage-collection-help-circle.a217347f.svg",
@@ -56,6 +57,7 @@
     "static/media/te-chevrons-left.svg": "/static/media/te-chevrons-left.4a2a0b47.svg",
     "static/media/te-chevrons-right.svg": "/static/media/te-chevrons-right.78281712.svg",
     "static/media/te-clock.svg": "/static/media/te-clock.a71c454b.svg",
+    "static/media/te-help-circle-white.svg": "/static/media/te-help-circle-white.64b3b368.svg",
     "static/media/time-bar-icon.svg": "/static/media/time-bar-icon.8ab3f346.svg",
     "static/media/translation.svg": "/static/media/translation.dc20c630.svg",
     "static/media/trash.svg": "/static/media/trash.dfa45393.svg",
@@ -65,7 +67,7 @@
   },
   "entrypoints": [
     "static/js/runtime-main.78e6bb37.js",
-    "static/js/2.de200698.chunk.js",
-    "static/js/main.daf0a0e7.chunk.js"
+    "static/js/2.7e8f8329.chunk.js",
+    "static/js/main.0c5a5102.chunk.js"
   ]
 }

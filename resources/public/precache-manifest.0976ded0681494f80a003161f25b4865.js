@@ -1,19 +1,19 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "f73f6680bcbcf1672d3e150e66bee808",
+    "revision": "44a30c4f5af2391287da6ea1e6edd4e1",
     "url": "/index.html"
   },
   {
-    "revision": "3b554eac7b8242353b10",
-    "url": "/static/js/2.de200698.chunk.js"
+    "revision": "02c8ae2995f2ba7ece66",
+    "url": "/static/js/2.7e8f8329.chunk.js"
   },
   {
     "revision": "dce29cb9479f20842c2592abc76494f3",
-    "url": "/static/js/2.de200698.chunk.js.LICENSE.txt"
+    "url": "/static/js/2.7e8f8329.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "c6a43bebd2de15cd17a5",
-    "url": "/static/js/main.daf0a0e7.chunk.js"
+    "revision": "8c60e66c9f2fff5442ec",
+    "url": "/static/js/main.0c5a5102.chunk.js"
   },
   {
     "revision": "d018355cd979db449cb0",
@@ -136,6 +136,10 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/static/media/event_skip.cbe8f9bf.svg"
   },
   {
+    "revision": "ca042eac57990bb3e7d1479374f69742",
+    "url": "/static/media/help-content.ca042eac.png"
+  },
+  {
     "revision": "418c1fbb8ceae7bbd2eeeee2edce8a01",
     "url": "/static/media/hexborder.418c1fbb.svg"
   },
@@ -202,6 +206,10 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
     "revision": "a71c454b3d1696c36f794f8b724bf6b6",
     "url": "/static/media/te-clock.a71c454b.svg"
+  },
+  {
+    "revision": "64b3b368851b0ef33163ecdc299f9b4b",
+    "url": "/static/media/te-help-circle-white.64b3b368.svg"
   },
   {
     "revision": "8ab3f34681bbd4c1c9bb6779da55cb59",
