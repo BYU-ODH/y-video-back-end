@@ -96,11 +96,13 @@
              :responses {200 {:body {:session-id string?}}
                          403 {:body {:message string?}}}
              :handler (fn [{{{:keys [username password]} :path} :parameters}]
-                        (if-not (= (:NEW-USER-PASSWORD env) password)
-                          {:status 403
-                           :body {:message "incorrect password"}}
-                          {:status 200
-                           :body {:session-id (str (uc/get-session-id username))}}))}}]]
+                        (if (nil? (:NEW-USER-PASSWORD env))
+                          {:status 401 :message "unauthorized"}
+                          (if-not (= (:NEW-USER-PASSWORD env) password)
+                            {:status 403
+                             :body {:message "incorrect password"}}
+                            {:status 200
+                             :body {:session-id (str (uc/get-session-id username))}})))}}]]
 
 
     ["/echo"
