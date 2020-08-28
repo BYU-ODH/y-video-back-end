@@ -1,29 +1,27 @@
 ;; env/dev/resources/config.edn
 {:dev true
- :port 3030
- :session-id-bypass "f1d1a6cc-e3db-4a6c-b0c5-13407887fb51"
+ :port 3000
+ :session-id-bypass "6e39dced-b31b-44c8-9250-183b88a27320"
  :nrepl-port 7000
- :ADMIN 0
- :LA 1
- :INSTR 2
- :STUD 3
- :CRSE-STUD 2
- :TA 1
- :OWNER 2
- :NEW-USER-PASSWORD "ae91e6b1-e29c-458f-8ddc-1a6fa2ba141b"
- :CONSUMER_KEY "fc028869ad27420ba215d5b99efeacfe"
- :CONSUMER_SECRET "48b7593d27c946ec8be2abdf0b8f3837"
- :auth {:timeout 3600000} ; 1 hour
- :FILES {:media-url "/home/path/to/file-server/"
-         :timeout 10000} ; 10 seconds
- :y-video-back {:site-url "http://localhost:3030"
+ :NEW-USER-PASSWORD "cc19f9e1-2ec1-4668-9231-df9d236ad13b"
+ :CONSUMER_KEY "3ca96bf52178799732f56b180ca"
+ :CONSUMER_SECRET "1d025bab77737938f493dddad7b"
+ :auth {:timeout 16200000} ; 4.5 hour - MUST CHANGE IN DB TRIGGER TOO
+ :front-end-netid "testuser"
+ :FILES {:media-url "/home/someone/file-store/"
+         :timeout 14400000 ; 4 hours - MUST CHANGE IN DB TRIGGER TOO
+         :log-path "/home/someone/log-store"}
+ :user-data-refresh-after 168 ; in hours - 7 days
+ :user-courses-refresh-after 168 ; in hours - 7 days
+ :host "http://localhost:3000"
+ :y-video-back {:site-url "http://localhost:3000"
                 :db {:database-name "my-db"
                      :adapter "postgresql"
                      :auto-commit true
                      :register-mbeans false
-                     :password "12345"
+                     :password "8675309"
                      :port-number 5432
-                     :username "a-user"
+                     :username "my-db"
                      :max-lifetime 1800000
                      :minimum-idle 10
                      :connection-timeout 30000
@@ -32,4 +30,4 @@
                      :maximum-pool-size 10
                      :idle-timeout 600000
                      :validation-timeout 5000
-                     :pool-name "local-db-pool"}}}
+                     :pool-name "db_pool"}}}

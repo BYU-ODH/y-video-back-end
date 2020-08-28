@@ -315,8 +315,6 @@
       {:get service-handlers/search-by-content}]
      ["/resource/{term}"
       {:get service-handlers/search-by-resource}]]
-     ;["/refresh-course-list/{password}"
-     ; {:post service-handlers/refresh-course-list}]]
 
 
     ["/media"

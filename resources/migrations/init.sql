@@ -2,8 +2,8 @@
 
 DROP TABLE IF EXISTS annotations CASCADE;
 
--- DROP EXTENSION IF EXISTS pgcrypto CASCADE; -- uncomment for new db
--- CREATE EXTENSION pgcrypto; -- uncomment for new db
+DROP EXTENSION IF EXISTS pgcrypto CASCADE; -- uncomment for new db
+CREATE EXTENSION pgcrypto; -- uncomment for new db
 
 DROP TABLE IF EXISTS users CASCADE;
 CREATE TABLE users (
@@ -279,7 +279,7 @@ CREATE OR REPLACE FUNCTION delete_expired_auth_tokens() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
 BEGIN
-  DELETE FROM auth_tokens WHERE created < NOW() - INTERVAL '1 hour';
+  DELETE FROM auth_tokens WHERE created < NOW() - INTERVAL '4 hours 30 minutes';
   RETURN NEW;
 END;
 $$;

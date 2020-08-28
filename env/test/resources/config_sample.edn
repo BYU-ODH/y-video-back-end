@@ -1,0 +1,42 @@
+;; env/test/resources/config.edn
+{:test true
+ :port 3030
+ :session-id-bypass "6e39dced-b31b-44c8-9250-183b88a27320"
+ :nrepl-port 7000
+ :NEW-USER-PASSWORD "cc19f9e1-2ec1-4668-9231-df9d236ad13b"
+ :CONSUMER_KEY "3ca96bf52178799732f56b180ca"
+ :CONSUMER_SECRET "1d025bab77737938f493dddad7b"
+ :auth {:timeout 5000} ; 5 seconds
+ :FILES {:media-url "/home/someone/test-file-store/test-dest/"
+         :timeout 5000 ; 5 seconds
+         :test-src "/home/someone/test-file-store/test-src/"
+         :test-temp "/home/someone/test-file-store/test-temp/"}
+ :test-user {:username "mynetid"
+             :email "myemail@gmail.com"
+             :full-name "John Smith"
+             :account-type 3
+             :byu-person-id "123456789"
+             :courses [{:department "MATH" :catalog-number "101" :section-number "001"}
+                       {:department "HIST" :catalog-number "121" :section-number "001"}
+                       {:department "ENGL" :catalog-number "201" :section-number "001"}
+                       {:department "BIO" :catalog-number "100" :section-number "004"}]}
+ :user-data-refresh-after 0.00138889 ; in hours - 5 seconds
+ :user-courses-refresh-after 0.00138889 ; in hours - 5 seconds
+ :host "http://localhost:3000"
+ :y-video-back {:site-url "http://localhost:3000"
+                :db {:database-name "my-db-test"
+                     :adapter "postgresql"
+                     :auto-commit true
+                     :register-mbeans false
+                     :password "6021023"
+                     :port-number 5432
+                     :username "my-db-test"
+                     :max-lifetime 1800000
+                     :minimum-idle 10
+                     :connection-timeout 30000
+                     :server-name "localhost"
+                     :read-only false
+                     :maximum-pool-size 10
+                     :idle-timeout 600000
+                     :validation-timeout 5000
+                     :pool-name "db_pool"}}}

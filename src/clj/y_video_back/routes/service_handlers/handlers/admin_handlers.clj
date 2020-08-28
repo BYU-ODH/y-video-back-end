@@ -11,49 +11,6 @@
 
 ; TODO - sort results by more than just alphabetical
 
-
-(comment
-  (defn add-course-to-db
-    [dpt course-data cur-sem]
-    (println course-data)
-    (let [sections (cd-api/get-class-sections dpt
-                                              (get course-data "curriculum_id")
-                                              (get course-data "title_code")
-                                              cur-sem)
-          res (map #(if-not (courses/EXISTS-DEP-CAT-SEC? dpt (get course-data "catalog_number") %)
-                      (courses/CREATE {:department dpt
-                                       :catalog-number (get course-data "catalog_number")
-                                       :section-number %})
-                      nil)
-                   sections)]
-      (count res)))
-
-  (defn add-teaching-area-to-db
-    [teaching-area cur-sem]
-    (println (get teaching-area "department"))
-    (let [dpt (get teaching-area "department")
-          dpt-courses (cd-api/get-department-classes dpt cur-sem)
-          res (map #(add-course-to-db dpt % cur-sem) dpt-courses)]
-      (reduce + res)))
-
-  (def refresh-course-list
-    {:summary "Refreshes courses in database. DANGEROUS - NOT FUNCTIONAL."
-     :permission-level "admin"
-     :parameters {:header {:session-id uuid?}
-                  :path {:password uuid?}}
-     :responses {200 {:body {:message string?}}
-                 401 {:body {:message string?}}}
-     :handler (fn [{{{:keys [password]} :path} :parameters}]
-                (println "password=" password)
-                (if-not (= (:REFRESH-COURSES-PASSWORD env) (str password))
-                  {:status 401
-                   :body {:message "unauthorized"}}
-                  (let [cur-sem (cd-api/get-current-sem)
-                        teaching-areas (cd-api/get-teaching-areas cur-sem)
-                        res (map #(add-teaching-area-to-db % cur-sem) teaching-areas)]
-                    {:status 200
-                     :body {:message (str (reduce + res) " courses added to db")}})))}))
-
 (def search-by-user ;; Non-functional
   {:summary "Searches users, collections, resources, and courses by search term"
    :permission-level "instructor"
