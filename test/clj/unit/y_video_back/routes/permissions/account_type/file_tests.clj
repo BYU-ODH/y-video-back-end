@@ -65,7 +65,7 @@
           res (rp/file-post (uc/user-id-to-session-id (:id user-one))
                             file-one
                             filecontent)]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student - no connection, file-post"
     (let [user-one (db-pop/add-user "student")
           file-one (db-pop/get-file)
@@ -73,7 +73,7 @@
           res (rp/file-post (uc/user-id-to-session-id (:id user-one))
                             file-one
                             filecontent)]
-      (is (= 401 (:status res))))))
+      (is (= 403 (:status res))))))
 
 ;get: /api/file/{id}
 (deftest file-get-by-id
@@ -100,7 +100,7 @@
           file-one (db-pop/add-file)
           res (rp/file-id-get (uc/user-id-to-session-id (:id user-one))
                               (:id file-one))]
-      (is (= 401 (:status res))))))
+      (is (= 403 (:status res))))))
 
 ;delete: /api/file/{id}
 (deftest file-delete-by-id
@@ -121,13 +121,13 @@
           file-one (db-pop/add-file)
           res (rp/file-id-delete (uc/user-id-to-session-id (:id user-one))
                                  (:id file-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student - no connection, file-delete-by-id"
     (let [user-one (db-pop/add-user "student")
           file-one (db-pop/add-file)
           res (rp/file-id-delete (uc/user-id-to-session-id (:id user-one))
                                  (:id file-one))]
-      (is (= 401 (:status res))))))
+      (is (= 403 (:status res))))))
 
 ;patch: /api/file/{id}
 (deftest file-patch-by-id
@@ -151,11 +151,11 @@
           res (rp/file-id-patch (uc/user-id-to-session-id (:id user-one))
                                 (:id file-one)
                                 file-one)]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student - no connection, file-patch-by-id"
     (let [user-one (db-pop/add-user "student")
           file-one (db-pop/add-file)
           res (rp/file-id-patch (uc/user-id-to-session-id (:id user-one))
                                 (:id file-one)
                                 file-one)]
-      (is (= 401 (:status res))))))
+      (is (= 403 (:status res))))))

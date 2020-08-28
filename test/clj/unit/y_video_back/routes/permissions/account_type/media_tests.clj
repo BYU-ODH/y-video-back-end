@@ -77,7 +77,7 @@
       (let [file-id (:id (m/decode-response-body res-file))
             res (rp/get-file-key (uc/user-id-to-session-id (:id user-one))
                                  file-id)]
-        (is (= 401 (:status res))))))
+        (is (= 403 (:status res))))))
   (testing "student - no connection, media-get-file-key"
     (let [user-one (db-pop/add-user "student")
           file-one (db-pop/get-file)
@@ -87,4 +87,4 @@
       (let [file-id (:id (m/decode-response-body res-file))
             res (rp/get-file-key (uc/user-id-to-session-id (:id user-one))
                                  file-id)]
-        (is (= 401 (:status res)))))))
+        (is (= 403 (:status res)))))))

@@ -95,7 +95,7 @@
           sbtl-one (db-pop/get-subtitle (:id cont-one))
           res (rp/subtitle-post (uc/user-id-to-session-id (:id user-one))
                                 sbtl-one)]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, subtitle-post, student via course"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -107,7 +107,7 @@
           sbtl-one (db-pop/get-subtitle (:id cont-one))
           res (rp/subtitle-post (uc/user-id-to-session-id (:id user-one))
                                 sbtl-one)]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, subtitle-post, auditing via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -117,7 +117,7 @@
           sbtl-one (db-pop/get-subtitle (:id cont-one))
           res (rp/subtitle-post (uc/user-id-to-session-id (:id user-one))
                                 sbtl-one)]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, subtitle-post, auditing via course"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -129,7 +129,7 @@
           sbtl-one (db-pop/get-subtitle (:id cont-one))
           res (rp/subtitle-post (uc/user-id-to-session-id (:id user-one))
                                 sbtl-one)]
-      (is (= 401 (:status res))))))
+      (is (= 403 (:status res))))))
 
 ;get: /api/subtitle/{id}
 (deftest subtitle-get-by-id
@@ -233,7 +233,7 @@
           sbtl-one (db-pop/add-subtitle (:id cont-one))
           res (rp/subtitle-id-delete (uc/user-id-to-session-id (:id user-one))
                                      (:id sbtl-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "instructor, subtitle-delete-by-id, instructor via course"
     (let [user-one (db-pop/add-user "instructor")
           coll-one (db-pop/add-collection)
@@ -245,7 +245,7 @@
           sbtl-one (db-pop/add-subtitle (:id cont-one))
           res (rp/subtitle-id-delete (uc/user-id-to-session-id (:id user-one))
                                      (:id sbtl-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, subtitle-delete-by-id, ta via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -255,7 +255,7 @@
           sbtl-one (db-pop/add-subtitle (:id cont-one))
           res (rp/subtitle-id-delete (uc/user-id-to-session-id (:id user-one))
                                      (:id sbtl-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, subtitle-delete-by-id, ta via course"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -267,7 +267,7 @@
           sbtl-one (db-pop/add-subtitle (:id cont-one))
           res (rp/subtitle-id-delete (uc/user-id-to-session-id (:id user-one))
                                      (:id sbtl-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, subtitle-delete-by-id, student via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -277,7 +277,7 @@
           sbtl-one (db-pop/add-subtitle (:id cont-one))
           res (rp/subtitle-id-delete (uc/user-id-to-session-id (:id user-one))
                                      (:id sbtl-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, subtitle-delete-by-id, student via course"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -289,7 +289,7 @@
           sbtl-one (db-pop/add-subtitle (:id cont-one))
           res (rp/subtitle-id-delete (uc/user-id-to-session-id (:id user-one))
                                      (:id sbtl-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, subtitle-delete-by-id, auditing via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -299,7 +299,7 @@
           sbtl-one (db-pop/add-subtitle (:id cont-one))
           res (rp/subtitle-id-delete (uc/user-id-to-session-id (:id user-one))
                                      (:id sbtl-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, subtitle-delete-by-id, auditing via course"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -311,7 +311,7 @@
           sbtl-one (db-pop/add-subtitle (:id cont-one))
           res (rp/subtitle-id-delete (uc/user-id-to-session-id (:id user-one))
                                      (:id sbtl-one))]
-      (is (= 401 (:status res))))))
+      (is (= 403 (:status res))))))
 
 ;patch: /api/subtitle/{id}
 (deftest subtitle-patch-by-id
@@ -373,7 +373,7 @@
           res (rp/subtitle-id-patch (uc/user-id-to-session-id (:id user-one))
                                     (:id sbtl-one)
                                     sbtl-one)]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, subtitle-patch-by-id, student via course"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -386,7 +386,7 @@
           res (rp/subtitle-id-patch (uc/user-id-to-session-id (:id user-one))
                                     (:id sbtl-one)
                                     sbtl-one)]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, subtitle-patch-by-id, auditing via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -397,7 +397,7 @@
           res (rp/subtitle-id-patch (uc/user-id-to-session-id (:id user-one))
                                     (:id sbtl-one)
                                     sbtl-one)]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, subtitle-patch-by-id, auditing via course"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -410,4 +410,4 @@
           res (rp/subtitle-id-patch (uc/user-id-to-session-id (:id user-one))
                                     (:id sbtl-one)
                                     sbtl-one)]
-      (is (= 401 (:status res))))))
+      (is (= 403 (:status res))))))

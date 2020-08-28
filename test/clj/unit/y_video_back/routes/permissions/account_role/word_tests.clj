@@ -63,8 +63,8 @@
                                 (db-pop/get-word (:id user-stud)))
           res-two (rp/word-post (uc/user-id-to-session-id (:id user-stud))
                                 (db-pop/get-word (:id user-one)))]
-      (is (= 401 (:status res-one)))
-      (is (= 401 (:status res-two))))))
+      (is (= 403 (:status res-one)))
+      (is (= 403 (:status res-two))))))
 
 ;get: /api/word/{id}
 (deftest word-get-by-id
@@ -92,8 +92,8 @@
                                   (:id word-stud))
           res-two (rp/word-id-get (uc/user-id-to-session-id (:id user-stud))
                                   (:id word-instr))]
-      (is (= 401 (:status res-one)))
-      (is (= 401 (:status res-two))))))
+      (is (= 403 (:status res-one)))
+      (is (= 403 (:status res-two))))))
 
 ;delete: /api/word/{id}
 (deftest word-delete-by-id
@@ -121,8 +121,8 @@
                                      (:id word-stud))
           res-two (rp/word-id-delete (uc/user-id-to-session-id (:id user-stud))
                                      (:id word-instr))]
-      (is (= 401 (:status res-one)))
-      (is (= 401 (:status res-two))))))
+      (is (= 403 (:status res-one)))
+      (is (= 403 (:status res-two))))))
 
 ;patch: /api/word/{id}
 (deftest word-patch-by-id
@@ -152,5 +152,5 @@
           res-two (rp/word-id-patch (uc/user-id-to-session-id (:id user-stud))
                                     (:id word-instr)
                                     word-instr)]
-      (is (= 401 (:status res-one)))
-      (is (= 401 (:status res-two))))))
+      (is (= 403 (:status res-one)))
+      (is (= 403 (:status res-two))))))

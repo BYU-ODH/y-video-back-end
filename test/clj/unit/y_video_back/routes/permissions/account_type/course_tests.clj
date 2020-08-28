@@ -65,7 +65,7 @@
           crse-one (db-pop/get-course)
           res (rp/course-post (uc/user-id-to-session-id (:id user-one))
                               crse-one)]
-      (is (= 401 (:status res))))))
+      (is (= 403 (:status res))))))
 
 ;get: /api/course/{id}
 (deftest course-get-by-id
@@ -92,7 +92,7 @@
           crse-one (db-pop/add-course)
           res (rp/course-id-get (uc/user-id-to-session-id (:id user-one))
                                 (:id crse-one))]
-      (is (= 401 (:status res))))))
+      (is (= 403 (:status res))))))
 
 ;delete: /api/course/{id}
 (deftest course-delete-by-id
@@ -107,19 +107,19 @@
           crse-one (db-pop/add-course)
           res (rp/course-id-delete (uc/user-id-to-session-id (:id user-one))
                                    (:id crse-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "instructor - no connection, course-delete-by-id"
     (let [user-one (db-pop/add-user "instructor")
           crse-one (db-pop/add-course)
           res (rp/course-id-delete (uc/user-id-to-session-id (:id user-one))
                                    (:id crse-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student - no connection, course-delete-by-id"
     (let [user-one (db-pop/add-user "student")
           crse-one (db-pop/add-course)
           res (rp/course-id-delete (uc/user-id-to-session-id (:id user-one))
                                    (:id crse-one))]
-      (is (= 401 (:status res))))))
+      (is (= 403 (:status res))))))
 
 ;patch: /api/course/{id}
 (deftest course-patch-by-id
@@ -136,21 +136,21 @@
           res (rp/course-id-patch (uc/user-id-to-session-id (:id user-one))
                                   (:id crse-one)
                                   crse-one)]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "instructor - no connection, course-patch-by-id"
     (let [user-one (db-pop/add-user "instructor")
           crse-one (db-pop/add-course)
           res (rp/course-id-patch (uc/user-id-to-session-id (:id user-one))
                                   (:id crse-one)
                                   crse-one)]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student - no connection, course-patch-by-id"
     (let [user-one (db-pop/add-user "student")
           crse-one (db-pop/add-course)
           res (rp/course-id-patch (uc/user-id-to-session-id (:id user-one))
                                   (:id crse-one)
                                   crse-one)]
-      (is (= 401 (:status res))))))
+      (is (= 403 (:status res))))))
 
 ;get: /api/course/{id}/collections
 (deftest course-id-collections
@@ -171,13 +171,13 @@
           crse-one (db-pop/add-course)
           res (rp/course-id-collections (uc/user-id-to-session-id (:id user-one))
                                         (:id crse-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student - no connection, course-id-collections"
     (let [user-one (db-pop/add-user "student")
           crse-one (db-pop/add-course)
           res (rp/course-id-collections (uc/user-id-to-session-id (:id user-one))
                                         (:id crse-one))]
-      (is (= 401 (:status res))))))
+      (is (= 403 (:status res))))))
 
 ;post: /api/course/{id}/add-user
 (deftest course-id-add-user
@@ -207,7 +207,7 @@
                                      (:id crse-one)
                                      (:id user-two)
                                      0)]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student- no connection, course-id-add-user"
     (let [user-one (db-pop/add-user "student")
           user-two (db-pop/add-user)
@@ -216,7 +216,7 @@
                                      (:id crse-one)
                                      (:id user-two)
                                      0)]
-      (is (= 401 (:status res))))))
+      (is (= 403 (:status res))))))
 
 ;post: /api/course/{id}/remove-user
 (deftest course-id-remove-user
@@ -246,7 +246,7 @@
           res (rp/course-id-remove-user (uc/user-id-to-session-id (:id user-one))
                                         (:id crse-one)
                                         (:id user-two))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student- no connection, course-id-remove-user"
     (let [user-one (db-pop/add-user "student")
           user-two (db-pop/add-user)
@@ -255,7 +255,7 @@
           res (rp/course-id-remove-user (uc/user-id-to-session-id (:id user-one))
                                         (:id crse-one)
                                         (:id user-two))]
-      (is (= 401 (:status res))))))
+      (is (= 403 (:status res))))))
 
 ;get: /api/course/{id}/users
 (deftest course-id-users
@@ -276,10 +276,10 @@
           crse-one (db-pop/add-course)
           res (rp/course-id-users (uc/user-id-to-session-id (:id user-one))
                                   (:id crse-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student - no connection, course-id-users"
     (let [user-one (db-pop/add-user "student")
           crse-one (db-pop/add-course)
           res (rp/course-id-users (uc/user-id-to-session-id (:id user-one))
                                   (:id crse-one))]
-      (is (= 401 (:status res))))))
+      (is (= 403 (:status res))))))

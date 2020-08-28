@@ -42,7 +42,7 @@
                           (:valid-role p-vals)
                           (= (:session-id-bypass env) (str session-id))
                           (user-courses-assoc/EXISTS-CRSE-USER? id (ru/token-to-user-id session-id)))
-                {:status 401 :body {:message "unauthorized"}}
+                {:status 403 :body {:message "forbidden"}}
                 (let [res (courses/READ id)]
                   (if (nil? res)
                     {:status 404
@@ -113,7 +113,7 @@
                           (user-courses-assoc/EXISTS-CRSE-USER-ROLE? id
                                                                      (ru/token-to-user-id session-id)
                                                                      (ac/to-int-role "instructor")))
-                {:status 401 :body {:message "unauthorized"}}
+                {:status 403 :body {:message "forbidden"}}
                 (if (not (courses/EXISTS? id))
                   {:status 404
                    :body {:message "course not found"}}
@@ -149,7 +149,7 @@
                           (user-courses-assoc/EXISTS-CRSE-USER-ROLE? id
                                                                      (ru/token-to-user-id session-id)
                                                                      (ac/to-int-role "instructor")))
-                {:status 401 :body {:message "unauthorized"}}
+                {:status 403 :body {:message "forbidden"}}
                 (if (not (courses/EXISTS? id))
                   {:status 404
                    :body {:message "course not found"}}
@@ -183,7 +183,7 @@
                           (user-courses-assoc/EXISTS-CRSE-USER-ROLE? id
                                                                      (ru/token-to-user-id session-id)
                                                                      (ac/to-int-role "instructor")))
-                {:status 401 :body {:message "unauthorized"}}
+                {:status 403 :body {:message "forbidden"}}
                 (if-not (courses/EXISTS? id)
                   {:status 404
                    :body {:message "course not found"}}
@@ -211,7 +211,7 @@
                           (:valid-role p-vals)
                           (= (:session-id-bypass env) (str session-id))
                           (user-courses-assoc/EXISTS-CRSE-USER? id (ru/token-to-user-id session-id)))
-                {:status 401 :body {:message "unauthorized"}}
+                {:status 403 :body {:message "forbidden"}}
                 (if-not (courses/EXISTS? id)
                   {:status 404
                    :body {:message "course not found"}}

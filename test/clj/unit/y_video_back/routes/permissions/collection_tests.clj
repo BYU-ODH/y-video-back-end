@@ -101,7 +101,7 @@
       (let [res (rp/collection-post (:id user-stud-stud)
                                     (g/get-random-collection-without-id)
                                     (:id user-stud-stud))]
-        (is (= 401 (:status res)))))
+        (is (= 403 (:status res)))))
     (testing "instr create collection"
       (let [res (rp/collection-post (:id user-instr-c1)
                                     (g/get-random-collection-without-id)
@@ -123,7 +123,7 @@
     (testing "student reading collection, no connection"
       (let [res (rp/collection-id-get (:id user-stud-na)
                                       (:id test-coll-one))]
-        (is (= 401 (:status res)))))
+        (is (= 403 (:status res)))))
     (testing "instructor reading collection, no connection"
       (let [res (rp/collection-id-get (:id user-instr-na)
                                       (:id test-coll-one))]
@@ -155,12 +155,12 @@
       (let [res (rp/collection-id-patch (:id user-stud-na)
                                         (:id test-coll-one)
                                         (g/get-random-collection-without-id))]
-        (is (= 401 (:status res)))))
+        (is (= 403 (:status res)))))
     (testing "instructor update collection, no connection"
       (let [res (rp/collection-id-patch (:id user-instr-na)
                                         (:id test-coll-one)
                                         (g/get-random-collection-without-id))]
-        (is (= 401 (:status res)))))
+        (is (= 403 (:status res)))))
     (testing "lab assistant update collection, no connection"
       (let [res (rp/collection-id-patch (:id user-la)
                                         (:id test-coll-one)
@@ -175,7 +175,7 @@
       (let [res (rp/collection-id-patch (:id user-stud-stud)
                                         (:id test-coll-one)
                                         (g/get-random-collection-without-id))]
-        (is (= 401 (:status res)))))
+        (is (= 403 (:status res)))))
     (testing "student update collection, with connection (TA)"
       (let [res (rp/collection-id-patch (:id user-stud-ta)
                                         (:id test-coll-one)
@@ -192,15 +192,15 @@
     (testing "student delete collection, no connection"
       (let [res (rp/collection-id-delete (:id user-stud-na)
                                          (:id test-coll-one))]
-        (is (= 401 (:status res)))))
+        (is (= 403 (:status res)))))
     (testing "instructor delete collection, no connection"
       (let [res (rp/collection-id-delete (:id user-instr-na)
                                          (:id test-coll-one))]
-        (is (= 401 (:status res)))))
+        (is (= 403 (:status res)))))
     (testing "lab assistant delete collection, no connection"
       (let [res (rp/collection-id-delete (:id user-la)
                                          (:id test-coll-one))]
-        (is (= 401 (:status res)))))
+        (is (= 403 (:status res)))))
     (testing "admin delete collection, no connection"
       (let [res (rp/collection-id-delete (:id user-admin)
                                          (:id test-coll-one))]
@@ -208,15 +208,15 @@
     (testing "student delete collection, with connection (student)"
       (let [res (rp/collection-id-delete (:id user-stud-stud)
                                          (:id test-coll-one))]
-        (is (= 401 (:status res)))))
+        (is (= 403 (:status res)))))
     (testing "student delete collection, with connection (TA)"
       (let [res (rp/collection-id-delete (:id user-stud-ta)
                                          (:id test-coll-one))]
-        (is (= 401 (:status res)))))
+        (is (= 403 (:status res)))))
     (testing "instructor delete collection, with connection (owner?)"
       (let [res (rp/collection-id-delete (:id user-instr-c1)
                                          (:id test-coll-one))]
-        (is (= 401 (:status res))))))
+        (is (= 403 (:status res))))))
 
   ; Connect user and collection
   (deftest collection-add-user
@@ -226,14 +226,14 @@
                                              (:id test-coll-one)
                                              (:id test-add-user)
                                              0)]
-          (is (= 401 (:status res))))))
+          (is (= 403 (:status res))))))
     (testing "instructor add user, no connection"
       (let [test-add-user (users/CREATE (g/get-random-user-without-id))]
         (let [res (rp/collection-id-add-user (:id user-instr-na)
                                              (:id test-coll-one)
                                              (:id test-add-user)
                                              0)]
-          (is (= 401 (:status res))))))
+          (is (= 403 (:status res))))))
     (testing "lab assistant add user, no connection"
       (let [test-add-user (users/CREATE (g/get-random-user-without-id))]
         (let [res (rp/collection-id-add-user (:id user-la)
@@ -254,14 +254,14 @@
                                              (:id test-coll-one)
                                              (:id test-add-user)
                                              0)]
-          (is (= 401 (:status res))))))
+          (is (= 403 (:status res))))))
     (testing "student add user, with connection (TA)"
       (let [test-add-user (users/CREATE (g/get-random-user-without-id))]
         (let [res (rp/collection-id-add-user (:id user-stud-ta)
                                              (:id test-coll-one)
                                              (:id test-add-user)
                                              0)]
-          (is (= 401 (:status res))))))
+          (is (= 403 (:status res))))))
     (testing "instructor add user, with connection"
       (let [test-add-user (users/CREATE (g/get-random-user-without-id))]
         (let [res (rp/collection-id-add-user (:id user-instr-c1)
@@ -280,7 +280,7 @@
         (let [res (rp/collection-id-remove-user (:id user-stud-na)
                                              (:id test-coll-one)
                                              (:id test-remove-user))]
-          (is (= 401 (:status res))))))
+          (is (= 403 (:status res))))))
     (testing "instructor remove user, no connection"
       (let [test-remove-user (users/CREATE (g/get-random-user-without-id))]
         (user-collections-assoc/CREATE {:user-id (:id test-remove-user)
@@ -289,7 +289,7 @@
         (let [res (rp/collection-id-remove-user (:id user-instr-na)
                                              (:id test-coll-one)
                                              (:id test-remove-user))]
-          (is (= 401 (:status res))))))
+          (is (= 403 (:status res))))))
     (testing "lab assistant remove user, no connection"
       (let [test-remove-user (users/CREATE (g/get-random-user-without-id))]
         (user-collections-assoc/CREATE {:user-id (:id test-remove-user)
@@ -316,7 +316,7 @@
         (let [res (rp/collection-id-remove-user (:id user-stud-stud)
                                              (:id test-coll-one)
                                              (:id test-remove-user))]
-          (is (= 401 (:status res))))))
+          (is (= 403 (:status res))))))
     (testing "student remove user, with connection (TA)"
       (let [test-remove-user (users/CREATE (g/get-random-user-without-id))]
         (user-collections-assoc/CREATE {:user-id (:id test-remove-user)
@@ -325,7 +325,7 @@
         (let [res (rp/collection-id-remove-user (:id user-stud-ta)
                                              (:id test-coll-one)
                                              (:id test-remove-user))]
-          (is (= 401 (:status res))))))
+          (is (= 403 (:status res))))))
     (testing "instructor remove user, with connection"
       (let [test-remove-user (users/CREATE (g/get-random-user-without-id))]
         (user-collections-assoc/CREATE {:user-id (:id test-remove-user)
@@ -343,13 +343,13 @@
         (let [res (rp/collection-id-add-resource (:id user-stud-na)
                                                 (:id test-coll-one)
                                                 (:id new-resource))]
-          (is (= 401 (:status res))))))
+          (is (= 403 (:status res))))))
     (testing "instructor add resource, no connection"
       (let [new-resource (resources/CREATE (g/get-random-resource-without-id))]
         (let [res (rp/collection-id-add-resource (:id user-instr-na)
                                                 (:id test-coll-one)
                                                 (:id new-resource))]
-          (is (= 401 (:status res))))))
+          (is (= 403 (:status res))))))
     (testing "lab assistant add resource, no connection"
       (let [new-resource (resources/CREATE (g/get-random-resource-without-id))]
         (let [res (rp/collection-id-add-resource (:id user-la)
@@ -367,13 +367,13 @@
         (let [res (rp/collection-id-add-resource (:id user-stud-stud)
                                                 (:id test-coll-one)
                                                 (:id new-resource))]
-          (is (= 401 (:status res))))))
+          (is (= 403 (:status res))))))
     (testing "student add resource, with connection (TA)"
       (let [new-resource (resources/CREATE (g/get-random-resource-without-id))]
         (let [res (rp/collection-id-add-resource (:id user-stud-ta)
                                                 (:id test-coll-one)
                                                 (:id new-resource))]
-          (is (= 401 (:status res))))))
+          (is (= 403 (:status res))))))
     (testing "instructor add resource, with connection (owner?)"
       (let [new-resource (resources/CREATE (g/get-random-resource-without-id))]
         (let [res (rp/collection-id-add-resource (:id user-instr-c1)
@@ -390,7 +390,7 @@
         (let [res (rp/collection-id-remove-resource (:id user-stud-na)
                                                    (:id test-coll-one)
                                                    (:id new-resource))]
-          (is (= 401 (:status res))))))
+          (is (= 403 (:status res))))))
     (testing "instructor remove resource, no connection"
       (let [new-resource (resources/CREATE (g/get-random-resource-without-id))]
         (collection-contents-assoc/CREATE {:resource-id (:id new-resource)
@@ -398,7 +398,7 @@
         (let [res (rp/collection-id-remove-resource (:id user-instr-na)
                                                    (:id test-coll-one)
                                                    (:id new-resource))]
-          (is (= 401 (:status res))))))
+          (is (= 403 (:status res))))))
     (testing "lab assistant remove resource, no connection"
       (let [new-resource (resources/CREATE (g/get-random-resource-without-id))]
         (collection-contents-assoc/CREATE {:resource-id (:id new-resource)
@@ -422,7 +422,7 @@
         (let [res (rp/collection-id-remove-resource (:id user-stud-stud)
                                                    (:id test-coll-one)
                                                    (:id new-resource))]
-          (is (= 401 (:status res))))))
+          (is (= 403 (:status res))))))
     (testing "student remove resource, with connection (TA)"
       (let [new-resource (resources/CREATE (g/get-random-resource-without-id))]
         (collection-contents-assoc/CREATE {:resource-id (:id new-resource)
@@ -430,7 +430,7 @@
         (let [res (rp/collection-id-remove-resource (:id user-stud-ta)
                                                    (:id test-coll-one)
                                                    (:id new-resource))]
-          (is (= 401 (:status res))))))
+          (is (= 403 (:status res))))))
     (testing "instructor remove resource, with connection (owner?)"
       (let [new-resource (resources/CREATE (g/get-random-resource-without-id))]
         (collection-contents-assoc/CREATE {:resource-id (:id new-resource)
@@ -445,11 +445,11 @@
     (testing "student get resources, no connection"
       (let [res (rp/collection-id-contents (:id user-stud-na)
                                            (:id test-coll-one))]
-        (is (= 401 (:status res)))))
+        (is (= 403 (:status res)))))
     (testing "instructor get resources, no connection"
       (let [res (rp/collection-id-contents (:id user-instr-na)
                                            (:id test-coll-one))]
-        (is (= 401 (:status res)))))
+        (is (= 403 (:status res)))))
     (testing "lab assistant get resources, no connection"
       (let [res (rp/collection-id-contents (:id user-la)
                                            (:id test-coll-one))]
@@ -476,11 +476,11 @@
     (testing "student get courses, no connection"
       (let [res (rp/collection-id-courses (:id user-stud-na)
                                           (:id test-coll-one))]
-        (is (= 401 (:status res)))))
+        (is (= 403 (:status res)))))
     (testing "instructor get courses, no connection"
       (let [res (rp/collection-id-courses (:id user-instr-na)
                                           (:id test-coll-one))]
-        (is (= 401 (:status res)))))
+        (is (= 403 (:status res)))))
     (testing "lab assistant get courses, no connection"
       (let [res (rp/collection-id-courses (:id user-la)
                                           (:id test-coll-one))]
@@ -492,26 +492,26 @@
     (testing "student get courses, with connection (student)"
       (let [res (rp/collection-id-courses (:id user-stud-stud)
                                           (:id test-coll-one))]
-        (is (= 401 (:status res)))))
+        (is (= 403 (:status res)))))
     (testing "student get courses, with connection (TA)"
       (let [res (rp/collection-id-courses (:id user-stud-ta)
                                           (:id test-coll-one))]
-        (is (= 401 (:status res)))))
+        (is (= 403 (:status res)))))
     (testing "instructor get courses, with connection (owner)"
       (let [res (rp/collection-id-courses (:id user-instr-c1)
                                           (:id test-coll-one))]
-        (is (= 401 (:status res))))))
+        (is (= 403 (:status res))))))
 
   ; Retrieve all users for collection
   (deftest collection-get-all-users
     (testing "student get users, no connection"
       (let [res (rp/collection-id-users (:id user-stud-na)
                                         (:id test-coll-one))]
-        (is (= 401 (:status res)))))
+        (is (= 403 (:status res)))))
     (testing "instructor get users, no connection"
       (let [res (rp/collection-id-users (:id user-instr-na)
                                         (:id test-coll-one))]
-        (is (= 401 (:status res)))))
+        (is (= 403 (:status res)))))
     (testing "lab assistant get users, no connection"
       (let [res (rp/collection-id-users (:id user-la)
                                         (:id test-coll-one))]
@@ -523,15 +523,15 @@
     (testing "student get users, with connection (student)"
       (let [res (rp/collection-id-users (:id user-stud-stud)
                                         (:id test-coll-one))]
-        (is (= 401 (:status res)))))
+        (is (= 403 (:status res)))))
     (testing "student get users, with connection (TA)"
       (let [res (rp/collection-id-users (:id user-stud-ta)
                                         (:id test-coll-one))]
-        (is (= 401 (:status res)))))
+        (is (= 403 (:status res)))))
     (testing "instructor get users, with connection (owner)"
       (let [res (rp/collection-id-users (:id user-instr-c1)
                                         (:id test-coll-one))]
-        (is (= 401 (:status res))))))
+        (is (= 403 (:status res))))))
 
   ; Connect course and collection
   (deftest collection-add-course
@@ -540,13 +540,13 @@
         (let [res (rp/collection-id-add-course (:id user-stud-na)
                                                (:id test-coll-one)
                                                (:id new-course))]
-          (is (= 401 (:status res))))))
+          (is (= 403 (:status res))))))
     (testing "instructor add course, no connection"
       (let [new-course (courses/CREATE (g/get-random-course-without-id))]
         (let [res (rp/collection-id-add-course (:id user-instr-na)
                                                (:id test-coll-one)
                                                (:id new-course))]
-          (is (= 401 (:status res))))))
+          (is (= 403 (:status res))))))
     (testing "lab assistant add course, no connection"
       (let [new-course (courses/CREATE (g/get-random-course-without-id))]
         (let [res (rp/collection-id-add-course (:id user-la)
@@ -564,13 +564,13 @@
         (let [res (rp/collection-id-add-course (:id user-stud-stud)
                                                (:id test-coll-one)
                                                (:id new-course))]
-          (is (= 401 (:status res))))))
+          (is (= 403 (:status res))))))
     (testing "student add course, with connection (TA)"
       (let [new-course (courses/CREATE (g/get-random-course-without-id))]
         (let [res (rp/collection-id-add-course (:id user-stud-ta)
                                                (:id test-coll-one)
                                                (:id new-course))]
-          (is (= 401 (:status res))))))
+          (is (= 403 (:status res))))))
     (testing "instructor add course, with connection (owner)"
       (let [new-course (courses/CREATE (g/get-random-course-without-id))]
         (let [res (rp/collection-id-add-course (:id user-instr-c1)
@@ -587,7 +587,7 @@
         (let [res (rp/collection-id-remove-course (:id user-stud-na)
                                                   (:id test-coll-one)
                                                   (:id new-course))]
-          (is (= 401 (:status res))))))
+          (is (= 403 (:status res))))))
     (testing "instructor remove course, no connection"
       (let [new-course (courses/CREATE (g/get-random-course-without-id))]
         (collection-courses-assoc/CREATE {:collection-id (:id test-coll-one)
@@ -595,7 +595,7 @@
         (let [res (rp/collection-id-remove-course (:id user-instr-na)
                                                   (:id test-coll-one)
                                                   (:id new-course))]
-          (is (= 401 (:status res))))))
+          (is (= 403 (:status res))))))
     (testing "lab assistant remove course, no connection"
       (let [new-course (courses/CREATE (g/get-random-course-without-id))]
         (collection-courses-assoc/CREATE {:collection-id (:id test-coll-one)
@@ -619,7 +619,7 @@
         (let [res (rp/collection-id-remove-course (:id user-stud-stud)
                                                   (:id test-coll-one)
                                                   (:id new-course))]
-          (is (= 401 (:status res))))))
+          (is (= 403 (:status res))))))
     (testing "student remove course, with connection (TA)"
       (let [new-course (courses/CREATE (g/get-random-course-without-id))]
         (collection-courses-assoc/CREATE {:collection-id (:id test-coll-one)
@@ -627,7 +627,7 @@
         (let [res (rp/collection-id-remove-course (:id user-stud-ta)
                                                   (:id test-coll-one)
                                                   (:id new-course))]
-          (is (= 401 (:status res))))))
+          (is (= 403 (:status res))))))
     (testing "instructor remove course, with connection (owner)"
       (let [new-course (courses/CREATE (g/get-random-course-without-id))]
         (collection-courses-assoc/CREATE {:collection-id (:id test-coll-one)

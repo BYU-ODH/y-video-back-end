@@ -133,7 +133,7 @@
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           res (rp/resource-id-delete (uc/user-id-to-session-id (:id user-one))
                                      (:id rsrc-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "instructor, resource-delete-by-id, instructor via course"
     (let [user-one (db-pop/add-user "instructor")
           coll-one (db-pop/add-collection)
@@ -144,7 +144,7 @@
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           res (rp/resource-id-delete (uc/user-id-to-session-id (:id user-one))
                                      (:id rsrc-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, resource-delete-by-id, ta via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -153,7 +153,7 @@
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           res (rp/resource-id-delete (uc/user-id-to-session-id (:id user-one))
                                      (:id rsrc-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, resource-delete-by-id, ta via course"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -164,7 +164,7 @@
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           res (rp/resource-id-delete (uc/user-id-to-session-id (:id user-one))
                                      (:id rsrc-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, resource-delete-by-id, student via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -173,7 +173,7 @@
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           res (rp/resource-id-delete (uc/user-id-to-session-id (:id user-one))
                                      (:id rsrc-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, resource-delete-by-id, student via course"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -184,7 +184,7 @@
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           res (rp/resource-id-delete (uc/user-id-to-session-id (:id user-one))
                                      (:id rsrc-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, resource-delete-by-id, auditing via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -193,7 +193,7 @@
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           res (rp/resource-id-delete (uc/user-id-to-session-id (:id user-one))
                                      (:id rsrc-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, resource-delete-by-id, auditing via course"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -204,7 +204,7 @@
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           res (rp/resource-id-delete (uc/user-id-to-session-id (:id user-one))
                                      (:id rsrc-one))]
-      (is (= 401 (:status res))))))
+      (is (= 403 (:status res))))))
 
 ;patch: /api/resource/{id}
 (deftest resource-patch-by-id
@@ -217,7 +217,7 @@
           res (rp/resource-id-patch (uc/user-id-to-session-id (:id user-one))
                                     (:id rsrc-one)
                                     rsrc-one)]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "instructor, resource-patch-by-id, instructor via course"
     (let [user-one (db-pop/add-user "instructor")
           coll-one (db-pop/add-collection)
@@ -229,7 +229,7 @@
           res (rp/resource-id-patch (uc/user-id-to-session-id (:id user-one))
                                     (:id rsrc-one)
                                     rsrc-one)]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, resource-patch-by-id, ta via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -239,7 +239,7 @@
           res (rp/resource-id-patch (uc/user-id-to-session-id (:id user-one))
                                     (:id rsrc-one)
                                     rsrc-one)]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, resource-patch-by-id, ta via course"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -251,7 +251,7 @@
           res (rp/resource-id-patch (uc/user-id-to-session-id (:id user-one))
                                     (:id rsrc-one)
                                     rsrc-one)]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, resource-patch-by-id, student via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -261,7 +261,7 @@
           res (rp/resource-id-patch (uc/user-id-to-session-id (:id user-one))
                                     (:id rsrc-one)
                                     rsrc-one)]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, resource-patch-by-id, student via course"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -273,7 +273,7 @@
           res (rp/resource-id-patch (uc/user-id-to-session-id (:id user-one))
                                     (:id rsrc-one)
                                     rsrc-one)]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, resource-patch-by-id, auditing via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -283,7 +283,7 @@
           res (rp/resource-id-patch (uc/user-id-to-session-id (:id user-one))
                                     (:id rsrc-one)
                                     rsrc-one)]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, resource-patch-by-id, auditing via course"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -295,7 +295,7 @@
           res (rp/resource-id-patch (uc/user-id-to-session-id (:id user-one))
                                     (:id rsrc-one)
                                     rsrc-one)]
-      (is (= 401 (:status res))))))
+      (is (= 403 (:status res))))))
 
 ;get: /api/resource/{id}/files
 (deftest resource-id-files
@@ -390,7 +390,7 @@
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           res (rp/resource-id-collections (uc/user-id-to-session-id (:id user-one))
                                           (:id rsrc-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "instructor, resource-id-collections, instructor via course"
     (let [user-one (db-pop/add-user "instructor")
           coll-one (db-pop/add-collection)
@@ -401,7 +401,7 @@
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           res (rp/resource-id-collections (uc/user-id-to-session-id (:id user-one))
                                           (:id rsrc-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, resource-id-collections, ta via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -410,7 +410,7 @@
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           res (rp/resource-id-collections (uc/user-id-to-session-id (:id user-one))
                                           (:id rsrc-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, resource-id-collections, ta via course"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -421,7 +421,7 @@
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           res (rp/resource-id-collections (uc/user-id-to-session-id (:id user-one))
                                           (:id rsrc-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, resource-id-collections, student via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -430,7 +430,7 @@
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           res (rp/resource-id-collections (uc/user-id-to-session-id (:id user-one))
                                           (:id rsrc-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, resource-id-collections, student via course"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -441,7 +441,7 @@
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           res (rp/resource-id-collections (uc/user-id-to-session-id (:id user-one))
                                           (:id rsrc-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, resource-id-collections, auditing via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -450,7 +450,7 @@
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           res (rp/resource-id-collections (uc/user-id-to-session-id (:id user-one))
                                           (:id rsrc-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, resource-id-collections, auditing via course"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -461,7 +461,7 @@
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           res (rp/resource-id-collections (uc/user-id-to-session-id (:id user-one))
                                           (:id rsrc-one))]
-      (is (= 401 (:status res))))))
+      (is (= 403 (:status res))))))
 
 ;get: /api/resource/{id}/contents
 (deftest resource-id-contents
@@ -473,7 +473,7 @@
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           res (rp/resource-id-contents (uc/user-id-to-session-id (:id user-one))
                                        (:id rsrc-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "instructor, resource-id-contents, instructor via course"
     (let [user-one (db-pop/add-user "instructor")
           coll-one (db-pop/add-collection)
@@ -484,7 +484,7 @@
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           res (rp/resource-id-contents (uc/user-id-to-session-id (:id user-one))
                                        (:id rsrc-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, resource-id-contents, ta via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -493,7 +493,7 @@
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           res (rp/resource-id-contents (uc/user-id-to-session-id (:id user-one))
                                        (:id rsrc-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, resource-id-contents, ta via course"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -504,7 +504,7 @@
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           res (rp/resource-id-contents (uc/user-id-to-session-id (:id user-one))
                                        (:id rsrc-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, resource-id-contents, student via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -513,7 +513,7 @@
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           res (rp/resource-id-contents (uc/user-id-to-session-id (:id user-one))
                                        (:id rsrc-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, resource-id-contents, student via course"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -524,7 +524,7 @@
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           res (rp/resource-id-contents (uc/user-id-to-session-id (:id user-one))
                                        (:id rsrc-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, resource-id-contents, auditing via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -533,7 +533,7 @@
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           res (rp/resource-id-contents (uc/user-id-to-session-id (:id user-one))
                                        (:id rsrc-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, resource-id-contents, auditing via course"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -544,4 +544,4 @@
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           res (rp/resource-id-contents (uc/user-id-to-session-id (:id user-one))
                                        (:id rsrc-one))]
-      (is (= 401 (:status res))))))
+      (is (= 403 (:status res))))))

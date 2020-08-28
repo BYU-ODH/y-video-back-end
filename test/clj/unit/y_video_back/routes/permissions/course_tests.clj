@@ -102,11 +102,11 @@
     (testing "student create course, no connection"
       (let [res (rp/course-post (:id user-stud-stud)
                                 (g/get-random-course-without-id))]
-        (is (= 401 (:status res)))))
+        (is (= 403 (:status res)))))
     (testing "instr create course"
       (let [res (rp/course-post (:id user-instr-c1)
                                 (g/get-random-course-without-id))]
-        (is (= 401 (:status res)))))
+        (is (= 403 (:status res)))))
     (testing "lab assistant create course"
       (let [res (rp/course-post (:id user-la)
                                 (g/get-random-course-without-id))]
@@ -122,11 +122,11 @@
     (testing "student reading course, no connection"
       (let [res (rp/course-id-get (:id user-stud-na)
                                   (:id test-crse-one))]
-        (is (= 401 (:status res)))))
+        (is (= 403 (:status res)))))
     (testing "instructor reading course, no connection"
       (let [res (rp/course-id-get (:id user-instr-na)
                                   (:id test-crse-one))]
-        (is (= 401 (:status res)))))
+        (is (= 403 (:status res)))))
     (testing "lab assistant reading course, no connection"
       (let [res (rp/course-id-get (:id user-la)
                                   (:id test-crse-one))]
@@ -142,7 +142,7 @@
     (testing "student reading course, with connection (TA)"
       (let [res (rp/course-id-get (:id user-stud-ta)
                                   (:id test-crse-one))]
-        (is (= 401 (:status res)))))
+        (is (= 403 (:status res)))))
     (testing "instructor reading course, with connection"
       (let [res (rp/course-id-get (:id user-instr-c1)
                                   (:id test-crse-one))]
@@ -154,12 +154,12 @@
       (let [res (rp/course-id-patch (:id user-stud-na)
                                     (:id test-crse-one)
                                     (g/get-random-course-without-id))]
-        (is (= 401 (:status res)))))
+        (is (= 403 (:status res)))))
     (testing "instructor update course, no connection"
       (let [res (rp/course-id-patch (:id user-instr-na)
                                     (:id test-crse-one)
                                     (g/get-random-course-without-id))]
-        (is (= 401 (:status res)))))
+        (is (= 403 (:status res)))))
     (testing "lab assistant update course, no connection"
       (let [res (rp/course-id-patch (:id user-la)
                                     (:id test-crse-one)
@@ -174,17 +174,17 @@
       (let [res (rp/course-id-patch (:id user-stud-stud)
                                     (:id test-crse-one)
                                     (g/get-random-course-without-id))]
-        (is (= 401 (:status res)))))
+        (is (= 403 (:status res)))))
     (testing "student update course, with connection (TA)"
       (let [res (rp/course-id-patch (:id user-stud-ta)
                                     (:id test-crse-one)
                                     (g/get-random-course-without-id))]
-        (is (= 401 (:status res)))))
+        (is (= 403 (:status res)))))
     (testing "instructor update course, with connection (owner?)"
       (let [res (rp/course-id-patch (:id user-instr-c1)
                                     (:id test-crse-one)
                                     (g/get-random-course-without-id))]
-        (is (= 401 (:status res))))))
+        (is (= 403 (:status res))))))
 
   ; Delete course
   (deftest course-delete
@@ -192,17 +192,17 @@
       (let [new-course (ut/under-to-hyphen (courses/CREATE (g/get-random-course-without-id)))]
         (let [res (rp/course-id-delete (:id user-stud-na)
                                        (:id new-course))]
-          (is (= 401 (:status res))))))
+          (is (= 403 (:status res))))))
     (testing "instructor delete course, no connection"
       (let [new-course (ut/under-to-hyphen (courses/CREATE (g/get-random-course-without-id)))]
         (let [res (rp/course-id-delete (:id user-instr-na)
                                        (:id new-course))]
-          (is (= 401 (:status res))))))
+          (is (= 403 (:status res))))))
     (testing "lab assistant delete course, no connection"
       (let [new-course (ut/under-to-hyphen (courses/CREATE (g/get-random-course-without-id)))]
         (let [res (rp/course-id-delete (:id user-la)
                                        (:id new-course))]
-          (is (= 401 (:status res))))))
+          (is (= 403 (:status res))))))
     (testing "admin delete course, no connection"
       (let [new-course (ut/under-to-hyphen (courses/CREATE (g/get-random-course-without-id)))]
         (let [res (rp/course-id-delete (:id user-admin)
@@ -212,28 +212,28 @@
       (let [new-course (ut/under-to-hyphen (courses/CREATE (g/get-random-course-without-id)))]
         (let [res (rp/course-id-delete (:id user-stud-stud)
                                        (:id new-course))]
-          (is (= 401 (:status res))))))
+          (is (= 403 (:status res))))))
     (testing "student delete course, with connection (TA)"
       (let [new-course (ut/under-to-hyphen (courses/CREATE (g/get-random-course-without-id)))]
         (let [res (rp/course-id-delete (:id user-stud-ta)
                                        (:id new-course))]
-          (is (= 401 (:status res))))))
+          (is (= 403 (:status res))))))
     (testing "instructor delete course, with connection (owner?)"
       (let [new-course (ut/under-to-hyphen (courses/CREATE (g/get-random-course-without-id)))]
         (let [res (rp/course-id-delete (:id user-instr-c1)
                                        (:id new-course))]
-          (is (= 401 (:status res)))))))
+          (is (= 403 (:status res)))))))
 
   ; Retrieve all collections for course
   (deftest course-get-all-collections
     (testing "student get all collections by course, no connection"
       (let [res (rp/course-id-collections (:id user-stud-na)
                                           (:id test-crse-one))]
-        (is (= 401 (:status res)))))
+        (is (= 403 (:status res)))))
     (testing "instructor get all collections by course, no connection"
       (let [res (rp/course-id-collections (:id user-instr-na)
                                           (:id test-crse-one))]
-        (is (= 401 (:status res)))))
+        (is (= 403 (:status res)))))
     (testing "lab assistant get all collections by course, no connection"
       (let [res (rp/course-id-collections (:id user-la)
                                           (:id test-crse-one))]
@@ -249,7 +249,7 @@
     (testing "student get all collections by course, with connection (TA)"
       (let [res (rp/course-id-collections (:id user-stud-ta)
                                           (:id test-crse-one))]
-        (is (= 401 (:status res))))) ; Will be 200 eventually
+        (is (= 403 (:status res))))) ; Will be 200 eventually
     (testing "instructor get all collections by course, with connection (owner?)"
       (let [res (rp/course-id-collections (:id user-instr-c1)
                                           (:id test-crse-one))]

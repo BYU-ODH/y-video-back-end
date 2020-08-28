@@ -20,7 +20,8 @@
       [y-video-back.db.user-collections-assoc :as user-collections-assoc]
       [y-video-back.db.users :as users]
       [y-video-back.db.words :as words]
-      [y-video-back.utils.utils :as ut]))
+      [y-video-back.utils.utils :as ut]
+      [y-video-back.utils.db-populator :as db-pop]))
 
 (declare ^:dynamic *txn*)
 
@@ -45,6 +46,10 @@
 (deftest user-id-get
   (testing "read nonexistent user"
     (let [res (rp/user-id-get (java.util.UUID/randomUUID))]
+      (is (= 404 (:status res)))))
+  (testing "nil instead of id"
+    (db-pop/add-user)
+    (let [res (rp/user-id-get nil)]
       (is (= 404 (:status res))))))
 
 (deftest user-id-patch

@@ -140,7 +140,7 @@
           coll-crse-add (db-pop/add-coll-crse-assoc (:id coll-one) (:id crse-one))
           res (rp/course-id-delete (uc/user-id-to-session-id (:id user-one))
                                    (:id crse-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "instructor, course-delete-by-id, connected via user-crse as instructor"
     (let [user-one (db-pop/add-user "instructor")
           coll-one (db-pop/add-collection)
@@ -150,7 +150,7 @@
                                                     "instructor")
           res (rp/course-id-delete (uc/user-id-to-session-id (:id user-one))
                                    (:id crse-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "instructor, course-delete-by-id, connected via user-crse as student"
     (let [user-one (db-pop/add-user "instructor")
           coll-one (db-pop/add-collection)
@@ -160,7 +160,7 @@
                                                     "student")
           res (rp/course-id-delete (uc/user-id-to-session-id (:id user-one))
                                    (:id crse-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "instructor, course-delete-by-id, connected via user-crse as auditing"
     (let [user-one (db-pop/add-user "instructor")
           coll-one (db-pop/add-collection)
@@ -170,7 +170,7 @@
                                                     "auditing")
           res (rp/course-id-delete (uc/user-id-to-session-id (:id user-one))
                                    (:id crse-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, course-delete-by-id, connected via user-coll as ta"
     (let [user-one (db-pop/add-user "student")
           coll-crse-add (db-pop/add-coll-crse-assoc)
@@ -180,7 +180,7 @@
           crse-one {:id (:course-id coll-crse-add)}
           res (rp/course-id-delete (uc/user-id-to-session-id (:id user-one))
                                    (:id crse-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, course-delete-by-id, connected via user-coll as auditing"
     (let [user-one (db-pop/add-user "student")
           coll-crse-add (db-pop/add-coll-crse-assoc)
@@ -190,7 +190,7 @@
           crse-one {:id (:course-id coll-crse-add)}
           res (rp/course-id-delete (uc/user-id-to-session-id (:id user-one))
                                    (:id crse-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, course-delete-by-id, connected via user-crse as ta"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -200,7 +200,7 @@
                                                     "ta")
           res (rp/course-id-delete (uc/user-id-to-session-id (:id user-one))
                                    (:id crse-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, course-delete-by-id, connected via user-crse as student"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -210,7 +210,7 @@
                                                     "student")
           res (rp/course-id-delete (uc/user-id-to-session-id (:id user-one))
                                    (:id crse-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, course-delete-by-id, connected via user-crse as auditing"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -220,7 +220,7 @@
                                                     "auditing")
           res (rp/course-id-delete (uc/user-id-to-session-id (:id user-one))
                                    (:id crse-one))]
-      (is (= 401 (:status res))))))
+      (is (= 403 (:status res))))))
 
 ;patch: /api/course/{id}
 (deftest course-patch-by-id
@@ -232,7 +232,7 @@
           res (rp/course-id-patch (uc/user-id-to-session-id (:id user-one))
                                   (:id crse-one)
                                   crse-one)]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "instructor, course-patch-by-id, connected via user-crse as instructor"
     (let [user-one (db-pop/add-user "instructor")
           coll-one (db-pop/add-collection)
@@ -243,7 +243,7 @@
           res (rp/course-id-patch (uc/user-id-to-session-id (:id user-one))
                                   (:id crse-one)
                                   crse-one)]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "instructor, course-patch-by-id, connected via user-crse as student"
     (let [user-one (db-pop/add-user "instructor")
           coll-one (db-pop/add-collection)
@@ -254,7 +254,7 @@
           res (rp/course-id-patch (uc/user-id-to-session-id (:id user-one))
                                   (:id crse-one)
                                   crse-one)]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "instructor, course-patch-by-id, connected via user-crse as auditing"
     (let [user-one (db-pop/add-user "instructor")
           coll-one (db-pop/add-collection)
@@ -265,7 +265,7 @@
           res (rp/course-id-patch (uc/user-id-to-session-id (:id user-one))
                                   (:id crse-one)
                                   crse-one)]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, course-patch-by-id, connected via user-coll as ta"
     (let [user-one (db-pop/add-user "student")
           coll-crse-add (db-pop/add-coll-crse-assoc)
@@ -276,7 +276,7 @@
           res (rp/course-id-patch (uc/user-id-to-session-id (:id user-one))
                                   (:id crse-one)
                                   crse-one)]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, course-patch-by-id, connected via user-coll as auditing"
     (let [user-one (db-pop/add-user "student")
           coll-crse-add (db-pop/add-coll-crse-assoc)
@@ -287,7 +287,7 @@
           res (rp/course-id-patch (uc/user-id-to-session-id (:id user-one))
                                   (:id crse-one)
                                   crse-one)]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, course-patch-by-id, connected via user-crse as ta"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -298,7 +298,7 @@
           res (rp/course-id-patch (uc/user-id-to-session-id (:id user-one))
                                   (:id crse-one)
                                   crse-one)]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, course-patch-by-id, connected via user-crse as student"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -309,7 +309,7 @@
           res (rp/course-id-patch (uc/user-id-to-session-id (:id user-one))
                                   (:id crse-one)
                                   crse-one)]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, course-patch-by-id, connected via user-crse as auditing"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -320,7 +320,7 @@
           res (rp/course-id-patch (uc/user-id-to-session-id (:id user-one))
                                   (:id crse-one)
                                   crse-one)]
-      (is (= 401 (:status res))))))
+      (is (= 403 (:status res))))))
 
 ;get: /api/course/{id}/collections
 (deftest course-id-collections
@@ -451,7 +451,7 @@
                                      (:id crse-one)
                                      (:id user-two)
                                      0)] ; role doesn't matter here
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "instructor, course-id-add-user, connected via user-crse as auditing"
     (let [user-one (db-pop/add-user "instructor")
           coll-one (db-pop/add-collection)
@@ -464,7 +464,7 @@
                                      (:id crse-one)
                                      (:id user-two)
                                      0)] ; role doesn't matter here
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, course-id-add-user, connected via user-coll as ta"
     (let [user-one (db-pop/add-user "student")
           coll-crse-add (db-pop/add-coll-crse-assoc)
@@ -477,7 +477,7 @@
                                      (:id crse-one)
                                      (:id user-two)
                                      0)] ; role doesn't matter here
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, course-id-add-user, connected via user-coll as auditing"
     (let [user-one (db-pop/add-user "student")
           coll-crse-add (db-pop/add-coll-crse-assoc)
@@ -490,7 +490,7 @@
                                      (:id crse-one)
                                      (:id user-two)
                                      0)] ; role doesn't matter here
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, course-id-add-user, connected via user-crse as ta"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -503,7 +503,7 @@
                                      (:id crse-one)
                                      (:id user-two)
                                      0)] ; role doesn't matter here
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, course-id-add-user, connected via user-crse as student"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -516,7 +516,7 @@
                                      (:id crse-one)
                                      (:id user-two)
                                      0)] ; role doesn't matter here
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, course-id-add-user, connected via user-crse as auditing"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -529,7 +529,7 @@
                                      (:id crse-one)
                                      (:id user-two)
                                      0)] ; role doesn't matter here
-      (is (= 401 (:status res))))))
+      (is (= 403 (:status res))))))
 
 ;post: /api/course/{id}/remove-user
 (deftest course-id-remove-user
@@ -569,7 +569,7 @@
           res (rp/course-id-remove-user (uc/user-id-to-session-id (:id user-one))
                                         (:id crse-one)
                                         (:id user-two))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "instructor, course-id-remove-user, connected via user-crse as auditing"
     (let [user-one (db-pop/add-user "instructor")
           coll-one (db-pop/add-collection)
@@ -582,7 +582,7 @@
           res (rp/course-id-remove-user (uc/user-id-to-session-id (:id user-one))
                                         (:id crse-one)
                                         (:id user-two))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, course-id-remove-user, connected via user-coll as ta"
     (let [user-one (db-pop/add-user "student")
           coll-crse-add (db-pop/add-coll-crse-assoc)
@@ -595,7 +595,7 @@
           res (rp/course-id-remove-user (uc/user-id-to-session-id (:id user-one))
                                         (:id crse-one)
                                         (:id user-two))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, course-id-remove-user, connected via user-coll as auditing"
     (let [user-one (db-pop/add-user "student")
           coll-crse-add (db-pop/add-coll-crse-assoc)
@@ -608,7 +608,7 @@
           res (rp/course-id-remove-user (uc/user-id-to-session-id (:id user-one))
                                         (:id crse-one)
                                         (:id user-two))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, course-id-remove-user, connected via user-crse as ta"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -621,7 +621,7 @@
           res (rp/course-id-remove-user (uc/user-id-to-session-id (:id user-one))
                                         (:id crse-one)
                                         (:id user-two))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, course-id-remove-user, connected via user-crse as student"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -634,7 +634,7 @@
           res (rp/course-id-remove-user (uc/user-id-to-session-id (:id user-one))
                                         (:id crse-one)
                                         (:id user-two))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, course-id-remove-user, connected via user-crse as auditing"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -647,7 +647,7 @@
           res (rp/course-id-remove-user (uc/user-id-to-session-id (:id user-one))
                                         (:id crse-one)
                                         (:id user-two))]
-      (is (= 401 (:status res))))))
+      (is (= 403 (:status res))))))
 
 ;get: /api/course/{id}/users
 (deftest course-id-users
@@ -678,7 +678,7 @@
                                                     "student")
           res (rp/course-id-users (uc/user-id-to-session-id (:id user-one))
                                   (:id crse-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "instructor, course-id-users, connected via user-crse as auditing"
     (let [user-one (db-pop/add-user "instructor")
           coll-one (db-pop/add-collection)
@@ -688,7 +688,7 @@
                                                     "auditing")
           res (rp/course-id-users (uc/user-id-to-session-id (:id user-one))
                                   (:id crse-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, course-id-users, connected via user-coll as ta"
     (let [user-one (db-pop/add-user "student")
           coll-crse-add (db-pop/add-coll-crse-assoc)
@@ -698,7 +698,7 @@
           crse-one {:id (:course-id coll-crse-add)}
           res (rp/course-id-users (uc/user-id-to-session-id (:id user-one))
                                   (:id crse-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, course-id-users, connected via user-coll as auditing"
     (let [user-one (db-pop/add-user "student")
           coll-crse-add (db-pop/add-coll-crse-assoc)
@@ -708,7 +708,7 @@
           crse-one {:id (:course-id coll-crse-add)}
           res (rp/course-id-users (uc/user-id-to-session-id (:id user-one))
                                   (:id crse-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, course-id-users, connected via user-crse as ta"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -718,7 +718,7 @@
                                                     "ta")
           res (rp/course-id-users (uc/user-id-to-session-id (:id user-one))
                                   (:id crse-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, course-id-users, connected via user-crse as student"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -728,7 +728,7 @@
                                                     "student")
           res (rp/course-id-users (uc/user-id-to-session-id (:id user-one))
                                   (:id crse-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, course-id-users, connected via user-crse as auditing"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -738,4 +738,4 @@
                                                     "auditing")
           res (rp/course-id-users (uc/user-id-to-session-id (:id user-one))
                                   (:id crse-one))]
-      (is (= 401 (:status res))))))
+      (is (= 403 (:status res))))))

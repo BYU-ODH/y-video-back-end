@@ -59,13 +59,13 @@
           word-one (db-pop/get-word)
           res (rp/word-post (uc/user-id-to-session-id (:id user-one))
                             word-one)]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student - not owner, word-post"
     (let [user-one (db-pop/add-user "student")
           word-one (db-pop/get-word)
           res (rp/word-post (uc/user-id-to-session-id (:id user-one))
                             word-one)]
-      (is (= 401 (:status res))))))
+      (is (= 403 (:status res))))))
 
 ;get: /api/word/{id}
 (deftest word-get-by-id
@@ -86,13 +86,13 @@
           word-one (db-pop/add-word)
           res (rp/word-id-get (uc/user-id-to-session-id (:id user-one))
                               (:id word-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student - not owner, word-get-by-id"
     (let [user-one (db-pop/add-user "student")
           word-one (db-pop/add-word)
           res (rp/word-id-get (uc/user-id-to-session-id (:id user-one))
                               (:id word-one))]
-      (is (= 401 (:status res))))))
+      (is (= 403 (:status res))))))
 
 ;delete: /api/word/{id}
 (deftest word-delete-by-id
@@ -113,13 +113,13 @@
           word-one (db-pop/add-word)
           res (rp/word-id-delete (uc/user-id-to-session-id (:id user-one))
                                  (:id word-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student - not owner, word-delete-by-id"
     (let [user-one (db-pop/add-user "student")
           word-one (db-pop/add-word)
           res (rp/word-id-delete (uc/user-id-to-session-id (:id user-one))
                                  (:id word-one))]
-      (is (= 401 (:status res))))))
+      (is (= 403 (:status res))))))
 
 ;patch: /api/word/{id}
 (deftest word-patch-by-id
@@ -143,11 +143,11 @@
           res (rp/word-id-patch (uc/user-id-to-session-id (:id user-one))
                                 (:id word-one)
                                 word-one)]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student - not owner, word-patch-by-id"
     (let [user-one (db-pop/add-user "student")
           word-one (db-pop/add-word)
           res (rp/word-id-patch (uc/user-id-to-session-id (:id user-one))
                                 (:id word-one)
                                 word-one)]
-      (is (= 401 (:status res))))))
+      (is (= 403 (:status res))))))

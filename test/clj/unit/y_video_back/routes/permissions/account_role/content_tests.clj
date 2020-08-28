@@ -71,7 +71,7 @@
                                                     "student")
           res (rp/content-post (uc/user-id-to-session-id (:id user-one))
                                cont-one)]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, content-post, ta via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -82,7 +82,7 @@
                                                     "ta")
           res (rp/content-post (uc/user-id-to-session-id (:id user-one))
                                cont-one)]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, content-post, student via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -93,7 +93,7 @@
                                                     "student")
           res (rp/content-post (uc/user-id-to-session-id (:id user-one))
                                cont-one)]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, content-post, auditing via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -104,7 +104,7 @@
                                                     "auditing")
           res (rp/content-post (uc/user-id-to-session-id (:id user-one))
                                cont-one)]
-      (is (= 401 (:status res))))))
+      (is (= 403 (:status res))))))
 
 ;get: /api/content/{id}
 (deftest content-get-by-id
@@ -199,7 +199,7 @@
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           res (rp/content-id-delete (uc/user-id-to-session-id (:id user-one))
                                     (:id cont-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "instructor, content-patch-by-id, instructor via course"
     (let [user-one (db-pop/add-user "instructor")
           coll-one (db-pop/add-collection)
@@ -210,7 +210,7 @@
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           res (rp/content-id-delete (uc/user-id-to-session-id (:id user-one))
                                     (:id cont-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, content-patch-by-id, ta via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -219,7 +219,7 @@
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           res (rp/content-id-delete (uc/user-id-to-session-id (:id user-one))
                                     (:id cont-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, content-patch-by-id, ta via course"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -230,7 +230,7 @@
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           res (rp/content-id-delete (uc/user-id-to-session-id (:id user-one))
                                     (:id cont-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, content-patch-by-id, student via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -239,7 +239,7 @@
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           res (rp/content-id-delete (uc/user-id-to-session-id (:id user-one))
                                     (:id cont-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, content-patch-by-id, student via course"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -250,7 +250,7 @@
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           res (rp/content-id-delete (uc/user-id-to-session-id (:id user-one))
                                     (:id cont-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, content-patch-by-id, auditing via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -259,7 +259,7 @@
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           res (rp/content-id-delete (uc/user-id-to-session-id (:id user-one))
                                     (:id cont-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, content-patch-by-id, auditing via course"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -270,7 +270,7 @@
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           res (rp/content-id-delete (uc/user-id-to-session-id (:id user-one))
                                     (:id cont-one))]
-      (is (= 401 (:status res))))))
+      (is (= 403 (:status res))))))
 
 ;patch: /api/content/{id}
 (deftest content-patch-by-id
@@ -327,7 +327,7 @@
           res (rp/content-id-patch (uc/user-id-to-session-id (:id user-one))
                                    (:id cont-one)
                                    cont-one)]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, content-patch-by-id, student via course"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -339,7 +339,7 @@
           res (rp/content-id-patch (uc/user-id-to-session-id (:id user-one))
                                    (:id cont-one)
                                    cont-one)]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, content-patch-by-id, auditing via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -349,7 +349,7 @@
           res (rp/content-id-patch (uc/user-id-to-session-id (:id user-one))
                                    (:id cont-one)
                                    cont-one)]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, content-patch-by-id, auditing via course"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -361,7 +361,7 @@
           res (rp/content-id-patch (uc/user-id-to-session-id (:id user-one))
                                    (:id cont-one)
                                    cont-one)]
-      (is (= 401 (:status res))))))
+      (is (= 403 (:status res))))))
 
 ;post: /api/content/{id}/add-view
 (deftest content-id-add-view
@@ -506,7 +506,7 @@
           res (rp/content-id-add-subtitle (uc/user-id-to-session-id (:id user-one))
                                           (:id cont-one)
                                           (:id sbtl-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, content-id-add-subtitle, student via course"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -519,7 +519,7 @@
           res (rp/content-id-add-subtitle (uc/user-id-to-session-id (:id user-one))
                                           (:id cont-one)
                                           (:id sbtl-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, content-id-add-subtitle, auditing via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -530,7 +530,7 @@
           res (rp/content-id-add-subtitle (uc/user-id-to-session-id (:id user-one))
                                           (:id cont-one)
                                           (:id sbtl-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, content-id-add-subtitle, auditing via course"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -543,7 +543,7 @@
           res (rp/content-id-add-subtitle (uc/user-id-to-session-id (:id user-one))
                                           (:id cont-one)
                                           (:id sbtl-one))]
-      (is (= 401 (:status res))))))
+      (is (= 403 (:status res))))))
 
 ;post: /api/content/{id}/remove-subtitle
 (comment (deftest content-id-remove-subtitle)
@@ -610,7 +610,7 @@
           res (rp/content-id-remove-subtitle (uc/user-id-to-session-id (:id user-one))
                                              (:id cont-one)
                                              (:id sbtl-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, content-id-remove-subtitle, student via course"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -624,7 +624,7 @@
           res (rp/content-id-remove-subtitle (uc/user-id-to-session-id (:id user-one))
                                              (:id cont-one)
                                              (:id sbtl-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, content-id-remove-subtitle, auditing via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -636,7 +636,7 @@
           res (rp/content-id-remove-subtitle (uc/user-id-to-session-id (:id user-one))
                                              (:id cont-one)
                                              (:id sbtl-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, content-id-remove-subtitle, auditing via course"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -650,4 +650,4 @@
           res (rp/content-id-remove-subtitle (uc/user-id-to-session-id (:id user-one))
                                              (:id cont-one)
                                              (:id sbtl-one))]
-      (is (= 401 (:status res))))))
+      (is (= 403 (:status res))))))

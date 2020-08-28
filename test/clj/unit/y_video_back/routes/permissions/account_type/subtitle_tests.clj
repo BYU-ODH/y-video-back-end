@@ -59,13 +59,13 @@
           sbtl-one (db-pop/get-subtitle)
           res (rp/subtitle-post (uc/user-id-to-session-id (:id user-one))
                                 sbtl-one)]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student - no connection, subtitle-post"
     (let [user-one (db-pop/add-user "student")
           sbtl-one (db-pop/get-subtitle)
           res (rp/subtitle-post (uc/user-id-to-session-id (:id user-one))
                                 sbtl-one)]
-      (is (= 401 (:status res))))))
+      (is (= 403 (:status res))))))
 
 ;get: /api/subtitle/{id}
 (deftest subtitle-id-get
@@ -86,13 +86,13 @@
           sbtl-one (db-pop/add-subtitle)
           res (rp/subtitle-id-get (uc/user-id-to-session-id (:id user-one))
                                   (:id sbtl-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student - no connection, subtitle-id-get"
     (let [user-one (db-pop/add-user "student")
           sbtl-one (db-pop/add-subtitle)
           res (rp/subtitle-id-get (uc/user-id-to-session-id (:id user-one))
                                   (:id sbtl-one))]
-      (is (= 401 (:status res))))))
+      (is (= 403 (:status res))))))
 
 ;delete: /api/subtitle/{id}
 (deftest subtitle-id-delete
@@ -107,19 +107,19 @@
           sbtl-one (db-pop/add-subtitle)
           res (rp/subtitle-id-delete (uc/user-id-to-session-id (:id user-one))
                                      (:id sbtl-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "instructor - no connection, subtitle-id-delete"
     (let [user-one (db-pop/add-user "instructor")
           sbtl-one (db-pop/add-subtitle)
           res (rp/subtitle-id-delete (uc/user-id-to-session-id (:id user-one))
                                      (:id sbtl-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student - no connection, subtitle-id-delete"
     (let [user-one (db-pop/add-user "student")
           sbtl-one (db-pop/add-subtitle)
           res (rp/subtitle-id-delete (uc/user-id-to-session-id (:id user-one))
                                      (:id sbtl-one))]
-      (is (= 401 (:status res))))))
+      (is (= 403 (:status res))))))
 
 ;patch: /api/subtitle/{id}
 (deftest subtitle-id-patch
@@ -143,11 +143,11 @@
           res (rp/subtitle-id-patch (uc/user-id-to-session-id (:id user-one))
                                     (:id sbtl-one)
                                     sbtl-one)]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student - no connection, subtitle-id-patch"
     (let [user-one (db-pop/add-user "student")
           sbtl-one (db-pop/add-subtitle)
           res (rp/subtitle-id-patch (uc/user-id-to-session-id (:id user-one))
                                     (:id sbtl-one)
                                     sbtl-one)]
-      (is (= 401 (:status res))))))
+      (is (= 403 (:status res))))))

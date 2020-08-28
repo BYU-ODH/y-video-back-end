@@ -71,7 +71,7 @@
     (let [user-one (db-pop/add-user "student")
           res (rp/user-id-get (uc/user-id-to-session-id (:id user-one))
                               (:id user-one))]
-      (is (= 401 (:status res))))))
+      (is (= 403 (:status res))))))
 
 ;delete: /api/user/{id}
 (deftest user-delete-by-id
@@ -79,17 +79,17 @@
     (let [user-one (db-pop/add-user "lab-assistant")
           res (rp/user-id-delete (uc/user-id-to-session-id (:id user-one))
                                  (:id user-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "instructor, user-delete-by-id, delete self"
     (let [user-one (db-pop/add-user "instructor")
           res (rp/user-id-delete (uc/user-id-to-session-id (:id user-one))
                                  (:id user-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, user-delete-by-id, delete self"
     (let [user-one (db-pop/add-user "student")
           res (rp/user-id-delete (uc/user-id-to-session-id (:id user-one))
                                  (:id user-one))]
-      (is (= 401 (:status res))))))
+      (is (= 403 (:status res))))))
 
 ;patch: /api/user/{id}
 (deftest user-patch-by-id
@@ -98,19 +98,19 @@
           res (rp/user-id-patch (uc/user-id-to-session-id (:id user-one))
                                 (:id user-one)
                                 user-one)]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "instructor, user-patch-by-id, patch self"
     (let [user-one (db-pop/add-user "instructor")
           res (rp/user-id-patch (uc/user-id-to-session-id (:id user-one))
                                 (:id user-one)
                                 user-one)]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, user-patch-by-id, patch self"
     (let [user-one (db-pop/add-user "student")
           res (rp/user-id-patch (uc/user-id-to-session-id (:id user-one))
                                 (:id user-one)
                                 user-one)]
-      (is (= 401 (:status res))))))
+      (is (= 403 (:status res))))))
 
 ;get: /api/user/{id}/collections
 (deftest user-id-collections

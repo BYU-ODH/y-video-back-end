@@ -59,13 +59,13 @@
           lang-one (db-pop/get-language)
           res (rp/language-post (uc/user-id-to-session-id (:id user-one))
                                 lang-one)]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student - no connection, language-post"
     (let [user-one (db-pop/add-user "student")
           lang-one (db-pop/get-language)
           res (rp/language-post (uc/user-id-to-session-id (:id user-one))
                                 lang-one)]
-      (is (= 401 (:status res))))))
+      (is (= 403 (:status res))))))
 
 ;delete: /api/language/{id}
 (deftest language-id-delete
@@ -80,19 +80,19 @@
           lang-one (db-pop/add-language)
           res (rp/language-id-delete (uc/user-id-to-session-id (:id user-one))
                                      (:id lang-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "instructor - no connection, language-id-delete"
     (let [user-one (db-pop/add-user "instructor")
           lang-one (db-pop/add-language)
           res (rp/language-id-delete (uc/user-id-to-session-id (:id user-one))
                                      (:id lang-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student - no connection, language-id-delete"
     (let [user-one (db-pop/add-user "student")
           lang-one (db-pop/add-language)
           res (rp/language-id-delete (uc/user-id-to-session-id (:id user-one))
                                      (:id lang-one))]
-      (is (= 401 (:status res))))))
+      (is (= 403 (:status res))))))
 
 ;get: /api/languages
 (deftest language-get-all

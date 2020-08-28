@@ -29,7 +29,7 @@
                           (:valid-type p-vals)
                           (and (= (ru/get-user-type (ru/token-to-user-id session-id)) (ac/to-int-type "instructor"))
                                (= (ru/token-to-user-id session-id) (:owner body))))
-                {:status 401 :body {:message "unauthorized"}}
+                {:status 403 :body {:message "forbidden"}}
                 (if (not (users/EXISTS? (:owner body)))
                   {:status 500
                    :body {:message "user (owner) not found, unable to create collection"}}

@@ -24,7 +24,7 @@
               (if-not (or (:valid-type p-vals)
                           (= (:session-id-bypass env) (str session-id))
                           (= (ru/token-to-user-id session-id) (:user-id body)))
-                {:status 401 :body {:message "unauthorized"}}
+                {:status 403 :body {:message "forbidden"}}
                 (if-not (users/EXISTS? (:user-id body))
                   {:status 500
                    :body {:message "user not found"}}
@@ -50,7 +50,7 @@
                 (if-not (or (:valid-type p-vals)
                             (= (:session-id-bypass env) (str session-id))
                             (= (ru/token-to-user-id session-id) (:user-id word-result)))
-                  {:status 401 :body {:message "unauthorized"}}
+                  {:status 403 :body {:message "forbidden"}}
                   (if (nil? word-result)
                     {:status 404
                      :body {:message "requested word not found"}}
@@ -81,7 +81,7 @@
                   (if-not (or (:valid-type p-vals)
                               (= (:session-id-bypass env) (str session-id))
                               (= (ru/token-to-user-id session-id) (:user-id current-word)))
-                    {:status 401 :body {:message "unauthorized"}}
+                    {:status 403 :body {:message "forbidden"}}
                     ; If there is a collision and the collision is not with self (i.e. word being changed)
                     (if (and (not (nil? same-name-word))
                              (not (= (:id current-word)
@@ -113,7 +113,7 @@
                 (if-not (or (:valid-type p-vals)
                             (= (:session-id-bypass env) (str session-id))
                             (= (ru/token-to-user-id session-id) (:user-id word-result)))
-                  {:status 401 :body {:message "unauthorized"}}
+                  {:status 403 :body {:message "forbidden"}}
                   (let [result (words/DELETE id)]
                     (if (nil? result)
                       {:status 404

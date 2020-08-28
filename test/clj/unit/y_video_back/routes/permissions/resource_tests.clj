@@ -102,11 +102,11 @@
     (testing "student create resource, no connection"
       (let [res (rp/resource-post (:id user-stud-stud)
                                  (g/get-random-resource-without-id))]
-        (is (= 401 (:status res)))))
+        (is (= 403 (:status res)))))
     (testing "instr create resource"
       (let [res (rp/resource-post (:id user-instr-c1)
                                  (g/get-random-resource-without-id))]
-        (is (= 401 (:status res)))))
+        (is (= 403 (:status res)))))
     (testing "lab assistant create resource"
       (let [res (rp/resource-post (:id user-la)
                                  (g/get-random-resource-without-id))]
@@ -121,7 +121,7 @@
     (testing "student reading resource, no connection"
       (let [res (rp/resource-id-get (:id user-stud-na)
                                    (:id test-cont-one))]
-        (is (= 401 (:status res)))))
+        (is (= 403 (:status res)))))
     (testing "instructor reading resource, no connection"
       (let [res (rp/resource-id-get (:id user-instr-na)
                                    (:id test-cont-one))]
@@ -153,12 +153,12 @@
       (let [res (rp/resource-id-patch (:id user-stud-na)
                                      (:id test-cont-one)
                                      (g/get-random-resource-without-id))]
-        (is (= 401 (:status res)))))
+        (is (= 403 (:status res)))))
     (testing "instructor update resource, no connection"
       (let [res (rp/resource-id-patch (:id user-instr-na)
                                      (:id test-cont-one)
                                      (g/get-random-resource-without-id))]
-        (is (= 401 (:status res)))))
+        (is (= 403 (:status res)))))
     (testing "lab assistant update resource, no connection"
       (let [res (rp/resource-id-patch (:id user-la)
                                      (:id test-cont-one)
@@ -173,7 +173,7 @@
       (let [res (rp/resource-id-patch (:id user-stud-stud)
                                      (:id test-cont-one)
                                      (g/get-random-resource-without-id))]
-        (is (= 401 (:status res)))))
+        (is (= 403 (:status res)))))
     (testing "student update resource, with connection (TA)"
       (let [res (rp/resource-id-patch (:id user-stud-ta)
                                      (:id test-cont-one)
@@ -191,17 +191,17 @@
       (let [new-resource (ut/under-to-hyphen (resources/CREATE (g/get-random-resource-without-id)))]
         (let [res (rp/resource-id-delete (:id user-stud-na)
                                         (:id new-resource))]
-          (is (= 401 (:status res))))))
+          (is (= 403 (:status res))))))
     (testing "instructor delete resource, no connection"
       (let [new-resource (ut/under-to-hyphen (resources/CREATE (g/get-random-resource-without-id)))]
         (let [res (rp/resource-id-delete (:id user-instr-na)
                                         (:id new-resource))]
-          (is (= 401 (:status res))))))
+          (is (= 403 (:status res))))))
     (testing "lab assistant delete resource, no connection"
       (let [new-resource (ut/under-to-hyphen (resources/CREATE (g/get-random-resource-without-id)))]
         (let [res (rp/resource-id-delete (:id user-la)
                                         (:id new-resource))]
-          (is (= 401 (:status res))))))
+          (is (= 403 (:status res))))))
     (testing "admin delete resource, no connection"
       (let [new-resource (ut/under-to-hyphen (resources/CREATE (g/get-random-resource-without-id)))]
         (let [res (rp/resource-id-delete (:id user-admin)
@@ -211,28 +211,28 @@
       (let [new-resource (ut/under-to-hyphen (resources/CREATE (g/get-random-resource-without-id)))]
         (let [res (rp/resource-id-delete (:id user-stud-stud)
                                         (:id new-resource))]
-          (is (= 401 (:status res))))))
+          (is (= 403 (:status res))))))
     (testing "student delete resource, with connection (TA)"
       (let [new-resource (ut/under-to-hyphen (resources/CREATE (g/get-random-resource-without-id)))]
         (let [res (rp/resource-id-delete (:id user-stud-ta)
                                         (:id new-resource))]
-          (is (= 401 (:status res))))))
+          (is (= 403 (:status res))))))
     (testing "instructor delete resource, with connection (owner?)"
       (let [new-resource (ut/under-to-hyphen (resources/CREATE (g/get-random-resource-without-id)))]
         (let [res (rp/resource-id-delete (:id user-instr-c1)
                                         (:id new-resource))]
-          (is (= 401 (:status res)))))))
+          (is (= 403 (:status res)))))))
 
   ; Retrieve all files for resource
   (deftest resource-get-all-files
     (testing "student get all files by resource, no connection"
       (let [res (rp/resource-id-files (:id user-stud-na)
                                      (:id test-cont-one))]
-        (is (= 401 (:status res)))))
+        (is (= 403 (:status res)))))
     (testing "instructor get all files by resource, no connection"
       (let [res (rp/resource-id-files (:id user-instr-na)
                                      (:id test-cont-one))]
-        (is (= 401 (:status res)))))
+        (is (= 403 (:status res)))))
     (testing "lab assistant get all files by resource, no connection"
       (let [res (rp/resource-id-files (:id user-la)
                                      (:id test-cont-one))]
@@ -261,11 +261,11 @@
     (testing "student get collections by resource, no connection"
       (let [res (rp/resource-id-collections (:id user-stud-na)
                                            (:id test-cont-one))]
-        (is (= 401 (:status res)))))
+        (is (= 403 (:status res)))))
     (testing "instructor get collections by resource, no connection"
       (let [res (rp/resource-id-collections (:id user-instr-na)
                                            (:id test-cont-one))]
-        (is (= 401 (:status res)))))
+        (is (= 403 (:status res)))))
     (testing "lab assistant get collections by resource, no connection"
       (let [res (rp/resource-id-collections (:id user-la)
                                            (:id test-cont-one))]
@@ -277,12 +277,12 @@
     (testing "student get collections by resource, with connection (student)"
       (let [res (rp/resource-id-collections (:id user-stud-stud)
                                            (:id test-cont-one))]
-        (is (= 401 (:status res)))))
+        (is (= 403 (:status res)))))
     (testing "student get collections by resource, with connection (TA)"
       (let [res (rp/resource-id-collections (:id user-stud-ta)
                                            (:id test-cont-one))]
-        (is (= 401 (:status res)))))
+        (is (= 403 (:status res)))))
     (testing "instructor get collections by resource, with connection (owner)"
       (let [res (rp/resource-id-collections (:id user-instr-c1)
                                            (:id test-cont-one))]
-        (is (= 401 (:status res)))))))
+        (is (= 403 (:status res)))))))

@@ -53,7 +53,7 @@
           res (rp/file-post (uc/user-id-to-session-id (:id user-one))
                             file-one
                             filecontent)]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "instructor, file-post, instructor via course"
     (let [user-one (db-pop/add-user "instructor")
           coll-one (db-pop/add-collection)
@@ -67,7 +67,7 @@
           res (rp/file-post (uc/user-id-to-session-id (:id user-one))
                             file-one
                             filecontent)]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, file-post, ta via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -79,7 +79,7 @@
           res (rp/file-post (uc/user-id-to-session-id (:id user-one))
                             file-one
                             filecontent)]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, file-post, ta via course"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -93,7 +93,7 @@
           res (rp/file-post (uc/user-id-to-session-id (:id user-one))
                             file-one
                             filecontent)]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, file-post, student via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -105,7 +105,7 @@
           res (rp/file-post (uc/user-id-to-session-id (:id user-one))
                             file-one
                             filecontent)]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, file-post, student via course"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -119,7 +119,7 @@
           res (rp/file-post (uc/user-id-to-session-id (:id user-one))
                             file-one
                             filecontent)]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, file-post, auditing via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -131,7 +131,7 @@
           res (rp/file-post (uc/user-id-to-session-id (:id user-one))
                             file-one
                             filecontent)]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, file-post, auditing via course"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -145,7 +145,7 @@
           res (rp/file-post (uc/user-id-to-session-id (:id user-one))
                             file-one
                             filecontent)]
-      (is (= 401 (:status res))))))
+      (is (= 403 (:status res))))))
 
 
 ;get: /api/file/{id}
@@ -250,7 +250,7 @@
           file-one (db-pop/add-file (:id rsrc-one))
           res (rp/file-id-delete (uc/user-id-to-session-id (:id user-one))
                                  (:id file-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "instructor, file-delete-by-id, instructor via course"
     (let [user-one (db-pop/add-user "instructor")
           coll-one (db-pop/add-collection)
@@ -262,7 +262,7 @@
           file-one (db-pop/add-file (:id rsrc-one))
           res (rp/file-id-delete (uc/user-id-to-session-id (:id user-one))
                                  (:id file-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, file-delete-by-id, ta via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -272,7 +272,7 @@
           file-one (db-pop/add-file (:id rsrc-one))
           res (rp/file-id-delete (uc/user-id-to-session-id (:id user-one))
                                  (:id file-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, file-delete-by-id, ta via course"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -284,7 +284,7 @@
           file-one (db-pop/add-file (:id rsrc-one))
           res (rp/file-id-delete (uc/user-id-to-session-id (:id user-one))
                                  (:id file-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, file-delete-by-id, student via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -294,7 +294,7 @@
           file-one (db-pop/add-file (:id rsrc-one))
           res (rp/file-id-delete (uc/user-id-to-session-id (:id user-one))
                                  (:id file-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, file-delete-by-id, student via course"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -306,7 +306,7 @@
           file-one (db-pop/add-file (:id rsrc-one))
           res (rp/file-id-delete (uc/user-id-to-session-id (:id user-one))
                                  (:id file-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, file-delete-by-id, auditing via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -316,7 +316,7 @@
           file-one (db-pop/add-file (:id rsrc-one))
           res (rp/file-id-delete (uc/user-id-to-session-id (:id user-one))
                                  (:id file-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, file-delete-by-id, auditing via course"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -328,7 +328,7 @@
           file-one (db-pop/add-file (:id rsrc-one))
           res (rp/file-id-delete (uc/user-id-to-session-id (:id user-one))
                                  (:id file-one))]
-      (is (= 401 (:status res))))))
+      (is (= 403 (:status res))))))
 
 ;patch: /api/file/{id}
 (deftest file-patch-by-id
@@ -342,7 +342,7 @@
           res (rp/file-id-patch (uc/user-id-to-session-id (:id user-one))
                                 (:id file-one)
                                 file-one)]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "instructor, file-patch-by-id, instructor via course"
     (let [user-one (db-pop/add-user "instructor")
           coll-one (db-pop/add-collection)
@@ -355,7 +355,7 @@
           res (rp/file-id-patch (uc/user-id-to-session-id (:id user-one))
                                 (:id file-one)
                                 file-one)]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, file-patch-by-id, ta via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -366,7 +366,7 @@
           res (rp/file-id-patch (uc/user-id-to-session-id (:id user-one))
                                 (:id file-one)
                                 file-one)]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, file-patch-by-id, ta via course"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -379,7 +379,7 @@
           res (rp/file-id-patch (uc/user-id-to-session-id (:id user-one))
                                 (:id file-one)
                                 file-one)]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, file-patch-by-id, student via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -390,7 +390,7 @@
           res (rp/file-id-patch (uc/user-id-to-session-id (:id user-one))
                                 (:id file-one)
                                 file-one)]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, file-patch-by-id, student via course"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -403,7 +403,7 @@
           res (rp/file-id-patch (uc/user-id-to-session-id (:id user-one))
                                 (:id file-one)
                                 file-one)]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, file-patch-by-id, auditing via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -414,7 +414,7 @@
           res (rp/file-id-patch (uc/user-id-to-session-id (:id user-one))
                                 (:id file-one)
                                 file-one)]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, file-patch-by-id, auditing via course"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -427,4 +427,4 @@
           res (rp/file-id-patch (uc/user-id-to-session-id (:id user-one))
                                 (:id file-one)
                                 file-one)]
-      (is (= 401 (:status res))))))
+      (is (= 403 (:status res))))))

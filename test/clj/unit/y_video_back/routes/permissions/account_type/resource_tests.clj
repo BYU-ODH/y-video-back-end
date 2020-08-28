@@ -59,13 +59,13 @@
           rsrc-one (db-pop/get-resource)
           res (rp/resource-post (uc/user-id-to-session-id (:id user-one))
                                 rsrc-one)]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, resource-post"
     (let [user-one (db-pop/add-user "student")
           rsrc-one (db-pop/get-resource)
           res (rp/resource-post (uc/user-id-to-session-id (:id user-one))
                                 rsrc-one)]
-      (is (= 401 (:status res))))))
+      (is (= 403 (:status res))))))
 
 ;get: /api/resource/{id}
 (deftest resource-get-by-id
@@ -92,7 +92,7 @@
           rsrc-one (db-pop/add-resource)
           res (rp/resource-id-get (uc/user-id-to-session-id (:id user-one))
                                   (:id rsrc-one))]
-      (is (= 401 (:status res))))))
+      (is (= 403 (:status res))))))
 
 ;delete: /api/resource/{id}
 (deftest resource-delete-by-id
@@ -107,19 +107,19 @@
           rsrc-one (db-pop/add-resource)
           res (rp/resource-id-delete (uc/user-id-to-session-id (:id user-one))
                                      (:id rsrc-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "instructor - no connection, resource-delete-by-id"
     (let [user-one (db-pop/add-user "instructor")
           rsrc-one (db-pop/add-resource)
           res (rp/resource-id-delete (uc/user-id-to-session-id (:id user-one))
                                      (:id rsrc-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student - no connection, resource-delete-by-id"
     (let [user-one (db-pop/add-user "student")
           rsrc-one (db-pop/add-resource)
           res (rp/resource-id-delete (uc/user-id-to-session-id (:id user-one))
                                      (:id rsrc-one))]
-      (is (= 401 (:status res))))))
+      (is (= 403 (:status res))))))
 
 ;patch: /api/resource/{id}
 (deftest resource-patch-by-id
@@ -143,14 +143,14 @@
           res (rp/resource-id-patch (uc/user-id-to-session-id (:id user-one))
                                     (:id rsrc-one)
                                     rsrc-one)]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student - no connection, resource-patch-by-id"
     (let [user-one (db-pop/add-user "student")
           rsrc-one (db-pop/add-resource)
           res (rp/resource-id-patch (uc/user-id-to-session-id (:id user-one))
                                     (:id rsrc-one)
                                     rsrc-one)]
-      (is (= 401 (:status res))))))
+      (is (= 403 (:status res))))))
 
 ;get: /api/resource/{id}/files
 (deftest resource-id-files
@@ -177,7 +177,7 @@
           rsrc-one (db-pop/add-resource)
           res (rp/resource-id-files (uc/user-id-to-session-id (:id user-one))
                                     (:id rsrc-one))]
-      (is (= 401 (:status res))))))
+      (is (= 403 (:status res))))))
 
 ;get: /api/resource/{id}/collections
 (deftest resource-id-collections
@@ -198,13 +198,13 @@
           rsrc-one (db-pop/add-resource)
           res (rp/resource-id-collections (uc/user-id-to-session-id (:id user-one))
                                           (:id rsrc-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student - no connection, resource-id-collections"
     (let [user-one (db-pop/add-user "student")
           rsrc-one (db-pop/add-resource)
           res (rp/resource-id-collections (uc/user-id-to-session-id (:id user-one))
                                           (:id rsrc-one))]
-      (is (= 401 (:status res))))))
+      (is (= 403 (:status res))))))
 
 ;get: /api/resource/{id}/contents
 (deftest resource-id-contents
@@ -225,10 +225,10 @@
           rsrc-one (db-pop/add-resource)
           res (rp/resource-id-contents (uc/user-id-to-session-id (:id user-one))
                                        (:id rsrc-one))]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student - no connection, resource-id-contents"
     (let [user-one (db-pop/add-user "student")
           rsrc-one (db-pop/add-resource)
           res (rp/resource-id-contents (uc/user-id-to-session-id (:id user-one))
                                        (:id rsrc-one))]
-      (is (= 401 (:status res))))))
+      (is (= 403 (:status res))))))

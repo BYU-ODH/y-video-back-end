@@ -62,7 +62,7 @@
     (let [user-one (db-pop/add-user "student")
           res (rp/search-by-user (uc/user-id-to-session-id (:id user-one))
                                  "test")]
-      (is (= 401 (:status res))))))
+      (is (= 403 (:status res))))))
 
 
 ;get: /api/admin/collection/{term}
@@ -81,12 +81,12 @@
     (let [user-one (db-pop/add-user "instructor")
           res (rp/search-by-collection (uc/user-id-to-session-id (:id user-one))
                                        "test")]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, admin-search-collections"
     (let [user-one (db-pop/add-user "student")
           res (rp/search-by-collection (uc/user-id-to-session-id (:id user-one))
                                        "test")]
-      (is (= 401 (:status res))))))
+      (is (= 403 (:status res))))))
 
 ;get: /api/admin/content/{term}
 (deftest admin-search-contents
@@ -104,12 +104,12 @@
     (let [user-one (db-pop/add-user "instructor")
           res (rp/search-by-content (uc/user-id-to-session-id (:id user-one))
                                     "test")]
-      (is (= 401 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "student, admin-search-contents"
     (let [user-one (db-pop/add-user "student")
           res (rp/search-by-content (uc/user-id-to-session-id (:id user-one))
                                     "test")]
-      (is (= 401 (:status res))))))
+      (is (= 403 (:status res))))))
 
 ;get: /api/admin/resource/{term}
 (deftest admin-search-resources
@@ -132,4 +132,4 @@
     (let [user-one (db-pop/add-user "student")
           res (rp/search-by-resource (uc/user-id-to-session-id (:id user-one))
                                      "test")]
-      (is (= 401 (:status res))))))
+      (is (= 403 (:status res))))))

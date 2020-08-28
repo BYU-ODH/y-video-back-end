@@ -153,9 +153,12 @@
                        false])))
 
 (def forbidden-page
-  (error-page {:status 401, :title "401 - Unauthorized",
+  (error-page {:status 403, :title "403 - Forbidden",
                :image "https://www.cheatsheet.com/wp-content/uploads/2020/02/anakin_council_ROTS.jpg", :caption "It's unfair! How can you be on this website and not be an admin?!"}))
 
+(def unauthorized-page
+  (error-page {:status 401, :title "401 - Unauthorized",
+               :image "https://www.cheatsheet.com/wp-content/uploads/2020/02/anakin_council_ROTS.jpg", :caption "It's unfair! How can you be on this website and not be an admin?!"}))
 
 (defn check-permission
   "Checks user has permission for route"
@@ -172,7 +175,7 @@
                 (and (not (and (or (:dev env) (:test env))
                                (= (:session-id-bypass env) (str session-id))))
                      (nil? (ru/token-to-user-id session-id))))
-          forbidden-page
+          unauthorized-page
           (if (= (:session-id-bypass env) (str session-id))
             (handler request)
             (let [valid-type (and (not (nil? (get-permission-level request)))

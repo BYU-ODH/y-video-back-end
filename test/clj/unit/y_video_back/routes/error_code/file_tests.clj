@@ -58,18 +58,25 @@
   (testing "add file to nonexistent resource"
     (let [filecontent (ut/get-filecontent)
           file-one (dissoc (db-pop/get-file (java.util.UUID/randomUUID)) :filepath)
-          res(rp/file-post file-one filecontent)]
+          res (rp/file-post file-one filecontent)]
       (is (= 500 (:status res)))))
   (testing "add file with nonexistent language"
     (let [filecontent (ut/get-filecontent)
           lang-one (db-pop/get-language)
           file-one (dissoc (db-pop/get-file) :filepath)
-          res(rp/file-post (assoc (dissoc file-one :file-version) :file-version (:id lang-one)) filecontent)]
+          res (rp/file-post (assoc (dissoc file-one :file-version) :file-version (:id lang-one)) filecontent)]
       (is (= 500 (:status res))))))
 
 (deftest file-id-get
   (testing "read nonexistent file"
     (let [res (rp/file-id-get (java.util.UUID/randomUUID))]
+      (is (= 404 (:status res)))))
+  (testing "nil as id with files in system"
+    (let [filecontent (ut/get-filecontent)
+          file-one (dissoc (db-pop/get-file) :filepath)
+          res-one (rp/file-post file-one filecontent)
+          res (rp/file-id-get nil)]
+      (is (= 200 (:status res-one)))
       (is (= 404 (:status res))))))
 
 (deftest file-id-patch
