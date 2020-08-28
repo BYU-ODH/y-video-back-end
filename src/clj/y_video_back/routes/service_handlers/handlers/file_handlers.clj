@@ -106,9 +106,14 @@
    :responses {200 {:body {:message string?}}
                404 {:body {:message string?}}}
    :handler (fn [{{{:keys [id]} :path} :parameters}]
-              (let [result (files/DELETE id)]
-                (if (nil? result)
-                  {:status 404
-                   :body {:message "requested file not found"}}
-                  {:status 200
-                   :body {:message (str result " files deleted")}})))})
+              (let [file-one (files/READ id)]
+                (if (nil? file-one)
+                  {:status 404 :body {:message "requested file not found"}}
+                  (do
+                    (if (.exists (io/file (str (-> env :FILES :media-url) (:filepath file-one))))
+                      (do (io/copy (io/file (str (-> env :FILES :media-url) (:filepath file-one)))
+                                   (io/file (str (-> env :FILES :media-trash-url) (:filepath file-one))))
+                          (io/delete-file (str (-> env :FILES :media-url) (:filepath file-one)))))
+                    (files/DELETE id)
+                    {:status 200
+                     :body {:message "1 file deleted"}}))))})

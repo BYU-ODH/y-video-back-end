@@ -57,7 +57,17 @@
         (is (= 200 (:status res)))
         (is (= (into file-two {:id (:id file-one)}) (ut/remove-db-only (files/READ (:id file-one))))))))
   (testing "file DELETE"
-    (let [file-one (files/CREATE (db-pop/get-file))
-          res (rp/file-id-delete (:id file-one))]
-      (is (= 200 (:status res)))
-      (is (= nil (files/READ (:id file-one)))))))
+    (let [filecontent (ut/get-filecontent)
+          file-one (dissoc (db-pop/get-file) :filepath)]
+      (let [res (rp/file-post file-one filecontent)]
+        (is (= 200 (:status res)))
+        (let [id (ut/to-uuid (:id (m/decode-response-body res)))
+              db-file (ut/remove-db-only (files/READ id))]
+          (is (= (assoc (into file-one {:id id}) :filepath (:filepath db-file))
+                 db-file))
+          (is (.exists (io/as-file (str (-> env :FILES :media-url) (:filepath db-file)))))
+          (let [res (rp/file-id-delete id)]
+            (is (= 200 (:status res)))
+            (is (= nil (files/READ id)))
+            (is (not (.exists (io/as-file (str (-> env :FILES :media-url) (:filepath db-file))))))
+            (is (.exists (io/as-file (str (-> env :FILES :media-trash-url) (:filepath db-file)))))))))))
