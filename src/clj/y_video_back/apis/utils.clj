@@ -42,12 +42,17 @@
     "20201"
     (get-current-sem-real)))
 
-(defn get-oauth-token  ; TODO - store token locally, only query new one when needed
+(defn get-oauth-token-new  ; TODO - store token locally, only query new one when needed
   "Gets oauth token from api"
   []
   (let [url "https://api.byu.edu/token"
         auth (str (:CONSUMER_KEY env) ":" (:CONSUMER_SECRET env))
         tokenRes (client/post url {:body "grant_type=client_credentials"
                                    :basic-auth auth
-                                   :content-type "application/x-www-form-urlencoded"})]
-    (get (json/read-str (:body tokenRes)) "access_token")))
+                                   :content-type "application/x-www-form-urlencoded"})
+        new-token (get (json/read-str (:body tokenRes)) "access_token")]
+    (def oauth-token new-token)
+    (println "setting new oatuh-token=" oauth-token)
+    new-token))
+
+(def oauth-token "")

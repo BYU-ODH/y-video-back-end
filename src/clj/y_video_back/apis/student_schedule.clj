@@ -33,8 +33,11 @@
     []
     (try
       (let [url (str "https://api.byu.edu:443/domains/legacy/academic/registration/studentschedule/v1/" person-id "/" (ut/get-current-sem))
-            res (client/get url {:oauth-token (ut/get-oauth-token)})
+            res (try (client/get url {:oauth-token ut/oauth-token})
+                     (catch Exception e
+                       (client/get url {:oauth-token (ut/get-oauth-token-new)})))
             json-res (json/read-str (:body res))]
         (map extract-course-data (get-courses-from-json json-res)))
       (catch Exception e
+        (println e)
         []))))

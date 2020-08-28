@@ -55,7 +55,9 @@
      :person-id "000000000"}
     (try
       (let [url (str "https://api.byu.edu:443/byuapi/persons/v3/?net_ids=" netid "&field_sets=basic%2Cemployee_summary%2Cstudent_summary%2Cemail_addresses")
-            res (client/get url {:oauth-token (ut/get-oauth-token)})
+            res (try (client/get url {:oauth-token ut/oauth-token})
+                     (catch Exception e
+                       (client/get url {:oauth-token (ut/get-oauth-token-new)})))
             json-res (json/read-str (:body res))
             ; tra (println "res=" res)
             ; tar (println "json-res=" json-res)
