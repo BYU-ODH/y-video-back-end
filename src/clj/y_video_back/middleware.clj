@@ -158,7 +158,7 @@
 
 (def unauthorized-page
   (error-page {:status 401, :title "401 - Unauthorized",
-               :image "https://www.cheatsheet.com/wp-content/uploads/2020/02/anakin_council_ROTS.jpg", :caption "It's unfair! How can you be on this website and not be an admin?!"}))
+               :image "https://www.pinterest.at/pin/840132505462941432/", :caption "Pippin: What are you going to do then?<br/>Gandalf: Knock your head against this endpoint, Peregrin Took!"}))
 
 (defn check-permission
   "Checks user has permission for route"

@@ -86,6 +86,27 @@
                         :account-role 0})
                  (map ut/remove-db-only (user-collections-assoc/READ-BY-IDS [(:id coll-one) (:id user-one)])))))))))
 
+(deftest coll-add-users
+  (testing "add list of users to collection"
+    (let [coll-one (db-pop/add-collection)
+          user-one (db-pop/add-user)
+          user-two (db-pop/add-user)
+          user-thr (db-pop/add-user)]
+      (is (= '() (user-collections-assoc/READ-BY-COLLECTION (:id coll-one))))
+      (let [res (rp/collection-id-add-users (:id coll-one)
+                                            [(:username user-one) (:username user-two) (:username user-thr)]
+                                            0)]
+        (is (= 200 (:status res)))
+        (is (= (frequencies (map #(into {}
+                                        {:collection-id (:id coll-one)
+                                         :user-id (:id %)
+                                         :account-role 0})
+                                 [user-one user-two user-thr]))
+               (frequencies (map #(-> %
+                                      (ut/remove-db-only)
+                                      (dissoc :id))
+                                 (user-collections-assoc/READ-BY-COLLECTION (:id coll-one))))))))))
+
 (deftest coll-remove-user
   (testing "remove user from collection"
     (let [coll-one (collections/CREATE (db-pop/get-collection))

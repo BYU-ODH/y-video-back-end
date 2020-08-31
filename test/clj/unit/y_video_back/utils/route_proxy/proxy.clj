@@ -53,6 +53,7 @@
 (def collection-id-patch collection/collection-id-patch)
 (def collection-id-delete collection/collection-id-delete)
 (def collection-id-add-user collection/collection-id-add-user)
+(def collection-id-add-users collection/collection-id-add-users)
 (def collection-id-remove-user collection/collection-id-remove-user)
 (def collection-id-users collection/collection-id-users)
 (def collection-id-add-course collection/collection-id-add-course)

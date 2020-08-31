@@ -56,6 +56,15 @@
   ([collection-id username role]
    (collection-id-add-user (:session-id-bypass env) collection-id username role)))
 
+(defn collection-id-add-users
+  "Connects list of users and collection"
+  ([session-id collection-id usernames role]
+   (ap2 (-> (request :post (str "/api/collection/" collection-id "/add-users"))
+            (header :session-id session-id)
+            (json-body {:usernames usernames :account-role role}))))
+  ([collection-id usernames role]
+   (collection-id-add-users (:session-id-bypass env) collection-id usernames role)))
+
 (defn collection-id-remove-user
   "Connects user and collection"
   ([session-id collection-id username]

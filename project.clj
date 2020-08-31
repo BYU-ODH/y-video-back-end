@@ -54,7 +54,8 @@
   :main y-video-back.core
   :plugins [[lein-cprop "1.0.3"]
             [migratus-lein "0.7.2"]
-            [lein-immutant "2.1.0"]]
+            [lein-immutant "2.1.0"]
+            [lein-cloverage "1.1.2"]]
   :clean-targets ^{:protect false}
   [:target-path [:builds :app :compiler :output-dir] [:builds :app :compiler :output-to]]
 

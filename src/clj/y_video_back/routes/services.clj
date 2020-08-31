@@ -199,6 +199,8 @@
        :delete service-handlers/collection-delete}]
      ["/{id}/add-user"
       {:post service-handlers/collection-add-user}]
+     ["/{id}/add-users"
+      {:post service-handlers/collection-add-users}]
      ["/{id}/remove-user"
       {:post service-handlers/collection-remove-user}]
      ["/{id}/add-course"

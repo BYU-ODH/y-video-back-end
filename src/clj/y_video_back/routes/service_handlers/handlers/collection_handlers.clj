@@ -134,6 +134,25 @@
                            :body {:message (str 1 " users added to collection")
                                   :id result}})))))))})
 
+(def collection-add-users
+  {:summary "Adds list of users to specified collection. All will have same role."
+   :permission-level "lab-assistant"
+   :role-level "instructor"
+   :parameters {:header {:session-id uuid?}
+                :path {:id uuid?} :body {:usernames [string?] :account-role int?}}
+   :responses {200 {:body {:message string?}}
+               404 (:body {:message string?})
+               500 (:body {:message string?})}
+   :handler (fn [{{{:keys [id]} :path :keys [body]} :parameters}]
+              (if (not (collections/EXISTS? id))
+                {:status 404
+                 :body {:message "collection not found"}}
+                (let [res (map #(user-collections-assoc/CREATE {:collection-id id :user-id (:id (first (users/READ-BY-USERNAME [%])))
+                                                                :account-role (:account-role body)})
+                               (:usernames body))]
+                  {:status 200
+                   :body {:message (str (count (:usernames body)) " users added to collection")}})))})
+
 (def collection-remove-user
   {:summary "Removes user from specified collection"
    :permission-level "lab-assistant"

@@ -35,6 +35,7 @@
 (def collection-update collections/collection-update)
 (def collection-delete collections/collection-delete)
 (def collection-add-user collections/collection-add-user)
+(def collection-add-users collections/collection-add-users)
 (def collection-remove-user collections/collection-remove-user)
 (def collection-add-course collections/collection-add-course)
 (def collection-remove-course collections/collection-remove-course)
