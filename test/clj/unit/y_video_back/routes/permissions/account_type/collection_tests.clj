@@ -221,7 +221,7 @@
     (let [user-one (db-pop/add-user "admin")
           user-two (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
-          user-add-res (db-pop/add-user-coll-assoc (:id user-two) (:id coll-one))
+          user-add-res (db-pop/add-user-coll-assoc (:username user-two) (:id coll-one))
           res (rp/collection-id-remove-user (uc/user-id-to-session-id (:id user-one))
                                          (:id coll-one)
                                          (:username user-two))]
@@ -230,7 +230,7 @@
     (let [user-one (db-pop/add-user "lab-assistant")
           user-two (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
-          user-add-res (db-pop/add-user-coll-assoc (:id user-two) (:id coll-one))
+          user-add-res (db-pop/add-user-coll-assoc (:username user-two) (:id coll-one))
           res (rp/collection-id-remove-user (uc/user-id-to-session-id (:id user-one))
                                          (:id coll-one)
                                          (:username user-two))]
@@ -239,7 +239,7 @@
     (let [user-one (db-pop/add-user "instructor")
           user-two (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
-          user-add-res (db-pop/add-user-coll-assoc (:id user-two) (:id coll-one))
+          user-add-res (db-pop/add-user-coll-assoc (:username user-two) (:id coll-one))
           res (rp/collection-id-remove-user (uc/user-id-to-session-id (:id user-one))
                                          (:id coll-one)
                                          (:username user-two))]
@@ -248,7 +248,7 @@
     (let [user-one (db-pop/add-user "student")
           user-two (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
-          user-add-res (db-pop/add-user-coll-assoc (:id user-two) (:id coll-one))
+          user-add-res (db-pop/add-user-coll-assoc (:username user-two) (:id coll-one))
           res (rp/collection-id-remove-user (uc/user-id-to-session-id (:id user-one))
                                          (:id coll-one)
                                          (:username user-two))]

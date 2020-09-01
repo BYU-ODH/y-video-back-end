@@ -83,7 +83,7 @@
   (testing "student, course-get-by-id, connected via user-coll as ta"
     (let [user-one (db-pop/add-user "student")
           coll-crse-add (db-pop/add-coll-crse-assoc)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one)
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one)
                                                     (:collection-id coll-crse-add)
                                                     "ta")
           crse-one {:id (:course-id coll-crse-add)}
@@ -93,7 +93,7 @@
   (testing "student, course-get-by-id, connected via user-coll as auditing"
     (let [user-one (db-pop/add-user "student")
           coll-crse-add (db-pop/add-coll-crse-assoc)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one)
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one)
                                                     (:collection-id coll-crse-add)
                                                     "auditing")
           crse-one {:id (:course-id coll-crse-add)}
@@ -174,7 +174,7 @@
   (testing "student, course-delete-by-id, connected via user-coll as ta"
     (let [user-one (db-pop/add-user "student")
           coll-crse-add (db-pop/add-coll-crse-assoc)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one)
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one)
                                                     (:collection-id coll-crse-add)
                                                     "ta")
           crse-one {:id (:course-id coll-crse-add)}
@@ -184,7 +184,7 @@
   (testing "student, course-delete-by-id, connected via user-coll as auditing"
     (let [user-one (db-pop/add-user "student")
           coll-crse-add (db-pop/add-coll-crse-assoc)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one)
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one)
                                                     (:collection-id coll-crse-add)
                                                     "auditing")
           crse-one {:id (:course-id coll-crse-add)}
@@ -269,7 +269,7 @@
   (testing "student, course-patch-by-id, connected via user-coll as ta"
     (let [user-one (db-pop/add-user "student")
           coll-crse-add (db-pop/add-coll-crse-assoc)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one)
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one)
                                                     (:collection-id coll-crse-add)
                                                     "ta")
           crse-one {:id (:course-id coll-crse-add)}
@@ -280,7 +280,7 @@
   (testing "student, course-patch-by-id, connected via user-coll as auditing"
     (let [user-one (db-pop/add-user "student")
           coll-crse-add (db-pop/add-coll-crse-assoc)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one)
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one)
                                                     (:collection-id coll-crse-add)
                                                     "auditing")
           crse-one {:id (:course-id coll-crse-add)}
@@ -365,7 +365,7 @@
   (testing "student, course-id-collections, connected via user-coll as ta"
     (let [user-one (db-pop/add-user "student")
           coll-crse-add (db-pop/add-coll-crse-assoc)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one)
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one)
                                                     (:collection-id coll-crse-add)
                                                     "ta")
           crse-one {:id (:course-id coll-crse-add)}
@@ -375,7 +375,7 @@
   (testing "student, course-id-collections, connected via user-coll as auditing"
     (let [user-one (db-pop/add-user "student")
           coll-crse-add (db-pop/add-coll-crse-assoc)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one)
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one)
                                                     (:collection-id coll-crse-add)
                                                     "auditing")
           crse-one {:id (:course-id coll-crse-add)}
@@ -468,7 +468,7 @@
   (testing "student, course-id-add-user, connected via user-coll as ta"
     (let [user-one (db-pop/add-user "student")
           coll-crse-add (db-pop/add-coll-crse-assoc)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one)
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one)
                                                     (:collection-id coll-crse-add)
                                                     "ta")
           crse-one {:id (:course-id coll-crse-add)}
@@ -481,7 +481,7 @@
   (testing "student, course-id-add-user, connected via user-coll as auditing"
     (let [user-one (db-pop/add-user "student")
           coll-crse-add (db-pop/add-coll-crse-assoc)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one)
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one)
                                                     (:collection-id coll-crse-add)
                                                     "auditing")
           crse-one {:id (:course-id coll-crse-add)}
@@ -586,7 +586,7 @@
   (testing "student, course-id-remove-user, connected via user-coll as ta"
     (let [user-one (db-pop/add-user "student")
           coll-crse-add (db-pop/add-coll-crse-assoc)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one)
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one)
                                                     (:collection-id coll-crse-add)
                                                     "ta")
           crse-one {:id (:course-id coll-crse-add)}
@@ -599,7 +599,7 @@
   (testing "student, course-id-remove-user, connected via user-coll as auditing"
     (let [user-one (db-pop/add-user "student")
           coll-crse-add (db-pop/add-coll-crse-assoc)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one)
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one)
                                                     (:collection-id coll-crse-add)
                                                     "auditing")
           crse-one {:id (:course-id coll-crse-add)}
@@ -692,7 +692,7 @@
   (testing "student, course-id-users, connected via user-coll as ta"
     (let [user-one (db-pop/add-user "student")
           coll-crse-add (db-pop/add-coll-crse-assoc)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one)
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one)
                                                     (:collection-id coll-crse-add)
                                                     "ta")
           crse-one {:id (:course-id coll-crse-add)}
@@ -702,7 +702,7 @@
   (testing "student, course-id-users, connected via user-coll as auditing"
     (let [user-one (db-pop/add-user "student")
           coll-crse-add (db-pop/add-coll-crse-assoc)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one)
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one)
                                                     (:collection-id coll-crse-add)
                                                     "auditing")
           crse-one {:id (:course-id coll-crse-add)}

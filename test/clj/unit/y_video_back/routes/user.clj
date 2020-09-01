@@ -65,8 +65,8 @@
           coll-thr (db-pop/add-collection (:id user-two))
           coll-fou (db-pop/add-collection (:id user-two))
           ; Connect one-one, two-two
-          user-coll-one (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one))
-          user-coll-two (db-pop/add-user-coll-assoc (:id user-two) (:id coll-two))
+          user-coll-one (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one))
+          user-coll-two (db-pop/add-user-coll-assoc (:username user-two) (:id coll-two))
           res-one (rp/user-id-collections (:id user-one))
           res-two (rp/user-id-collections (:id user-two))]
       (is (= 200 (:status res-one)))

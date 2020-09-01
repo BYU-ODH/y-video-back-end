@@ -10,7 +10,11 @@
   {"admin" 0
    "lab-assistant" 1
    "instructor" 2
-   "student" 3})
+   "student" 3
+   0 0
+   1 1
+   2 2
+   3 3})
 
 (def to-string-role
   {0 "instructor"
@@ -22,4 +26,8 @@
   {"instructor" 0
    "ta" 1
    "student" 2
-   "auditing" 3})
+   "auditing" 3
+   0 0
+   1 1
+   2 2
+   3 3})

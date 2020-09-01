@@ -45,7 +45,7 @@
   (testing "instructor, subtitle-post, instructor via user-coll"
     (let [user-one (db-pop/add-user "instructor")
           coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "instructor")
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "instructor")
           rsrc-one (db-pop/add-resource)
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           sbtl-one (db-pop/get-subtitle (:id cont-one))
@@ -67,7 +67,7 @@
   (testing "student, subtitle-post, ta via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "ta")
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "ta")
           rsrc-one (db-pop/add-resource)
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           sbtl-one (db-pop/get-subtitle (:id cont-one))
@@ -89,7 +89,7 @@
   (testing "student, subtitle-post, student via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "student")
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "student")
           rsrc-one (db-pop/add-resource)
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           sbtl-one (db-pop/get-subtitle (:id cont-one))
@@ -111,7 +111,7 @@
   (testing "student, subtitle-post, auditing via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "auditing")
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "auditing")
           rsrc-one (db-pop/add-resource)
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           sbtl-one (db-pop/get-subtitle (:id cont-one))
@@ -136,7 +136,7 @@
   (testing "instructor, subtitle-get-by-id, instructor via user-coll"
     (let [user-one (db-pop/add-user "instructor")
           coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "instructor")
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "instructor")
           rsrc-one (db-pop/add-resource)
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           sbtl-one (db-pop/add-subtitle (:id cont-one))
@@ -158,7 +158,7 @@
   (testing "student, subtitle-get-by-id, ta via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "ta")
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "ta")
           rsrc-one (db-pop/add-resource)
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           sbtl-one (db-pop/add-subtitle (:id cont-one))
@@ -180,7 +180,7 @@
   (testing "student, subtitle-get-by-id, student via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "student")
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "student")
           rsrc-one (db-pop/add-resource)
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           sbtl-one (db-pop/add-subtitle (:id cont-one))
@@ -202,7 +202,7 @@
   (testing "student, subtitle-get-by-id, auditing via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "auditing")
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "auditing")
           rsrc-one (db-pop/add-resource)
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           sbtl-one (db-pop/add-subtitle (:id cont-one))
@@ -227,7 +227,7 @@
   (testing "instructor, subtitle-delete-by-id, instructor via user-coll"
     (let [user-one (db-pop/add-user "instructor")
           coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "instructor")
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "instructor")
           rsrc-one (db-pop/add-resource)
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           sbtl-one (db-pop/add-subtitle (:id cont-one))
@@ -249,7 +249,7 @@
   (testing "student, subtitle-delete-by-id, ta via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "ta")
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "ta")
           rsrc-one (db-pop/add-resource)
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           sbtl-one (db-pop/add-subtitle (:id cont-one))
@@ -271,7 +271,7 @@
   (testing "student, subtitle-delete-by-id, student via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "student")
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "student")
           rsrc-one (db-pop/add-resource)
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           sbtl-one (db-pop/add-subtitle (:id cont-one))
@@ -293,7 +293,7 @@
   (testing "student, subtitle-delete-by-id, auditing via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "auditing")
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "auditing")
           rsrc-one (db-pop/add-resource)
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           sbtl-one (db-pop/add-subtitle (:id cont-one))
@@ -318,7 +318,7 @@
   (testing "instructor, subtitle-patch-by-id, instructor via user-coll"
     (let [user-one (db-pop/add-user "instructor")
           coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "instructor")
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "instructor")
           rsrc-one (db-pop/add-resource)
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           sbtl-one (db-pop/add-subtitle (:id cont-one))
@@ -342,7 +342,7 @@
   (testing "student, subtitle-patch-by-id, ta via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "ta")
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "ta")
           rsrc-one (db-pop/add-resource)
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           sbtl-one (db-pop/add-subtitle (:id cont-one))
@@ -366,7 +366,7 @@
   (testing "student, subtitle-patch-by-id, student via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "student")
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "student")
           rsrc-one (db-pop/add-resource)
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           sbtl-one (db-pop/add-subtitle (:id cont-one))
@@ -390,7 +390,7 @@
   (testing "student, subtitle-patch-by-id, auditing via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "auditing")
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "auditing")
           rsrc-one (db-pop/add-resource)
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           sbtl-one (db-pop/add-subtitle (:id cont-one))

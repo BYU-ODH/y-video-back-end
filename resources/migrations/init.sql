@@ -189,10 +189,10 @@ CREATE TABLE user_collections_assoc (
    ,deleted TIMESTAMP DEFAULT NULL
    ,updated TIMESTAMP DEFAULT NULL
    ,created  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-   ,user_id UUID REFERENCES users(id) ON DELETE CASCADE
+   ,username TEXT
    ,collection_id UUID REFERENCES collections(id) ON DELETE CASCADE
    ,account_role INTEGER
-   , CONSTRAINT no_duplicate_user_collections UNIQUE (deleted, user_id, collection_id)
+   , CONSTRAINT no_duplicate_user_collections UNIQUE (deleted, username, collection_id)
 );
 COMMENT ON TABLE user_collections_assoc IS 'Many-to-many table connecting users and collections, incl. user roles in collections';
 
@@ -339,13 +339,15 @@ DROP VIEW IF EXISTS users_by_collection;
 CREATE VIEW users_by_collection AS
     SELECT users_undeleted.*, uca.account_role, uca.collection_id
     FROM users_undeleted JOIN user_collections_assoc_undeleted AS uca
-    ON users_undeleted.id = uca.user_id;
+    ON users_undeleted.username = uca.username;
 
 DROP VIEW IF EXISTS collections_by_user;
 CREATE VIEW collections_by_user AS
-    SELECT collections_undeleted.*, uca.account_role, uca.user_id
+    SELECT collections_undeleted.*, uca.account_role, users.id AS user_id, users.username AS username
     FROM collections_undeleted JOIN user_collections_assoc_undeleted AS uca
-    ON collections_undeleted.id = uca.collection_id;
+    ON collections_undeleted.id = uca.collection_id
+    JOIN users_undeleted AS users
+    ON users.username = uca.username;
 
 DROP VIEW IF EXISTS users_by_course;
 CREATE VIEW users_by_course AS
@@ -455,7 +457,7 @@ CREATE VIEW user_collection_roles AS
     SELECT c.id AS collection_id, u.id AS user_id, uca.account_role AS role
     FROM users_undeleted AS u
     JOIN user_collections_assoc_undeleted AS uca
-    ON u.id = uca.user_id
+    ON u.username = uca.username
     JOIN collections_undeleted AS c
     ON c.id = uca.collection_id
 

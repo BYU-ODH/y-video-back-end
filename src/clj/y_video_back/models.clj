@@ -151,7 +151,7 @@
   {:account-role int?})
 
 (def user-collections-assoc-without-id
-  (into user-collections-assoc-without-any-ids {:user-id uuid? :collection-id uuid?}))
+  (into user-collections-assoc-without-any-ids {:username string? :collection-id uuid?}))
 
 (def user-collections-assoc
   (into user-collections-assoc-without-id {:id uuid?}))

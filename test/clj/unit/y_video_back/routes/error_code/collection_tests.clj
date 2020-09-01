@@ -118,18 +118,33 @@
 
 (deftest collection-add-user
   (testing "add nonexistent user to collection"
-    (let [res (rp/collection-id-add-user (:id test-coll-one) (java.util.UUID/randomUUID) 1)]
-      (is (= 500 (:status res)))))
+    (let [res (rp/collection-id-add-user (:id test-coll-one) "sadkjhasdvfkljsdhakj" 1)]
+      (is (= 200 (:status res)))))
   (testing "add user to nonexistent collection"
-    (let [res (rp/collection-id-add-user (java.util.UUID/randomUUID) (:id test-user-one) 1)]
+    (let [res (rp/collection-id-add-user (java.util.UUID/randomUUID) (:username test-user-one) 1)]
       (is (= 404 (:status res)))))
   (testing "add user to collection, already connected"
     (let [new-user (users/CREATE (g/get-random-user-without-id))
-          add-user-res (user-collections-assoc/CREATE {:user-id (:id new-user)
+          add-user-res (user-collections-assoc/CREATE {:username (:username new-user)
                                                        :collection-id (:id test-coll-one)
                                                        :account-role 1})
-          res (rp/collection-id-add-user (:id test-coll-one) (:id new-user) 1)]
+          res (rp/collection-id-add-user (:id test-coll-one) (:username new-user) 1)]
       (is (= 500 (:status res))))))
+
+(deftest collection-add-users
+  (testing "add nonexistent user to collection"
+    (let [res (rp/collection-id-add-users (:id test-coll-one) ["sdalikuhasdflkjhaskglj"] 1)]
+      (is (= 200 (:status res)))))
+  (testing "add user to nonexistent collection"
+    (let [res (rp/collection-id-add-users (java.util.UUID/randomUUID) [(:username test-user-one)] 1)]
+      (is (= 404 (:status res)))))
+  (testing "add user to collection, already connected"
+    (let [new-user (users/CREATE (g/get-random-user-without-id))
+          add-user-res (user-collections-assoc/CREATE {:username (:username new-user)
+                                                       :collection-id (:id test-coll-one)
+                                                       :account-role 1})
+          res (rp/collection-id-add-users (:id test-coll-one) [(:username new-user)] 1)]
+      (is (= 200 (:status res))))))
 
 (deftest collection-remove-user
   (testing "remove nonexistent user from collection"

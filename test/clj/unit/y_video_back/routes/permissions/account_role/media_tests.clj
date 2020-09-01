@@ -45,7 +45,7 @@
   (testing "instructor, media-get-file-key, instructor via user-coll"
     (let [user-one (db-pop/add-user "instructor")
           coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "instructor")
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "instructor")
           rsrc-one (db-pop/add-resource)
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           file-one (db-pop/add-file (:id rsrc-one))
@@ -67,7 +67,7 @@
   (testing "student, media-get-file-key, ta via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "ta")
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "ta")
           rsrc-one (db-pop/add-resource)
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           file-one (db-pop/add-file (:id rsrc-one))
@@ -89,7 +89,7 @@
   (testing "student, media-get-file-key, student via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "student")
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "student")
           rsrc-one (db-pop/add-resource)
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           file-one (db-pop/add-file (:id rsrc-one))
@@ -111,7 +111,7 @@
   (testing "student, media-get-file-key, auditing via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "auditing")
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "auditing")
           rsrc-one (db-pop/add-resource)
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           file-one (db-pop/add-file (:id rsrc-one))

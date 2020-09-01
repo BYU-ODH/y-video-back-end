@@ -91,6 +91,7 @@
     (let [user-one (users/CREATE (g/get-random-user-without-id))
           user-two (db-pop/add-user)
           user-id (:id user-one)
+          username (:username user-one)
           ; Create collections
           coll-one (ut/under-to-hyphen (collections/CREATE (g/get-random-collection-without-id (:id user-two))))
           coll-two (ut/under-to-hyphen (collections/CREATE (g/get-random-collection-without-id (:id user-two))))
@@ -99,10 +100,10 @@
           cont-one (db-pop/add-content (:id coll-two) (:id rsrc-one))
           ; Connect user to collections
           user-coll-one (user-collections-assoc/CREATE {:collection-id (:id coll-one)
-                                                        :user-id user-id
+                                                        :username username
                                                         :account-role 1})
           user-coll-two (user-collections-assoc/CREATE {:collection-id (:id coll-two)
-                                                        :user-id user-id
+                                                        :username username
                                                         :account-role 1})
           ; Read collections by session-id
           res (rp/collections-by-logged-in (uc/user-id-to-session-id user-id))]
@@ -112,6 +113,7 @@
                                (update :id str)
                                (update :owner str)
                                (assoc :content '[]))
+
                            (-> coll-two
                                         (ut/remove-db-only)
                                         (update :id str)
@@ -127,6 +129,7 @@
           ; Create user
     (let [user-one (users/CREATE (g/get-random-user-without-id))
           user-id (:id user-one)
+          username (:username user-one)
           ; Create collections
           coll-one (ut/under-to-hyphen (collections/CREATE (g/get-random-collection-without-id user-id)))
           coll-two (ut/under-to-hyphen (collections/CREATE (g/get-random-collection-without-id user-id)))
@@ -135,10 +138,10 @@
           cont-one (db-pop/add-content (:id coll-two) (:id rsrc-one))
           ; Connect user to collections
           user-coll-one (user-collections-assoc/CREATE {:collection-id (:id coll-one)
-                                                        :user-id user-id
+                                                        :username username
                                                         :account-role 1})
           user-coll-two (user-collections-assoc/CREATE {:collection-id (:id coll-two)
-                                                        :user-id user-id
+                                                        :username username
                                                         :account-role 1})
           ; Read collections by session-id
           res (rp/collections-by-logged-in (uc/user-id-to-session-id user-id))]
@@ -204,15 +207,16 @@
     (let [user-one (users/CREATE (g/get-random-user-without-id))
           user-two (db-pop/add-user)
           user-id (:id user-one)
+          username (:username user-one)
           ; Create collections
           coll-one (ut/under-to-hyphen (collections/CREATE (g/get-random-collection-without-id (:id user-two))))
           coll-two (ut/under-to-hyphen (collections/CREATE (g/get-random-collection-without-id (:id user-two))))
           ; Connect user to collections
           user-coll-one (user-collections-assoc/CREATE {:collection-id (:id coll-one)
-                                                        :user-id user-id
+                                                        :username username
                                                         :account-role 1})
           user-coll-two (user-collections-assoc/CREATE {:collection-id (:id coll-two)
-                                                        :user-id user-id
+                                                        :username username
                                                         :account-role 1})
           coll-thr (ut/under-to-hyphen (collections/CREATE (g/get-random-collection-without-id (:id user-two))))
           coll-fou (ut/under-to-hyphen (collections/CREATE (g/get-random-collection-without-id (:id user-two))))

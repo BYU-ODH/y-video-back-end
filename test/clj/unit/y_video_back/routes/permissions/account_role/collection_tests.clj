@@ -73,7 +73,7 @@
   (testing "instructor, collection-get-by-id, instructor via user-coll"
     (let [user-one (db-pop/add-user "instructor")
           coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "instructor")
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "instructor")
           res (rp/collection-id-get (uc/user-id-to-session-id (:id user-one))
                                     (:id coll-one))]
       (is (= 200 (:status res)))))
@@ -89,7 +89,7 @@
   (testing "student, collection-get-by-id, ta via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "ta")
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "ta")
           res (rp/collection-id-get (uc/user-id-to-session-id (:id user-one))
                                     (:id coll-one))]
       (is (= 200 (:status res)))))
@@ -105,7 +105,7 @@
   (testing "student, collection-get-by-id, student via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "student")
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "student")
           res (rp/collection-id-get (uc/user-id-to-session-id (:id user-one))
                                     (:id coll-one))]
       (is (= 200 (:status res)))))
@@ -121,7 +121,7 @@
   (testing "student, collection-get-by-id, auditing via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "auditing")
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "auditing")
           res (rp/collection-id-get (uc/user-id-to-session-id (:id user-one))
                                     (:id coll-one))]
       (is (= 200 (:status res)))))
@@ -146,7 +146,7 @@
   (testing "instructor, collection-delete-by-id, instructor via user-coll"
     (let [user-one (db-pop/add-user "instructor")
           coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "instructor")
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "instructor")
           res (rp/collection-id-delete (uc/user-id-to-session-id (:id user-one))
                                        (:id coll-one))]
       (is (= 403 (:status res)))))
@@ -162,7 +162,7 @@
   (testing "student, collection-delete-by-id, ta via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "ta")
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "ta")
           res (rp/collection-id-delete (uc/user-id-to-session-id (:id user-one))
                                        (:id coll-one))]
       (is (= 403 (:status res)))))
@@ -178,7 +178,7 @@
   (testing "student, collection-delete-by-id, student via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "student")
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "student")
           res (rp/collection-id-delete (uc/user-id-to-session-id (:id user-one))
                                        (:id coll-one))]
       (is (= 403 (:status res)))))
@@ -194,7 +194,7 @@
   (testing "student, collection-delete-by-id, auditing via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "auditing")
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "auditing")
           res (rp/collection-id-delete (uc/user-id-to-session-id (:id user-one))
                                        (:id coll-one))]
       (is (= 403 (:status res)))))
@@ -220,7 +220,7 @@
   (testing "instructor, collection-patch-by-id, instructor via user-coll"
     (let [user-one (db-pop/add-user "instructor")
           coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "instructor")
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "instructor")
           res (rp/collection-id-patch (uc/user-id-to-session-id (:id user-one))
                                       (:id coll-one)
                                       coll-one)]
@@ -238,7 +238,7 @@
   (testing "student, collection-patch-by-id, ta via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "ta")
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "ta")
           res (rp/collection-id-patch (uc/user-id-to-session-id (:id user-one))
                                       (:id coll-one)
                                       coll-one)]
@@ -256,7 +256,7 @@
   (testing "student, collection-patch-by-id, student via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "student")
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "student")
           res (rp/collection-id-patch (uc/user-id-to-session-id (:id user-one))
                                       (:id coll-one)
                                       coll-one)]
@@ -274,7 +274,7 @@
   (testing "student, collection-patch-by-id, auditing via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "auditing")
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "auditing")
           res (rp/collection-id-patch (uc/user-id-to-session-id (:id user-one))
                                       (:id coll-one)
                                       coll-one)]
@@ -304,7 +304,7 @@
   (testing "instructor, collection-add-user, instructor via user-coll"
     (let [user-one (db-pop/add-user "instructor")
           coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "instructor")
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "instructor")
           user-two (db-pop/add-user)
           res (rp/collection-id-add-user (uc/user-id-to-session-id (:id user-one))
                                          (:id coll-one)
@@ -326,7 +326,7 @@
   (testing "student, collection-add-user, ta via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "ta")
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "ta")
           user-two (db-pop/add-user)
           res (rp/collection-id-add-user (uc/user-id-to-session-id (:id user-one))
                                          (:id coll-one)
@@ -348,7 +348,7 @@
   (testing "student, collection-add-user, student via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "student")
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "student")
           user-two (db-pop/add-user)
           res (rp/collection-id-add-user (uc/user-id-to-session-id (:id user-one))
                                          (:id coll-one)
@@ -370,7 +370,7 @@
   (testing "student, collection-add-user, auditing via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "auditing")
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "auditing")
           user-two (db-pop/add-user)
           res (rp/collection-id-add-user (uc/user-id-to-session-id (:id user-one))
                                          (:id coll-one)
@@ -396,7 +396,7 @@
     (let [user-one (db-pop/add-user "instructor")
           coll-one (db-pop/add-collection (:id user-one))
           user-two (db-pop/add-user)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-two) (:id coll-one))
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-two) (:id coll-one))
           res (rp/collection-id-remove-user (uc/user-id-to-session-id (:id user-one))
                                             (:id coll-one)
                                             (:username user-two))]
@@ -404,9 +404,9 @@
   (testing "instructor, collection-remove-user, instructor via user-coll"
     (let [user-one (db-pop/add-user "instructor")
           coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "instructor")
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "instructor")
           user-two (db-pop/add-user)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-two) (:id coll-one))
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-two) (:id coll-one))
           res (rp/collection-id-remove-user (uc/user-id-to-session-id (:id user-one))
                                             (:id coll-one)
                                             (:username user-two))]
@@ -418,7 +418,7 @@
           user-crse-add (db-pop/add-user-crse-assoc (:id user-one) (:id crse-one) "instructor")
           coll-crse-add (db-pop/add-coll-crse-assoc (:id coll-one) (:id crse-one))
           user-two (db-pop/add-user)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-two) (:id coll-one))
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-two) (:id coll-one))
           res (rp/collection-id-remove-user (uc/user-id-to-session-id (:id user-one))
                                             (:id coll-one)
                                             (:username user-two))]
@@ -426,9 +426,9 @@
   (testing "student, collection-remove-user, ta via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "ta")
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "ta")
           user-two (db-pop/add-user)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-two) (:id coll-one))
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-two) (:id coll-one))
           res (rp/collection-id-remove-user (uc/user-id-to-session-id (:id user-one))
                                             (:id coll-one)
                                             (:username user-two))]
@@ -440,7 +440,7 @@
           user-crse-add (db-pop/add-user-crse-assoc (:id user-one) (:id crse-one) "ta")
           coll-crse-add (db-pop/add-coll-crse-assoc (:id coll-one) (:id crse-one))
           user-two (db-pop/add-user)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-two) (:id coll-one))
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-two) (:id coll-one))
           res (rp/collection-id-remove-user (uc/user-id-to-session-id (:id user-one))
                                             (:id coll-one)
                                             (:username user-two))]
@@ -448,9 +448,9 @@
   (testing "student, collection-remove-user, student via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "student")
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "student")
           user-two (db-pop/add-user)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-two) (:id coll-one))
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-two) (:id coll-one))
           res (rp/collection-id-remove-user (uc/user-id-to-session-id (:id user-one))
                                             (:id coll-one)
                                             (:username user-two))]
@@ -462,7 +462,7 @@
           user-crse-add (db-pop/add-user-crse-assoc (:id user-one) (:id crse-one) "student")
           coll-crse-add (db-pop/add-coll-crse-assoc (:id coll-one) (:id crse-one))
           user-two (db-pop/add-user)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-two) (:id coll-one))
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-two) (:id coll-one))
           res (rp/collection-id-remove-user (uc/user-id-to-session-id (:id user-one))
                                             (:id coll-one)
                                             (:username user-two))]
@@ -470,9 +470,9 @@
   (testing "student, collection-remove-user, auditing via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "auditing")
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "auditing")
           user-two (db-pop/add-user)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-two) (:id coll-one))
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-two) (:id coll-one))
           res (rp/collection-id-remove-user (uc/user-id-to-session-id (:id user-one))
                                             (:id coll-one)
                                             (:username user-two))]
@@ -484,7 +484,7 @@
           user-crse-add (db-pop/add-user-crse-assoc (:id user-one) (:id crse-one) "auditing")
           coll-crse-add (db-pop/add-coll-crse-assoc (:id coll-one) (:id crse-one))
           user-two (db-pop/add-user)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-two) (:id coll-one))
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-two) (:id coll-one))
           res (rp/collection-id-remove-user (uc/user-id-to-session-id (:id user-one))
                                             (:id coll-one)
                                             (:username user-two))]
@@ -505,7 +505,7 @@
   (testing "instructor, collection-id-add-course, instructor via user-coll"
     (let [user-one (db-pop/add-user "instructor")
           coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "instructor")
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "instructor")
           crse-two (db-pop/get-course)
           res (rp/collection-id-add-course (uc/user-id-to-session-id (:id user-one))
                                            (:id coll-one)
@@ -529,7 +529,7 @@
   (testing "student, collection-id-add-course, ta via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "ta")
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "ta")
           crse-two (db-pop/get-course)
           res (rp/collection-id-add-course (uc/user-id-to-session-id (:id user-one))
                                            (:id coll-one)
@@ -553,7 +553,7 @@
   (testing "student, collection-id-add-course, student via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "student")
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "student")
           crse-two (db-pop/get-course)
           res (rp/collection-id-add-course (uc/user-id-to-session-id (:id user-one))
                                            (:id coll-one)
@@ -577,7 +577,7 @@
   (testing "student, collection-id-add-course, auditing via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "auditing")
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "auditing")
           crse-two (db-pop/get-course)
           res (rp/collection-id-add-course (uc/user-id-to-session-id (:id user-one))
                                            (:id coll-one)
@@ -613,7 +613,7 @@
   (testing "instructor, collection-remove-course, instructor via user-coll"
     (let [user-one (db-pop/add-user "instructor")
           coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "instructor")
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "instructor")
           crse-two (db-pop/add-course)
           coll-crse-add (db-pop/add-coll-crse-assoc (:id coll-one) (:id crse-two))
           res (rp/collection-id-remove-course (uc/user-id-to-session-id (:id user-one))
@@ -635,7 +635,7 @@
   (testing "student, collection-remove-course, ta via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "ta")
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "ta")
           crse-two (db-pop/add-course)
           coll-crse-add (db-pop/add-coll-crse-assoc (:id coll-one) (:id crse-two))
           res (rp/collection-id-remove-course (uc/user-id-to-session-id (:id user-one))
@@ -657,7 +657,7 @@
   (testing "student, collection-remove-course, student via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "student")
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "student")
           crse-two (db-pop/add-course)
           coll-crse-add (db-pop/add-coll-crse-assoc (:id coll-one) (:id crse-two))
           res (rp/collection-id-remove-course (uc/user-id-to-session-id (:id user-one))
@@ -679,7 +679,7 @@
   (testing "student, collection-remove-course, auditing via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "auditing")
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "auditing")
           crse-two (db-pop/add-course)
           coll-crse-add (db-pop/add-coll-crse-assoc (:id coll-one) (:id crse-two))
           res (rp/collection-id-remove-course (uc/user-id-to-session-id (:id user-one))
@@ -710,7 +710,7 @@
   (testing "instructor, collection-id-contents, instructor via user-coll"
     (let [user-one (db-pop/add-user "instructor")
           coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "instructor")
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "instructor")
           res (rp/collection-id-contents (uc/user-id-to-session-id (:id user-one))
                                          (:id coll-one))]
       (is (= 200 (:status res)))))
@@ -726,7 +726,7 @@
   (testing "student, collection-id-contents, ta via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "ta")
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "ta")
           res (rp/collection-id-contents (uc/user-id-to-session-id (:id user-one))
                                          (:id coll-one))]
       (is (= 200 (:status res)))))
@@ -742,7 +742,7 @@
   (testing "student, collection-id-contents, student via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "student")
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "student")
           res (rp/collection-id-contents (uc/user-id-to-session-id (:id user-one))
                                          (:id coll-one))]
       (is (= 200 (:status res)))))
@@ -758,7 +758,7 @@
   (testing "student, collection-id-contents, auditing via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "auditing")
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "auditing")
           res (rp/collection-id-contents (uc/user-id-to-session-id (:id user-one))
                                          (:id coll-one))]
       (is (= 200 (:status res)))))
@@ -783,7 +783,7 @@
   (testing "instructor, collection-id-courses, instructor via user-coll"
     (let [user-one (db-pop/add-user "instructor")
           coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "instructor")
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "instructor")
           res (rp/collection-id-courses (uc/user-id-to-session-id (:id user-one))
                                         (:id coll-one))]
       (is (= 200 (:status res)))))
@@ -799,7 +799,7 @@
   (testing "student, collection-id-courses, ta via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "ta")
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "ta")
           res (rp/collection-id-courses (uc/user-id-to-session-id (:id user-one))
                                         (:id coll-one))]
       (is (= 403 (:status res)))))
@@ -815,7 +815,7 @@
   (testing "student, collection-id-courses, student via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "student")
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "student")
           res (rp/collection-id-courses (uc/user-id-to-session-id (:id user-one))
                                         (:id coll-one))]
       (is (= 403 (:status res)))))
@@ -831,7 +831,7 @@
   (testing "student, collection-id-courses, auditing via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "auditing")
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "auditing")
           res (rp/collection-id-courses (uc/user-id-to-session-id (:id user-one))
                                         (:id coll-one))]
       (is (= 403 (:status res)))))
@@ -856,7 +856,7 @@
   (testing "instructor, collection-id-users, instructor via user-coll"
     (let [user-one (db-pop/add-user "instructor")
           coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "instructor")
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "instructor")
           res (rp/collection-id-users (uc/user-id-to-session-id (:id user-one))
                                       (:id coll-one))]
       (is (= 200 (:status res)))))
@@ -872,7 +872,7 @@
   (testing "student, collection-id-users, ta via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "ta")
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "ta")
           res (rp/collection-id-users (uc/user-id-to-session-id (:id user-one))
                                       (:id coll-one))]
       (is (= 403 (:status res)))))
@@ -888,7 +888,7 @@
   (testing "student, collection-id-users, student via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "student")
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "student")
           res (rp/collection-id-users (uc/user-id-to-session-id (:id user-one))
                                       (:id coll-one))]
       (is (= 403 (:status res)))))
@@ -904,7 +904,7 @@
   (testing "student, collection-id-users, auditing via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "auditing")
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "auditing")
           res (rp/collection-id-users (uc/user-id-to-session-id (:id user-one))
                                       (:id coll-one))]
       (is (= 403 (:status res)))))

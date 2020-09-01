@@ -45,7 +45,7 @@
   (testing "instructor, file-post, instructor via user-coll"
     (let [user-one (db-pop/add-user "instructor")
           coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "instructor")
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "instructor")
           rsrc-one (db-pop/add-resource)
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           file-one (db-pop/get-file (:id rsrc-one))
@@ -71,7 +71,7 @@
   (testing "student, file-post, ta via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "ta")
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "ta")
           rsrc-one (db-pop/add-resource)
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           file-one (db-pop/get-file (:id rsrc-one))
@@ -97,7 +97,7 @@
   (testing "student, file-post, student via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "student")
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "student")
           rsrc-one (db-pop/add-resource)
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           file-one (db-pop/get-file (:id rsrc-one))
@@ -123,7 +123,7 @@
   (testing "student, file-post, auditing via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "auditing")
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "auditing")
           rsrc-one (db-pop/add-resource)
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           file-one (db-pop/get-file (:id rsrc-one))
@@ -153,7 +153,7 @@
   (testing "instructor, file-get-by-id, instructor via user-coll"
     (let [user-one (db-pop/add-user "instructor")
           coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "instructor")
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "instructor")
           rsrc-one (db-pop/add-resource)
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           file-one (db-pop/add-file (:id rsrc-one))
@@ -175,7 +175,7 @@
   (testing "student, file-get-by-id, ta via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "ta")
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "ta")
           rsrc-one (db-pop/add-resource)
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           file-one (db-pop/add-file (:id rsrc-one))
@@ -197,7 +197,7 @@
   (testing "student, file-get-by-id, student via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "student")
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "student")
           rsrc-one (db-pop/add-resource)
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           file-one (db-pop/add-file (:id rsrc-one))
@@ -219,7 +219,7 @@
   (testing "student, file-get-by-id, auditing via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "auditing")
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "auditing")
           rsrc-one (db-pop/add-resource)
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           file-one (db-pop/add-file (:id rsrc-one))
@@ -244,7 +244,7 @@
   (testing "instructor, file-delete-by-id, instructor via user-coll"
     (let [user-one (db-pop/add-user "instructor")
           coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "instructor")
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "instructor")
           rsrc-one (db-pop/add-resource)
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           file-one (db-pop/add-file (:id rsrc-one))
@@ -266,7 +266,7 @@
   (testing "student, file-delete-by-id, ta via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "ta")
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "ta")
           rsrc-one (db-pop/add-resource)
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           file-one (db-pop/add-file (:id rsrc-one))
@@ -288,7 +288,7 @@
   (testing "student, file-delete-by-id, student via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "student")
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "student")
           rsrc-one (db-pop/add-resource)
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           file-one (db-pop/add-file (:id rsrc-one))
@@ -310,7 +310,7 @@
   (testing "student, file-delete-by-id, auditing via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "auditing")
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "auditing")
           rsrc-one (db-pop/add-resource)
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           file-one (db-pop/add-file (:id rsrc-one))
@@ -335,7 +335,7 @@
   (testing "instructor, file-patch-by-id, instructor via user-coll"
     (let [user-one (db-pop/add-user "instructor")
           coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "instructor")
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "instructor")
           rsrc-one (db-pop/add-resource)
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           file-one (db-pop/add-file (:id rsrc-one))
@@ -359,7 +359,7 @@
   (testing "student, file-patch-by-id, ta via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "ta")
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "ta")
           rsrc-one (db-pop/add-resource)
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           file-one (db-pop/add-file (:id rsrc-one))
@@ -383,7 +383,7 @@
   (testing "student, file-patch-by-id, student via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "student")
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "student")
           rsrc-one (db-pop/add-resource)
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           file-one (db-pop/add-file (:id rsrc-one))
@@ -407,7 +407,7 @@
   (testing "student, file-patch-by-id, auditing via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one) "auditing")
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "auditing")
           rsrc-one (db-pop/add-resource)
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           file-one (db-pop/add-file (:id rsrc-one))

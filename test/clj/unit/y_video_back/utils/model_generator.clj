@@ -101,8 +101,8 @@
 (defn get-random-user-collections-assoc-without-id
   ([]
    (get-random-model models/user-collections-assoc-without-id))
-  ([user-id collection-id]
-   (into (get-random-model models/user-collections-assoc-without-any-ids) {:user-id user-id :collection-id collection-id})))
+  ([username collection-id]
+   (into (get-random-model models/user-collections-assoc-without-any-ids) {:username username :collection-id collection-id})))
 
 (defn get-random-user-courses-assoc-without-id
   ([]

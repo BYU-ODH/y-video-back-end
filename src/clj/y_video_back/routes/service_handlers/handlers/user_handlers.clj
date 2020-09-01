@@ -123,6 +123,7 @@
                         collection-result (map #(-> %
                                                     (utils/remove-db-only)
                                                     (dissoc :user-id)
+                                                    (dissoc :username)
                                                     (dissoc :account-role))
                                                owner-result)]
                     {:status 200
@@ -140,7 +141,8 @@
                   {:status 404
                    :body {:message "user not found"}}
                   (let [user-owner-result (collections/READ-ALL-BY-OWNER [user-id])
-                        user-collections-result (user-collections-assoc/READ-COLLECTIONS-BY-USER user-id)
+                        username (:username (users/READ user-id))
+                        user-collections-result (user-collections-assoc/READ-COLLECTIONS-BY-USER username)
                         user-courses-result (users/READ-COLLECTIONS-BY-USER-VIA-COURSES user-id)
                         courses-result (map #(-> %
                                                  (utils/remove-db-only)
@@ -149,6 +151,7 @@
                         collections-result (map #(-> %
                                                      (utils/remove-db-only)
                                                      (dissoc :user-id)
+                                                     (dissoc :username)
                                                      (dissoc :account-role))
                                                 user-collections-result)
                         owner-result (map #(-> %

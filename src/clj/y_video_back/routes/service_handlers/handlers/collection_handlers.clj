@@ -119,23 +119,20 @@
               (if (not (collections/EXISTS? id))
                 {:status 404
                  :body {:message "collection not found"}}
-                (let [user-id (:id (first (users/READ-BY-USERNAME [(:username body)])))]
-                  (if (nil? user-id)
+                (let [username (:username body)]
+                  (if (user-collections-assoc/EXISTS-COLL-USER? id username)
                     {:status 500
-                     :body {:message (str "user: " (:username body) " not found")}}
-                    (if (user-collections-assoc/EXISTS-COLL-USER? id user-id)
-                      {:status 500
-                       :body {:message "user already connected to collection"}}
-                      (let [result (utils/get-id (user-collections-assoc/CREATE (into (dissoc body :username) {:collection-id id :user-id user-id})))]
-                        (if (nil? result)
-                          {:status 500
-                           :body {:message "unable to add user"}}
-                          {:status 200
-                           :body {:message (str 1 " users added to collection")
-                                  :id result}})))))))})
+                     :body {:message "user already connected to collection"}}
+                    (let [result (utils/get-id (user-collections-assoc/CREATE (into (dissoc body :username) {:collection-id id :username username})))]
+                      (if (nil? result)
+                        {:status 500
+                         :body {:message "unable to add user"}}
+                        {:status 200
+                         :body {:message (str 1 " users added to collection")
+                                :id result}}))))))})
 
 (def collection-add-users
-  {:summary "Adds list of users to specified collection. All will have same role."
+  {:summary "Adds list of users to specified collection. All will have same role. Will not override existing connections."
    :permission-level "lab-assistant"
    :role-level "instructor"
    :parameters {:header {:session-id uuid?}
@@ -147,9 +144,11 @@
               (if (not (collections/EXISTS? id))
                 {:status 404
                  :body {:message "collection not found"}}
-                (let [res (map #(user-collections-assoc/CREATE {:collection-id id :user-id (:id (first (users/READ-BY-USERNAME [%])))
-                                                                :account-role (:account-role body)})
-                               (:usernames body))]
+                (do
+                  (doseq [username (:usernames body)]
+                    (if-not (user-collections-assoc/EXISTS-COLL-USER? id username)
+                      (user-collections-assoc/CREATE {:collection-id id :username username
+                                                      :account-role (:account-role body)})))
                   {:status 200
                    :body {:message (str (count (:usernames body)) " users added to collection")}})))})
 
@@ -167,14 +166,14 @@
                 {:status 404
                  :body {:message "collection not found"}}
                 (let [user-id (:id (first (users/READ-BY-USERNAME [(:username body)])))
-                      body (assoc (dissoc body :username) :user-id user-id)]
+                      body (assoc body :user-id user-id)]
                   (if (not (users/EXISTS? (:user-id body)))
                     {:status 500
                      :body {:message "user not found"}}
-                    (if-not (user-collections-assoc/EXISTS-COLL-USER? id (:user-id body))
+                    (if-not (user-collections-assoc/EXISTS-COLL-USER? id (:username body))
                       {:status 500
                        :body {:message "user not connected to collection"}}
-                      (let [result (user-collections-assoc/DELETE-BY-IDS [id (:user-id body)])]
+                      (let [result (user-collections-assoc/DELETE-BY-IDS [id (:username body)])]
                         (if (= 0 result)
                           {:status 500
                            :body {:message "unable to remove user"}}

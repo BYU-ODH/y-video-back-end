@@ -16,7 +16,8 @@
       [y-video-back.db.users :as users]
       [y-video-back.db.courses :as courses]
       [y-video-back.db.user-collections-assoc :as user-collections-assoc]
-      [y-video-back.db.collections-courses-assoc :as collection-courses-assoc]))
+      [y-video-back.db.collections-courses-assoc :as collection-courses-assoc]
+      [y-video-back.user-creator :as uc]))
 
 (declare ^:dynamic *txn*)
 
@@ -71,10 +72,10 @@
       (is (= nil (collections/READ (:id coll-one)))))))
 
 (deftest coll-add-user
-  (testing "add user to collection"
+  (testing "add user to collection, user already in db"
     (let [coll-one (db-pop/add-collection)
           user-one (db-pop/add-user)]
-      (is (= '() (user-collections-assoc/READ-BY-IDS [(:id coll-one) (:id user-one)])))
+      (is (= '() (user-collections-assoc/READ-BY-IDS [(:id coll-one) (:username user-one)])))
       (let [res (rp/collection-id-add-user (:id coll-one)
                                            (:username user-one)
                                            0)]
@@ -82,9 +83,33 @@
         (let [id (ut/to-uuid (:id (m/decode-response-body res)))]
           (is (= (list {:id id
                         :collection-id (:id coll-one)
-                        :user-id (:id user-one)
+                        :username (:username user-one)
                         :account-role 0})
-                 (map ut/remove-db-only (user-collections-assoc/READ-BY-IDS [(:id coll-one) (:id user-one)])))))))))
+                 (map ut/remove-db-only (user-collections-assoc/READ-BY-IDS [(:id coll-one) (:username user-one)]))))))))
+  (testing "add user to collection, user not in db"
+    ; Add collection, connect to username
+    (let [coll-one (db-pop/add-collection)
+          user-one (db-pop/get-user)]
+      (is (= '() (user-collections-assoc/READ-BY-IDS [(:id coll-one) (:username user-one)])))
+      (let [res (rp/collection-id-add-user (:id coll-one)
+                                           (:username user-one)
+                                           0)]
+        (is (= 200 (:status res)))
+        (let [id (ut/to-uuid (:id (m/decode-response-body res)))]
+          (is (= (list {:id id
+                        :collection-id (:id coll-one)
+                        :username (:username user-one)
+                        :account-role 0})
+                 (map ut/remove-db-only (user-collections-assoc/READ-BY-IDS [(:id coll-one) (:username user-one)]))))))
+      ; Add user, check if collection in get collections by logged in
+      (let [user-one-add (users/CREATE user-one)
+            res (rp/collections-by-logged-in (uc/user-id-to-session-id (:id user-one-add)))]
+        (is (= [(-> coll-one
+                    (ut/remove-db-only)
+                    (update :id str)
+                    (update :owner str)
+                    (assoc :content []))]
+               (m/decode-response-body res)))))))
 
 (deftest coll-add-users
   (testing "add list of users to collection"
@@ -99,23 +124,80 @@
         (is (= 200 (:status res)))
         (is (= (frequencies (map #(into {}
                                         {:collection-id (:id coll-one)
-                                         :user-id (:id %)
+                                         :username (:username %)
                                          :account-role 0})
                                  [user-one user-two user-thr]))
                (frequencies (map #(-> %
                                       (ut/remove-db-only)
                                       (dissoc :id))
-                                 (user-collections-assoc/READ-BY-COLLECTION (:id coll-one))))))))))
+                                 (user-collections-assoc/READ-BY-COLLECTION (:id coll-one)))))))))
+  (testing "add list of users to collection, not in db"
+    (let [coll-one (db-pop/add-collection)
+          user-one (db-pop/get-user)
+          user-two (db-pop/add-user)
+          user-thr (db-pop/get-user)
+          user-fou (db-pop/add-user)
+          user-fou-add (db-pop/add-user-coll-assoc (:username user-fou) (:id coll-one) 0)]
+      (is (= [{:username (:username user-fou)
+               :collection-id (:id coll-one)
+               :account-role 0}]
+             (map #(-> %
+                       (ut/remove-db-only)
+                       (dissoc :id))
+                  (user-collections-assoc/READ-BY-COLLECTION (:id coll-one)))))
+      (let [res (rp/collection-id-add-users (:id coll-one)
+                                            [(:username user-one) (:username user-two) (:username user-thr) (:username user-fou)]
+                                            0)]
+        (is (= 200 (:status res)))
+        (is (= (frequencies (map #(into {}
+                                        {:collection-id (:id coll-one)
+                                         :username (:username %)
+                                         :account-role 0})
+                                 [user-one user-two user-thr user-fou]))
+               (frequencies (map #(-> %
+                                      (ut/remove-db-only)
+                                      (dissoc :id))
+                                 (user-collections-assoc/READ-BY-COLLECTION (:id coll-one)))))))
+      (let [user-one-add (users/CREATE user-one)
+            user-thr-add (users/CREATE user-thr)
+            res-one (rp/collections-by-logged-in (uc/user-id-to-session-id (:id user-one-add)))
+            res-two (rp/collections-by-logged-in (uc/user-id-to-session-id (:id user-two)))
+            res-thr (rp/collections-by-logged-in (uc/user-id-to-session-id (:id user-thr-add)))
+            res-fou (rp/collections-by-logged-in (uc/user-id-to-session-id (:id user-fou)))]
+        (is (= [(-> coll-one
+                    (ut/remove-db-only)
+                    (update :id str)
+                    (update :owner str)
+                    (assoc :content []))]
+               (m/decode-response-body res-one)))
+        (is (= [(-> coll-one
+                    (ut/remove-db-only)
+                    (update :id str)
+                    (update :owner str)
+                    (assoc :content []))]
+               (m/decode-response-body res-two)))
+        (is (= [(-> coll-one
+                    (ut/remove-db-only)
+                    (update :id str)
+                    (update :owner str)
+                    (assoc :content []))]
+               (m/decode-response-body res-thr)))
+        (is (= [(-> coll-one
+                    (ut/remove-db-only)
+                    (update :id str)
+                    (update :owner str)
+                    (assoc :content []))]
+               (m/decode-response-body res-fou)))))))
 
 (deftest coll-remove-user
   (testing "remove user from collection"
     (let [coll-one (collections/CREATE (db-pop/get-collection))
           user-one (users/CREATE (db-pop/get-user))
-          user-coll (user-collections-assoc/CREATE (g/get-random-user-collections-assoc-without-id (:id user-one) (:id coll-one)))]
-      (is (not (= '() (user-collections-assoc/READ-BY-IDS [(:id coll-one) (:id user-one)]))))
+          user-coll (user-collections-assoc/CREATE (g/get-random-user-collections-assoc-without-id (:username user-one) (:id coll-one)))]
+      (is (not (= '() (user-collections-assoc/READ-BY-IDS [(:id coll-one) (:username user-one)]))))
       (let [res (rp/collection-id-remove-user (:id coll-one) (:username user-one))]
         (is (= 200 (:status res)))
-        (is (= '() (user-collections-assoc/READ-BY-IDS [(:id coll-one) (:id user-one)])))))))
+        (is (= '() (user-collections-assoc/READ-BY-IDS [(:id coll-one) (:username user-one)])))))))
 
 (deftest coll-add-crse
   (testing "add course to collection"
@@ -151,8 +233,8 @@
           coll-one (db-pop/add-collection)
           coll-two (db-pop/add-collection)
           ; Connect one-one, two-two
-          user-coll-one (db-pop/add-user-coll-assoc (:id user-one) (:id coll-one))
-          user-coll-two (db-pop/add-user-coll-assoc (:id user-two) (:id coll-two))
+          user-coll-one (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one))
+          user-coll-two (db-pop/add-user-coll-assoc (:username user-two) (:id coll-two))
           res-one (rp/collection-id-users (:id coll-one))
           res-two (rp/collection-id-users (:id coll-two))]
       (is (= 200 (:status res-one)))

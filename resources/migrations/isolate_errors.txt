@@ -1,0 +1,1 @@
+sudo -u y-video-test psql -f init.sql 2>&1 | grep -- 'ERROR\|LINE'
