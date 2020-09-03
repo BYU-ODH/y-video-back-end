@@ -91,6 +91,7 @@
     (let [coll-one (db-pop/add-collection)
           user-one (db-pop/get-user)]
       (is (= '() (user-collections-assoc/READ-BY-IDS [(:id coll-one) (:username user-one)])))
+      (is (= nil (users/READ-BY-USERNAME (:username user-one))))
       (let [res (rp/collection-id-add-user (:id coll-one)
                                            (:username user-one)
                                            0)]
@@ -101,9 +102,11 @@
                         :username (:username user-one)
                         :account-role 0})
                  (map ut/remove-db-only (user-collections-assoc/READ-BY-IDS [(:id coll-one) (:username user-one)]))))))
-      ; Add user, check if collection in get collections by logged in
-      (let [user-one-add (users/CREATE user-one)
-            res (rp/collections-by-logged-in (uc/user-id-to-session-id (:id user-one-add)))]
+      ; Check user was created
+      (is (= user-one (dissoc (users/READ-BY-USERNAME (:username user-one)) :id)))
+      ; Check if collection in get collections by logged in
+      (let [user-one-res (users/READ-BY-USERNAME (:username user-one))
+            res (rp/collections-by-logged-in (uc/user-id-to-session-id (:id user-one-res)))]
         (is (= [(-> coll-one
                     (ut/remove-db-only)
                     (update :id str)
@@ -145,6 +148,8 @@
                        (ut/remove-db-only)
                        (dissoc :id))
                   (user-collections-assoc/READ-BY-COLLECTION (:id coll-one)))))
+      (is (= nil (users/READ-BY-USERNAME (:username user-one))))
+      (is (= nil (users/READ-BY-USERNAME (:username user-thr))))
       (let [res (rp/collection-id-add-users (:id coll-one)
                                             [(:username user-one) (:username user-two) (:username user-thr) (:username user-fou)]
                                             0)]
@@ -158,11 +163,13 @@
                                       (ut/remove-db-only)
                                       (dissoc :id))
                                  (user-collections-assoc/READ-BY-COLLECTION (:id coll-one)))))))
-      (let [user-one-add (users/CREATE user-one)
-            user-thr-add (users/CREATE user-thr)
-            res-one (rp/collections-by-logged-in (uc/user-id-to-session-id (:id user-one-add)))
+      (is (= user-one (dissoc (users/READ-BY-USERNAME (:username user-one)) :id)))
+      (is (= user-thr (dissoc (users/READ-BY-USERNAME (:username user-thr)) :id)))
+      (let [user-one-res (users/READ-BY-USERNAME (:username user-one))
+            user-thr-res (users/READ-BY-USERNAME (:username user-one))
+            res-one (rp/collections-by-logged-in (uc/user-id-to-session-id (:id user-one-res)))
             res-two (rp/collections-by-logged-in (uc/user-id-to-session-id (:id user-two)))
-            res-thr (rp/collections-by-logged-in (uc/user-id-to-session-id (:id user-thr-add)))
+            res-thr (rp/collections-by-logged-in (uc/user-id-to-session-id (:id user-thr-res)))
             res-fou (rp/collections-by-logged-in (uc/user-id-to-session-id (:id user-fou)))]
         (is (= [(-> coll-one
                     (ut/remove-db-only)
