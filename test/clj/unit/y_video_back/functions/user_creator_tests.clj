@@ -56,7 +56,7 @@
       (is (= {:username bad-username
               :email (str bad-username "@yvideobeta.byu.edu")
               :account-name (str bad-username " no_name")
-              :account-type 4}
+              :account-type 3}
              {:username (get-in user-res [:username])
               :email (get-in user-res [:email])
               :account-name (get-in user-res [:account-name])
@@ -68,7 +68,7 @@
       (is (= {:username bad-username
               :email (str bad-username "@yvideobeta.byu.edu")
               :account-name (str bad-username " no_name")
-              :account-type 4}
+              :account-type 3}
              {:username (get-in user-res [:username])
               :email (get-in user-res [:email])
               :account-name (get-in user-res [:account-name])

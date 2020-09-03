@@ -11,7 +11,8 @@
    [y-video-back.model-specs :as sp]
    [y-video-back.routes.service-handlers.utils.utils :as utils]
    [y-video-back.routes.service-handlers.utils.role-utils :as ru]
-   [y-video-back.utils.account-permissions :as ac]))
+   [y-video-back.utils.account-permissions :as ac]
+   [y-video-back.user-creator :as uc]))
 
 (def collection-create ;; Non-functional
   {:summary "Creates a new collection with the given (temp) user as an owner"
@@ -120,6 +121,8 @@
                 {:status 404
                  :body {:message "collection not found"}}
                 (let [username (:username body)]
+                  (if (nil? (users/READ-BY-USERNAME username))
+                    (uc/get-session-id username))
                   (if (user-collections-assoc/EXISTS-COLL-USER? id username)
                     {:status 500
                      :body {:message "user already connected to collection"}}
@@ -146,9 +149,12 @@
                  :body {:message "collection not found"}}
                 (do
                   (doseq [username (:usernames body)]
-                    (if-not (user-collections-assoc/EXISTS-COLL-USER? id username)
-                      (user-collections-assoc/CREATE {:collection-id id :username username
-                                                      :account-role (:account-role body)})))
+                    (do
+                      (if-not (user-collections-assoc/EXISTS-COLL-USER? id username)
+                        (user-collections-assoc/CREATE {:collection-id id :username username
+                                                        :account-role (:account-role body)}))
+                      (if (nil? (users/READ-BY-USERNAME username))
+                        (uc/get-session-id username))))
                   {:status 200
                    :body {:message (str (count (:usernames body)) " users added to collection")}})))})
 

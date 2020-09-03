@@ -75,5 +75,5 @@
         {:full-name (str netid " no_name")
          :byu-id nil
          :email (str netid "@yvideobeta.byu.edu")
-         :account-type 4
+         :account-type (if (:test env) 3 4)
          :person-id "000000000"}))))

@@ -1,5 +1,6 @@
 (ns y-video-back.routes.collection
     (:require
+      [y-video-back.config :refer [env]]
       [clojure.test :refer :all]
       [ring.mock.request :refer :all]
       [y-video-back.handler :refer :all]
@@ -89,9 +90,9 @@
   (testing "add user to collection, user not in db"
     ; Add collection, connect to username
     (let [coll-one (db-pop/add-collection)
-          user-one (db-pop/get-user)]
+          user-one {:username (get-in env [:test-user :username])}]
       (is (= '() (user-collections-assoc/READ-BY-IDS [(:id coll-one) (:username user-one)])))
-      (is (= nil (users/READ-BY-USERNAME (:username user-one))))
+      (is (= '() (users/READ-BY-USERNAME [(:username user-one)])))
       (let [res (rp/collection-id-add-user (:id coll-one)
                                            (:username user-one)
                                            0)]
@@ -103,9 +104,9 @@
                         :account-role 0})
                  (map ut/remove-db-only (user-collections-assoc/READ-BY-IDS [(:id coll-one) (:username user-one)]))))))
       ; Check user was created
-      (is (= user-one (dissoc (users/READ-BY-USERNAME (:username user-one)) :id)))
+      (is (= (:username user-one) (:username (first (users/READ-BY-USERNAME [(:username user-one)])))))
       ; Check if collection in get collections by logged in
-      (let [user-one-res (users/READ-BY-USERNAME (:username user-one))
+      (let [user-one-res (first (users/READ-BY-USERNAME [(:username user-one)]))
             res (rp/collections-by-logged-in (uc/user-id-to-session-id (:id user-one-res)))]
         (is (= [(-> coll-one
                     (ut/remove-db-only)
@@ -148,8 +149,8 @@
                        (ut/remove-db-only)
                        (dissoc :id))
                   (user-collections-assoc/READ-BY-COLLECTION (:id coll-one)))))
-      (is (= nil (users/READ-BY-USERNAME (:username user-one))))
-      (is (= nil (users/READ-BY-USERNAME (:username user-thr))))
+      (is (= '() (users/READ-BY-USERNAME [(:username user-one)])))
+      (is (= '() (users/READ-BY-USERNAME [(:username user-thr)])))
       (let [res (rp/collection-id-add-users (:id coll-one)
                                             [(:username user-one) (:username user-two) (:username user-thr) (:username user-fou)]
                                             0)]
@@ -163,10 +164,10 @@
                                       (ut/remove-db-only)
                                       (dissoc :id))
                                  (user-collections-assoc/READ-BY-COLLECTION (:id coll-one)))))))
-      (is (= user-one (dissoc (users/READ-BY-USERNAME (:username user-one)) :id)))
-      (is (= user-thr (dissoc (users/READ-BY-USERNAME (:username user-thr)) :id)))
-      (let [user-one-res (users/READ-BY-USERNAME (:username user-one))
-            user-thr-res (users/READ-BY-USERNAME (:username user-one))
+      (is (= (:username user-one) (:username (first (users/READ-BY-USERNAME [(:username user-one)])))))
+      (is (= (:username user-thr) (:username (first (users/READ-BY-USERNAME [(:username user-thr)])))))
+      (let [user-one-res (first (users/READ-BY-USERNAME [(:username user-one)]))
+            user-thr-res (first (users/READ-BY-USERNAME [(:username user-thr)]))
             res-one (rp/collections-by-logged-in (uc/user-id-to-session-id (:id user-one-res)))
             res-two (rp/collections-by-logged-in (uc/user-id-to-session-id (:id user-two)))
             res-thr (rp/collections-by-logged-in (uc/user-id-to-session-id (:id user-thr-res)))
