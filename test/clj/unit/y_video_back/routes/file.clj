@@ -14,6 +14,7 @@
       [y-video-back.utils.utils :as ut]
       [y-video-back.utils.db-populator :as db-pop]
       [y-video-back.db.files :as files]
+      [y-video-back.db.languages :as languages]
       [clojure.java.io :as io]))
 
 (declare ^:dynamic *txn*)
@@ -40,6 +41,23 @@
           (is (= (assoc (into file-one {:id id}) :filepath (:filepath db-file))
                  db-file))
           (is (.exists (io/as-file (str (-> env :FILES :media-url) (:filepath db-file)))))))))
+  (testing "file CREATE with new file-version/langauge"
+    (let [filecontent (ut/get-filecontent)
+          file-one (-> (db-pop/get-file)
+                       (dissoc :filepath)
+                       (dissoc :file-version)
+                       (assoc :file-version "dasfowinvkjha"))]
+      ; Check file-version is not in language table
+      (is (not (languages/EXISTS? (:file-version file-one))))
+      (let [res (rp/file-post file-one filecontent)]
+        (is (= 200 (:status res)))
+        (let [id (ut/to-uuid (:id (m/decode-response-body res)))
+              db-file (ut/remove-db-only (files/READ id))]
+          (is (= (assoc (into file-one {:id id}) :filepath (:filepath db-file))
+                 db-file))
+          (is (.exists (io/as-file (str (-> env :FILES :media-url) (:filepath db-file)))))))
+      ; Check file-version is in language table
+      (is (languages/EXISTS? (:file-version file-one)))))
 
   (testing "file READ"
     (let [file-one (ut/under-to-hyphen (files/CREATE (db-pop/get-file)))

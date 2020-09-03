@@ -65,7 +65,7 @@
           lang-one (db-pop/get-language)
           file-one (dissoc (db-pop/get-file) :filepath)
           res (rp/file-post (assoc (dissoc file-one :file-version) :file-version (:id lang-one)) filecontent)]
-      (is (= 500 (:status res))))))
+      (is (= 200 (:status res))))))
 
 (deftest file-id-get
   (testing "read nonexistent file"

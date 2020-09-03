@@ -33,9 +33,9 @@
                 (if-not (resources/EXISTS? resource-id)
                   {:status 500
                    :body {:message "resource not found"}}
-                  (if-not (languages/EXISTS? file-version)
-                    {:status 500
-                     :body {:message "file-version not found in language table"}}
+                  (do
+                    (if-not (languages/EXISTS? file-version)
+                      (languages/CREATE {:id file-version}))
                     (let [id (utils/get-id (files/CREATE {:filepath file-name
                                                           :file-version file-version
                                                           :metadata metadata
