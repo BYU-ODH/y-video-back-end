@@ -30,6 +30,7 @@
                  [ring-middleware-format "0.7.4"]
                  [ring-webjars "0.2.0"]
                  [ring/ring-core "1.8.0"]
+                 [ring-partial-content "2.0.1"]
                  ;[clj-commons/clj-yaml "0.7.1"]
                  [ring/ring-defaults "0.3.2"]
                  [selmer "1.12.23"]

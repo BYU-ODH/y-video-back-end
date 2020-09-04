@@ -14,8 +14,8 @@
     [y-video-back.routes.service-handlers.handlers :as service-handlers]
     [ring.util.http-response :as response]
     [y-video-back.user-creator :as uc]
-    [ring.middleware.multipart-params :refer [wrap-multipart-params]]))
-
+    [ring.middleware.multipart-params :refer [wrap-multipart-params]]
+    [ring.middleware.partial-content :refer [wrap-partial-content]]))
 
 (defn service-routes []
    ["/api"
@@ -327,4 +327,9 @@
      ["/get-file-key/{file-id}"
       {:get service-handlers/get-file-key}]
      ["/stream-media/{file-key}"
-      {:get service-handlers/stream-media}]]])
+      {:get service-handlers/stream-media}]]
+    ["/partial-media"
+     {:swagger {:tags ["media"]}
+      :middleware [wrap-partial-content]}
+     ["/stream-media/{file-key}"
+      {:get service-handlers/stream-partial-media}]]])

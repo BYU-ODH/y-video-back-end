@@ -158,7 +158,7 @@
 
 (def unauthorized-page
   (error-page {:status 401, :title "401 - Unauthorized",
-               :image "https://www.pinterest.at/pin/840132505462941432/", :caption "Pippin: What are you going to do then?<br/>Gandalf: Knock your head against this endpoint, Peregrin Took!"}))
+               :image "https://rossonl.files.wordpress.com/2014/01/4ba90-moriariddle.jpg", :caption "Pippin: What are you going to do then?<br/>Gandalf: Knock your head against this endpoint, Peregrin Took!"}))
 
 (defn check-permission
   "Checks user has permission for route"
@@ -201,6 +201,7 @@
             (clojure.string/starts-with? (:uri request) "/api/swagger.json")
             (clojure.string/starts-with? (:uri request) "/api/get-session-id")
             (clojure.string/starts-with? (:uri request) "/api/media/stream-media")
+            (clojure.string/starts-with? (:uri request) "/api/partial-media/stream-media")
             (= (:uri request) "/api/ping"))
       (handler request)
       (if (= (get-session-id request) (sh-utils/to-uuid (:session-id-bypass env)))

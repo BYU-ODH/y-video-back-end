@@ -16,6 +16,7 @@
       (str/starts-with? uri "/api/video")
       (str/starts-with? uri "/api/get-video-url");temporary
       (str/starts-with? uri "/api/media/stream-media/");temporary
+      (str/starts-with? uri "/api/partial-media/stream-media/");temporary
       (str/starts-with? uri "/api/upload");temporary))
       (str/starts-with? uri "/api/ping")));temporary))
 

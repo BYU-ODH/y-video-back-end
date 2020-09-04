@@ -61,3 +61,21 @@
                     (log-ut/log-media-access {:file-id (str (:file-id file-key-res))
                                               :username (:username user-res)})
                     (file-response (utils/file-id-to-path (:file-id file-key-res)))))))})
+
+(def stream-partial-media ;; TODO - require session-id?
+  {:summary "Stream partial media referenced by file-key"
+   :parameters {
+                ;:header {:session-id uuid?}
+                :path {:file-key uuid?}}
+   ;:responses {200 {:body "file response body"}
+   ;            404 (:body {:message string?})
+   ;:handler (fn [{{{:keys [session-id]} :header {:keys [file-id]} :path} :parameters}])
+   :handler (fn [{{{:keys [file-key]} :path} :parameters}]
+              (let [file-key-res (file-keys/READ-UNEXPIRED file-key)]
+                (if (nil? file-key-res)
+                  {:status 404
+                   :body {:message "file-key not found"}}
+                  (let [user-res (users/READ (:user-id file-key-res))]
+                    (log-ut/log-media-access {:file-id (str (:file-id file-key-res))
+                                              :username (:username user-res)})
+                    (file-response (utils/file-id-to-path (:file-id file-key-res)))))))})
