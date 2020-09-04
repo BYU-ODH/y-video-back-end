@@ -129,7 +129,7 @@
                                                        :collection-id (:id test-coll-one)
                                                        :account-role 1})
           res (rp/collection-id-add-user (:id test-coll-one) (:username new-user) 1)]
-      (is (= 500 (:status res))))))
+      (is (= 200 (:status res))))))
 
 (deftest collection-add-users
   (testing "add nonexistent user to collection"

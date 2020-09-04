@@ -87,6 +87,27 @@
                         :username (:username user-one)
                         :account-role 0})
                  (map ut/remove-db-only (user-collections-assoc/READ-BY-IDS [(:id coll-one) (:username user-one)]))))))))
+  (testing "add user to collection, already connected"
+    (let [coll-one (db-pop/add-collection)
+          user-one (db-pop/add-user)
+          user-one-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) 1)]
+      (is (= [{:username (:username user-one)
+               :collection-id (:id coll-one)
+               :account-role 1}]
+             (map #(-> %
+                       (ut/remove-db-only)
+                       (dissoc :id))
+                  (user-collections-assoc/READ-BY-COLLECTION (:id coll-one)))))
+      (let [res (rp/collection-id-add-user (:id coll-one)
+                                           (:username user-one)
+                                           0)]
+        (is (= 200 (:status res)))
+        (let [id (ut/to-uuid (:id (m/decode-response-body res)))]
+          (is (= (list {:id id
+                        :collection-id (:id coll-one)
+                        :username (:username user-one)
+                        :account-role 0})
+                 (map ut/remove-db-only (user-collections-assoc/READ-BY-IDS [(:id coll-one) (:username user-one)]))))))))
   (testing "add user to collection, user not in db"
     ; Add collection, connect to username
     (let [coll-one (db-pop/add-collection)
@@ -141,10 +162,10 @@
           user-two (db-pop/add-user)
           user-thr (db-pop/get-user)
           user-fou (db-pop/add-user)
-          user-fou-add (db-pop/add-user-coll-assoc (:username user-fou) (:id coll-one) 0)]
+          user-fou-add (db-pop/add-user-coll-assoc (:username user-fou) (:id coll-one) 1)]
       (is (= [{:username (:username user-fou)
                :collection-id (:id coll-one)
-               :account-role 0}]
+               :account-role 1}]
              (map #(-> %
                        (ut/remove-db-only)
                        (dissoc :id))
@@ -172,6 +193,13 @@
             res-two (rp/collections-by-logged-in (uc/user-id-to-session-id (:id user-two)))
             res-thr (rp/collections-by-logged-in (uc/user-id-to-session-id (:id user-thr-res)))
             res-fou (rp/collections-by-logged-in (uc/user-id-to-session-id (:id user-fou)))]
+        (is (= [{:username (:username user-fou)
+                 :collection-id (:id coll-one)
+                 :account-role 0}]
+               (map #(-> %
+                         (ut/remove-db-only)
+                         (dissoc :id))
+                    (user-collections-assoc/READ-BY-IDS [(:id coll-one) (:username user-fou)]))))
         (is (= [(-> coll-one
                     (ut/remove-db-only)
                     (update :id str)

@@ -124,15 +124,14 @@
                   (if (nil? (users/READ-BY-USERNAME username))
                     (uc/get-session-id username))
                   (if (user-collections-assoc/EXISTS-COLL-USER? id username)
-                    {:status 500
-                     :body {:message "user already connected to collection"}}
-                    (let [result (utils/get-id (user-collections-assoc/CREATE (into (dissoc body :username) {:collection-id id :username username})))]
-                      (if (nil? result)
-                        {:status 500
-                         :body {:message "unable to add user"}}
-                        {:status 200
-                         :body {:message (str 1 " users added to collection")
-                                :id result}}))))))})
+                    (user-collections-assoc/DELETE-BY-IDS [id username]))
+                  (let [result (utils/get-id (user-collections-assoc/CREATE (into (dissoc body :username) {:collection-id id :username username})))]
+                    (if (nil? result)
+                      {:status 500
+                       :body {:message "unable to add user"}}
+                      {:status 200
+                       :body {:message (str 1 " users added to collection")
+                              :id result}})))))})
 
 (def collection-add-users
   {:summary "Adds list of users to specified collection. All will have same role. Will not override existing connections."
@@ -150,9 +149,10 @@
                 (do
                   (doseq [username (:usernames body)]
                     (do
-                      (if-not (user-collections-assoc/EXISTS-COLL-USER? id username)
-                        (user-collections-assoc/CREATE {:collection-id id :username username
-                                                        :account-role (:account-role body)}))
+                      (if (user-collections-assoc/EXISTS-COLL-USER? id username)
+                        (user-collections-assoc/DELETE-BY-IDS [id username]))
+                      (user-collections-assoc/CREATE {:collection-id id :username username
+                                                      :account-role (:account-role body)})
                       (if (nil? (users/READ-BY-USERNAME username))
                         (uc/get-session-id username))))
                   {:status 200
