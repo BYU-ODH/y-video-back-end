@@ -31,7 +31,7 @@
   (let [user-data (persons-api/get-user-data username)
         create-res (users/CREATE {:username username
                                   :email (:email user-data)
-                                  :last-login "today"
+                                  :last-login "na"
                                   :account-type (:account-type user-data)
                                   :account-name (:full-name user-data)
                                   :last-person-api (java.sql.Timestamp. (System/currentTimeMillis))
