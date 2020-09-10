@@ -43,39 +43,39 @@
   (-> course
       (ut/remove-db-only)
       (dissoc :id :account-role :user-id)))
-
-(defn check-against-test-user
-  [user-id]
-  (is (= (frequencies (get-in env [:test-user
-                                   :courses]))
-         (frequencies (map remove-course-db-fields (user-courses-assoc/READ-COURSES-BY-USER user-id))))))
-
-
-(deftest refresh-courses-for-new-user
-  (testing "new user"
-    (let [res (rp/login-current-user (get-in env [:test-user :username]))
-          user-one (users/READ-BY-USERNAME (get-in env [:test-user :username]))]
-      (check-against-test-user (:id user-one)))))
-
-(deftest login-before-refresh-time-passes
-  (testing "new user"
-    (let [res (rp/login-current-user (get-in env [:test-user :username]))
-          user-one (users/READ-BY-USERNAME (get-in env [:test-user :username]))
-          crse-one (db-pop/add-course)
-          user-crse (db-pop/add-user-crse-assoc (:id user-one) (:id crse-one) "student")
-          res-two (rp/login-current-user (get-in env [:test-user :username]))]
-      (is (= (frequencies (into (get-in env [:test-user
-                                             :courses])
-                                [(remove-course-db-fields crse-one)]))
-             (frequencies (map remove-course-db-fields (user-courses-assoc/READ-COURSES-BY-USER (:id user-one)))))))))
-
-(deftest login-check-last-course-api-field
-  (testing "login, wait, login then last-course-api field"
-    (let [res-one (rp/login-current-user (get-in env [:test-user :username]))
-          pause (Thread/sleep (* 3600000 (-> env :user-courses-refresh-after)))
-          pre-log (System/currentTimeMillis)
-          res-two (rp/login-current-user (get-in env [:test-user :username]))
-          post-log (System/currentTimeMillis)
-          user-res (first (users/READ-BY-USERNAME [(get-in env [:test-user :username])]))]
-      (is (< pre-log (inst-ms (:last-course-api user-res))))
-      (is (> post-log (inst-ms (:last-course-api user-res)))))))
+;
+; (defn check-against-test-user
+;   [user-id]
+;   (is (= (frequencies (get-in env [:test-user
+;                                    :courses]))
+;          (frequencies (map remove-course-db-fields (user-courses-assoc/READ-COURSES-BY-USER user-id))))))
+;
+;
+; (deftest refresh-courses-for-new-user
+;   (testing "new user"
+;     (let [res (rp/login-current-user (get-in env [:test-user :username]))
+;           user-one (users/READ-BY-USERNAME (get-in env [:test-user :username]))]
+;       (check-against-test-user (:id user-one)))))
+;
+; (deftest login-before-refresh-time-passes
+;   (testing "new user"
+;     (let [res (rp/login-current-user (get-in env [:test-user :username]))
+;           user-one (users/READ-BY-USERNAME (get-in env [:test-user :username]))
+;           crse-one (db-pop/add-course)
+;           user-crse (db-pop/add-user-crse-assoc (:id user-one) (:id crse-one) "student")
+;           res-two (rp/login-current-user (get-in env [:test-user :username]))]
+;       (is (= (frequencies (into (get-in env [:test-user
+;                                              :courses])
+;                                 [(remove-course-db-fields crse-one)]))
+;              (frequencies (map remove-course-db-fields (user-courses-assoc/READ-COURSES-BY-USER (:id user-one)))))))))
+;
+; (deftest login-check-last-course-api-field
+;   (testing "login, wait, login then last-course-api field"
+;     (let [res-one (rp/login-current-user (get-in env [:test-user :username]))
+;           pause (Thread/sleep (* 3600000 (-> env :user-courses-refresh-after)))
+;           pre-log (System/currentTimeMillis)
+;           res-two (rp/login-current-user (get-in env [:test-user :username]))
+;           post-log (System/currentTimeMillis)
+;           user-res (first (users/READ-BY-USERNAME [(get-in env [:test-user :username])]))]
+;       (is (< pre-log (inst-ms (:last-course-api user-res))))
+;       (is (> post-log (inst-ms (:last-course-api user-res)))))))
