@@ -1,33 +1,33 @@
 ;; env/dev/resources/config.edn
 {:dev true
  :port 3000
- :session-id-bypass "6e39dced-b31b-44c8-9250-183b88a27320"
+ :session-id-bypass ""
  :nrepl-port 7000
- :NEW-USER-PASSWORD "cc19f9e1-2ec1-4668-9231-df9d236ad13b"
- :CONSUMER_KEY "3ca96bf52178799732f56b180ca"
- :CONSUMER_SECRET "1d025bab77737938f493dddad7b"
+ :NEW-USER-PASSWORD ""
+ :CONSUMER_KEY ""
+ :CONSUMER_SECRET ""
  :auth {:timeout 16200000} ; 4.5 hour - MUST CHANGE IN DB TRIGGER TOO
- :front-end-netid "testuser"
- :FILES {:media-url "/home/someone/file-store/"
+ :front-end-netid ""
+ :FILES {:media-url ""
          :timeout 14400000 ; 4 hours - MUST CHANGE IN DB TRIGGER TOO
-         :log-path "/home/someone/log-store"}
+         :log-path ""}
  :user-data-refresh-after 168 ; in hours - 7 days
  :user-courses-refresh-after 168 ; in hours - 7 days
- :host "http://localhost:3000"
- :y-video-back {:site-url "http://localhost:3000"
-                :db {:database-name "my-db"
-                     :adapter "postgresql"
+ :host ""
+ :y-video-back {:site-url ""
+                :db {:database-name ""
+                     :adapter ""
                      :auto-commit true
                      :register-mbeans false
-                     :password "8675309"
+                     :password ""
                      :port-number 5432
-                     :username "my-db"
+                     :username ""
                      :max-lifetime 1800000
                      :minimum-idle 10
                      :connection-timeout 30000
-                     :server-name "localhost"
+                     :server-name ""
                      :read-only false
                      :maximum-pool-size 10
                      :idle-timeout 600000
                      :validation-timeout 5000
-                     :pool-name "db_pool"}}}
+                     :pool-name ""}}}
