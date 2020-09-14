@@ -68,7 +68,7 @@
   :profiles
   {:uberjar {:omit-source true
              :aot :all
-             :uberjar-name "y-video-back.jar"
+             :uberjar-name "y-video-back-end.jar"
              :source-paths ["env/prod/clj"]
              :resource-paths ["env/prod/resources"]}
 
