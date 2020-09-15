@@ -17,7 +17,8 @@
       [y-video-back.db.resources :as resources]
       [y-video-back.db.files :as files]
       [y-video-back.db.file-keys :as file-keys]
-      [y-video-back.user-creator :as uc]))
+      [y-video-back.user-creator :as uc]
+      [y-video-back.db.migratus :as migratus]))
 
 (declare ^:dynamic *txn*)
 
@@ -27,6 +28,7 @@
     (mount/start #'y-video-back.config/env
                  #'y-video-back.handler/app
                  #'y-video-back.db.core/*db*)
+    (migratus/renew)
     (f)))
 
 (tcore/basic-transaction-fixtures
