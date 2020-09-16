@@ -2,8 +2,9 @@
 
 DROP TABLE IF EXISTS annotations CASCADE;
 
-DROP EXTENSION IF EXISTS pgcrypto CASCADE; -- uncomment for new db
-CREATE EXTENSION pgcrypto; -- uncomment for new db
+-- usually these persmissions are unavailable; admin will have installed pgcrypto for us on the db server
+-- DROP EXTENSION IF EXISTS pgcrypto CASCADE; -- uncomment for new db
+-- CREATE EXTENSION pgcrypto; -- uncomment for new db
 
 DROP TABLE IF EXISTS users CASCADE;
 CREATE TABLE users (
