@@ -25,40 +25,41 @@
     (mount/start #'y-video-back.config/env
                  #'y-video-back.handler/app
                  #'y-video-back.db.core/*db*)
+    (ut/renew-db)
     (f)))
 
 (tcore/basic-transaction-fixtures
   (mount.core/start #'y-video-back.handler/app))
 
+(comment
+  (defn remove-course-db-fields
+    [course]
+    (-> course
+        (ut/remove-db-only)
+        (dissoc :id :account-role :user-id)))
 
-(defn remove-course-db-fields
-  [course]
-  (-> course
-      (ut/remove-db-only)
-      (dissoc :id :account-role :user-id)))
 
-
-(deftest api-hiccup-test
-  (testing "api returns no courses randomly"
-    (let [user-one (-> (db-pop/get-user)
-                       (dissoc :username)
-                       (assoc :username (get-in env [:test-user :username]))
-                       (assoc :byu-person-id (get-in env [:test-user :byu-person-id])))
-          user-one-add (users/CREATE user-one)
-          user-id (:id user-one-add)]
-      (is (= [] (user-courses-assoc/READ-COURSES-BY-USER user-id)))
-      ; successful api query
-      (cc/check-courses-with-api (:username user-one) true)
-      (is (= (frequencies (get-in env [:test-user
-                                       :courses]))
-             (frequencies (map remove-course-db-fields (user-courses-assoc/READ-COURSES-BY-USER user-id)))))
-      ; unsuccessful api query (returns empty schedule)
-      (with-redefs-fn {#'schedule-api/get-api-courses (fn [arg] [])}
-        #(cc/check-courses-with-api (:username user-one) true))
-      (is (= []
-             (user-courses-assoc/READ-COURSES-BY-USER user-id)))
-      ; another successful api query
-      (cc/check-courses-with-api (:username user-one) true)
-      (is (= (frequencies (get-in env [:test-user
-                                       :courses]))
-             (frequencies (map remove-course-db-fields (user-courses-assoc/READ-COURSES-BY-USER user-id))))))))
+  (deftest api-hiccup-test
+    (testing "api returns no courses randomly"
+      (let [user-one (-> (db-pop/get-user)
+                         (dissoc :username)
+                         (assoc :username (get-in env [:test-user :username]))
+                         (assoc :byu-person-id (get-in env [:test-user :byu-person-id])))
+            user-one-add (users/CREATE user-one)
+            user-id (:id user-one-add)]
+        (is (= [] (user-courses-assoc/READ-COURSES-BY-USER user-id)))
+        ; successful api query
+        (cc/check-courses-with-api (:username user-one) true)
+        (is (= (frequencies (get-in env [:test-user
+                                         :courses]))
+               (frequencies (map remove-course-db-fields (user-courses-assoc/READ-COURSES-BY-USER user-id)))))
+        ; unsuccessful api query (returns empty schedule)
+        (with-redefs-fn {#'schedule-api/get-api-courses (fn [arg] [])}
+          #(cc/check-courses-with-api (:username user-one) true))
+        (is (= []
+               (user-courses-assoc/READ-COURSES-BY-USER user-id)))
+        ; another successful api query
+        (cc/check-courses-with-api (:username user-one) true)
+        (is (= (frequencies (get-in env [:test-user
+                                         :courses]))
+               (frequencies (map remove-course-db-fields (user-courses-assoc/READ-COURSES-BY-USER user-id)))))))))

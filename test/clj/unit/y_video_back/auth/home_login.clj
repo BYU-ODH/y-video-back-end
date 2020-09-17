@@ -14,8 +14,7 @@
       [y-video-back.utils.utils :as ut]
       [y-video-back.utils.db-populator :as db-pop]
       [y-video-back.db.auth-tokens :as auth-tokens]
-      [y-video-back.user-creator :as uc]
-      [y-video-back.db.migratus :as migratus]))
+      [y-video-back.user-creator :as uc]))
 
 (declare ^:dynamic *txn*)
 
@@ -25,7 +24,7 @@
     (mount/start #'y-video-back.config/env
                  #'y-video-back.handler/app
                  #'y-video-back.db.core/*db*)
-    (migratus/renew)
+    (ut/renew-db)
     (f)))
 
 (tcore/basic-transaction-fixtures
@@ -35,16 +34,15 @@
   (testing "no login, access home page"
     (let [res (app (request :get "/"))]
       (is (= 302 (:status res)))
-      (is (= "https://cas.byu.edu/cas/login?service=http://localhost:3030/"
+      (is (= (str "https://cas.byu.edu/cas/login?service=" (:host env) "/")
              (get-in res [:headers "Location"])))))
   (testing "no login, access api/ping"
     (let [res (app (request :get "/api/ping"))]
       (is (= 200 (:status res)))
       (is (= {:message "pong"}
              (m/decode-response-body res)))))
-
   (testing "no login, access admin"
     (let [res (app (request :get "/admin"))]
       (is (= 302 (:status res)))
-      (is (= "https://cas.byu.edu/cas/login?service=http://localhost:3030/admin"
+      (is (= (str "https://cas.byu.edu/cas/login?service=" (:host env) "/admin")
              (get-in res [:headers "Location"]))))))

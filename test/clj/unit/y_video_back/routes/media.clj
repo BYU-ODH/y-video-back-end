@@ -18,7 +18,7 @@
       [y-video-back.db.files :as files]
       [y-video-back.db.file-keys :as file-keys]
       [y-video-back.user-creator :as uc]
-      [y-video-back.db.migratus :as migratus]))
+      [clojure.java.io :as io]))
 
 (declare ^:dynamic *txn*)
 
@@ -28,14 +28,18 @@
     (mount/start #'y-video-back.config/env
                  #'y-video-back.handler/app
                  #'y-video-back.db.core/*db*)
-    (migratus/renew)
-    (f)))
+    (ut/renew-db)
+    (f)
+    (ut/delete-all-files (-> env :FILES :media-url))))
 
 (tcore/basic-transaction-fixtures
   (def user-one (users/CREATE (assoc (dissoc (db-pop/get-user) :account-type) :account-type 0)))
   (def rsrc-one (db-pop/add-resource))
+  (println "filepath=" (subs (str (.toURI (io/resource "small_test_video.mp4"))) 5))
+  (io/copy (io/file (subs (str (.toURI (io/resource "small_test_video.mp4"))) 5))
+           (io/file (str (-> env :FILES :media-url) "small_test_video.mp4")))
   (def file-one (files/CREATE {:resource-id (:id rsrc-one)
-                               :filepath "persistent/test_kitten.mp4" ; move this into github repository?
+                               :filepath "small_test_video.mp4" ; move this into github repository?
                                :file_version (:id (db-pop/add-language))
                                :metadata "text"}))
   (mount.core/start #'y-video-back.handler/app))

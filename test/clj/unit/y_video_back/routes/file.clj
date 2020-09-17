@@ -15,8 +15,7 @@
       [y-video-back.utils.db-populator :as db-pop]
       [y-video-back.db.files :as files]
       [y-video-back.db.languages :as languages]
-      [clojure.java.io :as io]
-      [y-video-back.db.migratus :as migratus]))
+      [clojure.java.io :as io]))
 
 (declare ^:dynamic *txn*)
 
@@ -26,8 +25,10 @@
     (mount/start #'y-video-back.config/env
                  #'y-video-back.handler/app
                  #'y-video-back.db.core/*db*)
-    (migratus/renew)
-    (f)))
+    (ut/renew-db)
+    (f)
+    (ut/delete-all-files (-> env :FILES :media-url))
+    (ut/delete-all-files (-> env :FILES :test-temp))))
 
 (tcore/basic-transaction-fixtures
   (mount.core/start #'y-video-back.handler/app))

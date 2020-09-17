@@ -27,8 +27,7 @@
       [y-video-back.course-creator :as cc]
       [y-video-back.utils.db-populator :as db-pop]
       [y-video-back.utils.account-permissions :as ac]
-      [y-video-back.apis.student-schedule :as schedule-api]
-      [y-video-back.db.migratus :as migratus]))
+      [y-video-back.apis.student-schedule :as schedule-api]))
 
 (declare ^:dynamic *txn*)
 
@@ -38,7 +37,7 @@
     (mount/start #'y-video-back.config/env
                  #'y-video-back.handler/app
                  #'y-video-back.db.core/*db*)
-    (migratus/renew)
+    (ut/renew-db)
     (f)))
 
 (tcore/basic-transaction-fixtures

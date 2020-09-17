@@ -10,8 +10,7 @@
       [y-video-back.utils.model-generator :as g]
       [y-video-back.utils.route-proxy.proxy :as rp]
       [y-video-back.db.core :refer [*db*] :as db]
-      [y-video-back.utils.utils :as ut]
-      [y-video-back.db.migratus :as migratus]))
+      [y-video-back.utils.utils :as ut]))
 
 (declare ^:dynamic *txn*)
 
@@ -21,7 +20,7 @@
     (mount/start #'y-video-back.config/env
                  #'y-video-back.handler/app
                  #'y-video-back.db.core/*db*)
-    (migratus/renew)
+    (ut/renew-db)
     (f)))
 
 (tcore/basic-transaction-fixtures

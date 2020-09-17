@@ -40,7 +40,9 @@
    :handler (fn [{{{:keys [session-id]} :header {:keys [file-id]} :path} :parameters}]
               (let [user-id (ru/token-to-user-id session-id)
                     file-key (file-keys/CREATE {:file-id file-id
-                                                :user-id user-id})]
+                                                :user-id user-id})
+                    file-res (files/READ file-id)]
+                (println "filepath in handler=" (:filepath file-res))
                 {:status 200
                  :body {:file-key (:id file-key)}}))})
 
@@ -60,6 +62,7 @@
                   (let [user-res (users/READ (:user-id file-key-res))]
                     (log-ut/log-media-access {:file-id (str (:file-id file-key-res))
                                               :username (:username user-res)})
+                    (println "DEBUG: file-path=" (utils/file-id-to-path (:file-id file-key-res)))
                     (file-response (utils/file-id-to-path (:file-id file-key-res)))))))})
 
 (def stream-partial-media ;; TODO - require session-id?

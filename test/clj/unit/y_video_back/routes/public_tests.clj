@@ -29,7 +29,7 @@
     (mount/start #'y-video-back.config/env
                  #'y-video-back.handler/app
                  #'y-video-back.db.core/*db*)
-    (migratus/renew)
+    (ut/renew-db)
     (f)))
 
 (tcore/basic-transaction-fixtures

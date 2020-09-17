@@ -3,6 +3,8 @@
     [y-video-back.config :refer [env]]
     [muuntaja.core :as m]
     [clojure.test :refer :all]
+    [clojure.java.io :as io]
+    [y-video-back.db.migratus :as migratus]
     [clojure.java.io :as io]))
 
 (defn under-to-hyphen
@@ -65,7 +67,8 @@
 (defn create-temp-file
   "Simulates the output from ring's wrap-multipart-params."
   [file-path-raw]
-  (let [file-path (str (-> env :FILES :test-src) file-path-raw)
+  (let [file-path-with-prefix (str (.toURI (io/resource file-path-raw)))
+        file-path (subs file-path-with-prefix 5)
         file-name-with-ext (last (clojure.string/split file-path #"/"))
         file-name (first (clojure.string/split file-name-with-ext #"\."))
         file-ext (str "." (last (clojure.string/split file-name-with-ext #"\.")))
@@ -76,12 +79,22 @@
 (defn get-filecontent
   "Generates filecontent to be included in file routes"
   ([]
-   {:tempfile (create-temp-file "test_kitten.mp4")
+   {:tempfile (create-temp-file "small_test_video.mp4")
     :content-type "application/octet-stream"
-    :filename "test_kitten.mp4"
+    :filename "small_test_video.mp4"
     :size 0})
   ([filename]
    {:tempfile (create-temp-file filename)
     :content-type "application/octet-stream"
     :filename filename
     :size 0}))
+
+(defn delete-all-files
+  "Deletes all files in target directory"
+  [target]
+  (doall (map #(if (.isFile %) (io/delete-file %))
+              (.listFiles (io/as-file target)))))
+
+(defn renew-db
+  []
+  (if-not (= "1" (System/getenv "SURE_DB")) (migratus/renew)))

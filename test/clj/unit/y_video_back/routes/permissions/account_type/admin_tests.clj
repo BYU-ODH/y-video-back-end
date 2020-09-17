@@ -25,8 +25,7 @@
     [y-video-back.db.words :as words]
     [y-video-back.utils.utils :as ut]
     [y-video-back.utils.db-populator :as db-pop]
-    [y-video-back.user-creator :as uc]
-    [y-video-back.db.migratus :as migratus]))
+    [y-video-back.user-creator :as uc]))
 
 (declare ^:dynamic *txn*)
 
@@ -36,7 +35,7 @@
     (mount/start #'y-video-back.config/env
                  #'y-video-back.handler/app
                  #'y-video-back.db.core/*db*)
-    (migratus/renew)
+    (ut/renew-db)
     (f)))
 
 (tcore/basic-transaction-fixtures
