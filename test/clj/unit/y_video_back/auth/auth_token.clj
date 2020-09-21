@@ -33,7 +33,7 @@
 ; auth-ping with valid auth token
 (deftest auth-token-valid
   (testing "valid auth token"
-    (let [user-one (db-pop/add-user)
+    (let [user-one (db-pop/add-user "admin")
           token (:id (auth-tokens/CREATE {:user-id (:id user-one)}))
           res (rp/auth-ping token)]
       (is (= 200 (:status res)))
@@ -47,7 +47,7 @@
 ; auth-ping with invalid auth token
 (deftest auth-token-invalid
   (testing "random uuid as auth token"
-    (let [user-one (db-pop/add-user)
+    (let [user-one (db-pop/add-user "admin")
           token (java.util.UUID/randomUUID)
           res (rp/auth-ping token)]
       (is (= 401 (:status res)))
@@ -69,7 +69,7 @@
 ; auth-ping with expired valid auth token
 (deftest auth-token-valid-expired
   (testing "expired auth token"
-    (let [user-one (db-pop/add-user 0)
+    (let [user-one (db-pop/add-user "admin")
           token (:id (auth-tokens/CREATE {:user-id (:id user-one)}))]
       (Thread/sleep (-> env :auth :timeout))
       (let [res (rp/auth-ping token)]
