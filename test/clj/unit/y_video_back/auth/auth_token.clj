@@ -67,7 +67,7 @@
       (is (= token (get-in res-two [:headers "session-id"]))))))
 
 ; auth-ping with expired valid auth token
-(deftest auth-token-valid
+(deftest auth-token-valid-expired
   (testing "expired auth token"
     (let [user-one (db-pop/add-user 0)
           token (:id (auth-tokens/CREATE {:user-id (:id user-one)}))]

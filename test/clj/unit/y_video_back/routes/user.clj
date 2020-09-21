@@ -122,19 +122,20 @@
          (frequencies (map remove-course-db-fields (user-courses-assoc/READ-COURSES-BY-USER user-id))))))
 
 
-(deftest user-refresh-courses
-  (testing "refresh courses - no course enrollments, student"
-    (let [pre-log (System/currentTimeMillis)
-          user-one (db-pop/get-user "student")
-          user-one-add (users/CREATE (assoc (dissoc user-one :username :byu-person-id)
-                                            :username (get-in env [:test-user :username])
-                                            :byu-person-id (get-in env [:test-user :byu-person-id])))]
-      (is (= []
-             (user-courses-assoc/READ-COURSES-BY-USER (:id user-one-add))))
-      (let [res (rp/refresh-courses (uc/user-id-to-session-id (:id user-one-add)))
-            post-log (System/currentTimeMillis)
-            user-res (users/READ (:id user-one-add))]
-        (is (= 200 (:status res)))
-        (is (< pre-log (inst-ms (:last-course-api user-res))))
-        (is (> post-log (inst-ms (:last-course-api user-res))))
-        (check-against-test-user (:id user-one-add))))))
+; Need to mock api before uncommenting
+; (deftest user-refresh-courses
+;   (testing "refresh courses - no course enrollments, student"
+;     (let [pre-log (System/currentTimeMillis)
+;           user-one (db-pop/get-user "student")
+;           user-one-add (users/CREATE (assoc (dissoc user-one :username :byu-person-id)
+;                                             :username (get-in env [:test-user :username])
+;                                             :byu-person-id (get-in env [:test-user :byu-person-id])))]
+;       (is (= []
+;              (user-courses-assoc/READ-COURSES-BY-USER (:id user-one-add))))
+;       (let [res (rp/refresh-courses (uc/user-id-to-session-id (:id user-one-add)))
+;             post-log (System/currentTimeMillis)
+;             user-res (users/READ (:id user-one-add))]
+;         (is (= 200 (:status res)))
+;         (is (< pre-log (inst-ms (:last-course-api user-res))))
+;         (is (> post-log (inst-ms (:last-course-api user-res))))
+;         (check-against-test-user (:id user-one-add))))))

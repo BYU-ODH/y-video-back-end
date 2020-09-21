@@ -98,3 +98,8 @@
       (+ n 2) ; n = 2 + n
       (* 3 n) ; n = 3 * n
       (str "The final number is " n "."))
+
+(defn all-keys-in-coll
+  "Returns true if all keys k are in coll c."
+  [k c]
+  (reduce #(and %1 (contains? c %2)) (concat [true] k)))
