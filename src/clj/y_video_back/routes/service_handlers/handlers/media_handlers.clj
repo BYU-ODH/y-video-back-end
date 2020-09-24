@@ -20,8 +20,8 @@
    :handler (fn [p]
               (let [file-params (get-in p [:params "file"])
                     body (:body p)]
-                (println "DEBUG: file-params=" file-params)
-                (println "DEBUG: body=" body)
+                ;(println "DEBUG: file-params=" file-params)
+                ;(println "DEBUG: body=" body)
                 (io/copy (:tempfile file-params)
                          (io/file (str (-> env :FILES :media-url) (:filename file-params)))))
               {:status 200
@@ -42,7 +42,7 @@
                     file-key (file-keys/CREATE {:file-id file-id
                                                 :user-id user-id})
                     file-res (files/READ file-id)]
-                (println "filepath in handler=" (:filepath file-res))
+                ;(println "filepath in handler=" (:filepath file-res))
                 {:status 200
                  :body {:file-key (:id file-key)}}))})
 
@@ -62,7 +62,7 @@
                   (let [user-res (users/READ (:user-id file-key-res))]
                     (log-ut/log-media-access {:file-id (str (:file-id file-key-res))
                                               :username (:username user-res)})
-                    (println "DEBUG: file-path=" (utils/file-id-to-path (:file-id file-key-res)))
+                    ;(println "DEBUG: file-path=" (utils/file-id-to-path (:file-id file-key-res)))
                     (file-response (utils/file-id-to-path (:file-id file-key-res)))))))})
 
 (def stream-partial-media ;; TODO - require session-id?

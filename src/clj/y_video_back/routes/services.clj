@@ -115,7 +115,7 @@
              :parameters {:query {:echo string?}}
              :responses {200 {:body {:echo string?}}}
              :handler (fn [{{{:keys [echo]} :query} :parameters}]
-                        (println (str "In the echo get route with query: " echo))
+                        ;(println (str "In the echo get route with query: " echo))
                         {:status 200
                          :body {:echo echo}})}
        :post {:summary "echo parameter post"
