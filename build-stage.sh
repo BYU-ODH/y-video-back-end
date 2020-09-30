@@ -14,7 +14,7 @@ lein_test_error="Lein test failed."
 
 FINAL_DEPLOY_SCRIPT="$base_dir/deploy.sh"
 
-cd $codedir
+cd $code_dir
 git checkout development
 git fetch
 git pull
