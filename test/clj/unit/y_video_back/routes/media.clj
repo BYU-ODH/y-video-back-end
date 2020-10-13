@@ -61,7 +61,7 @@
           res-body (m/decode-response-body res)]
       (is (= 200 (:status res)))
       (is (contains? res-body :file-key))
-      (Thread/sleep (-> env :FILES :timeout))
+      (Thread/sleep (* 3 (-> env :FILES :timeout)))
       (is (not (nil? (file-keys/READ (ut/to-uuid (:file-key res-body))))))
       (let [file-key (:file-key res-body)
             res (rp/stream-media file-key)]

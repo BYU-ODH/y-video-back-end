@@ -71,7 +71,7 @@
   (testing "expired auth token"
     (let [user-one (db-pop/add-user "admin")
           token (:id (auth-tokens/CREATE {:user-id (:id user-one)}))]
-      (Thread/sleep (-> env :auth :timeout))
+      (Thread/sleep (* 3 (-> env :auth :timeout)))
       (let [res (rp/auth-ping token)]
         (is (= 401 (:status res)))
         ; Check old auth token provided in response headers
