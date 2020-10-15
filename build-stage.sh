@@ -6,7 +6,7 @@
 
 base_dir="/srv/y-video-back-end"
 deployment_dir="$base_dir/docket/"
-code_dir="$base_dir/y-video-video-back-end"
+code_dir="$base_dir/y-video-back-end"
 jar_file="$code_dir/target/y-video-back-end.jar"
 
 jar_build_error="jar file was not built"
