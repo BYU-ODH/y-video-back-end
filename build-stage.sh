@@ -6,7 +6,7 @@
 
 base_dir="/srv/y-video-back-end"
 deployment_dir="$base_dir/docket/"
-code_dir="$base_dir/y-video-video-back-end/"
+code_dir="$base_dir/y-video-back-end"
 jar_file="$code_dir/target/y-video-back-end.jar"
 
 jar_build_error="jar file was not built"
@@ -30,6 +30,7 @@ if [ $? -eq 0 ]
     	echo "Successfully built y-video-back.jar file"
 	cp $jar_file $deployment_dir
 	source "$FINAL_DEPLOY_SCRIPT"
+	exit 0
     else
 	echo $jar_build_error >&2
 	exit 1    
