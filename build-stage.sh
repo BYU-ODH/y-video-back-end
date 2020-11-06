@@ -29,8 +29,8 @@ if [ $? -eq 0 ]
        then
     	echo "Successfully built y-video-back.jar file"
 	cp $jar_file $deployment_dir
-	# This is to be handled by systemd
-	#	source "$FINAL_DEPLOY_SCRIPT"
+	echo "Placed jar for systemd deployment"
+	git push development origin/master
 	exit 0
     else
 	echo $jar_build_error >&2
