@@ -30,7 +30,13 @@ if [ $? -eq 0 ]
     	echo "Successfully built y-video-back.jar file"
 	cp $jar_file $deployment_dir
 	echo "Placed jar for systemd deployment"
-	git push development origin/master
+	git checkout master
+	git fetch
+	git pull
+	git merge origin/development
+	git push
+	git checkout development
+	git pull
 	exit 0
     else
 	echo $jar_build_error >&2
