@@ -37,6 +37,7 @@ if [ $? -eq 0 ]
 	git push
 	git checkout development
 	git pull
+	echo "Git master updated"
 	exit 0
     else
 	echo $jar_build_error >&2
