@@ -45,7 +45,7 @@ INSERT INTO languages (id) VALUES ('Japanese');
 INSERT INTO languages (id) VALUES ('Javanese');
 INSERT INTO languages (id) VALUES ('Kazakh');
 INSERT INTO languages (id) VALUES ('Kiribati');
-INSERT INTO languages (id) VALUES ('K'iche'');
+INSERT INTO languages (id) VALUES ('Kiche');
 INSERT INTO languages (id) VALUES ('Korean');
 INSERT INTO languages (id) VALUES ('Laotian');
 INSERT INTO languages (id) VALUES ('Latin');
@@ -93,4 +93,3 @@ INSERT INTO languages (id) VALUES ('Vietnamese');
 INSERT INTO languages (id) VALUES ('Waray-Waray');
 INSERT INTO languages (id) VALUES ('Welsh');
 INSERT INTO languages (id) VALUES ('Xhosa');
-
