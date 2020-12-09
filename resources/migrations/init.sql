@@ -434,9 +434,9 @@ DROP VIEW IF EXISTS collections_by_users_via_courses;
 CREATE VIEW collections_by_users_via_courses AS
     SELECT collections_undeleted.*, uca.user_id
     FROM users_undeleted
-    JOIN user_courses_assoc AS uca
+    JOIN user_courses_assoc_undeleted AS uca
     ON users_undeleted.id = uca.user_id
-    JOIN collection_courses_assoc AS cca
+    JOIN collection_courses_assoc_undeleted AS cca
     ON uca.course_id = cca.course_id
     JOIN collections_undeleted
     ON cca.collection_id = collections_undeleted.id;
