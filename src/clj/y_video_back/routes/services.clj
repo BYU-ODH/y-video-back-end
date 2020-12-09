@@ -67,7 +67,7 @@
              :responses {200 {:body {:message string?}}}
              :handler (fn [req]
                         {:status 200
-                         :body {:message "pong"}})}}]
+                         :body {:message "Hello, World!"}})}}]
       ;{:get (constantly (response/ok {:message "pong"}))}]
      ["/auth-ping"
       {:get {:summary "ping, requires valid session-id"
