@@ -1,3 +1,11 @@
+resources/html/index.html
+resources/public/_redirects
+resources/public/asset-manifest.json
+resources/public/favicon.ico
+resources/public/manifest.json
+resources/public/precache*.js
+resources/public/service-worker.js
+resources/public/static
 yvideo-client
 media_use_logs
 .~lock.permissions.ods#
