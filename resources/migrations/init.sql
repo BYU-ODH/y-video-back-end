@@ -222,8 +222,24 @@ CREATE TABLE collection_courses_assoc (
 );
 COMMENT ON TABLE collection_courses_assoc IS 'Many-to-many table connecting collections and courses';
 
-DROP TABLE IF EXISTS collection_resources_assoc CASCADE;
 
+DROP TABLE IF EXISTS "email_logs" CASCADE;
+CREATE TABLE "email_logs" (
+    id UUID UNIQUE NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY
+    ,sender_id UUID REFERENCES users(id)
+    ,sender_email TEXT NOT NULL
+    ,recipients TEXT[] NOT NULL
+    ,subject TEXT DEFAULT '' NOT NULL
+    ,message TEXT DEFAULT '' NOT NULL
+    ,sent_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    ,deleted TIMESTAMP DEFAULT NULL
+    ,created TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    ,updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+COMMENT ON TABLE email_logs IS 'Tracks all emails sent';
+
+
+DROP TABLE IF EXISTS collection_resources_assoc CASCADE;
 
 
 DROP TABLE IF EXISTS content_files_assoc CASCADE;

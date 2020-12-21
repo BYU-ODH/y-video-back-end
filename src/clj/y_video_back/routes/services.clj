@@ -332,4 +332,10 @@
      {:swagger {:tags ["media"]}
       :middleware [wrap-partial-content]}
      ["/stream-media/{file-key}"
-      {:get service-handlers/stream-partial-media}]]])
+      {:get service-handlers/stream-partial-media}]]
+    ["/email"
+     {:swagger {:tags ["email"]}}
+     ["/no-attachment"
+      {:post service-handlers/send-email}]
+     ["/with-attachment"
+      {:post service-handlers/send-email-with-attachment}]]])

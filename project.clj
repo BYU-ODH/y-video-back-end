@@ -7,6 +7,7 @@
                  [camel-snake-kebab "0.4.1"]
                  [cheshire "5.10.0"]
                  [clj-http "3.10.0"]
+                 [com.draines/postal "2.0.3"]
                  [com.mchange/c3p0 "0.9.5.5"]
                  [cprop "0.1.16"]
                  [hiccup "1.0.5"]

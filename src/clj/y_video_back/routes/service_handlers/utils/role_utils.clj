@@ -21,14 +21,20 @@
       (str/starts-with? uri "/api/ping")));temporary))
 
 (defn token-to-user-id
-  "Returns userID associated with token. Returns false if token invalid."
+  "Returns user-id associated with token. Returns nil if token invalid."
   [token]
-  ; DEVELOPMENT ONLY - token is actually the userID, so just return it
   (let [res (auth-tokens/READ-UNEXPIRED token)]
-    ;(println "token-to-user-id token=" token)
-    ;(println "token-to-user-id res=" res)
-    (:user-id res)))
-  ;(:user-id (auth-tokens/READ token)))
+    (if (nil? res)
+      nil
+      (:user-id res))))
+
+(defn token-to-user-id-all
+  "Returns user-id associated with token even if token is invalid."
+  [token]
+  (let [res (auth-tokens/READ-ALL token)]
+    (if (nil? res)
+      nil
+      (:user-id res))))
 
 (defn check-user-role
   "Checks if user has sufficient role in collection for id."
