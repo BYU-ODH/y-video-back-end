@@ -36,11 +36,11 @@
       (is (= 302 (:status res)))
       (is (= (str "https://cas.byu.edu/cas/login?service=" (:host env) "/")
              (get-in res [:headers "Location"])))))
-  (testing "no login, access api/ping"
-    (let [res (app (request :get "/api/ping"))]
-      (is (= 200 (:status res)))
-      (is (= {:message "pong"}
-             (m/decode-response-body res)))))
+  ; (testing "no login, access api/ping"
+  ;   (let [res (app (request :get "/api/ping"))]
+  ;     (is (= 200 (:status res)))
+  ;     (is (= {:message "pong"}
+  ;            (m/decode-response-body res)))))
   (testing "no login, access admin"
     (let [res (app (request :get "/admin"))]
       (is (= 302 (:status res)))
