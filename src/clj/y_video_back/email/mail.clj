@@ -7,15 +7,23 @@
 (defn log-message
   "Log to the database that an email was sent"
   [email]
-  (email-logs/CREATE email))
+  (email-logs/CREATE {:sender-id (:user-id email)
+                      :sender-email (:sender email)
+                      :recipients (:admin-emails env)
+                      :subject (:subject email)
+                      :message (:message email)}))
 
 (defn send-message
   "Send email message over SMTP and write to log"
   [email &[server-map]]
   (let [server-map (or server-map
                        (-> env :mail :server)
-                       {:host "gateway.byu.edu" :port 25})]
-    (postal/send-message server-map email)
+                       {:host "gateway.byu.edu" :port 25})
+        email-map {:from (:sender email)
+                   :to (:admin-emails env)
+                   :subject (:subject email)
+                   :body (:body email)}]
+    (postal/send-message server-map email-map)
     (log-message email)))
 
 (defn send-email
@@ -24,3 +32,15 @@
   (if (or (:test env) (:dev env))
       (log-message email)
       (send-message email)))
+
+; (defn send-email
+;   "Fake send email using gmail"
+;   [email]
+;   (postal/send-message {:host "smtp.gmail.com"
+;                         :user (:gmail-user env)
+;                         :pass (:gmail-pass env)
+;                         :tls true}
+;                        {:from (:from email)
+;                         :to (:admin-emails env)
+;                         :subject (:subject email)
+;                         :body (:body email)}))

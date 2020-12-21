@@ -226,14 +226,13 @@ COMMENT ON TABLE collection_courses_assoc IS 'Many-to-many table connecting coll
 DROP TABLE IF EXISTS "email_logs" CASCADE;
 CREATE TABLE "email_logs" (
     id UUID UNIQUE NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY
-    ,sender TEXT NOT NULL
+    ,sender_id UUID REFERENCES users(id)
+    ,sender_email TEXT NOT NULL
     ,recipients TEXT[] NOT NULL
     ,subject TEXT DEFAULT '' NOT NULL
     ,message TEXT DEFAULT '' NOT NULL
     ,sent_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-    ,updated_by UUID REFERENCES users(id)
     ,deleted TIMESTAMP DEFAULT NULL
-    ,info JSONB
     ,created TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     ,updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

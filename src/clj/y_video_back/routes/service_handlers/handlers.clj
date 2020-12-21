@@ -11,7 +11,8 @@
    [y-video-back.routes.service-handlers.handlers.content-handlers :as contents]
    [y-video-back.routes.service-handlers.handlers.word-handlers :as words]
    [y-video-back.routes.service-handlers.handlers.admin-handlers :as admin]
-   [y-video-back.routes.service-handlers.handlers.media-handlers :as media]))
+   [y-video-back.routes.service-handlers.handlers.media-handlers :as media]
+   [y-video-back.routes.service-handlers.handlers.email-handlers :as email]))
 
 
 ; Misc handlers
@@ -109,3 +110,7 @@
 (def get-file-key media/get-file-key)
 (def stream-media media/stream-media)
 (def stream-partial-media media/stream-partial-media)
+
+; Email handlers
+(def send-email email/send-email)
+(def send-email-with-attachment email/send-email-with-attachment)
