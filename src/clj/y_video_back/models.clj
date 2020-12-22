@@ -57,8 +57,8 @@
 (def collection-without-id-or-owner
   {:collection-name string?
    :published boolean?
-   :archived boolean?})
-   ;:public boolean?})
+   :archived boolean?
+   :public boolean?})
 
 (def collection-without-id
   (into collection-without-id-or-owner {:owner uuid?}))

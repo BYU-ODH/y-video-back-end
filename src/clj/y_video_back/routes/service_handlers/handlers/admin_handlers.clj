@@ -12,7 +12,7 @@
 ; TODO - sort results by more than just alphabetical
 
 (def search-by-user ;; Non-functional
-  {:summary "Searches users, collections, resources, and courses by search term"
+  {:summary "Searches users by search term"
    :permission-level "instructor"
    :parameters {:header {:session-id uuid?}
                 :path {:term string?}}
@@ -27,7 +27,7 @@
                  :body res}))})
 
 (def search-by-collection ;; Non-functional
-  {:summary "Searches users, collections, resources, and courses by search term"
+  {:summary "Searches collections by search term"
    :permission-level "lab-assistant"
    :parameters {:header {:session-id uuid?}
                 :path {:term string?}}
@@ -43,8 +43,25 @@
                 {:status 200
                  :body res}))})
 
+(def search-public-collections ;; Non-functional
+  {:summary "Searches public collections by search term"
+   :permission-level "student"
+   :bypass-permission true
+   :parameters {:path {:term string?}}
+   :responses {200 {:body [(into models/collection {:username string?})]}}
+   :handler (fn [{{{:keys [term]} :path} :parameters}]
+              (let [term (java.net.URLDecoder/decode term)
+                    coll-res (map utils/remove-db-only
+                                  (db/read-all-pattern :public-collections-undeleted
+                                                       [:collection-name]
+                                                       (str "%" term "%")))
+                    res (map #(into % {:username (:username (users/READ (:owner %)))})
+                             coll-res)]
+                {:status 200
+                 :body res}))})
+
 (def search-by-content
-  {:summary "Searches users, collections, contents, and courses by search term"
+  {:summary "Searches contents by search term"
    :permission-level "lab-assistant"
    :parameters {:header {:session-id uuid?}
                 :path {:term string?}}
@@ -60,7 +77,7 @@
 
 
 (def search-by-resource
-  {:summary "Searches users, collections, resources, and courses by search term"
+  {:summary "Searches resources by search term"
    :permission-level "instructor"
    :parameters {:header {:session-id uuid?}
                 :path {:term string?}}

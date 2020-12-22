@@ -62,7 +62,11 @@
 
 (defn get-random-collection-without-id-or-owner
   []
-  (get-random-model models/collection-without-id-or-owner))
+  (assoc
+    (dissoc (get-random-model models/collection-without-id-or-owner)
+            :public)
+    :public
+    false))
 
 (defn get-random-collection-without-id
   ([owner-id]

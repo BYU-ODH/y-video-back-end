@@ -60,7 +60,7 @@ CREATE TABLE collections (
    ,owner UUID REFERENCES users(id)
    ,published BOOLEAN
    ,archived BOOLEAN
-   --,public BOOLEAN
+   ,public BOOLEAN
    , CONSTRAINT no_duplicate_owner_names UNIQUE (deleted, owner, collection_name)
 );
 COMMENT ON TABLE collections IS 'Collections of content/resources';
@@ -350,6 +350,12 @@ $$ LANGUAGE plpgsql;
 ---------------------
 
 -- These will be views which depend upon other views, such as *_undeleted
+
+DROP VIEW IF EXISTS public_collections_undeleted;
+CREATE VIEW public_collections_undeleted AS
+    SELECT collections_undeleted.*
+    FROM collections_undeleted
+    WHERE collections_undeleted.public = true;
 
 DROP VIEW IF EXISTS users_by_collection;
 CREATE VIEW users_by_collection AS
