@@ -49,6 +49,11 @@
                                                         :account-name "Hermione Granger"
                                                         :account-type 0
                                                         :username "future-minister-1"})))
+  (def test-user-adm (ut/under-to-hyphen (users/CREATE {:email "lemon-drops@byu.edu"
+                                                        :last-login "1604"
+                                                        :account-name "Albus Dumbledore"
+                                                        :account-type 0
+                                                        :username "bumblebee01"})))
   (def test-coll-one (ut/under-to-hyphen (collections/CREATE {:collection-name "Quidditch Books"
                                                               :published true
                                                               :archived false
@@ -64,6 +69,11 @@
                                                               :archived true
                                                               :public false
                                                               :owner (:id test-user-thr)})))
+  (def test-coll-pub (ut/under-to-hyphen (collections/CREATE {:collection-name "The Tales of Beedle the Bard"
+                                                              :published false
+                                                              :archived true
+                                                              :public true
+                                                              :owner (:id test-user-adm)})))
   (def test-rsrc-one (ut/under-to-hyphen (resources/CREATE {:resource-name "Quidditch Through the Ages"
                                                             :resource-type "book 1"
                                                             :requester-email "im.a.what@gmail.com"
@@ -178,10 +188,11 @@
   (let [res (case table-key
               :users (rp/search-by-user query-term)
               :collections (rp/search-by-collection query-term)
+              :public-collections (rp/search-public-collections query-term)
               :resources (rp/search-by-resource query-term)
               :contents (rp/search-by-content query-term))]
     (is (= 200 (:status res)))
-    (if (= table-key :collections)
+    (if (or (= table-key :collections) (= table-key :public-collections))
       (is (= (frequencies (into [] (map #(update (update (ut/remove-db-only %) :id str) :owner str) expected-res)))
              (frequencies (m/decode-response-body res))))
       (is (= (frequencies (into [] (map #(update (ut/remove-db-only %) :id str) expected-res)))
@@ -191,7 +202,7 @@
   (testing "all users email"
     (test-search-table :users
                        "@"
-                       [test-user-one test-user-two test-user-thr]))
+                       [test-user-one test-user-two test-user-thr test-user-adm]))
   (testing "one user email"
     (test-search-table :users
                        "im.a.what"
@@ -203,7 +214,7 @@
   (testing "all users name"
     (test-search-table :users
                        "o"
-                       [test-user-one test-user-two test-user-thr]))
+                       [test-user-one test-user-two test-user-thr test-user-adm]))
   (testing "one user name"
     (test-search-table :users
                        "Ron W"
@@ -215,7 +226,7 @@
   (testing "all users username"
     (test-search-table :users
                        "1"
-                       [test-user-one test-user-two test-user-thr]))
+                       [test-user-one test-user-two test-user-thr test-user-adm]))
   (testing "one user username"
     (test-search-table :users
                        "minister"
@@ -227,7 +238,7 @@
   (testing "only a space"
     (test-search-table :users
                        " "
-                       [test-user-one test-user-two test-user-thr]))
+                       [test-user-one test-user-two test-user-thr test-user-adm]))
   (testing "case insensitive"
     (test-search-table :users
                        "mIniSTer"
@@ -253,7 +264,8 @@
                        " "
                        [(assoc test-coll-one :username (:username test-user-one))
                         (assoc test-coll-two :username (:username test-user-two))
-                        (assoc test-coll-thr :username (:username test-user-thr))]))
+                        (assoc test-coll-thr :username (:username test-user-thr))
+                        (assoc test-coll-pub :username (:username test-user-adm))]))
   (testing "case insensitive"
     (test-search-table :collections
                        "FICTION"
@@ -323,3 +335,8 @@
     (test-search-table :contents
                        "adfwE"
                        [(update (update test-cont-two :resource-id str) :collection-id str)])))
+(deftest test-search-public-collections
+  (testing "all colls name"
+    (test-search-table :public-collections
+                       "Bard"
+                       [(assoc test-coll-pub :username (:username test-user-adm))])))

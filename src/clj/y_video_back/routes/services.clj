@@ -314,6 +314,8 @@
       {:get service-handlers/search-by-user}]
      ["/collection/{term}"
       {:get service-handlers/search-by-collection}]
+     ["/public-collection/{term}"
+      {:get service-handlers/search-public-collections}]
      ["/content/{term}"
       {:get service-handlers/search-by-content}]
      ["/resource/{term}"

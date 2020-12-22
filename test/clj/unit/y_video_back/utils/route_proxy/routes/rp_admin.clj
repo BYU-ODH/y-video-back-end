@@ -37,6 +37,14 @@
   ([term]
    (search-by-collection (:session-id-bypass env) term)))
 
+(defn search-public-collections
+  "Search public collection view by term"
+  ([session-id term]
+   (app (-> (request :get (str "/api/admin/public-collection/" (java.net.URLEncoder/encode term))))))
+  ([term]
+   (search-by-collection (:session-id-bypass env) term)))
+
+
 (defn search-by-content
   "Search content table by term"
   ([session-id term]

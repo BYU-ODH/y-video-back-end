@@ -351,6 +351,12 @@ $$ LANGUAGE plpgsql;
 
 -- These will be views which depend upon other views, such as *_undeleted
 
+DROP VIEW IF EXISTS public_collections_undeleted;
+CREATE VIEW public_collections_undeleted AS
+    SELECT collections_undeleted.*
+    FROM collections_undeleted
+    WHERE collections_undeleted.public = true;
+
 DROP VIEW IF EXISTS users_by_collection;
 CREATE VIEW users_by_collection AS
     SELECT users_undeleted.*, uca.account_role, uca.collection_id
