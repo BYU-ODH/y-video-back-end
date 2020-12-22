@@ -61,6 +61,12 @@
           coll-one (db-pop/get-collection (:id user-one))
           res (rp/collection-post (uc/user-id-to-session-id (:id user-one))
                                   coll-one)]
+      (is (= 403 (:status res)))))
+  (testing "instructor, collection-post, public, self as owner"
+    (let [user-one (db-pop/add-user "instructor")
+          coll-one (db-pop/get-public-collection (:id user-one))
+          res (rp/collection-post (uc/user-id-to-session-id (:id user-one))
+                                  coll-one)]
       (is (= 403 (:status res))))))
 
 ;get: /api/collection/{id}

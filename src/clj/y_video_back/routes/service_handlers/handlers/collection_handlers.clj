@@ -12,13 +12,14 @@
    [y-video-back.routes.service-handlers.utils.utils :as utils]
    [y-video-back.routes.service-handlers.utils.role-utils :as ru]
    [y-video-back.utils.account-permissions :as ac]
-   [y-video-back.user-creator :as uc]))
+   [y-video-back.user-creator :as uc]
+   [y-video-back.routes.service-handlers.handlers.collection-methods :as methods]))
 
-(def collection-create ;; Non-functional
+(def collection-create
   {:summary "Creates a new collection with the given (temp) user as an owner"
    :permission-level "lab-assistant"
    :bypass-permission true
-   :permission-note "Instructors may create a collection with their own user-id as the collection's owner."
+   :permission-note "Instructors may create a collection with their own user-id as the collection's owner. Only admins may create public collections."
    :parameters {:header {:session-id uuid?}
                 :body models/collection-without-id}
    :responses {200 {:body {:message string?
@@ -26,73 +27,52 @@
                500 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header :keys [body]} :parameters
                   p-vals :permission-values}]
-              (if-not (or (= (:session-id-bypass env) (str session-id))
-                          (:valid-type p-vals)
-                          (and (= (ru/get-user-type (ru/token-to-user-id session-id)) (ac/to-int-type "instructor"))
-                               (= (ru/token-to-user-id session-id) (:owner body))))
-                {:status 403 :body {:message "forbidden"}}
-                (if (not (users/EXISTS? (:owner body)))
-                  {:status 500
-                   :body {:message "user (owner) not found, unable to create collection"}}
-                  (if (collections/EXISTS-NAME-OWNER? (:collection-name body)
-                                                      (:owner body))
-                    {:status 500
-                     :body {:message "collection name / owner combination already in use, unable to create collection"}}
-                    {:status 200
-                     :body {:message "1 collection created"
-                            :id (utils/get-id (collections/CREATE body))}}))))})
+              (let [user-id (ru/token-to-user-id session-id)]
+                (if-not (or (= (:session-id-bypass env) (str session-id))
+                            (:valid-type p-vals)
+                            (and (= (ru/get-user-type user-id) (ac/to-int-type "instructor"))
+                                 (= user-id (:owner body))))
+                  {:status 403 :body {:message "forbidden"}}
+                  (if (and (:public body)
+                           (not (= (ac/to-int-type "admin") (ru/get-user-type user-id))))
+                    {:status 403 :body {:message "forbidden"}}
+                    (methods/collection-create body)))))})
 
-(def collection-get-by-id ;; Not tested
+(def collection-get-by-id
   {:summary "Retrieves specified collection"
    :permission-level "lab-assistant"
    :role-level "auditing"
    :path-to-id [:parameters :path :id]
+   :bypass-permission true
+   :permission-note "Any user may get public collections."
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
    :responses {200 {:body models/collection}
                404 {:body {:message string?}}}
-   :handler (fn [{{{:keys [id]} :path} :parameters}]
-              (let [res (collections/READ id)]
-                (if (nil? res)
-                  {:status 404
-                   :body {:message "requested collection not found"}}
-                  {:status 200
-                   :body res})))})
+   :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters p-vals :permission-values}]
+              (if (or (= (:session-id-bypass env) (str session-id))
+                      (:valid-type p-vals) (:valid-role p-vals) (not (nil? (collections/READ-PUBLIC id))))
+                (methods/collection-get-by-id id)
+                {:status 403 :body {:message "forbidden"}}))})
 
-(def collection-update ;; Non-functional
+(def collection-update
   {:summary "Updates the specified collection"
    :permission-level "lab-assistant"
    :role-level "ta"
+   :permission-note "Only admin may change public flag. Admins should only change collections owned by admins (this is necessary, but not currently enforced)."
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?} :body ::sp/collection}
    :responses {200 {:body {:message string?}}
                404 (:body {:message string?})
                500 (:body {:message string?})}
-   :handler (fn [{{{:keys [id]} :path :keys [body]} :parameters}]
-              (if-not (collections/EXISTS? id)
-                {:status 404
-                 :body {:message "collection not found"}}
-                (let [current-collection (collections/READ id)
-                      proposed-collection (merge current-collection body)
-                      same-name-collection (first (collections/READ-ALL-BY-NAME-OWNER [(:collection-name proposed-collection)
-                                                                                       (:owner proposed-collection)]))]
-                  ; If there is a name-owner collision and the collision is not with self (i.e. collection being changed)
-                  (if (and (not (nil? same-name-collection))
-                           (not (= (:id current-collection)
-                                   (:id same-name-collection))))
-                    {:status 500
-                     :body {:message "unable to update collection, name-owner pair likely in use"}}
-                    (if-not (users/EXISTS? (:owner proposed-collection))
-                      {:status 500
-                       :body {:message "user (owner) not found, unable to create collection"}}
-                      (let [result (collections/UPDATE id body)]
-                        (if (nil? result)
-                          {:status 500
-                           :body {:message "unable to update collection"}}
-                          {:status 200
-                           :body {:message (str 1 " collections updated")}})))))))})
+   :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters}]
+              (if (and (not (= (:session-id-bypass env) (str session-id)))
+                       (:public body)
+                       (not (= (ac/to-int-type "admin") (ru/get-user-type (ru/token-to-user-id session-id)))))
+                {:status 403 :body {:message "forbidden"}}
+                (methods/collection-update id body)))})
 
-(def collection-delete ;; Non-functional
+(def collection-delete
   {:summary "Deletes the specified collection"
    :permission-level "admin"
    :parameters {:header {:session-id uuid?}
@@ -100,96 +80,68 @@
    :responses {200 {:body {:message string?}}
                404 (:body {:message string?})}
    :handler (fn [{{{:keys [id]} :path} :parameters}]
-              (let [result (collections/DELETE id)]
-                (if (nil? result)
-                  {:status 404
-                   :body {:message "requested collection not found"}}
-                  {:status 200
-                   :body {:message (str 1 " collections deleted")}})))})
+              (methods/collection-delete id))})
 
 (def collection-add-user
   {:summary "Adds user to specified collection"
    :permission-level "lab-assistant"
    :role-level "instructor"
+   :permission-note "If collection is public, any user may add other user to collection as auditing"
+   :bypass-permission true
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?} :body {:username string? :account-role int?}}
    :responses {200 {:body {:message string? :id string?}}
                404 (:body {:message string?})
                500 (:body {:message string?})}
-   :handler (fn [{{{:keys [id]} :path :keys [body]} :parameters}]
-              (if (not (collections/EXISTS? id))
-                {:status 404
-                 :body {:message "collection not found"}}
-                (let [username (:username body)]
-                  (if (nil? (users/READ-BY-USERNAME username))
-                    (uc/get-session-id username))
-                  (if (user-collections-assoc/EXISTS-COLL-USER? id username)
-                    (user-collections-assoc/DELETE-BY-IDS [id username]))
-                  (let [result (utils/get-id (user-collections-assoc/CREATE (into (dissoc body :username) {:collection-id id :username username})))]
-                    (if (nil? result)
-                      {:status 500
-                       :body {:message "unable to add user"}}
-                      {:status 200
-                       :body {:message (str 1 " users added to collection")
-                              :id result}})))))})
+   :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters p-vals :permission-values}]
+              (if (or (= (:session-id-bypass env) (str session-id))
+                      (:valid-role p-vals) (:valid-type p-vals) (and (not (nil? (collections/READ-PUBLIC id)))
+                                                                     (= 3 (:account-role body))))
+                (methods/collection-add-user id body)
+                {:status 403 :body {:message "forbidden"}}))})
 
 (def collection-add-users
   {:summary "Adds list of users to specified collection. All will have same role. Will not override existing connections."
    :permission-level "lab-assistant"
    :role-level "instructor"
+   :bypass-permission true
+   :permission-note "If collection is public, instructors may add any users to collection as auditing."
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?} :body {:usernames [string?] :account-role int?}}
    :responses {200 {:body {:message string?}}
                404 (:body {:message string?})
                500 (:body {:message string?})}
-   :handler (fn [{{{:keys [id]} :path :keys [body]} :parameters}]
-              (if (not (collections/EXISTS? id))
-                {:status 404
-                 :body {:message "collection not found"}}
-                (do
-                  (doseq [username (:usernames body)]
-                    (do
-                      (if (user-collections-assoc/EXISTS-COLL-USER? id username)
-                        (user-collections-assoc/DELETE-BY-IDS [id username]))
-                      (user-collections-assoc/CREATE {:collection-id id :username username
-                                                      :account-role (:account-role body)})
-                      (if (nil? (users/READ-BY-USERNAME username))
-                        (uc/get-session-id username))))
-                  {:status 200
-                   :body {:message (str (count (:usernames body)) " users added to collection")}})))})
+   :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters p-vals :permission-values}]
+              (if (or (= (:session-id-bypass env) (str session-id))
+                      (:valid-role p-vals) (:valid-type p-vals) (and (not (nil? (collections/READ-PUBLIC id)))
+                                                                     (= 3 (:account-role body))))
+                (methods/collection-add-users id body)
+                {:status 403 :body {:message "forbidden"}}))})
 
 (def collection-remove-user
   {:summary "Removes user from specified collection"
    :permission-level "lab-assistant"
    :role-level "instructor"
+   :bypass-permission true
+   :permission-note "If collection is public, users may remove self from collection."
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?} :body {:username string?}}
    :responses {200 {:body {:message string?}}
                404 (:body {:message string?})
                500 (:body {:message string?})}
-   :handler (fn [{{{:keys [id]} :path :keys [body]} :parameters}]
-              (if (not (collections/EXISTS? id))
-                {:status 404
-                 :body {:message "collection not found"}}
-                (let [user-id (:id (first (users/READ-BY-USERNAME [(:username body)])))
-                      body (assoc body :user-id user-id)]
-                  (if (not (users/EXISTS? (:user-id body)))
-                    {:status 500
-                     :body {:message "user not found"}}
-                    (if-not (user-collections-assoc/EXISTS-COLL-USER? id (:username body))
-                      {:status 500
-                       :body {:message "user not connected to collection"}}
-                      (let [result (user-collections-assoc/DELETE-BY-IDS [id (:username body)])]
-                        (if (= 0 result)
-                          {:status 500
-                           :body {:message "unable to remove user"}}
-                          {:status 200
-                           :body {:message (str result " users removed from collection")}})))))))})
+   :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path :keys [body]} :parameters p-vals :permission-values}]
+              (if (or (= (:session-id-bypass env) (str session-id))
+                      (:valid-role p-vals) (:valid-type p-vals) (and (not (nil? (collections/READ-PUBLIC id)))
+                                                                     (= (:username body) (:username (ru/token-to-user session-id)))))
+                (methods/collection-remove-user id body)
+                {:status 403 :body {:message "forbidden"}}))})
 
 (def collection-add-course
   {:summary "Adds course to specified collection. Creates course in database if does not already exist."
    :permission-level "lab-assistant"
    :role-level "instructor"
+   :permission-note "Instructors may add any course to any public collection."
+   :bypass-permission true
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}
                 :body {:department string?
@@ -198,68 +150,44 @@
    :responses {200 {:body {:message string? :id string?}}
                404 (:body {:message string?})
                500 (:body {:message string?})}
-   :handler (fn [{{{:keys [id]} :path {:keys [department catalog-number section-number]} :body} :parameters}]
-              (if (not (collections/EXISTS? id))
-                {:status 404
-                 :body {:message "collection not found"}}
-                (do
-                  (if-not (courses/EXISTS-DEP-CAT-SEC? department catalog-number section-number)
-                    (courses/CREATE {:department department :catalog-number catalog-number :section-number section-number}))
-                  (let [course-id (:id (first (courses/READ-ALL-BY-DEP-CAT-SEC [department catalog-number section-number])))]
-                    (if (collection-courses-assoc/EXISTS-COLL-CRSE? id course-id)
-                      {:status 500
-                       :body {:message "course already connected to collection"}}
-                      (let [result (utils/get-id (collection-courses-assoc/CREATE {:collection-id id :course-id course-id}))]
-                        (if (= nil result)
-                          {:status 500
-                           :body {:message "unable to add course"}}
-                          {:status 200
-                           :body {:message (str 1 " courses added to collection")
-                                  :id (str course-id)}})))))))})
+   :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path
+                   {:keys [department catalog-number section-number]} :body} :parameters
+                   p-vals :permission-values}]
+              (if (or (= (:session-id-bypass env) (str session-id))
+                      (:valid-role p-vals) (:valid-type p-vals) (and (not (nil? (collections/READ-PUBLIC id)))
+                                                                     (<= (ru/get-user-type (ru/token-to-user-id session-id))
+                                                                         (ac/to-int-type "instructor"))))
+                (methods/collection-add-course id department catalog-number section-number)
+                {:status 403 :body {:message "forbidden"}}))})
 
 (def collection-remove-course
   {:summary "Removes course from specified collection"
    :permission-level "lab-assistant"
    :role-level "instructor"
+   :permission-note "Instructors must contact lab-assistants to remove a course from a public collection. This will likely be a temporary fix."
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?} :body {:course-id uuid?}}
    :responses {200 {:body {:message string?}}
                404 (:body {:message string?})
                500 (:body {:message string?})}
    :handler (fn [{{{:keys [id]} :path :keys [body]} :parameters}]
-              (if (not (collections/EXISTS? id))
-                {:status 404
-                 :body {:message "collection not found"}}
-                (if (not (courses/EXISTS? (:course-id body)))
-                  {:status 500
-                   :body {:message "course not found"}}
-                  (if-not (collection-courses-assoc/EXISTS-COLL-CRSE? id (:course-id body))
-                    {:status 500
-                     :body {:message "course not connected to collection"}}
-                    (let [result (collection-courses-assoc/DELETE-BY-IDS [id (:course-id body)])]
-                      (if (= 0 result)
-                        {:status 404
-                         :body {:message "unable to remove course"}}
-                        {:status 200
-                         :body {:message (str result " courses removed from collection")}}))))))})
-
+              (methods/collection-remove-course id body))})
 
 (def collection-get-all-contents ;; Non-functional
   {:summary "Retrieves all the resources for the specified collection"
    :permission-level "lab-assistant"
    :role-level "auditing"
+   :bypass-permission true
+   :permission-note "Any user may get contents for a public collection."
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
    :responses {200 {:body [models/content]}
                404 (:body {:message string?})}
-   :handler (fn [{{{:keys [id]} :path} :parameters}]
-              (if (not (collections/EXISTS? id))
-                {:status 404
-                 :body {:message "collection not found"}}
-                (let [raw-res (contents/READ-BY-COLLECTION id)
-                      res (map #(utils/remove-db-only %) raw-res)]
-                  {:status 200
-                   :body res})))})
+   :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters p-vals :permission-values}]
+              (if (or (= (:session-id-bypass env) (str session-id))
+                      (:valid-role p-vals) (:valid-type p-vals) (not (nil? (collections/READ-PUBLIC id))))
+                (methods/collection-get-all-contents id)
+                {:status 403 :body {:message "forbidden"}}))})
 
 (def collection-get-all-courses ;; Non-functional
   {:summary "Retrieves all the courses for the specified collection"
@@ -270,16 +198,7 @@
    :responses {200 {:body [models/course]}
                404 (:body {:message string?})}
    :handler (fn [{{{:keys [id]} :path} :parameters}]
-              (if (not (collections/EXISTS? id))
-                {:status 404
-                 :body {:message "collection not found"}}
-                (let [course-collections-result (collection-courses-assoc/READ-COURSES-BY-COLLECTION id)
-                      course-result (map #(-> %
-                                              (utils/remove-db-only)
-                                              (dissoc :collection-id))
-                                         course-collections-result)]
-                    {:status 200
-                     :body course-result})))})
+              (methods/collection-get-all-courses id))})
 
 (def collection-get-all-users
   {:summary "Retrieves all users for the specified collection"
@@ -290,14 +209,4 @@
    :responses {200 {:body [models/user]}
                404 (:body {:message string?})}
    :handler (fn [{{{:keys [id]} :path} :parameters}]
-              (if (not (collections/EXISTS? id))
-                {:status 404
-                 :body {:message "collection not found"}}
-                (let [user-collections-result (user-collections-assoc/READ-USERS-BY-COLLECTION id)
-                      user-result (map #(-> %
-                                            (utils/remove-db-only)
-                                            (dissoc :collection-id)
-                                            (dissoc :account-role))
-                                       user-collections-result)]
-                    {:status 200
-                     :body user-result})))})
+              (methods/collection-get-all-users id))})

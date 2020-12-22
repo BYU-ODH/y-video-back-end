@@ -119,7 +119,7 @@
 (defn get-public-collection
   "Creates public collection, ready to be added to db"
   ([]
-   (let [new-user (ut/under-to-hyphen (users/CREATE (g/get-random-user-without-id)))]
+   (let [new-user (add-user "admin")]
      (-> (g/get-random-collection-without-id (:id new-user))
          (dissoc :public)
          (assoc :public true))))

@@ -52,17 +52,17 @@
   (def test-coll-one (ut/under-to-hyphen (collections/CREATE {:collection-name "Quidditch Books"
                                                               :published true
                                                               :archived false
-                                                              ;:public false
+                                                              :public false
                                                               :owner (:id test-user-one)})))
   (def test-coll-two (ut/under-to-hyphen (collections/CREATE {:collection-name "Self-help Books"
                                                               :published true
                                                               :archived true
-                                                              ;:public false
+                                                              :public false
                                                               :owner (:id test-user-two)})))
   (def test-coll-thr (ut/under-to-hyphen (collections/CREATE {:collection-name "Non-fiction Books"
                                                               :published false
                                                               :archived true
-                                                              ;:public false
+                                                              :public false
                                                               :owner (:id test-user-thr)})))
   (def test-rsrc-one (ut/under-to-hyphen (resources/CREATE {:resource-name "Quidditch Through the Ages"
                                                             :resource-type "book 1"

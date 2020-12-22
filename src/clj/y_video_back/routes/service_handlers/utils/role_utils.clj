@@ -28,6 +28,14 @@
       nil
       (:user-id res))))
 
+(defn token-to-user
+  "Returns user-id associated with valid token."
+  [token]
+  (let [res (auth-tokens/READ-UNEXPIRED token)]
+    (if (nil? res)
+      nil
+      (users/READ (:user-id res)))))
+
 (defn token-to-user-id-all
   "Returns user-id associated with token even if token is invalid."
   [token]

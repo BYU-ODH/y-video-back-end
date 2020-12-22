@@ -60,7 +60,7 @@ CREATE TABLE collections (
    ,owner UUID REFERENCES users(id)
    ,published BOOLEAN
    ,archived BOOLEAN
-   --,public BOOLEAN
+   ,public BOOLEAN
    , CONSTRAINT no_duplicate_owner_names UNIQUE (deleted, owner, collection_name)
 );
 COMMENT ON TABLE collections IS 'Collections of content/resources';
