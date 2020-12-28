@@ -42,7 +42,7 @@
   ([session-id term]
    (app (-> (request :get (str "/api/admin/public-collection/" (java.net.URLEncoder/encode term))))))
   ([term]
-   (search-by-collection (:session-id-bypass env) term)))
+   (search-public-collections (:session-id-bypass env) term)))
 
 
 (defn search-by-content
