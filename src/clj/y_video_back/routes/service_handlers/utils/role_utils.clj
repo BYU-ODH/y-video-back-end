@@ -14,6 +14,7 @@
       (str/starts-with? uri "/api/docs")
       (str/starts-with? uri "/api/swagger")
       (str/starts-with? uri "/api/video")
+      (str/starts-with? uri "/api/admin/public-collection/")
       (str/starts-with? uri "/api/get-video-url");temporary
       (str/starts-with? uri "/api/media/stream-media/");temporary
       (str/starts-with? uri "/api/partial-media/stream-media/");temporary

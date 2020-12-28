@@ -208,7 +208,9 @@
         (assoc-in (handler request) [:headers "session-id"] (get-session-id request))
         (let [response (handler request)]
           (if (= 200 (:status response))
-            (assoc-in response [:headers "session-id"] (ru/get-new-session-id (get-session-id request)))
+            (if (not (nil? (get-session-id request)))
+              (assoc-in response [:headers "session-id"] (ru/get-new-session-id (get-session-id request)))
+              response)
             (assoc-in response [:headers "session-id"] (get-session-id request))))))))
 
 (defn wrap-api [handler]
