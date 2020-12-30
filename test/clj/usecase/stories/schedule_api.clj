@@ -4,17 +4,17 @@
             [clojure.test :refer :all]
             [ring.mock.request :refer :all]
             [y-video-back.handler :refer :all]
-            [y-video-back.db.test-util :as tcore]
+            [legacy.db.test-util :as tcore]
             [muuntaja.core :as m]
             [clojure.java.jdbc :as jdbc]
             [mount.core :as mount]
             [y-video-back.config :refer [env]]
             [y-video-back.course-creator :as cc]
             [y-video-back.apis.student-schedule :as schedule-api]
-            [y-video-back.utils.db-populator :as db-pop]
+            [legacy.utils.db-populator :as db-pop]
             [y-video-back.db.user-courses-assoc :as user-courses-assoc]
             [y-video-back.db.users :as users]
-            [y-video-back.utils.utils :as ut]))
+            [legacy.utils.utils :as ut]))
 
 
 (declare ^:dynamic *txn*)
