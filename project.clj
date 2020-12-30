@@ -88,4 +88,4 @@
                                (pjstadig.humane-test-output/activate!)]}
    :project/test {:resource-paths ["env/test/resources"]}
    :profiles/dev {:repl-options {:init-ns user}}
-   :profiles/test {:cloverage {:ns-exclude-regex [#"y-video-back\.common|y-video-back\.core|y-video-back\.db\.migratus|y-video-back\.env|y-video-back\.figwheel|y-video-back\.handler|y-video-back\.layout|y-video-back\.middleware\.exception|y-video-back\.middleware\.formats|y-video-back\.nrepl|user|y-video-back.config|y-video-back.dev-middleware|.*-tests.clj"]}}})
+   :profiles/test {:cloverage {:ns-exclude-regex [#"y-video-back\.common|y-video-back\.core|y-video-back\.db\.migratus|y-video-back\.env|y-video-back\.figwheel|y-video-back\.handler|y-video-back\.layout|y-video-back\.middleware\.exception|y-video-back\.middleware\.formats|y-video-back\.nrepl|user|y-video-back.config|y-video-back.dev-middleware|.*-tests.clj|y-video-back\.auth.*|.*test.*|.*route-proxy.*|legacy.*"]}}})
