@@ -77,6 +77,7 @@
 (s/def :content/views integer?)
 (s/def :content/file-version string?)
 (s/def :content/published boolean?)
+(s/def :content/words string?)
 (s/def :content/resource-id uuid?)
 (s/def :content/collection-id uuid?)
 (s/def ::content
@@ -94,6 +95,7 @@
                    :content/views
                    :content/file-version
                    :content/published
+                   :content/words
                    :content/resource-id
                    :content/collection-id]))
 

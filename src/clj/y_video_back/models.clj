@@ -109,7 +109,8 @@
    :allow-captions boolean?
    :views integer?
    :file-version string?
-   :published boolean?})
+   :published boolean?
+   :words string?})
    ;:public boolean?})
 
 (def content-without-id
