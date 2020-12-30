@@ -28,6 +28,7 @@
     (ut/renew-db)
     (f)
     (ut/delete-all-files (-> env :FILES :media-url))
+    (ut/delete-all-files (-> env :FILES :media-trash-url))
     (ut/delete-all-files (-> env :FILES :test-temp))))
 
 (tcore/basic-transaction-fixtures
