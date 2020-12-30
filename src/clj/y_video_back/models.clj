@@ -1,31 +1,21 @@
 (ns y-video-back.models
-  (:require [clojure.string :as str]))
+  (:require
+    [clojure.string :as str]))
 
-(defn add-namespace
-  "Converts all keywords to namespace-keywords, returns vector of keywords"
-  [namespace m]
-  (into []
-    (map (fn [val]
-            (keyword
-              namespace
-              (str/replace
-                (str
-                  (get val 0))
-                ":"
-                "")))
-      m)))
+; (defn add-namespace
+;   "Converts all keywords to namespace-keywords, returns vector of keywords"
+;   [namespace m]
+;   (into []
+;     (map (fn [val]
+;             (keyword
+;               namespace
+;               (str/replace
+;                 (str
+;                   (get val 0))
+;                 ":"
+;                 "")))
+;       m)))
 
-(defn to-uuid
-  [text-in]
-  (java.util.UUID/fromString text-in))
-
-
-(defn nuuid?
-  "Returns true if val is uuid or nil"
-  [val]
-  (or (nil? val)
-      (uuid? val)
-      (uuid? (to-uuid val))))
 
 (def echo-patch
   {:echo string?})
@@ -40,8 +30,8 @@
 (def user
   (into user-without-id {:id uuid?}))
 
-(def user-without-id-ns-params  ; Not in use
-  (add-namespace "user" {:variable string?}))
+; (def user-without-id-ns-params  ; Not in use
+;   (add-namespace "user" {:variable string?}))
 
 (def word-without-id-or-user-id
   {:word string?

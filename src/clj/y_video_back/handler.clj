@@ -3,7 +3,7 @@
             [y-video-back.layout :refer [error-page]]
             [y-video-back.routes.home :refer [home-routes]]
             [y-video-back.routes.services :refer [service-routes]]
-            [y-video-back.routes.public :refer [public-routes]]
+            ; [y-video-back.routes.public :refer [public-routes]]
 
             [reitit.ring :as ring]
             [ring.middleware.webjars :refer [wrap-webjars]]
@@ -21,8 +21,8 @@
     (ring/ring-handler
      (ring/router
       [(home-routes)
-       (service-routes)
-       (public-routes)])
+       (service-routes)])
+       ; (public-routes)])
 
      (ring/routes
       (ring/create-resource-handler

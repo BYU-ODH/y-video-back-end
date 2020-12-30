@@ -12,8 +12,7 @@
       [y-video-back.db.core :refer [*db*] :as db]
       [legacy.utils.utils :as ut]
       [legacy.utils.db-populator :as db-pop]
-      [y-video-back.db.subtitles :as subtitles]
-      [y-video-back.db.content-subtitles-assoc :as content-subtitles-assoc]))
+      [y-video-back.db.subtitles :as subtitles]))
 
 (declare ^:dynamic *txn*)
 
