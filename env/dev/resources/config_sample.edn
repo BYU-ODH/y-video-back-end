@@ -1,3 +1,5 @@
+;; ALL FILE PATHS MUST HAVE TRAILING FORWARD SLASH
+
 ;; env/dev/resources/config.edn
 {:dev true
  :port 3000
@@ -10,7 +12,8 @@
  :front-end-netid ""
  :FILES {:media-url ""
          :timeout 14400000 ; 4 hours - MUST CHANGE IN DB TRIGGER TOO
-         :log-path ""}
+         :log-path ""
+         :endpoint-log-path ""}
  :user-data-refresh-after 168 ; in hours - 7 days
  :user-courses-refresh-after 168 ; in hours - 7 days
  :host ""

@@ -13,3 +13,12 @@
 (def READ-WORDS (partial db/read-all-where :words-undeleted :user-id))
 (def READ-COLLECTIONS-BY-USER-VIA-COURSES (partial db/read-all-where :collections-by-users-via-courses :user-id))
 (defn EXISTS? [id] (not (nil? (db/READ :users-undeleted id))))
+(defn id-to-username
+  "Returns username. Returns nil if id is nil or user doesn't exist."
+  [id]
+  (if (nil? id)
+    nil
+    (let [res (READ id)]
+      (if (nil? res)
+        nil
+        (:username res)))))

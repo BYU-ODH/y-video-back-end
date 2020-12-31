@@ -19,7 +19,9 @@
             [ring.middleware.cors :refer [wrap-cors]]
             [y-video-back.routes.service-handlers.utils.role-utils :as ru]
             [clojure.data.json :as json]
-            [y-video-back.utils.account-permissions :as ac])
+            [y-video-back.utils.account-permissions :as ac]
+            [y-video-back.db.users :as users]
+            [y-video-back.log :as ylog])
 
   (:import [javax.servlet ServletContext]))
 
@@ -160,6 +162,15 @@
   (error-page {:status 401, :title "401 - Unauthorized",
                :image "https://rossonl.files.wordpress.com/2014/01/4ba90-moriariddle.jpg", :caption "Pippin: What are you going to do then?<br/>Gandalf: Knock your head against this endpoint, Peregrin Took!"}))
 
+(defn add-id-and-username
+  "Adds user id and username to request. Adds nil if values do not exist."
+  [handler]
+  (fn [request]
+    (let [session-id (get-in request [:parameters :header :session-id])
+          user-id (ru/token-to-user-id session-id)
+          username (users/id-to-username user-id)]
+      (handler (merge request {:user-id user-id :username username})))))
+
 (defn check-permission
   "Checks user has permission for route"
   [handler]
@@ -213,6 +224,16 @@
               response)
             (assoc-in response [:headers "session-id"] (get-session-id request))))))))
 
+(defn log-endpoint-access
+  "Logs access to endpoint."
+  [handler]
+  (fn [request]
+    (ylog/log-endpoint-access {:method (:request-method request)
+                               :path (str (:path-info request))
+                               :username (:username request)
+                               :user-id (str (:user-id request))})
+    (handler request)))
+
 (defn wrap-api [handler]
   (let [check-csrf  (if-not (:test env) wrap-csrf identity)]
       (-> ((:middleware defaults) handler)
@@ -234,6 +255,8 @@
 
 (defn wrap-api-post [handler]
   (-> handler
+      log-endpoint-access
+      add-id-and-username
       check-permission
       add-session-id)) ; Why are these evaluated backwards?
 
