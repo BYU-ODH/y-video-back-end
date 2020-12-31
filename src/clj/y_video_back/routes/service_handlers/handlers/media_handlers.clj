@@ -60,9 +60,9 @@
                   {:status 404
                    :body {:message "file-key not found"}}
                   (let [user-res (users/READ (:user-id file-key-res))]
-                    (log-ut/log-media-access {:file-id (str (:file-id file-key-res))
-                                              :username (:username user-res)})
-                    ;(println "DEBUG: file-path=" (utils/file-id-to-path (:file-id file-key-res)))
+                    (if (or (:dev env) (:prod env))
+                      (log-ut/log-media-access {:file-id (str (:file-id file-key-res))
+                                                :username (:username user-res)}))
                     (file-response (utils/file-id-to-path (:file-id file-key-res)))))))})
 
 (def stream-partial-media ;; TODO - require session-id?
@@ -79,6 +79,7 @@
                   {:status 404
                    :body {:message "file-key not found"}}
                   (let [user-res (users/READ (:user-id file-key-res))]
-                    (log-ut/log-media-access {:file-id (str (:file-id file-key-res))
-                                              :username (:username user-res)})
+                    (if (or (:dev env) (:prod env))
+                      (log-ut/log-media-access {:file-id (str (:file-id file-key-res))
+                                                :username (:username user-res)}))
                     (file-response (utils/file-id-to-path (:file-id file-key-res)))))))})
