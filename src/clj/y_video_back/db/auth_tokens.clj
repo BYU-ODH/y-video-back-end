@@ -12,10 +12,12 @@
 (defn READ-UNEXPIRED
   "Reads unexpired auth-tokens. If expired, deletes and returns nil."
   [auth-token-id]
-  (let [auth-token (READ auth-token-id)]
-    (if (nil? auth-token)
-      nil
-      (if-not (< (inst-ms (:created auth-token)) (- (System/currentTimeMillis) (-> env :auth :timeout)))
-        auth-token
-        (do (DELETE auth-token-id)
-            nil)))))
+  (if (nil? auth-token-id)
+    nil
+    (let [auth-token (READ auth-token-id)]
+      (if (nil? auth-token)
+        nil
+        (if-not (< (inst-ms (:created auth-token)) (- (System/currentTimeMillis) (-> env :auth :timeout)))
+          auth-token
+          (do (DELETE auth-token-id)
+              nil))))))
