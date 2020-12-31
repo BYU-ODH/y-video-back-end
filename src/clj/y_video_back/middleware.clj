@@ -228,10 +228,11 @@
   "Logs access to endpoint."
   [handler]
   (fn [request]
-    (ylog/log-endpoint-access {:method (:request-method request)
-                               :path (str (:path-info request))
-                               :username (:username request)
-                               :user-id (str (:user-id request))})
+    (if (or (:dev env) (:prod env))
+      (ylog/log-endpoint-access {:method (:request-method request)
+                                 :path (str (:path-info request))
+                                 :username (:username request)
+                                 :user-id (str (:user-id request))}))
     (handler request)))
 
 (defn wrap-api [handler]
