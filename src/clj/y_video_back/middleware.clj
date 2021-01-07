@@ -34,8 +34,9 @@
    "Access-Control-Allow-Methods" "GET POST OPTIONS DELETE PUT"})
 
 (defn wrap-cas [handler]
+    "Validates CAS login. If invalid, only prompts login if given /login path-info"
   (fn [request]
-    ((cas/wrap-cas handler {:timeout 120 :host-override (:host env) :no-redirect? (constantly (not (= "/index" (str (:path-info request)))))})
+    ((cas/wrap-cas handler {:timeout 120 :host-override (:host env) :no-redirect? (constantly (not (= "/login" (str (:path-info request)))))})
      request)))
     ;((cas/wrap-cas handler (str (-> env :y-video-back :site-url) (str (:uri request))))
     ; request))
@@ -43,7 +44,6 @@
 (defn wrap-pre-cas [handler]
   (fn [request]
     ;(println "request-in-pre-cas=" request)
-    (println "in pre-cas")
     (let [res (handler request)]
       (if (= 403 (:status res))
           (redirect "/public/home")
@@ -51,7 +51,6 @@
 
 (defn wrap-post-cas [handler]
   (fn [request]
-    (println "in post-cas")
     (handler request)))
 
 (defn wrap-cas-to-request-url

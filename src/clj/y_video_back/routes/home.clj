@@ -88,7 +88,7 @@
          ["/who-am-i" {:get (fn [request] {:status 200 :body {:username (:username request)}})}]
          ;["/show-request" {:get (fn [request] {:status 200 :body {:request (str request)}})}]
          ["/permission-docs" {:get permission-docs-page}]
-         ; ["/login" {:get {:handler (redirect "/")}}]
+         ["/login" {:get (constantly (redirect "/"))}]
 
          ;["/logout" {:get {:handler (fn [req] (cas/logout-resp "https://cheneycreations.com"))}}] ; placeholder url until we get a login page going
          ;["/logout" {:get {:handler (redirect (str "/?logout=true"))}}]
