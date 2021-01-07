@@ -1,6 +1,7 @@
 (ns y-video-back.middleware
   (:require [y-video-back.env :refer [defaults]]
             [clojure.tools.logging :as log]
+            [y-video-back.layout :as layout]
             [y-video-back.layout :refer [*app-context* error-page]]
             [ring.middleware.anti-forgery :refer [wrap-anti-forgery]]
             [ring.middleware.webjars :refer [wrap-webjars]]
@@ -46,7 +47,7 @@
     ;(println "request-in-pre-cas=" request)
     (let [res (handler request)]
       (if (= 403 (:status res))
-          (redirect "/public/home")
+          (layout/render request "index.html" {:logged-in false})
           res))))
 
 (defn wrap-post-cas [handler]

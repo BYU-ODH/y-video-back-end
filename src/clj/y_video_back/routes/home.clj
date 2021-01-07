@@ -20,13 +20,13 @@
   (println (get-in request [:query-params]))
   (println (get-in request [:query-params]))
   (if (nil? (:username request))
-    (redirect "/public/ping")
+      (layout/render request "index.html" {:logged-in false})
     (let [session-id (uc/get-session-id (:username request))] ; temporary fix
       (println "checking user courses")
       (check-courses-with-api (:username request))
       (println (str "user from CAS: " (:username request)))
       (println (str "serving session-id from home.clj: " session-id))
-      (layout/render (into request {:session-id session-id}) "index.html"))))
+      (layout/render (into request {:session-id session-id}) "index.html" {:logged-in true}))))
 
 (defn get-routes-r
   "Recursive helper for get-routes"

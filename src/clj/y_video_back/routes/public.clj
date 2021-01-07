@@ -15,7 +15,7 @@
     [ring.middleware.multipart-params :refer [wrap-multipart-params]]))
 
 (defn home-page [request]
-  (layout/render request "dummy_home.html"))
+  (layout/render request "dummy_home.html" {:logged-in false}))
 
 
 (defn public-routes []
