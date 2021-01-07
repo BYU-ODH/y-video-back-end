@@ -1,5 +1,6 @@
 (ns y-video-back.routes.home
     (:require
+     [y-video-back.config :refer [env]]
      [y-video-back.layout :as layout]
      [ring.util.http-response :as response]
      [ring.util.response :refer [redirect]]
@@ -90,8 +91,8 @@
          ["/permission-docs" {:get permission-docs-page}]
          ["/login" {:get (constantly (redirect "/"))}]
 
-         ;["/logout" {:get {:handler (fn [req] (cas/logout-resp "https://cheneycreations.com"))}}] ; placeholder url until we get a login page going
-         ;["/logout" {:get {:handler (redirect (str "/?logout=true"))}}]
+         ["/logout" {:get {:handler (fn [req] (cas/logout-resp (:host env)))}}] ; placeholder url until we get a login page going
+         ; ["/logout" {:get {:handler (redirect (str "/?logout=true"))}}]
          ; serving videos routes
 
          ; React BrowserRouter support
