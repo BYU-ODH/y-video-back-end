@@ -21,7 +21,8 @@
             [clojure.data.json :as json]
             [y-video-back.utils.account-permissions :as ac]
             [y-video-back.db.users :as users]
-            [y-video-back.log :as ylog])
+            [y-video-back.log :as ylog]
+            [ring.util.response :refer [redirect]])
 
   (:import [javax.servlet ServletContext]))
 
@@ -34,7 +35,7 @@
 
 (defn wrap-cas [handler]
   (fn [request]
-    ((cas/wrap-cas handler {:timeout 120 :host-override (:host env)})
+    ((cas/wrap-cas handler {:timeout 120 :host-override (:host env) :no-redirect? (constantly (not (= "/index" (str (:path-info request)))))})
      request)))
     ;((cas/wrap-cas handler (str (-> env :y-video-back :site-url) (str (:uri request))))
     ; request))
@@ -42,10 +43,15 @@
 (defn wrap-pre-cas [handler]
   (fn [request]
     ;(println "request-in-pre-cas=" request)
-    (handler request)))
+    (println "in pre-cas")
+    (let [res (handler request)]
+      (if (= 403 (:status res))
+          (redirect "/public/home")
+          res))))
 
 (defn wrap-post-cas [handler]
   (fn [request]
+    (println "in post-cas")
     (handler request)))
 
 (defn wrap-cas-to-request-url
@@ -259,14 +265,14 @@
       log-endpoint-access
       add-id-and-username
       check-permission
-      add-session-id)) ; Why are these evaluated backwards?
+      add-session-id))
 
 (defn wrap-base [handler]
   (-> ((:middleware defaults) handler)
       wrap-flash
-      ;wrap-post-cas
+      wrap-post-cas
       wrap-cas
-      ;wrap-pre-cas
+      wrap-pre-cas
       ;wrap-csrf
       (wrap-session {:cookie-attrs {:http-only true}})
       (wrap-defaults

@@ -19,7 +19,7 @@
   (println (get-in request [:query-params]))
   (println (get-in request [:query-params]))
   (if (nil? (:username request))
-    (response/ok {:message "CAS failed to provide username"})
+    (redirect "/public/ping")
     (let [session-id (uc/get-session-id (:username request))] ; temporary fix
       (println "checking user courses")
       (check-courses-with-api (:username request))
@@ -88,6 +88,7 @@
          ["/who-am-i" {:get (fn [request] {:status 200 :body {:username (:username request)}})}]
          ;["/show-request" {:get (fn [request] {:status 200 :body {:request (str request)}})}]
          ["/permission-docs" {:get permission-docs-page}]
+         ; ["/login" {:get {:handler (redirect "/")}}]
 
          ;["/logout" {:get {:handler (fn [req] (cas/logout-resp "https://cheneycreations.com"))}}] ; placeholder url until we get a login page going
          ;["/logout" {:get {:handler (redirect (str "/?logout=true"))}}]
