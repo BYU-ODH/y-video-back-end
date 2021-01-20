@@ -1,5 +1,6 @@
 (ns y-video-back.routes.home
     (:require
+     [y-video-back.config :refer [env]]
      [y-video-back.layout :as layout]
      [ring.util.http-response :as response]
      [ring.util.response :refer [redirect]]
@@ -19,13 +20,13 @@
   (println (get-in request [:query-params]))
   (println (get-in request [:query-params]))
   (if (nil? (:username request))
-    (response/ok {:message "CAS failed to provide username"})
+      (layout/render request "index.html" {:logged-in false})
     (let [session-id (uc/get-session-id (:username request))] ; temporary fix
       (println "checking user courses")
       (check-courses-with-api (:username request))
       (println (str "user from CAS: " (:username request)))
       (println (str "serving session-id from home.clj: " session-id))
-      (layout/render (into request {:session-id session-id}) "index.html"))))
+      (layout/render (into request {:session-id session-id}) "index.html" {:logged-in true}))))
 
 (defn get-routes-r
   "Recursive helper for get-routes"
@@ -88,9 +89,10 @@
          ["/who-am-i" {:get (fn [request] {:status 200 :body {:username (:username request)}})}]
          ;["/show-request" {:get (fn [request] {:status 200 :body {:request (str request)}})}]
          ["/permission-docs" {:get permission-docs-page}]
+         ["/login" {:get (constantly (redirect "/"))}]
 
-         ;["/logout" {:get {:handler (fn [req] (cas/logout-resp "https://cheneycreations.com"))}}] ; placeholder url until we get a login page going
-         ;["/logout" {:get {:handler (redirect (str "/?logout=true"))}}]
+         ["/logout" {:get {:handler (fn [req] (cas/logout-resp (:host env)))}}] ; placeholder url until we get a login page going
+         ; ["/logout" {:get {:handler (redirect (str "/?logout=true"))}}]
          ; serving videos routes
 
          ; React BrowserRouter support

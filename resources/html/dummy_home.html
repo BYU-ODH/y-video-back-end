@@ -1,0 +1,59 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Y-Video</title>
+</head>
+
+
+<body style="margin: 30px;">
+    <div id="public_div" style="display: none">
+    <table style="margin-left:auto;margin-right:auto;">
+        <tr>
+            <td>
+                <img src="https://i.pinimg.com/originals/21/e3/e7/21e3e7217a61ba7327c3a2977b089293.jpg"
+                style="height: 80vh;">
+                <!-- <img src="https://upload.wikimedia.org/wikipedia/en/2/2b/Doors_of_Durin.jpg" -->
+                <!-- style="max-height: 90vh;"> -->
+            </td>
+            <td style="padding-left: 20px; font-size: 200%;">
+                <h1 style="text-align:center;">Y-Video</h1>
+                <h2 style="text-align:center;">Please login below</h2>
+                <h2 style="text-align:center;"><a href="/login"><button style="font-size: 100%;">login</button></a></h2>
+            </td>
+        </tr>
+    </table>
+    </div>
+    <div id="private_div" style="display: none">
+    <table style="margin-left:auto;margin-right:auto;">
+        <tr>
+            <td style="padding-left: 20px; font-size: 200%;">
+                <h1 style="text-align:center;">Welcome to Y-Video</h1>
+                <h2 style="text-align:center;">You can logout below</h2>
+                <h2 style="text-align:center;"><a href="/logout"><button style="font-size: 100%;">logout</button></a></h2>
+            </td>
+            <td>
+                <img src="https://i.pinimg.com/originals/c4/8e/0d/c48e0df6974e3be4f7c100d70db6940f.jpg"
+                style="height: 80vh;">
+            </td>
+        </tr>
+    </table>
+    </div>
+</body>
+
+<script>
+    var clj_session_id = "{{ session-id }}";
+    console.log(clj_session_id);
+    if (clj_session_id == "") {
+        console.log("logged out");
+        document.getElementById("public_div").style.display = "block";
+        document.getElementById("private_div").style.display = "none";
+    } else {
+        console.log("logged in");
+        document.getElementById("public_div").style.display = "none";
+        document.getElementById("private_div").style.display = "block";
+    }
+</script>
+
+</html>

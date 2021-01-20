@@ -1,6 +1,7 @@
 (ns y-video-back.middleware
   (:require [y-video-back.env :refer [defaults]]
             [clojure.tools.logging :as log]
+            [y-video-back.layout :as layout]
             [y-video-back.layout :refer [*app-context* error-page]]
             [ring.middleware.anti-forgery :refer [wrap-anti-forgery]]
             [ring.middleware.webjars :refer [wrap-webjars]]
@@ -21,7 +22,8 @@
             [clojure.data.json :as json]
             [y-video-back.utils.account-permissions :as ac]
             [y-video-back.db.users :as users]
-            [y-video-back.log :as ylog])
+            [y-video-back.log :as ylog]
+            [ring.util.response :refer [redirect]])
 
   (:import [javax.servlet ServletContext]))
 
@@ -33,8 +35,9 @@
    "Access-Control-Allow-Methods" "GET POST OPTIONS DELETE PUT"})
 
 (defn wrap-cas [handler]
+    "Validates CAS login. If invalid, only prompts login if given /login path-info"
   (fn [request]
-    ((cas/wrap-cas handler {:timeout 120 :host-override (:host env)})
+    ((cas/wrap-cas handler {:timeout 120 :host-override (:host env) :no-redirect? (constantly (not (= "/login" (str (:path-info request)))))})
      request)))
     ;((cas/wrap-cas handler (str (-> env :y-video-back :site-url) (str (:uri request))))
     ; request))
@@ -42,7 +45,10 @@
 (defn wrap-pre-cas [handler]
   (fn [request]
     ;(println "request-in-pre-cas=" request)
-    (handler request)))
+    (let [res (handler request)]
+      (if (= 403 (:status res))
+          (layout/render request "index.html" {:session-id ""})
+          res))))
 
 (defn wrap-post-cas [handler]
   (fn [request]
@@ -259,14 +265,14 @@
       log-endpoint-access
       add-id-and-username
       check-permission
-      add-session-id)) ; Why are these evaluated backwards?
+      add-session-id))
 
 (defn wrap-base [handler]
   (-> ((:middleware defaults) handler)
       wrap-flash
-      ;wrap-post-cas
+      wrap-post-cas
       wrap-cas
-      ;wrap-pre-cas
+      wrap-pre-cas
       ;wrap-csrf
       (wrap-session {:cookie-attrs {:http-only true}})
       (wrap-defaults
