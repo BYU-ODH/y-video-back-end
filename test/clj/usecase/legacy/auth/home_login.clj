@@ -14,7 +14,8 @@
       [legacy.utils.utils :as ut]
       [legacy.utils.db-populator :as db-pop]
       [y-video-back.db.auth-tokens :as auth-tokens]
-      [y-video-back.user-creator :as uc]))
+      [y-video-back.user-creator :as uc]
+      [clojure.string :refer [includes?]]))
 
 (declare ^:dynamic *txn*)
 
@@ -33,15 +34,13 @@
 (deftest cas-redirect
   (testing "no login, access home page"
     (let [res (app (request :get "/"))]
-      (is (= 302 (:status res)))
-      (is (= (str "https://cas.byu.edu/cas/login?service=" (:host env) "/")
-             (get-in res [:headers "Location"])))))
+      (is (= 200 (:status res)))
+      (is (includes? (:body res) "clj_session_id=\"\""))))
   (testing "no login, access api/ping"
     (let [res (app (request :get "/api/ping"))]
       (is (= 200 (:status res)))
       (is (contains? (m/decode-response-body res) :message))))
   (testing "no login, access admin"
     (let [res (app (request :get "/admin"))]
-      (is (= 302 (:status res)))
-      (is (= (str "https://cas.byu.edu/cas/login?service=" (:host env) "/admin")
-             (get-in res [:headers "Location"]))))))
+      (is (= 200 (:status res)))
+      (is (includes? (:body res) "clj_session_id=\"\"")))))
