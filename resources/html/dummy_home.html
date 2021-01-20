@@ -43,14 +43,14 @@
 </body>
 
 <script>
-    var logged_in = {{ logged-in }};
-    console.log(logged_in);
-    if (!logged_in) {
-        console.log("logged in");
+    var clj_session_id = "{{ session-id }}";
+    console.log(clj_session_id);
+    if (clj_session_id == "") {
+        console.log("logged out");
         document.getElementById("public_div").style.display = "block";
         document.getElementById("private_div").style.display = "none";
     } else {
-        console.log("logged out");
+        console.log("logged in");
         document.getElementById("public_div").style.display = "none";
         document.getElementById("private_div").style.display = "block";
     }

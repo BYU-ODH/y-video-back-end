@@ -47,7 +47,7 @@
     ;(println "request-in-pre-cas=" request)
     (let [res (handler request)]
       (if (= 403 (:status res))
-          (layout/render request "index.html" {:logged-in false})
+          (layout/render request "index.html" {:session-id ""})
           res))))
 
 (defn wrap-post-cas [handler]
