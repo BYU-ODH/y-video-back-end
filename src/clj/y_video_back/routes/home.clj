@@ -101,6 +101,7 @@
          ["/collections" {:get index-page}]
          ["/lab-assistant" {:get index-page}]
          ["/manage-resource" {:get index-page}]
+         ["/feedback" {:get index-page}]
          ["/lab-assistant-manager/:professorId" {:get index-page}]
          ["/lab-assistant-manager/:professorId/:collectionId" {:get index-page}]
          ["/manager" {:get index-page}]
