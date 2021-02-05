@@ -168,6 +168,7 @@ CREATE TABLE subtitles (
     ,title TEXT
     ,language TEXT
     ,content TEXT
+    ,words TEXT
     ,content_id UUID REFERENCES contents(id)
 );
 COMMENT ON TABLE subtitles IS 'Contains subtitles to be applied over contents';
