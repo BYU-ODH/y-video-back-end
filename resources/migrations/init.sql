@@ -152,7 +152,7 @@ CREATE TABLE contents (
     ,views INTEGER
     ,file_version TEXT
     ,published BOOLEAN
-    ,words TEXT
+    -- ,words TEXT
     ,resource_id UUID REFERENCES resources(id)
     ,collection_id UUID REFERENCES collections(id)
     --,public BOOLEAN
