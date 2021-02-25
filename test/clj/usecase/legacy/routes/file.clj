@@ -14,6 +14,7 @@
       [legacy.utils.utils :as ut]
       [legacy.utils.db-populator :as db-pop]
       [y-video-back.db.files :as files]
+      [y-video-back.db.auth-tokens :as auth-tokens]
       [y-video-back.db.languages :as languages]
       [clojure.java.io :as io]))
 
@@ -45,6 +46,20 @@
           (is (= (assoc (into file-one {:id id}) :filepath (:filepath db-file))
                  db-file))
           (is (.exists (io/as-file (str (-> env :FILES :media-url) (:filepath db-file)))))))))
+  (testing "file CREATE session-id remains valid"
+    (let [filecontent (ut/get-filecontent)
+          file-one (dissoc (db-pop/get-file) :filepath)
+          user-one (db-pop/add-user "admin")
+          token (:id (auth-tokens/CREATE {:user-id (:id user-one)}))]
+      (is (not (nil? (auth-tokens/READ-UNEXPIRED token))))
+      (let [res (rp/file-post token file-one filecontent)]
+        (is (= 200 (:status res)))
+        (let [id (ut/to-uuid (:id (m/decode-response-body res)))
+              db-file (ut/remove-db-only (files/READ id))]
+          (is (= (assoc (into file-one {:id id}) :filepath (:filepath db-file))
+                 db-file))
+          (is (.exists (io/as-file (str (-> env :FILES :media-url) (:filepath db-file)))))
+          (is (not (nil? (auth-tokens/READ-UNEXPIRED token))))))))
   (testing "file CREATE with new file-version/langauge"
     (let [filecontent (ut/get-filecontent)
           file-one (-> (db-pop/get-file)

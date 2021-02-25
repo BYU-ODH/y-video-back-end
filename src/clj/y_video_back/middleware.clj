@@ -224,11 +224,12 @@
       (if (= (get-session-id request) (sh-utils/to-uuid (:session-id-bypass env)))
         (assoc-in (handler request) [:headers "session-id"] (get-session-id request))
         (let [response (handler request)]
-          (if (= 200 (:status response))
-            (if (not (nil? (get-session-id request)))
+          (if (and (= 200 (:status response))
+                   (not (nil? (get-session-id request)))
+                   (not (and (= :post (:request-method request))
+                             (clojure.string/starts-with? (:uri request) "/api/file"))))
               (assoc-in response [:headers "session-id"] (ru/get-new-session-id (get-session-id request)))
-              response)
-            (assoc-in response [:headers "session-id"] (get-session-id request))))))))
+              (assoc-in response [:headers "session-id"] (get-session-id request))))))))
 
 (defn log-endpoint-access
   "Logs access to endpoint."
