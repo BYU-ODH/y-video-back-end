@@ -12,7 +12,8 @@
       [y-video-back.db.core :refer [*db*] :as db]
       [legacy.utils.utils :as ut]
       [legacy.utils.db-populator :as db-pop]
-      [y-video-back.db.resources :as resources]))
+      [y-video-back.db.resources :as resources]
+      [y-video-back.db.resource-access :as resource-access]))
 
 (declare ^:dynamic *txn*)
 
@@ -118,3 +119,10 @@
                  (update :resource-id str)
                  (list))
              (map ut/remove-db-only (m/decode-response-body res)))))))
+
+(deftest rsrc-access
+  (testing "add access to resource"
+    (let [rsrc-one (db-pop/add-resource)
+          res (rp/resource-add-access "testuser" (:id rsrc-one))]
+      (is (= 200 (:status res)))
+      (is (resource-access/EXISTS-USERNAME-RESOURCE? "testuser" (:id rsrc-one))))))
