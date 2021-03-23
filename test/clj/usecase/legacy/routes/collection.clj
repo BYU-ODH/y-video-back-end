@@ -278,12 +278,12 @@
       (is (= 200 (:status res-two)))
       (is (= (-> user-one
                  (update :id str)
-                 ;(into {:collection-id (str (:id coll-one)) :account-role (:account-role user-coll-one)})
+                 (into {:account-role (:account-role user-coll-one)})
                  (list))
              (map ut/remove-db-only (m/decode-response-body res-one))))
       (is (= (-> user-two
                  (update :id str)
-                 ;(into {:collection-id (str (:id coll-two)) :account-role (:account-role user-coll-two)})
+                 (into {:account-role (:account-role user-coll-two)})
                  (list))
              (map ut/remove-db-only (m/decode-response-body res-two)))))))
 
