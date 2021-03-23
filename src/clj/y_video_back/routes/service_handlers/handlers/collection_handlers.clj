@@ -206,7 +206,7 @@
    :role-level "instructor"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
-   :responses {200 {:body [models/user]}
+   :responses {200 {:body [(assoc models/user :account-role int?)]}
                404 (:body {:message string?})}
    :handler (fn [{{{:keys [id]} :path} :parameters}]
               (methods/collection-get-all-users id))})
