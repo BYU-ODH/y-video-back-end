@@ -13,4 +13,4 @@
 (def DELETE-BY-IDS "[column-vals]\ncolumn-vals must be a collection containing collection-id then username." (partial db/delete-where-and :user-collections-assoc-undeleted [:collection-id :username]))
 (def READ-USERS-BY-COLLECTION (partial db/read-all-where :users-by-collection :collection-id))
 (def READ-COLLECTIONS-BY-USER (partial db/read-all-where :collections-by-user :username))
-(defn EXISTS-COLL-USER? [collection-id username] (seq (db/read-where-and :user-collections-assoc-undeleted [:collection-id :username] [collection-id username])))
+(defn EXISTS-COLL-USER? [collection-id username] (not (= 0 (count (db/read-where-and :user-collections-assoc-undeleted [:collection-id :username] [collection-id username])))))
