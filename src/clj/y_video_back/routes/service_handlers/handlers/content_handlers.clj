@@ -1,8 +1,10 @@
 (ns y-video-back.routes.service-handlers.handlers.content-handlers
   (:require
+   [y-video-back.config :refer [env]]
    [y-video-back.db.contents :as contents]
    [y-video-back.db.collections :as collections]
    [y-video-back.db.resources :as resources]
+   [y-video-back.db.resource-access :as resource-access]
    [y-video-back.db.subtitles :as subtitles]
    [y-video-back.models :as models]
    [y-video-back.model-specs :as sp]
@@ -21,21 +23,27 @@
    :responses {200 {:body {:message string?
                            :id string?}}
                500 {:body {:message string?}}}
-   :handler (fn [{{:keys [body]} :parameters}]
-              (if-not (collections/EXISTS? (:collection-id body))
-                {:status 500
-                 :body {:message "collection not found"}}
-                (if-not (resources/EXISTS? (:resource-id body))
+   :handler (fn [{{{:keys [session-id]} :header :keys [body]} :parameters
+                  p-vals :permission-values}]
+                (if-not (collections/EXISTS? (:collection-id body))
                   {:status 500
-                   :body {:message "resource not found"}}
-                  ;(if (contents/EXISTS-COLL-CONT? (:collection-id body) (:resource-id body))
-                  ;  {:status 500
-                  ;   :body {:message "content connecting collection and resource already exists"}
-                  (let [new-thumbnail (first (filter #(not (= "" %)) [(:thumbnail body) (utils/get-thumbnail (:url body)) "none"]))
-                        res (contents/CREATE (assoc (dissoc body :thumbnail) :thumbnail new-thumbnail))]
-                    {:status 200
-                     :body {:message "1 content created"
-                            :id (utils/get-id res)}}))))})
+                   :body {:message "collection not found"}}
+                  (if-not (resources/EXISTS? (:resource-id body))
+                    {:status 500
+                     :body {:message "resource not found"}}
+                    ;(if (contents/EXISTS-COLL-CONT? (:collection-id body) (:resource-id body))
+                    ;  {:status 500
+                    ;   :body {:message "content connecting collection and resource already exists"}
+                    (if (or (:valid-type p-vals)
+                            (= (:session-id-bypass env) (str session-id))
+                            (resource-access/EXISTS-USERNAME-RESOURCE? (:username (ru/token-to-user session-id)) (:resource-id body)))
+                      (let [new-thumbnail (first (filter #(not (= "" %)) [(:thumbnail body) (utils/get-thumbnail (:url body)) "none"]))
+                            res (contents/CREATE (assoc (dissoc body :thumbnail) :thumbnail new-thumbnail))]
+                        {:status 200
+                         :body {:message "1 content created"
+                                :id (utils/get-id res)}})
+                      {:status 403
+                       :body {:message "user does not have permission to use resource"}}))))})
 
 (def content-get-by-id
   {:summary "Retrieves specified content"

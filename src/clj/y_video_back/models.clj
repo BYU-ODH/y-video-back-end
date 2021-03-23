@@ -86,6 +86,13 @@
 (def resource
   (into resource-without-id {:id uuid?}))
 
+(def resource-access-without-id
+  {:username string?
+   :resource-id string?})
+
+(def resource-access
+  (into resource-access-without-id {:id uuid?}))
+
 (def content-without-any-ids
   {:title string?
    :content-type string?
