@@ -71,6 +71,7 @@
 (def resource-id-files resource/resource-id-files)
 (def resource-id-contents resource/resource-id-contents)
 (def resource-id-subtitles resource/resource-id-subtitles)
+(def resource-add-access resource/resource-add-access)
 
 ; content routes
 (def content-id-add-view content/content-id-add-view)

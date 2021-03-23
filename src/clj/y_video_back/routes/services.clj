@@ -255,7 +255,9 @@
      ["/{id}/contents"
       {:get service-handlers/resource-get-all-contents}]
      ["/{id}/subtitles"
-      {:get service-handlers/resource-get-all-subtitles}]]
+      {:get service-handlers/resource-get-all-subtitles}]
+     ["/{id}/add-access"
+      {:post service-handlers/resource-add-access}]]
 
 
     ["/content"

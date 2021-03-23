@@ -53,6 +53,7 @@
 (def resource-get-all-contents resources/resource-get-all-contents)
 (def resource-get-all-subtitles resources/resource-get-all-subtitles)
 (def resource-get-all-files resources/resource-get-all-files)
+(def resource-add-access resources/resource-add-access)
 ;(def resource-add-view resources/resource-add-view)
 
 ; Subtitle handlers

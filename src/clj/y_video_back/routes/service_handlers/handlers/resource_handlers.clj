@@ -1,6 +1,7 @@
 (ns y-video-back.routes.service-handlers.handlers.resource-handlers
   (:require
    [y-video-back.db.resources :as resources]
+   [y-video-back.db.resource-access :as resource-access]
    [y-video-back.db.subtitles :as subtitles]
    [y-video-back.models :as models]
    [y-video-back.model-specs :as sp]
@@ -139,3 +140,21 @@
                       file-result (map #(utils/remove-db-only %) file-resources-result)]
                   {:status 200 ; Not implemented yet
                    :body file-result})))})
+
+(def resource-add-access ;; Non-functional
+  {:summary "Gives user with username access to add this resource to contents"
+   :permission-level "lab-assistant"
+   :parameters {:header {:session-id uuid?}
+                :body {:username string?}
+                :path {:id uuid?}}
+   :responses {200 {:body {:message string?}}
+               500 {:body {:message string?}}
+               404 {:body {:message string?}}}
+   :handler (fn [{{{:keys [session-id]} :header :keys [body] {:keys [id]} :path} :parameters}]
+              (if (resource-access/EXISTS-USERNAME-RESOURCE? (:username body) id)
+                {:status 500
+                 :body {:message "resource access already exists"}}
+                (do
+                  (resource-access/CREATE {:username (:username body) :resource-id id})
+                  {:status 200
+                   :body {:message "resource access added"}})))})

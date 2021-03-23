@@ -86,6 +86,10 @@
   []
   (get-random-model models/resource-without-id))
 
+(defn get-random-resource-access-without-id
+  [username resource-id]
+  (into (get-random-model models/resource-access-without-id) {:username username :resource-id resource-id}))
+
 (defn get-random-language-without-id
   ([]
    (get-random-model models/language-without-id)))

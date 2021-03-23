@@ -26,6 +26,7 @@
       [y-video-back.db.contents :as contents]
       [y-video-back.db.collections :as collections]
       [y-video-back.db.resources :as resources]
+      [y-video-back.db.resource-access :as resource-access]
       [y-video-back.db.courses :as courses]
       [y-video-back.db.languages :as languages]
       [y-video-back.db.subtitles :as subtitles]
@@ -338,3 +339,17 @@
    (let [cca-one (get-coll-crse-assoc)
          cca-one-add (collection-courses-assoc/CREATE cca-one)]
      (assoc cca-one :id (:id cca-one-add)))))
+
+(defn get-resource-access
+  "Creates resource-id, ready to be added to db"
+  [username resource-id]
+  ; (g/get-random-resource-access-without-id username resource-id))
+  {:username username :resource-id resource-id})
+
+(defn add-resource-access
+  "Creates resourece-access"
+  ([username resource-id]
+   (let [rsrc-acc (get-resource-access username resource-id)
+         rsrc-acc-add (resource-access/CREATE rsrc-acc)
+         temp (resource-access/READ (:id rsrc-acc-add))]
+     (assoc rsrc-acc :id (:id rsrc-acc-add)))))

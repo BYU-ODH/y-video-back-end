@@ -78,3 +78,12 @@
             (header :session-id session-id))))
   ([id]
    (resource-id-subtitles (:session-id-bypass env) id)))
+
+(defn resource-add-access
+  "Give username permission to create contents with resource"
+  ([session-id username resource-id]
+   (ap2 (-> (request :post (str "/api/resource/" resource-id "/add-access"))
+            (json-body {:username username})
+            (header :session-id session-id))))
+  ([username resource-id]
+   (resource-add-access (:session-id-bypass env) username resource-id)))

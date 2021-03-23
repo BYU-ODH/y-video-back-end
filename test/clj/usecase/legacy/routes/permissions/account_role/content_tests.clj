@@ -43,15 +43,36 @@
 
 ;post: /api/content
 (deftest content-post
-  (testing "instructor, content-post, owns collection"
+  (testing "instructor, content-post, owns collection, has resource access"
+    (let [user-one (db-pop/add-user "instructor")
+          coll-one (db-pop/add-collection (:id user-one))
+          rsrc-one (db-pop/add-resource)
+          rsrc-acc (db-pop/add-resource-access (:username user-one) (:id rsrc-one))
+          cont-one (db-pop/get-content (:id coll-one) (:id rsrc-one))
+          res (rp/content-post (uc/user-id-to-session-id (:id user-one))
+                               cont-one)]
+      (is (= 200 (:status res)))))
+  (testing "instructor, content-post, instructor via user-coll, has resource access"
+    (let [user-one (db-pop/add-user "instructor")
+          coll-one (db-pop/add-collection)
+          rsrc-one (db-pop/add-resource)
+          rsrc-acc (db-pop/add-resource-access (:username user-one) (:id rsrc-one))
+          cont-one (db-pop/get-content (:id coll-one) (:id rsrc-one))
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one)
+                                                    (:id coll-one)
+                                                    "instructor")
+          res (rp/content-post (uc/user-id-to-session-id (:id user-one))
+                               cont-one)]
+      (is (= 200 (:status res)))))
+  (testing "instructor, content-post, owns collection, no resource access"
     (let [user-one (db-pop/add-user "instructor")
           coll-one (db-pop/add-collection (:id user-one))
           rsrc-one (db-pop/add-resource)
           cont-one (db-pop/get-content (:id coll-one) (:id rsrc-one))
           res (rp/content-post (uc/user-id-to-session-id (:id user-one))
                                cont-one)]
-      (is (= 200 (:status res)))))
-  (testing "instructor, content-post, instructor via user-coll"
+      (is (= 403 (:status res)))))
+  (testing "instructor, content-post, instructor via user-coll, no resource access"
     (let [user-one (db-pop/add-user "instructor")
           coll-one (db-pop/add-collection)
           rsrc-one (db-pop/add-resource)
@@ -61,7 +82,7 @@
                                                     "instructor")
           res (rp/content-post (uc/user-id-to-session-id (:id user-one))
                                cont-one)]
-      (is (= 200 (:status res)))))
+      (is (= 403 (:status res)))))
   (testing "instructor, content-post, student via user-coll"
     (let [user-one (db-pop/add-user "instructor")
           coll-one (db-pop/add-collection)

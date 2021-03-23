@@ -99,6 +99,18 @@ CREATE TABLE resources (
 );
 COMMENT ON TABLE resources IS 'Referenced by contents, hold media in files table';
 
+DROP TABLE IF EXISTS resource_access CASCADE;
+CREATE TABLE resource_access (
+    id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY
+    ,deleted TIMESTAMP DEFAULT NULL
+    ,updated TIMESTAMP DEFAULT NULL
+    ,created  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    ,username TEXT NOT NULL
+    ,resource_id UUID REFERENCES resources(id)
+   , CONSTRAINT no_duplicate_resource_access UNIQUE (deleted, username, resource_id)
+);
+COMMENT ON TABLE resource_access IS 'Tracks which users may add this resource to contents';
+
 DROP TABLE IF EXISTS languages CASCADE;
 CREATE TABLE languages (
     id TEXT NOT NULL PRIMARY KEY
