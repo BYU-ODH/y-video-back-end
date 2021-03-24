@@ -41,7 +41,7 @@
                          :body {:message "1 content created"
                                 :id (ut/get-id res)}})
                       {:status 403
-                       :body {:message "user does not have permission to use resource"}}))))})
+                       :body {:message "collection owner does not have permission to use resource"}}))))})
 
 (def content-get-by-id
   {:summary "Retrieves specified content"
@@ -68,7 +68,7 @@
    :responses {200 {:body {:message string?}}
                404 {:body {:message string?}}
                500 {:body {:message string?}}}
-   :handler (fn [{{{:keys [id]} :path :keys [body]} :parameters}]
+   :handler (fn [{{{:keys [id]} :path {:keys [session-id]} :header :keys [body]} :parameters}]
               (if-not (contents/EXISTS? id)
                 {:status 404
                  :body {:message "content not found"}}
@@ -80,9 +80,13 @@
                     (if-not (resources/EXISTS? (:resource-id proposed-content))
                       {:status 500
                        :body {:message "resource not found"}}
-                      (let [result (contents/UPDATE id body)]
-                        {:status 200
-                         :body {:message (str result " contents updated")}}))))))})
+                      (if (or (= (:session-id-bypass env) (str session-id))
+                              (ut/has-resource-permission (:resource-id body) (:collection-id body)))
+                          (let [result (contents/UPDATE id body)]
+                            {:status 200
+                             :body {:message (str result " contents updated")}})
+                          {:status 403
+                           :body {:message "collection owner does not have permission to use resource"}}))))))})
 
 (def content-delete ;; Non-functional
   {:summary "Deletes the specified content"

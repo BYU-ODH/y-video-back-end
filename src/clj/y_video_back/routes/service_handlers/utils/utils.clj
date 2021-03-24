@@ -97,10 +97,13 @@
   [resource-id collection-id]
   (let [coll (collections/READ collection-id)
         owner (users/READ (:owner coll))]
+    ; (println "in utils")
+    ; (println "coll: " coll)
+    ; (println "owner: " owner)
     (if (nil? owner)
       false
       (resource-access/EXISTS-USERNAME-RESOURCE? (:username owner) resource-id))))
-      ; need to include check for user connected via user-collections-assoc
+      ; TODO need to include check for user connected via user-collections-assoc
 
 ; (defn user-db-to-front
 ;   "Replace keywords with what the front end expects"
