@@ -55,6 +55,7 @@
 (def resource-get-all-files resources/resource-get-all-files)
 (def resource-add-access resources/resource-add-access)
 (def resource-remove-access resources/resource-remove-access)
+(def resource-read-all-access resources/resource-read-all-access)
 ;(def resource-add-view resources/resource-add-view)
 
 ; Subtitle handlers

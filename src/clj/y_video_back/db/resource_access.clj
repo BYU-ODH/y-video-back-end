@@ -23,3 +23,8 @@
            :resource-access-undeleted
            [:username :resource-id]
            [username resource-id])))
+
+(defn READ-USERNAMES-BY-RESOURCE
+  "Returns all usernames connected resource"
+  [resource-id]
+  (db/read-all-where :resource-access-undeleted :resource-id resource-id [:username]))

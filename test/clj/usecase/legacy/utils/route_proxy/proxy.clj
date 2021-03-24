@@ -73,6 +73,7 @@
 (def resource-id-subtitles resource/resource-id-subtitles)
 (def resource-add-access resource/resource-add-access)
 (def resource-remove-access resource/resource-remove-access)
+(def resource-read-all-access resource/resource-read-all-access)
 
 ; content routes
 (def content-id-add-view content/content-id-add-view)

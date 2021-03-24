@@ -133,4 +133,25 @@
       (is (resource-access/EXISTS-USERNAME-RESOURCE? username (:id rsrc-one)))
       (let [res (rp/resource-remove-access username (:id rsrc-one))]
         (is (= 200 (:status res)))
-        (is (not (resource-access/EXISTS-USERNAME-RESOURCE? username (:id rsrc-one))))))))
+        (is (not (resource-access/EXISTS-USERNAME-RESOURCE? username (:id rsrc-one)))))))
+  (testing "read all users with access to resource"
+    (let [rsrc-one (db-pop/add-resource)
+          username-one "testuser"
+          username-two "seconduser"
+          username-thr "another!"
+          res-zer (rp/resource-read-all-access (:id rsrc-one))
+          acc-one (db-pop/add-resource-access username-one (:id rsrc-one))
+          res-one (rp/resource-read-all-access (:id rsrc-one))
+          acc-two (db-pop/add-resource-access username-two (:id rsrc-one))
+          acc-thr (db-pop/add-resource-access username-thr (:id rsrc-one))
+          res-two (rp/resource-read-all-access (:id rsrc-one))]
+      (is (= 200 (:status res-zer)))
+      (is (= 200 (:status res-one)))
+      (is (= 200 (:status res-two)))
+      (is (= '() (m/decode-response-body res-zer)))
+      (is (= (frequencies (list username-one)) (frequencies (m/decode-response-body res-one))))
+      (is (= (frequencies (list username-one username-two username-thr)) (frequencies (m/decode-response-body res-two))))))
+  (testing "read all users from nonexistant resource"
+    (let [fake-id (java.util.UUID/randomUUID)
+          res-one (rp/resource-read-all-access fake-id)]
+      (is (= 404 (:status res-one))))))

@@ -158,6 +158,7 @@
                   (resource-access/CREATE {:username (:username body) :resource-id id})
                   {:status 200
                    :body {:message "resource access added"}})))})
+              ; TODO add check for resource existence
 
 (def resource-remove-access ;; Non-functional
   {:summary "Removes user with username access to add this resource to contents"
@@ -177,3 +178,18 @@
                     (resource-access/DELETE (:id rsrc-acc))
                     {:status 200
                      :body {:message "resource access added"}}))))})
+
+(def resource-read-all-access ;; Non-functional
+  {:summary "Returns usernames of all users with access to add this resource to contents"
+   :permission-level "lab-assistant"
+   :parameters {:header {:session-id uuid?}
+                :path {:id uuid?}}
+   :responses {200 {:body [string?]}
+               500 {:body {:message string?}}
+               404 {:body {:message string?}}}
+   :handler (fn [{{{:keys [id]} :path} :parameters}]
+              (if (not (resources/EXISTS? id))
+                {:status 404
+                 :body {:message "resource not found"}}
+                {:status 200
+                 :body (map (fn [arg] (:username arg)) (resource-access/READ-USERNAMES-BY-RESOURCE id))}))})

@@ -259,7 +259,9 @@
      ["/{id}/add-access"
       {:post service-handlers/resource-add-access}]
      ["/{id}/remove-access"
-      {:delete service-handlers/resource-remove-access}]]
+      {:delete service-handlers/resource-remove-access}]
+     ["/{id}/read-all-access"
+      {:get service-handlers/resource-read-all-access}]]
 
 
     ["/content"

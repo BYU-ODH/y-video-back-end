@@ -96,3 +96,11 @@
             (header :session-id session-id))))
   ([username resource-id]
    (resource-remove-access (:session-id-bypass env) username resource-id)))
+
+(defn resource-read-all-access
+  "Remove username permission to create contents with resource"
+  ([session-id resource-id]
+   (ap2 (-> (request :get (str "/api/resource/" resource-id "/read-all-access"))
+            (header :session-id session-id))))
+  ([resource-id]
+   (resource-read-all-access (:session-id-bypass env) resource-id)))
