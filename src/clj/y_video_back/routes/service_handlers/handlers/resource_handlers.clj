@@ -158,3 +158,22 @@
                   (resource-access/CREATE {:username (:username body) :resource-id id})
                   {:status 200
                    :body {:message "resource access added"}})))})
+
+(def resource-remove-access ;; Non-functional
+  {:summary "Removes user with username access to add this resource to contents"
+   :permission-level "lab-assistant"
+   :parameters {:header {:session-id uuid?}
+                :body {:username string?}
+                :path {:id uuid?}}
+   :responses {200 {:body {:message string?}}
+               500 {:body {:message string?}}
+               404 {:body {:message string?}}}
+   :handler (fn [{{{:keys [session-id]} :header :keys [body] {:keys [id]} :path} :parameters}]
+              (let [rsrc-acc (resource-access/READ-BY-USERNAME-RESOURCE (:username body) id)]
+                (if (nil? rsrc-acc)
+                  {:status 500
+                   :body {:message "no user resource connection to delete"}}
+                  (do
+                    (resource-access/DELETE (:id rsrc-acc))
+                    {:status 200
+                     :body {:message "resource access added"}}))))})

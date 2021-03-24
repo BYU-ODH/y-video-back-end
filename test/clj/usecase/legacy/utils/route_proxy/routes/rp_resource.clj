@@ -87,3 +87,12 @@
             (header :session-id session-id))))
   ([username resource-id]
    (resource-add-access (:session-id-bypass env) username resource-id)))
+
+(defn resource-remove-access
+  "Remove username permission to create contents with resource"
+  ([session-id username resource-id]
+   (ap2 (-> (request :delete (str "/api/resource/" resource-id "/remove-access"))
+            (json-body {:username username})
+            (header :session-id session-id))))
+  ([username resource-id]
+   (resource-remove-access (:session-id-bypass env) username resource-id)))

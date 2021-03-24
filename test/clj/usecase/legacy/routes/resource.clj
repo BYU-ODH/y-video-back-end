@@ -125,4 +125,12 @@
     (let [rsrc-one (db-pop/add-resource)
           res (rp/resource-add-access "testuser" (:id rsrc-one))]
       (is (= 200 (:status res)))
-      (is (resource-access/EXISTS-USERNAME-RESOURCE? "testuser" (:id rsrc-one))))))
+      (is (resource-access/EXISTS-USERNAME-RESOURCE? "testuser" (:id rsrc-one)))))
+  (testing "remove access to resource"
+    (let [rsrc-one (db-pop/add-resource)
+          username "testuser"
+          rsrc-acc (db-pop/add-resource-access username (:id rsrc-one))]
+      (is (resource-access/EXISTS-USERNAME-RESOURCE? username (:id rsrc-one)))
+      (let [res (rp/resource-remove-access username (:id rsrc-one))]
+        (is (= 200 (:status res)))
+        (is (not (resource-access/EXISTS-USERNAME-RESOURCE? username (:id rsrc-one))))))))
