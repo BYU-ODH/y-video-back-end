@@ -52,18 +52,18 @@
           res (rp/content-post (uc/user-id-to-session-id (:id user-one))
                                cont-one)]
       (is (= 200 (:status res)))))
-  (testing "instructor, content-post, instructor via user-coll, has resource access"
-    (let [user-one (db-pop/add-user "instructor")
-          coll-one (db-pop/add-collection)
-          rsrc-one (db-pop/add-resource)
-          rsrc-acc (db-pop/add-resource-access (:username user-one) (:id rsrc-one))
-          cont-one (db-pop/get-content (:id coll-one) (:id rsrc-one))
-          user-coll-add (db-pop/add-user-coll-assoc (:username user-one)
-                                                    (:id coll-one)
-                                                    "instructor")
-          res (rp/content-post (uc/user-id-to-session-id (:id user-one))
-                               cont-one)]
-      (is (= 200 (:status res)))))
+  ; (testing "instructor, content-post, instructor via user-coll, has resource access"
+  ;   (let [user-one (db-pop/add-user "instructor")
+  ;         coll-one (db-pop/add-collection)
+  ;         rsrc-one (db-pop/add-resource)
+  ;         rsrc-acc (db-pop/add-resource-access (:username user-one) (:id rsrc-one))
+  ;         cont-one (db-pop/get-content (:id coll-one) (:id rsrc-one))
+  ;         user-coll-add (db-pop/add-user-coll-assoc (:username user-one)
+  ;                                                   (:id coll-one)
+  ;                                                   "instructor")
+  ;         res (rp/content-post (uc/user-id-to-session-id (:id user-one))
+  ;                              cont-one)]
+  ;     (is (= 200 (:status res)))))
   (testing "instructor, content-post, owns collection, no resource access"
     (let [user-one (db-pop/add-user "instructor")
           coll-one (db-pop/add-collection (:id user-one))

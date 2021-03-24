@@ -43,15 +43,41 @@
 
 ;post: /api/content
 (deftest content-post
-  (testing "admin - no connection, content-post"
+  (testing "admin - no connection, content-post, other user owns collection without access"
     (let [user-one (db-pop/add-user "admin")
-          cont-one (db-pop/get-content)
+          user-two (db-pop/add-user "instructor")
+          coll-one (db-pop/add-collection (:id user-two))
+          rsrc-one (db-pop/add-resource)
+          cont-one (db-pop/get-content (:id coll-one) (:id rsrc-one))
+          res (rp/content-post (uc/user-id-to-session-id (:id user-one))
+                               cont-one)]
+      (is (= 403 (:status res)))))
+  (testing "admin - no connection, content-post, other user owns collection with access"
+    (let [user-one (db-pop/add-user "admin")
+          user-two (db-pop/add-user "instructor")
+          coll-one (db-pop/add-collection (:id user-two))
+          rsrc-one (db-pop/add-resource)
+          cont-one (db-pop/get-content (:id coll-one) (:id rsrc-one))
+          rsrc-acc (db-pop/add-resource-access (:username user-two) (:id rsrc-one))
           res (rp/content-post (uc/user-id-to-session-id (:id user-one))
                                cont-one)]
       (is (= 200 (:status res)))))
-  (testing "lab assistant - no connection, content-post"
+  (testing "lab-assistant - no connection, content-post, other user owns collection without access"
     (let [user-one (db-pop/add-user "lab-assistant")
-          cont-one (db-pop/get-content)
+          user-two (db-pop/add-user "instructor")
+          coll-one (db-pop/add-collection (:id user-two))
+          rsrc-one (db-pop/add-resource)
+          cont-one (db-pop/get-content (:id coll-one) (:id rsrc-one))
+          res (rp/content-post (uc/user-id-to-session-id (:id user-one))
+                               cont-one)]
+      (is (= 403 (:status res)))))
+  (testing "lab-assistant - no connection, content-post, other user owns collection with access"
+    (let [user-one (db-pop/add-user "lab-assistant")
+          user-two (db-pop/add-user "instructor")
+          coll-one (db-pop/add-collection (:id user-two))
+          rsrc-one (db-pop/add-resource)
+          cont-one (db-pop/get-content (:id coll-one) (:id rsrc-one))
+          rsrc-acc (db-pop/add-resource-access (:username user-two) (:id rsrc-one))
           res (rp/content-post (uc/user-id-to-session-id (:id user-one))
                                cont-one)]
       (is (= 200 (:status res)))))

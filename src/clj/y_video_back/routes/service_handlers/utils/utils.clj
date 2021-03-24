@@ -1,6 +1,9 @@
 (ns y-video-back.routes.service-handlers.utils.utils
   (:require [y-video-back.config :refer [env]]
             [y-video-back.db.files :as files]
+            [y-video-back.db.collections :as collections]
+            [y-video-back.db.users :as users]
+            [y-video-back.db.resource-access :as resource-access]
             [clojure.string :as str]))
 (defn remove-db-only
   "Removes created, updated, and deleted fields from map"
@@ -87,6 +90,17 @@
   [given-name]
   (str (rand-str 8)
        (str "." (last (str/split given-name #"\.")))))
+
+
+(defn has-resource-permission
+  "Checks if user with username has permission to add resource to content. Body must contain resource-id and collection-id. Must verify collection and resource before calling."
+  [resource-id collection-id]
+  (let [coll (collections/READ collection-id)
+        owner (users/READ (:owner coll))]
+    (if (nil? owner)
+      false
+      (resource-access/EXISTS-USERNAME-RESOURCE? (:username owner) resource-id))))
+      ; need to include check for user connected via user-collections-assoc
 
 ; (defn user-db-to-front
 ;   "Replace keywords with what the front end expects"

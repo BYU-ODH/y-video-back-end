@@ -8,7 +8,6 @@
    [y-video-back.db.subtitles :as subtitles]
    [y-video-back.models :as models]
    [y-video-back.model-specs :as sp]
-   [y-video-back.routes.service-handlers.utils.utils :as utils]
    [y-video-back.routes.service-handlers.utils.role-utils :as ru]
    [y-video-back.routes.service-handlers.utils.utils :as ut]
    [y-video-back.utils.account-permissions :as ac]))
@@ -34,14 +33,13 @@
                     ;(if (contents/EXISTS-COLL-CONT? (:collection-id body) (:resource-id body))
                     ;  {:status 500
                     ;   :body {:message "content connecting collection and resource already exists"}
-                    (if (or (:valid-type p-vals)
-                            (= (:session-id-bypass env) (str session-id))
-                            (resource-access/EXISTS-USERNAME-RESOURCE? (:username (ru/token-to-user session-id)) (:resource-id body)))
-                      (let [new-thumbnail (first (filter #(not (= "" %)) [(:thumbnail body) (utils/get-thumbnail (:url body)) "none"]))
+                    (if (or (= (:session-id-bypass env) (str session-id))
+                            (ut/has-resource-permission (:resource-id body) (:collection-id body)))
+                      (let [new-thumbnail (first (filter #(not (= "" %)) [(:thumbnail body) (ut/get-thumbnail (:url body)) "none"]))
                             res (contents/CREATE (assoc (dissoc body :thumbnail) :thumbnail new-thumbnail))]
                         {:status 200
                          :body {:message "1 content created"
-                                :id (utils/get-id res)}})
+                                :id (ut/get-id res)}})
                       {:status 403
                        :body {:message "user does not have permission to use resource"}}))))})
 
@@ -168,4 +166,4 @@
                                                       (assoc :content-id id)))]
                     {:status 200
                      :body {:message "1 subtitle cloned"
-                            :id (utils/get-id add-res)}}))))})
+                            :id (ut/get-id add-res)}}))))})
