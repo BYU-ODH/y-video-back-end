@@ -8,7 +8,7 @@
 (defn remove-db-only
   "Removes created, updated, and deleted fields from map"
   [my-map]
-  (dissoc my-map :created :updated :deleted :last-person-api :last-course-api :byu-person-id))
+  (dissoc my-map :created :updated :deleted :last-person-api :last-course-api :byu-person-id :last-verified))
 
 ; (defn add-namespace ; Can probably delete this function, not in use?
 ;   "Converts all keywords to namespace-keywords"

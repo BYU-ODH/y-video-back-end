@@ -133,7 +133,9 @@
   {:summary "Retrieves all collections for session user"
    :permission-level "student"
    :parameters {:header {:session-id uuid?}}
-   :responses {200 {:body [(assoc models/collection :content [models/content])]}
+   :responses {200 {:body [(assoc (assoc models/collection :content [models/content]) :expired-content [{:content-title string?
+                                                                                                         :content-id uuid?
+                                                                                                         :resource-id uuid?}])]}
                404 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header} :parameters}]
               (let [user-id (ru/token-to-user-id session-id)]
@@ -158,8 +160,26 @@
                                                (utils/remove-db-only)
                                                (dissoc :user-id))
                                            user-owner-result)
-                        total-result (map #(-> %
-                                               (assoc :content (map utils/remove-db-only (contents/READ-BY-COLLECTION (:id %)))))
+                        total-result (map (fn [arg]
+                                              (let [raw-res-all (contents/READ-BY-COLLECTION-WITH-LAST-VERIFIED (:id arg))
+                                                    raw-res (doall (filter #(not (nil? (:last-verified %)))
+                                                                           raw-res-all))
+                                                    raw-valid (doall (filter #(> (inst-ms (:last-verified %))
+                                                                                 (- (System/currentTimeMillis) (* 3600000 (-> env :resource-access-expire-after))))
+                                                                             raw-res))
+                                                    raw-expired (doall (filter #(< (inst-ms (:last-verified %))
+                                                                                   (- (System/currentTimeMillis) (* 3600000 (-> env :resource-access-expire-after))))
+                                                                               raw-res))
+                                                    res-valid (map #(utils/remove-db-only %) raw-valid)
+                                                    res-expired (map (fn [arg]
+                                                                       {:content-title (:title arg)
+                                                                        :content-id (:id arg)
+                                                                        :resource-id (:resource-id arg)})
+                                                                     raw-expired)]
+
+                                                (-> arg
+                                                    (assoc :content res-valid)
+                                                    (assoc :expired-content res-expired))))
                                           (distinct (concat courses-result collections-result owner-result)))]
                     {:status 200
                      :body total-result}))))})

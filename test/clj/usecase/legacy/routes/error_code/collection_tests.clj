@@ -206,7 +206,7 @@
           add-coll-res (collections/CREATE new-collection)
           res (rp/collection-id-contents (:id add-coll-res))]
       (is (= 200 (:status res)))
-      (is (= '() (m/decode-response-body res))))))
+      (is (= {:content [] :expired-content []} (m/decode-response-body res))))))
 
 (deftest collection-courses
   (testing "read courses for nonexistent collection"

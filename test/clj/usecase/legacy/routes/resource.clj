@@ -154,4 +154,7 @@
   (testing "read all users from nonexistant resource"
     (let [fake-id (java.util.UUID/randomUUID)
           res-one (rp/resource-read-all-access fake-id)]
-      (is (= 404 (:status res-one))))))
+      (is (= 404 (:status res-one)))))
+  (testing "renew expired access by adding again")
+
+  (testing "renew unexpired access by adding again"))
