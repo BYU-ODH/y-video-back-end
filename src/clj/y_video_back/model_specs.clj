@@ -78,6 +78,7 @@
 (s/def :content/file-version string?)
 (s/def :content/published boolean?)
 (s/def :content/words string?)
+(s/def :content/clips string?)
 (s/def :content/resource-id uuid?)
 (s/def :content/collection-id uuid?)
 (s/def ::content
@@ -96,6 +97,7 @@
                    :content/file-version
                    :content/published
                    :content/words
+                   :content/clips
                    :content/resource-id
                    :content/collection-id]))
 
