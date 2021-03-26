@@ -9,7 +9,8 @@
 (def CLONE (partial db/CLONE :resource-access))
 (def PERMANENT-DELETE (partial db/DELETE :resource-access))
 (defn EXISTS? [id] (not (nil? (db/READ :resource-access-undeleted id))))
-
+(defn UPDATE-LAST-VERIFIED [id]
+  (db/update-resource-access-last-verified (str id)))
 (defn EXISTS-USERNAME-RESOURCE?
   [username resource-id]
   (not (= 0 (count (db/read-where-and

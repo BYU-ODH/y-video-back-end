@@ -162,6 +162,8 @@
                                            user-owner-result)
                         total-result (map (fn [arg]
                                               (let [raw-res-all (contents/READ-BY-COLLECTION-WITH-LAST-VERIFIED (:id arg))
+                                                    ; TODO also need to indicate there are contents with no resource-access at all
+                                                    ; TODO they are currently just getting dropped and ignored
                                                     raw-res (doall (filter #(not (nil? (:last-verified %)))
                                                                            raw-res-all))
                                                     raw-valid (doall (filter #(> (inst-ms (:last-verified %))

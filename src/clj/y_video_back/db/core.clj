@@ -176,6 +176,12 @@
 
 (def spy #(do (println "DEBUG:" %) %))
 
+(defn update-resource-access-last-verified  ; TODO - generalize this function
+  "Sets last verified in resource-access to current timestamp"
+  [id]
+  (let [sql-query (str "UPDATE resource_access SET last_verified=CURRENT_TIMESTAMP WHERE id='" id "';")]
+    (dbdo! sql-query)))
+
 (defn read-where-and
   "Get entry from table by column(s), conditionals joined by AND"
   [table-keyword [& column-keywords] [& column-vals] &[select-field-keys]]

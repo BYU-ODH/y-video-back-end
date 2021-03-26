@@ -6,7 +6,8 @@
    [y-video-back.models :as models]
    [y-video-back.model-specs :as sp]
    [y-video-back.routes.service-handlers.utils.utils :as utils]
-   [y-video-back.utils.account-permissions :as ac]))
+   [y-video-back.utils.account-permissions :as ac]
+   [clj-time.core :as t]))
 
 
 (def resource-create ;; Non-functional
@@ -152,13 +153,12 @@
                404 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header :keys [body] {:keys [id]} :path} :parameters}]
               (if (resource-access/EXISTS-USERNAME-RESOURCE? (:username body) id)
-                {:status 500
-                 :body {:message "resource access already exists"}}
-                (do
-                  (resource-access/CREATE {:username (:username body) :resource-id id})
-                  {:status 200
-                   :body {:message "resource access added"}})))})
+                (resource-access/UPDATE-LAST-VERIFIED (:id (resource-access/READ-BY-USERNAME-RESOURCE (:username body) id)))
+                (resource-access/CREATE {:username (:username body) :resource-id id}))
+              {:status 200
+               :body {:message "resource access added"}})})
               ; TODO add check for resource existence
+              ; TODO add check for update or create success
 
 (def resource-remove-access ;; Non-functional
   {:summary "Removes user with username access to add this resource to contents"
