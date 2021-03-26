@@ -86,7 +86,8 @@
                    (ut/remove-db-only)
                    (update :id str)
                    (update :owner str)
-                   (assoc :content '[]))]
+                   (assoc :content '[])
+                   (assoc :expired-content '[]))]
              (m/decode-response-body res)))))
   (testing "get collections - direct user-coll assoc only"
           ; Create user
@@ -99,6 +100,7 @@
           coll-two (ut/under-to-hyphen (collections/CREATE (g/get-random-collection-without-id (:id user-two))))
           ; Create content for coll-two
           rsrc-one (db-pop/add-resource)
+          res-acc (db-pop/add-resource-access (:username user-two) (:id rsrc-one))
           cont-one (db-pop/add-content (:id coll-two) (:id rsrc-one))
           ; Connect user to collections
           user-coll-one (user-collections-assoc/CREATE {:collection-id (:id coll-one)
@@ -114,7 +116,8 @@
                                (ut/remove-db-only)
                                (update :id str)
                                (update :owner str)
-                               (assoc :content '[]))
+                               (assoc :content '[])
+                               (assoc :expired-content []))
 
                            (-> coll-two
                                         (ut/remove-db-only)
@@ -124,7 +127,8 @@
                                                              (ut/remove-db-only)
                                                              (update :id str)
                                                              (update :collection-id str)
-                                                             (update :resource-id str))]))])
+                                                             (update :resource-id str))])
+                                        (assoc :expired-content '[]))])
              (frequencies (map ut/remove-db-only (m/decode-response-body res)))))))
 
   (testing "get collections - direct user-coll assoc and owner of same"
@@ -137,6 +141,7 @@
           coll-two (ut/under-to-hyphen (collections/CREATE (g/get-random-collection-without-id user-id)))
           ; Create content for coll-two
           rsrc-one (db-pop/add-resource)
+          res-acc (db-pop/add-resource-access (:username user-one) (:id rsrc-one))
           cont-one (db-pop/add-content (:id coll-two) (:id rsrc-one))
           ; Connect user to collections
           user-coll-one (user-collections-assoc/CREATE {:collection-id (:id coll-one)
@@ -152,7 +157,8 @@
                                (ut/remove-db-only)
                                (update :id str)
                                (update :owner str)
-                               (assoc :content '[]))
+                               (assoc :content '[])
+                               (assoc :expired-content '[]))
                            (-> coll-two
                                         (ut/remove-db-only)
                                         (update :id str)
@@ -161,7 +167,8 @@
                                                              (ut/remove-db-only)
                                                              (update :id str)
                                                              (update :collection-id str)
-                                                             (update :resource-id str))]))])
+                                                             (update :resource-id str))])
+                                        (assoc :expired-content '[]))])
              (frequencies (map ut/remove-db-only (m/decode-response-body res)))))))
 
   (testing "get collections - indirect via course only"
@@ -173,6 +180,7 @@
           coll-two (ut/under-to-hyphen (collections/CREATE (g/get-random-collection-without-id (:id user-two))))
           ; Create content for coll-two
           rsrc-one (db-pop/add-resource)
+          res-acc (db-pop/add-resource-access (:username user-two) (:id rsrc-one))
           cont-one (db-pop/add-content (:id coll-two) (:id rsrc-one))
           ; Create courses
           crse-one (courses/CREATE (g/get-random-course-without-id))
@@ -187,14 +195,15 @@
                                                           :collection-id (:id coll-one)})
           coll-crse-two (collection-courses-assoc/CREATE {:course-id (:id crse-two)
                                                           :collection-id (:id coll-two)})
-          ; Read collections by sessio-id
+          ; Read collections by session-id
           res (rp/collections-by-logged-in (uc/user-id-to-session-id user-id))]
         (is (= 200 (:status res)))
         (is (= (frequencies [(-> coll-one
                                  (ut/remove-db-only)
                                  (update :id str)
                                  (update :owner str)
-                                 (assoc :content '[]))
+                                 (assoc :content '[])
+                                 (assoc :expired-content '[]))
                              (-> coll-two
                                           (ut/remove-db-only)
                                           (update :id str)
@@ -203,7 +212,8 @@
                                                                (ut/remove-db-only)
                                                                (update :id str)
                                                                (update :collection-id str)
-                                                               (update :resource-id str))]))])
+                                                               (update :resource-id str))])
+                                          (assoc :expired-content '[]))])
                (frequencies (map ut/remove-db-only (m/decode-response-body res)))))))
   (testing "get collections - user-coll and via course"
     (let [user-one (users/CREATE (g/get-random-user-without-id))
@@ -240,7 +250,8 @@
                                       (ut/remove-db-only)
                                       (update :id str)
                                       (update :owner str)
-                                      (assoc :content '[]))
+                                      (assoc :content '[])
+                                      (assoc :expired-content '[]))
                                       ;(assoc :account-role 1)
                                       ;(assoc :user-id (str user-id)))
                                  [coll-one coll-two])
@@ -248,7 +259,8 @@
                                         (ut/remove-db-only)
                                         (update :id str)
                                         (update :owner str)
-                                        (assoc :content '[]))
+                                        (assoc :content '[])
+                                        (assoc :expired-content '[]))
                                         ;(assoc :account-role 2)
                                         ;(assoc :user-id (str user-id)))
                                    [coll-thr coll-fou])]

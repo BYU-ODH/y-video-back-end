@@ -107,6 +107,7 @@ CREATE TABLE resource_access (
     ,created  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     ,username TEXT NOT NULL
     ,resource_id UUID REFERENCES resources(id)
+    ,last_verified  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
    , CONSTRAINT no_duplicate_resource_access UNIQUE (deleted, username, resource_id)
 );
 COMMENT ON TABLE resource_access IS 'Tracks which users may add this resource to contents';

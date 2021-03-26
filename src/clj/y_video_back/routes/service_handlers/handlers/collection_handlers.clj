@@ -181,7 +181,10 @@
    :permission-note "Any user may get contents for a public collection."
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
-   :responses {200 {:body [models/content]}
+   :responses {200 {:body {:content [models/content]
+                           :expired-content [{:content-title string?
+                                              :content-id uuid?
+                                              :resource-id uuid?}]}}
                404 (:body {:message string?})}
    :handler (fn [{{{:keys [session-id]} :header {:keys [id]} :path} :parameters p-vals :permission-values}]
               (if (or (= (:session-id-bypass env) (str session-id))

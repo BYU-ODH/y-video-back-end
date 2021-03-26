@@ -16,6 +16,7 @@
       [y-video-back.db.collections :as collections]
       [y-video-back.db.users :as users]
       [y-video-back.db.courses :as courses]
+      [y-video-back.db.resource-access :as resource-access]
       [y-video-back.db.user-collections-assoc :as user-collections-assoc]
       [y-video-back.db.collections-courses-assoc :as collection-courses-assoc]
       [y-video-back.user-creator :as uc]))
@@ -205,25 +206,29 @@
                     (ut/remove-db-only)
                     (update :id str)
                     (update :owner str)
-                    (assoc :content []))]
+                    (assoc :content [])
+                    (assoc :expired-content []))]
                (m/decode-response-body res-one)))
         (is (= [(-> coll-one
                     (ut/remove-db-only)
                     (update :id str)
                     (update :owner str)
-                    (assoc :content []))]
+                    (assoc :content [])
+                    (assoc :expired-content []))]
                (m/decode-response-body res-two)))
         (is (= [(-> coll-one
                     (ut/remove-db-only)
                     (update :id str)
                     (update :owner str)
-                    (assoc :content []))]
+                    (assoc :content [])
+                    (assoc :expired-content []))]
                (m/decode-response-body res-thr)))
         (is (= [(-> coll-one
                     (ut/remove-db-only)
                     (update :id str)
                     (update :owner str)
-                    (assoc :content []))]
+                    (assoc :content [])
+                    (assoc :expired-content []))]
                (m/decode-response-body res-fou)))))))
 
 (deftest coll-remove-user
@@ -289,16 +294,66 @@
 
 (deftest coll-all-conts
   (testing "find all contents by collection"
-    (let [cont-one (db-pop/add-content)
-          coll-id (:collection-id cont-one)
-          res (rp/collection-id-contents coll-id)]
+    (let [user-one (db-pop/add-user "instructor")
+          coll-one (db-pop/add-collection (:id user-one))
+          rsrc-one (db-pop/add-resource)
+          rsrc-acc (db-pop/add-resource-access (:username user-one) (:id rsrc-one))
+          cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
+          res (rp/collection-id-contents (uc/user-id-to-session-id (:id user-one)) (:id coll-one))]
       (is (= 200 (:status res)))
-      (is (= (-> cont-one
-                 (update :id str)
-                 (update :collection-id str)
-                 (update :resource-id str)
-                 (list))
-             (map ut/remove-db-only (m/decode-response-body res)))))))
+      (is (= {:content (-> cont-one
+                           (update :id str)
+                           (update :collection-id str)
+                           (update :resource-id str)
+                           (list))
+              :expired-content '()}
+             (m/decode-response-body res)))))
+  (testing "find all contents by collection some expired"
+    (let [user-one (db-pop/add-user "instructor")
+          coll-one (db-pop/add-collection (:id user-one))
+          rsrc-one (db-pop/add-resource)
+          rsrc-acc-one (resource-access/CREATE {:username (:username user-one)
+                                                :resource-id (:id rsrc-one)
+                                                :last-verified (java.sql.Timestamp/valueOf "2004-10-19 10:23:54")})
+          cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
+          rsrc-two (db-pop/add-resource)
+          rsrc-acc-two (db-pop/add-resource-access (:username user-one) (:id rsrc-two))
+          cont-two (db-pop/add-content (:id coll-one) (:id rsrc-two))
+          res (rp/collection-id-contents (:id coll-one))]
+      (is (= 200 (:status res)))
+      (is (= {:content (-> cont-two
+                           (update :id str)
+                           (update :collection-id str)
+                           (update :resource-id str)
+                           (list))
+              :expired-content (list {:content-title (:title cont-one)
+                                      :content-id (str (:id cont-one))
+                                      :resource-id (str (:resource-id cont-one))})}
+             (m/decode-response-body res)))))
+  (testing "find all contents by collection all expired"
+    (let [user-one (db-pop/add-user "instructor")
+          coll-one (db-pop/add-collection (:id user-one))
+          rsrc-one (db-pop/add-resource)
+          rsrc-acc-one (resource-access/CREATE {:username (:username user-one)
+                                                :resource-id (:id rsrc-one)
+                                                :last-verified (java.sql.Timestamp/valueOf "2004-10-19 10:23:54")})
+          cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
+          rsrc-two (db-pop/add-resource)
+          rsrc-acc-one (resource-access/CREATE {:username (:username user-one)
+                                                :resource-id (:id rsrc-two)
+                                                :last-verified (java.sql.Timestamp/valueOf "2010-10-19 10:23:54")})
+          cont-two (db-pop/add-content (:id coll-one) (:id rsrc-two))
+          res (rp/collection-id-contents (:id coll-one))
+          res-json (m/decode-response-body res)]
+      (is (= 200 (:status res)))
+      (is (= '() (:content res-json)))
+      (is (= (frequencies (list {:content-title (:title cont-one)
+                                 :content-id (str (:id cont-one))
+                                 :resource-id (str (:resource-id cont-one))}
+                                {:content-title (:title cont-two)
+                                 :content-id (str (:id cont-two))
+                                 :resource-id (str (:resource-id cont-two))}))
+             (frequencies (:expired-content res-json)))))))
 
 (deftest coll-all-crses
   (testing "find all courses by collection"

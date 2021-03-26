@@ -6,7 +6,8 @@
    [y-video-back.models :as models]
    [y-video-back.model-specs :as sp]
    [y-video-back.routes.service-handlers.utils.utils :as utils]
-   [y-video-back.utils.account-permissions :as ac]))
+   [y-video-back.utils.account-permissions :as ac]
+   [clj-time.core :as t]))
 
 
 (def resource-create ;; Non-functional
@@ -152,9 +153,43 @@
                404 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header :keys [body] {:keys [id]} :path} :parameters}]
               (if (resource-access/EXISTS-USERNAME-RESOURCE? (:username body) id)
-                {:status 500
-                 :body {:message "resource access already exists"}}
-                (do
-                  (resource-access/CREATE {:username (:username body) :resource-id id})
-                  {:status 200
-                   :body {:message "resource access added"}})))})
+                (resource-access/UPDATE-LAST-VERIFIED (:id (resource-access/READ-BY-USERNAME-RESOURCE (:username body) id)))
+                (resource-access/CREATE {:username (:username body) :resource-id id}))
+              {:status 200
+               :body {:message "resource access added"}})})
+              ; TODO add check for resource existence
+              ; TODO add check for update or create success
+
+(def resource-remove-access ;; Non-functional
+  {:summary "Removes user with username access to add this resource to contents"
+   :permission-level "lab-assistant"
+   :parameters {:header {:session-id uuid?}
+                :body {:username string?}
+                :path {:id uuid?}}
+   :responses {200 {:body {:message string?}}
+               500 {:body {:message string?}}
+               404 {:body {:message string?}}}
+   :handler (fn [{{{:keys [session-id]} :header :keys [body] {:keys [id]} :path} :parameters}]
+              (let [rsrc-acc (resource-access/READ-BY-USERNAME-RESOURCE (:username body) id)]
+                (if (nil? rsrc-acc)
+                  {:status 500
+                   :body {:message "no user resource connection to delete"}}
+                  (do
+                    (resource-access/DELETE (:id rsrc-acc))
+                    {:status 200
+                     :body {:message "resource access added"}}))))})
+
+(def resource-read-all-access ;; Non-functional
+  {:summary "Returns usernames of all users with access to add this resource to contents"
+   :permission-level "lab-assistant"
+   :parameters {:header {:session-id uuid?}
+                :path {:id uuid?}}
+   :responses {200 {:body [string?]}
+               500 {:body {:message string?}}
+               404 {:body {:message string?}}}
+   :handler (fn [{{{:keys [id]} :path} :parameters}]
+              (if (not (resources/EXISTS? id))
+                {:status 404
+                 :body {:message "resource not found"}}
+                {:status 200
+                 :body (map (fn [arg] (:username arg)) (resource-access/READ-USERNAMES-BY-RESOURCE id))}))})

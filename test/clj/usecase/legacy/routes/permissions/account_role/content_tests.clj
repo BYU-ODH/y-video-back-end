@@ -52,18 +52,18 @@
           res (rp/content-post (uc/user-id-to-session-id (:id user-one))
                                cont-one)]
       (is (= 200 (:status res)))))
-  (testing "instructor, content-post, instructor via user-coll, has resource access"
-    (let [user-one (db-pop/add-user "instructor")
-          coll-one (db-pop/add-collection)
-          rsrc-one (db-pop/add-resource)
-          rsrc-acc (db-pop/add-resource-access (:username user-one) (:id rsrc-one))
-          cont-one (db-pop/get-content (:id coll-one) (:id rsrc-one))
-          user-coll-add (db-pop/add-user-coll-assoc (:username user-one)
-                                                    (:id coll-one)
-                                                    "instructor")
-          res (rp/content-post (uc/user-id-to-session-id (:id user-one))
-                               cont-one)]
-      (is (= 200 (:status res)))))
+  ; (testing "instructor, content-post, instructor via user-coll, has resource access"
+  ;   (let [user-one (db-pop/add-user "instructor")
+  ;         coll-one (db-pop/add-collection)
+  ;         rsrc-one (db-pop/add-resource)
+  ;         rsrc-acc (db-pop/add-resource-access (:username user-one) (:id rsrc-one))
+  ;         cont-one (db-pop/get-content (:id coll-one) (:id rsrc-one))
+  ;         user-coll-add (db-pop/add-user-coll-assoc (:username user-one)
+  ;                                                   (:id coll-one)
+  ;                                                   "instructor")
+  ;         res (rp/content-post (uc/user-id-to-session-id (:id user-one))
+  ;                              cont-one)]
+  ;     (is (= 200 (:status res)))))
   (testing "instructor, content-post, owns collection, no resource access"
     (let [user-one (db-pop/add-user "instructor")
           coll-one (db-pop/add-collection (:id user-one))
@@ -212,8 +212,8 @@
       (is (= 200 (:status res))))))
 
 ;delete: /api/content/{id}
-(deftest content-patch-by-id
-  (testing "instructor, content-patch-by-id, instructor via user-coll"
+(deftest content-delete-by-id
+  (testing "instructor, content-delete-by-id, instructor via user-coll"
     (let [user-one (db-pop/add-user "instructor")
           coll-one (db-pop/add-collection)
           user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "instructor")
@@ -222,7 +222,7 @@
           res (rp/content-id-delete (uc/user-id-to-session-id (:id user-one))
                                     (:id cont-one))]
       (is (= 403 (:status res)))))
-  (testing "instructor, content-patch-by-id, instructor via course"
+  (testing "instructor, content-delete-by-id, instructor via course"
     (let [user-one (db-pop/add-user "instructor")
           coll-one (db-pop/add-collection)
           crse-one (db-pop/add-course)
@@ -233,7 +233,7 @@
           res (rp/content-id-delete (uc/user-id-to-session-id (:id user-one))
                                     (:id cont-one))]
       (is (= 403 (:status res)))))
-  (testing "student, content-patch-by-id, ta via user-coll"
+  (testing "student, content-delete-by-id, ta via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
           user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "ta")
@@ -242,7 +242,7 @@
           res (rp/content-id-delete (uc/user-id-to-session-id (:id user-one))
                                     (:id cont-one))]
       (is (= 403 (:status res)))))
-  (testing "student, content-patch-by-id, ta via course"
+  (testing "student, content-delete-by-id, ta via course"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
           crse-one (db-pop/add-course)
@@ -253,7 +253,7 @@
           res (rp/content-id-delete (uc/user-id-to-session-id (:id user-one))
                                     (:id cont-one))]
       (is (= 403 (:status res)))))
-  (testing "student, content-patch-by-id, student via user-coll"
+  (testing "student, content-delete-by-id, student via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
           user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "student")
@@ -262,7 +262,7 @@
           res (rp/content-id-delete (uc/user-id-to-session-id (:id user-one))
                                     (:id cont-one))]
       (is (= 403 (:status res)))))
-  (testing "student, content-patch-by-id, student via course"
+  (testing "student, content-delete-by-id, student via course"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
           crse-one (db-pop/add-course)
@@ -273,7 +273,7 @@
           res (rp/content-id-delete (uc/user-id-to-session-id (:id user-one))
                                     (:id cont-one))]
       (is (= 403 (:status res)))))
-  (testing "student, content-patch-by-id, auditing via user-coll"
+  (testing "student, content-delete-by-id, auditing via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
           user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "auditing")
@@ -282,7 +282,7 @@
           res (rp/content-id-delete (uc/user-id-to-session-id (:id user-one))
                                     (:id cont-one))]
       (is (= 403 (:status res)))))
-  (testing "student, content-patch-by-id, auditing via course"
+  (testing "student, content-delete-by-id, auditing via course"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
           crse-one (db-pop/add-course)
@@ -298,47 +298,67 @@
 (deftest content-patch-by-id
   (testing "instructor, content-patch-by-id, instructor via user-coll"
     (let [user-one (db-pop/add-user "instructor")
-          coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "instructor")
+          coll-one (db-pop/add-collection (:id user-one))
           rsrc-one (db-pop/add-resource)
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
+          coll-two (db-pop/add-collection (:id user-one))
+          rsrc-two (db-pop/add-resource)
+          cont-two (db-pop/get-content (:id coll-two) (:id rsrc-two))
+          rsrc-acc (db-pop/add-resource-access (:username user-one) (:id rsrc-one))
+          rsrc-acc (db-pop/add-resource-access (:username user-one) (:id rsrc-two))
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "instructor")
           res (rp/content-id-patch (uc/user-id-to-session-id (:id user-one))
                                    (:id cont-one)
-                                   cont-one)]
+                                   cont-two)]
       (is (= 200 (:status res)))))
   (testing "instructor, content-patch-by-id, instructor via course"
     (let [user-one (db-pop/add-user "instructor")
-          coll-one (db-pop/add-collection)
+          coll-one (db-pop/add-collection (:id user-one))
+          rsrc-one (db-pop/add-resource)
+          cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
+          coll-two (db-pop/add-collection (:id user-one))
+          rsrc-two (db-pop/add-resource)
+          cont-two (db-pop/get-content (:id coll-two) (:id rsrc-two))
+          rsrc-acc (db-pop/add-resource-access (:username user-one) (:id rsrc-one))
+          rsrc-acc (db-pop/add-resource-access (:username user-one) (:id rsrc-two))
           crse-one (db-pop/add-course)
           user-crse-add (db-pop/add-user-crse-assoc (:id user-one) (:id crse-one) "instructor")
           coll-crse-add (db-pop/add-coll-crse-assoc (:id coll-one) (:id crse-one))
-          rsrc-one (db-pop/add-resource)
-          cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           res (rp/content-id-patch (uc/user-id-to-session-id (:id user-one))
                                    (:id cont-one)
-                                   cont-one)]
+                                   cont-two)]
       (is (= 200 (:status res)))))
   (testing "student, content-patch-by-id, ta via user-coll"
     (let [user-one (db-pop/add-user "student")
-          coll-one (db-pop/add-collection)
-          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "ta")
+          coll-one (db-pop/add-collection (:id user-one))
           rsrc-one (db-pop/add-resource)
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
+          coll-two (db-pop/add-collection (:id user-one))
+          rsrc-two (db-pop/add-resource)
+          cont-two (db-pop/get-content (:id coll-two) (:id rsrc-two))
+          rsrc-acc (db-pop/add-resource-access (:username user-one) (:id rsrc-one))
+          rsrc-acc (db-pop/add-resource-access (:username user-one) (:id rsrc-two))
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "ta")
           res (rp/content-id-patch (uc/user-id-to-session-id (:id user-one))
                                    (:id cont-one)
-                                   cont-one)]
+                                   cont-two)]
       (is (= 200 (:status res)))))
   (testing "student, content-patch-by-id, ta via course"
     (let [user-one (db-pop/add-user "student")
-          coll-one (db-pop/add-collection)
+          coll-one (db-pop/add-collection (:id user-one))
+          rsrc-one (db-pop/add-resource)
+          cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
+          coll-two (db-pop/add-collection (:id user-one))
+          rsrc-two (db-pop/add-resource)
+          cont-two (db-pop/get-content (:id coll-two) (:id rsrc-two))
+          rsrc-acc (db-pop/add-resource-access (:username user-one) (:id rsrc-one))
+          rsrc-acc (db-pop/add-resource-access (:username user-one) (:id rsrc-two))
           crse-one (db-pop/add-course)
           user-crse-add (db-pop/add-user-crse-assoc (:id user-one) (:id crse-one) "ta")
           coll-crse-add (db-pop/add-coll-crse-assoc (:id coll-one) (:id crse-one))
-          rsrc-one (db-pop/add-resource)
-          cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           res (rp/content-id-patch (uc/user-id-to-session-id (:id user-one))
                                    (:id cont-one)
-                                   cont-one)]
+                                   cont-two)]
       (is (= 200 (:status res)))))
   (testing "student, content-patch-by-id, student via user-coll"
     (let [user-one (db-pop/add-user "student")

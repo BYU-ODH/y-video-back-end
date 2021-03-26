@@ -1,11 +1,14 @@
 (ns y-video-back.routes.service-handlers.utils.utils
   (:require [y-video-back.config :refer [env]]
             [y-video-back.db.files :as files]
+            [y-video-back.db.collections :as collections]
+            [y-video-back.db.users :as users]
+            [y-video-back.db.resource-access :as resource-access]
             [clojure.string :as str]))
 (defn remove-db-only
   "Removes created, updated, and deleted fields from map"
   [my-map]
-  (dissoc my-map :created :updated :deleted :last-person-api :last-course-api :byu-person-id))
+  (dissoc my-map :created :updated :deleted :last-person-api :last-course-api :byu-person-id :last-verified))
 
 ; (defn add-namespace ; Can probably delete this function, not in use?
 ;   "Converts all keywords to namespace-keywords"
@@ -87,6 +90,20 @@
   [given-name]
   (str (rand-str 8)
        (str "." (last (str/split given-name #"\.")))))
+
+
+(defn has-resource-permission
+  "Checks if user with username has permission to add resource to content. Body must contain resource-id and collection-id. Must verify collection and resource before calling."
+  [resource-id collection-id]
+  (let [coll (collections/READ collection-id)
+        owner (users/READ (:owner coll))]
+    ; (println "in utils")
+    ; (println "coll: " coll)
+    ; (println "owner: " owner)
+    (if (nil? owner)
+      false
+      (resource-access/EXISTS-USERNAME-RESOURCE? (:username owner) resource-id))))
+      ; TODO need to include check for user connected via user-collections-assoc
 
 ; (defn user-db-to-front
 ;   "Replace keywords with what the front end expects"

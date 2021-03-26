@@ -13,7 +13,8 @@
       [legacy.utils.utils :as ut]
       [legacy.utils.db-populator :as db-pop]
       [y-video-back.db.resources :as resources]
-      [y-video-back.db.resource-access :as resource-access]))
+      [y-video-back.db.resource-access :as resource-access]
+      [clj-time.core :as t]))
 
 (declare ^:dynamic *txn*)
 
@@ -125,4 +126,45 @@
     (let [rsrc-one (db-pop/add-resource)
           res (rp/resource-add-access "testuser" (:id rsrc-one))]
       (is (= 200 (:status res)))
-      (is (resource-access/EXISTS-USERNAME-RESOURCE? "testuser" (:id rsrc-one))))))
+      (is (resource-access/EXISTS-USERNAME-RESOURCE? "testuser" (:id rsrc-one)))))
+  (testing "remove access to resource"
+    (let [rsrc-one (db-pop/add-resource)
+          username "testuser"
+          rsrc-acc (db-pop/add-resource-access username (:id rsrc-one))]
+      (is (resource-access/EXISTS-USERNAME-RESOURCE? username (:id rsrc-one)))
+      (let [res (rp/resource-remove-access username (:id rsrc-one))]
+        (is (= 200 (:status res)))
+        (is (not (resource-access/EXISTS-USERNAME-RESOURCE? username (:id rsrc-one)))))))
+  (testing "read all users with access to resource"
+    (let [rsrc-one (db-pop/add-resource)
+          username-one "testuser"
+          username-two "seconduser"
+          username-thr "another!"
+          res-zer (rp/resource-read-all-access (:id rsrc-one))
+          acc-one (db-pop/add-resource-access username-one (:id rsrc-one))
+          res-one (rp/resource-read-all-access (:id rsrc-one))
+          acc-two (db-pop/add-resource-access username-two (:id rsrc-one))
+          acc-thr (db-pop/add-resource-access username-thr (:id rsrc-one))
+          res-two (rp/resource-read-all-access (:id rsrc-one))]
+      (is (= 200 (:status res-zer)))
+      (is (= 200 (:status res-one)))
+      (is (= 200 (:status res-two)))
+      (is (= '() (m/decode-response-body res-zer)))
+      (is (= (frequencies (list username-one)) (frequencies (m/decode-response-body res-one))))
+      (is (= (frequencies (list username-one username-two username-thr)) (frequencies (m/decode-response-body res-two))))))
+  (testing "read all users from nonexistant resource"
+    (let [fake-id (java.util.UUID/randomUUID)
+          res-one (rp/resource-read-all-access fake-id)]
+      (is (= 404 (:status res-one)))))
+  (testing "renew expired access by adding again"
+    (let [rsrc-one (db-pop/add-resource)
+          username "testuser"
+          rsrc-acc-one {:username username
+                        :resource-id (:id rsrc-one)
+                        :last-verified (java.sql.Timestamp/valueOf "2004-10-19 10:23:54")}
+          rsrc-acc-one-create (resource-access/CREATE rsrc-acc-one)
+          db-acc-one (resource-access/READ-BY-USERNAME-RESOURCE username (:id rsrc-one))
+          res (rp/resource-add-access username (:id rsrc-one))
+          db-acc-two (resource-access/READ-BY-USERNAME-RESOURCE username (:id rsrc-one))]
+      (is (= 200 (:status res)))
+      (is (< (inst-ms (:last-verified db-acc-one)) (inst-ms (:last-verified db-acc-two)))))))
