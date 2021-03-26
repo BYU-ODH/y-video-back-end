@@ -134,6 +134,7 @@
                                                            :file-version "f"
                                                            :published true
                                                            :words ""
+                                                           :clips ""
                                                            :resource-id (:id test-rsrc-one)
                                                            :collection-id (:id test-coll-one)})))
   (def test-cont-two (ut/under-to-hyphen (contents/CREATE {:title "aaa"
@@ -151,6 +152,7 @@
                                                            :file-version "f"
                                                            :published true
                                                            :words ""
+                                                           :clips ""
                                                            :resource-id (:id test-rsrc-two)
                                                            :collection-id (:id test-coll-two)})))
   (def test-cont-thr (ut/under-to-hyphen (contents/CREATE {:title "aa"
@@ -168,6 +170,7 @@
                                                            :file-version "f"
                                                            :published true
                                                            :words ""
+                                                           :clips ""
                                                            :resource-id (:id test-rsrc-thr)
                                                            :collection-id (:id test-coll-thr)})))
 

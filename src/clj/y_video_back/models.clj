@@ -107,7 +107,8 @@
    :views integer?
    :file-version string?
    :published boolean?
-   :words string?})
+   :words string?
+   :clips string?})
    ;:public boolean?})
 
 (def content-without-id

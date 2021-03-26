@@ -166,6 +166,7 @@ CREATE TABLE contents (
     ,file_version TEXT
     ,published BOOLEAN
     ,words TEXT
+    ,clips TEXT
     ,resource_id UUID REFERENCES resources(id)
     ,collection_id UUID REFERENCES collections(id)
     --,public BOOLEAN
