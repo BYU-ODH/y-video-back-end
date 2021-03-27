@@ -164,13 +164,16 @@
                                               (let [raw-res-all (contents/READ-BY-COLLECTION-WITH-LAST-VERIFIED (:id arg))
                                                     ; TODO also need to indicate there are contents with no resource-access at all
                                                     ; TODO they are currently just getting dropped and ignored
-                                                    raw-res (doall (filter #(not (nil? (:last-verified %)))
+                                                    raw-res (doall (filter #(or (not (nil? (:last-verified %)))
+                                                                                (= "00000000-0000-0000-0000-000000000000" (str (:resource-id %))))
                                                                            raw-res-all))
-                                                    raw-valid (doall (filter #(> (inst-ms (:last-verified %))
-                                                                                 (- (System/currentTimeMillis) (* 3600000 (-> env :resource-access-expire-after))))
+                                                    raw-valid (doall (filter #(or (= "00000000-0000-0000-0000-000000000000" (str (:resource-id %)))
+                                                                                  (> (inst-ms (:last-verified %))
+                                                                                     (- (System/currentTimeMillis) (* 3600000 (-> env :resource-access-expire-after)))))
                                                                              raw-res))
-                                                    raw-expired (doall (filter #(< (inst-ms (:last-verified %))
-                                                                                   (- (System/currentTimeMillis) (* 3600000 (-> env :resource-access-expire-after))))
+                                                    raw-expired (doall (filter #(and (not (= "00000000-0000-0000-0000-000000000000" (str (:resource-id %))))
+                                                                                     (< (inst-ms (:last-verified %))
+                                                                                        (- (System/currentTimeMillis) (* 3600000 (-> env :resource-access-expire-after)))))
                                                                                raw-res))
                                                     res-valid (map #(utils/remove-db-only %) raw-valid)
                                                     res-expired (map (fn [arg]

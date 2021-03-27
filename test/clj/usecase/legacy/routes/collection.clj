@@ -308,6 +308,19 @@
                            (list))
               :expired-content '()}
              (m/decode-response-body res)))))
+  (testing "find all contents by collection"
+    (let [user-one (db-pop/add-user "instructor")
+          coll-one (db-pop/add-collection (:id user-one))
+          cont-one (db-pop/add-content (:id coll-one) (ut/to-uuid "00000000-0000-0000-0000-000000000000"))
+          res (rp/collection-id-contents (uc/user-id-to-session-id (:id user-one)) (:id coll-one))]
+      (is (= 200 (:status res)))
+      (is (= {:content (-> cont-one
+                           (update :id str)
+                           (update :collection-id str)
+                           (update :resource-id str)
+                           (list))
+              :expired-content '()}
+             (m/decode-response-body res)))))
   (testing "find all contents by collection some expired"
     (let [user-one (db-pop/add-user "instructor")
           coll-one (db-pop/add-collection (:id user-one))

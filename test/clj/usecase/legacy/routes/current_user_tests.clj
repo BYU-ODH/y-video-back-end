@@ -89,6 +89,22 @@
                    (assoc :content '[])
                    (assoc :expired-content '[]))]
              (m/decode-response-body res)))))
+  (testing "get collections - owner only, online resource"
+    (let [coll-one (db-pop/add-collection)
+          cont-one (db-pop/add-content (:id coll-one) (ut/to-uuid "00000000-0000-0000-0000-000000000000"))
+          res (rp/collections-by-logged-in (uc/user-id-to-session-id (:owner coll-one)))]
+      (is (= 200 (:status res)))
+      (is (= [(-> coll-one
+                   (ut/remove-db-only)
+                   (update :id str)
+                   (update :owner str)
+                   (assoc :content [(-> cont-one
+                                        (ut/remove-db-only)
+                                        (update :id str)
+                                        (update :collection-id str)
+                                        (update :resource-id str))])
+                   (assoc :expired-content '[]))]
+             (m/decode-response-body res)))))
   (testing "get collections - direct user-coll assoc only"
           ; Create user
     (let [user-one (users/CREATE (g/get-random-user-without-id))

@@ -19,6 +19,7 @@ INSERT INTO languages (id) VALUES ('Czech');
 INSERT INTO languages (id) VALUES ('Danish');
 INSERT INTO languages (id) VALUES ('Dari');
 INSERT INTO languages (id) VALUES ('Dutch');
+INSERT INTO languages (id) VALUES ('English');
 INSERT INTO languages (id) VALUES ('Estonian');
 INSERT INTO languages (id) VALUES ('Fijian');
 INSERT INTO languages (id) VALUES ('Finnish');
