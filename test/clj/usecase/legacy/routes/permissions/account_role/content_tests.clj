@@ -52,6 +52,14 @@
           res (rp/content-post (uc/user-id-to-session-id (:id user-one))
                                cont-one)]
       (is (= 200 (:status res)))))
+  (testing "instructor, content-post, owns collection, online only resource"
+    (let [user-one (db-pop/add-user "instructor")
+          coll-one (db-pop/add-collection (:id user-one))
+          cont-one (db-pop/get-content (:id coll-one) (ut/to-uuid "00000000-0000-0000-0000-000000000000"))
+          res (rp/content-post (uc/user-id-to-session-id (:id user-one))
+                               cont-one)]
+      (is (= 200 (:status res)))))
+  ; TODO finish this test when we check for resource access via user-coll
   ; (testing "instructor, content-post, instructor via user-coll, has resource access"
   ;   (let [user-one (db-pop/add-user "instructor")
   ;         coll-one (db-pop/add-collection)
@@ -306,6 +314,19 @@
           cont-two (db-pop/get-content (:id coll-two) (:id rsrc-two))
           rsrc-acc (db-pop/add-resource-access (:username user-one) (:id rsrc-one))
           rsrc-acc (db-pop/add-resource-access (:username user-one) (:id rsrc-two))
+          user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "instructor")
+          res (rp/content-id-patch (uc/user-id-to-session-id (:id user-one))
+                                   (:id cont-one)
+                                   cont-two)]
+      (is (= 200 (:status res)))))
+  (testing "instructor, content-patch-by-id, instructor via user-coll, change to online only resource"
+    (let [user-one (db-pop/add-user "instructor")
+          coll-one (db-pop/add-collection (:id user-one))
+          rsrc-one (db-pop/add-resource)
+          cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
+          coll-two (db-pop/add-collection (:id user-one))
+          cont-two (db-pop/get-content (:id coll-two) (ut/to-uuid "00000000-0000-0000-0000-000000000000"))
+          rsrc-acc (db-pop/add-resource-access (:username user-one) (:id rsrc-one))
           user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "instructor")
           res (rp/content-id-patch (uc/user-id-to-session-id (:id user-one))
                                    (:id cont-one)

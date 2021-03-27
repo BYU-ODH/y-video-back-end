@@ -22,6 +22,7 @@
                        {:department "BIO" :catalog-number "100" :section-number "004"}]}
  :user-data-refresh-after 0.00138889 ; in hours - 5 seconds
  :user-courses-refresh-after 0.00138889 ; in hours - 5 seconds
+ :resource-access-expire-after 0.00138889 ; in hours - 5 seconds
  :host "http://localhost:3000"
  :y-video-back {:site-url "http://localhost:3000"
                 :db {:database-name "my-db-test"
