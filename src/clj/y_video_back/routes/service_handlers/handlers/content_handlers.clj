@@ -59,6 +59,7 @@
                    :body {:message "requested content not found"}}
                   {:status 200
                    :body res})))})
+   ; TODO - do not return contents with expired resource-access
 
 (def content-update ;; Non-functional
   {:summary "Updates the specified content"
