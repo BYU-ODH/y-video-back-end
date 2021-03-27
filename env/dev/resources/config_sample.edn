@@ -16,6 +16,7 @@
          :endpoint-log-path ""}
  :user-data-refresh-after 168 ; in hours - 7 days
  :user-courses-refresh-after 168 ; in hours - 7 days
+ :resource-access-expire-after 168 ; in hours - 7 days
  :host ""
  :y-video-back {:site-url ""
                 :db {:database-name ""

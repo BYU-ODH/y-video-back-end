@@ -34,6 +34,7 @@
                     ;  {:status 500
                     ;   :body {:message "content connecting collection and resource already exists"}
                     (if (or (= (:session-id-bypass env) (str session-id))
+                            (= (ut/to-uuid "00000000-0000-0000-0000-000000000000") (:resource-id body))
                             (ut/has-resource-permission (:resource-id body) (:collection-id body)))
                       (let [new-thumbnail (first (filter #(not (= "" %)) [(:thumbnail body) (ut/get-thumbnail (:url body)) "none"]))
                             res (contents/CREATE (assoc (dissoc body :thumbnail) :thumbnail new-thumbnail))]
@@ -81,6 +82,7 @@
                       {:status 500
                        :body {:message "resource not found"}}
                       (if (or (= (:session-id-bypass env) (str session-id))
+                              (= (ut/to-uuid "00000000-0000-0000-0000-000000000000") (:resource-id body))
                               (ut/has-resource-permission (:resource-id body) (:collection-id body)))
                           (let [result (contents/UPDATE id body)]
                             {:status 200
