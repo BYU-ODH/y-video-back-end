@@ -76,7 +76,7 @@
                    :body {:message (str result " users deleted")}})))})
 
 
-(def user-get-logged-in ;; Non-functional
+(def user-get-logged-in
   {:summary "Retrieves the current logged-in user"
    :permission-level "student"
    ;:bypass-permission true
@@ -101,7 +101,7 @@
                          :body user-result}))))))})
 
 
-(def user-get-all-collections ;; Non-functional
+(def user-get-all-collections
   {:summary "Retrieves all collections the specified user owns"
    :permission-level "lab-assistant"
    :bypass-permission true
@@ -189,7 +189,7 @@
                     {:status 200
                      :body total-result}))))})
 
-(def user-get-all-courses ;; Non-functional
+(def user-get-all-courses
   {:summary "Retrieves all courses for specified user"
    :permission-level "lab-assistant"
    :bypass-permission true

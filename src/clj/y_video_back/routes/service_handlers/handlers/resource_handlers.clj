@@ -10,7 +10,7 @@
    [clj-time.core :as t]))
 
 
-(def resource-create ;; Non-functional
+(def resource-create
   {:summary "Creates new resource"
    :permission-level "lab-assistant"
    :parameters {:header {:session-id uuid?}
@@ -38,7 +38,7 @@
                   {:status 200
                    :body res})))})
 
-(def resource-update ;; Non-functional
+(def resource-update
   {:summary "Updates the specified resource"
    :permission-level "lab-assistant"
    :parameters {:header {:session-id uuid?}
@@ -56,7 +56,7 @@
                     {:status 200
                      :body {:message (str result " resources updated")}}))))})
 
-(def resource-delete ;; Non-functional
+(def resource-delete
   {:summary "Deletes the specified resource"
    :permission-level "admin"
    :parameters {:header {:session-id uuid?}
@@ -71,7 +71,7 @@
                   {:status 200
                    :body {:message (str 1 " resources deleted")}})))})
 
-(def resource-get-all-collections ;; Non-functional
+(def resource-get-all-collections
   {:summary "Retrieves all collections for specified resource"
    :permission-level "lab-assistant"
    :parameters {:header {:session-id uuid?}
@@ -89,7 +89,7 @@
                                    (dissoc :resource-id))
                               res)})))})
 
-(def resource-get-all-contents ;; Non-functional
+(def resource-get-all-contents
   {:summary "Retrieves all contents for specified resource"
    :permission-level "lab-assistant"
    :parameters {:header {:session-id uuid?}
@@ -105,7 +105,7 @@
                   {:status 200 ; Not implemented yet
                    :body content-result})))})
 
-(def resource-get-all-subtitles ;; Non-functional
+(def resource-get-all-subtitles
   {:summary "Retrieves all subtitles connected to resource"
    :permission-level "instructor"
    :role-level "ta"
@@ -125,7 +125,7 @@
                               res)})))})
 
 
-(def resource-get-all-files ;; Non-functional
+(def resource-get-all-files
   {:summary "Retrieves all the files for the specified resource"
    :permission-level "instructor"
    :role-level "auditing"
@@ -142,7 +142,7 @@
                   {:status 200 ; Not implemented yet
                    :body file-result})))})
 
-(def resource-add-access ;; Non-functional
+(def resource-add-access
   {:summary "Gives user with username access to add this resource to contents"
    :permission-level "lab-assistant"
    :parameters {:header {:session-id uuid?}
@@ -160,7 +160,7 @@
               ; TODO add check for resource existence
               ; TODO add check for update or create success
 
-(def resource-remove-access ;; Non-functional
+(def resource-remove-access
   {:summary "Removes user with username access to add this resource to contents"
    :permission-level "lab-assistant"
    :parameters {:header {:session-id uuid?}
@@ -179,7 +179,7 @@
                     {:status 200
                      :body {:message "resource access added"}}))))})
 
-(def resource-read-all-access ;; Non-functional
+(def resource-read-all-access
   {:summary "Returns usernames of all users with access to add this resource to contents"
    :permission-level "lab-assistant"
    :parameters {:header {:session-id uuid?}

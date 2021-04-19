@@ -173,7 +173,7 @@
    :handler (fn [{{{:keys [id]} :path :keys [body]} :parameters}]
               (methods/collection-remove-course id body))})
 
-(def collection-get-all-contents ;; Non-functional
+(def collection-get-all-contents
   {:summary "Retrieves all the resources for the specified collection"
    :permission-level "lab-assistant"
    :role-level "auditing"
@@ -192,7 +192,7 @@
                 (methods/collection-get-all-contents id)
                 {:status 403 :body {:message "forbidden"}}))})
 
-(def collection-get-all-courses ;; Non-functional
+(def collection-get-all-courses
   {:summary "Retrieves all the courses for the specified collection"
    :permission-level "lab-assistant"
    :role-level "instructor"

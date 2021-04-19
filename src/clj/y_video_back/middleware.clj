@@ -180,11 +180,7 @@
 (defn check-permission
   "Checks user has permission for route"
   [handler]
-  ;handler)
   (fn [request]
-    ;(println "permission-level=" (get-permission-level request))
-    ;(println "role-level=" (get-role-level request))
-    ;(println "path-to-id=" (get-path-to-id request))
     (if (ru/bypass-uri (:uri request))
       (handler request)
       (let [session-id (get-in request [:parameters :header :session-id])]
@@ -193,8 +189,8 @@
                                (= (:session-id-bypass env) (str session-id))))
                      (nil? (ru/token-to-user-id session-id))))
           unauthorized-page  ; no user for session-id and session-id is not bypass from config
-          (if (= (and (or (:dev env) (:test env))
-                      (= (:session-id-bypass env) (str session-id))))
+          (if (and (or (:dev env) (:test env))
+                   (= (:session-id-bypass env) (str session-id)))
             (handler request)  ; session-id is bypass from config
             (let [valid-type (and (not (nil? (get-permission-level request)))
                                   (<= (ru/get-user-type (ru/token-to-user-id session-id))
@@ -204,7 +200,6 @@
                                                       (get-obj-id request)
                                                       (get-role-level request)))
                   bypass-permission (get-bypass-permission request)]
-              ;(println "valid-type, valid-role, bypass-permission: " valid-type valid-role bypass-permission)
               (if (or valid-type valid-role bypass-permission)
                 (handler (assoc request :permission-values {:valid-type valid-type
                                                             :valid-role valid-role}))
@@ -214,7 +209,6 @@
   "Adds new session-id to response header. Invalidates old session-id."
   [handler]
   (fn [request]
-    ;(println "add session-id middleware")
     (if (or (clojure.string/starts-with? (:uri request) "/api/docs")
             (clojure.string/starts-with? (:uri request) "/api/swagger.json")
             (clojure.string/starts-with? (:uri request) "/api/get-session-id")
@@ -246,7 +240,6 @@
 (defn wrap-api [handler]
   (let [check-csrf  (if-not (:test env) wrap-csrf identity)]
       (-> ((:middleware defaults) handler)
-          ;(print-handler)
           (wrap-cors :access-control-allow-origin #"http://localhost:3000" :access-control-allow-methods [:get :put :post :delete :patch]
                      :access-control-allow-credentials "true" :access-control-expose-headers "session-id"))))
           ;check-csrf)))

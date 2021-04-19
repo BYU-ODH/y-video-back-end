@@ -7,11 +7,10 @@
    [y-video-back.routes.service-handlers.utils.utils :as utils]
    [y-video-back.db.core :as db]
    [y-video-back.utils.account-permissions :as ac]))
-   ;[y-video-back.course-data :as cd-api]))
 
 ; TODO - sort results by more than just alphabetical
 
-(def search-by-user ;; Non-functional
+(def search-by-user
   {:summary "Searches users by search term"
    :permission-level "instructor"
    :parameters {:header {:session-id uuid?}
@@ -26,7 +25,7 @@
                 {:status 200
                  :body res}))})
 
-(def search-by-collection ;; Non-functional
+(def search-by-collection
   {:summary "Searches collections by search term"
    :permission-level "lab-assistant"
    :parameters {:header {:session-id uuid?}
@@ -43,7 +42,7 @@
                 {:status 200
                  :body res}))})
 
-(def search-public-collections ;; Non-functional
+(def search-public-collections
   {:summary "Searches public collections by search term"
    :permission-level "student"
    :bypass-permission true
