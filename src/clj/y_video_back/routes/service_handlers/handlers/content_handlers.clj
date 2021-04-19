@@ -12,7 +12,7 @@
    [y-video-back.routes.service-handlers.utils.utils :as ut]
    [y-video-back.utils.account-permissions :as ac]))
 
-(def content-create ;; Non-functional
+(def content-create
   {:summary "Creates new content"
    :permission-level "lab-assistant"
    :role-level "instructor"
@@ -61,7 +61,7 @@
                    :body res})))})
    ; TODO - do not return contents with expired resource-access
 
-(def content-update ;; Non-functional
+(def content-update
   {:summary "Updates the specified content"
    :permission-level "lab-assistant"
    :role-level "ta"
@@ -91,7 +91,7 @@
                           {:status 403
                            :body {:message "collection owner does not have permission to use resource"}}))))))})
 
-(def content-delete ;; Non-functional
+(def content-delete
   {:summary "Deletes the specified content"
    :permission-level "admin"
    :parameters {:header {:session-id uuid?}

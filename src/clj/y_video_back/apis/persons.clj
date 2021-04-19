@@ -13,7 +13,6 @@
 
 (defn get-cats-from-json
   [js]
-  ;(println "get-cats-js=" js)
   (first (get-in js ["values"])))
 
 
@@ -27,7 +26,6 @@
 
 (defn get-account-type-from-json
   [js]
-  ;(println "get-account-type-js" js)
   (if (= "FAC" (str/upper-case (get-in (get-cats-from-json js) ["employee_summary" "employee_classification_code" "value"])))
     2
     3))
@@ -59,8 +57,6 @@
                      (catch Exception e
                        (client/get url {:oauth-token (ut/get-oauth-token-new)})))
             json-res (json/read-str (:body res))
-            ; tra (println "res=" res)
-            ; tar (println "json-res=" json-res)
             full-name (get-in (get-cats-from-json json-res) ["basic" "preferred_name" "value"])
             byu-id (get-in (get-cats-from-json json-res) ["basic" "byu_id" "value"])
             email (first (filter #(not (nil? %)) [(get-email-from-json json-res), "none"]))

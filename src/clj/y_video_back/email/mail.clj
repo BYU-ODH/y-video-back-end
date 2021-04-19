@@ -32,15 +32,3 @@
   (if (or (:test env) (:dev env))
       (log-message email)
       (send-message email)))
-
-; (defn send-email
-;   "Fake send email using gmail"
-;   [email]
-;   (postal/send-message {:host "smtp.gmail.com"
-;                         :user (:gmail-user env)
-;                         :pass (:gmail-pass env)
-;                         :tls true}
-;                        {:from (:from email)
-;                         :to (:admin-emails env)
-;                         :subject (:subject email)
-;                         :body (:body email)}))

@@ -11,7 +11,7 @@
    [y-video-back.routes.service-handlers.utils.role-utils :as ru]
    [y-video-back.utils.account-permissions :as ac]))
 
-(def course-create ;; Non-functional
+(def course-create
   {:summary "Creates a new course"
    :permission-level "instructor"
    :parameters {:header {:session-id uuid?}
@@ -27,7 +27,7 @@
                  :body {:message "1 course created"
                         :id (utils/get-id (courses/CREATE body))}}))})
 
-(def course-get-by-id ;; Non-functional
+(def course-get-by-id
   {:summary "Retrieves specified course"
    :permission-level "instructor"
    :role-level "auditing"
@@ -50,7 +50,7 @@
                     {:status 200
                      :body res}))))})
 
-(def course-update ;; Non-functional
+(def course-update
   {:summary "Updates the specified course"
    :permission-level "admin"
    :parameters {:header {:session-id uuid?}
@@ -80,7 +80,7 @@
                         {:status 200
                          :body {:message (str result " courses updated")}}))))))})
 
-(def course-delete ;; Non-functional
+(def course-delete
   {:summary "Deletes the specified course"
    :permission-level "admin"
    :parameters {:header {:session-id uuid?}
@@ -196,7 +196,7 @@
                     {:status 200
                      :body user-result}))))})
 
-(def course-get-all-collections ;; Non-functional
+(def course-get-all-collections
   {:summary "Retrieves all collections for specified course"
    :permission-level "lab-assistant"
    :role-level "auditing"

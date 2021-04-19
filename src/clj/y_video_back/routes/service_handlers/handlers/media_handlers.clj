@@ -30,7 +30,7 @@
 
 ;; TODO - check if user has permission to stream requested file
 
-(def get-file-key ;; Non-functional
+(def get-file-key
   {:summary "Gets volatile url for streaming specified media file. If accessing public file as public user, use '00000000-0000-0000-0000-000000000000' as session-id."
    :permission-level "lab-assistant"
    :role-level "auditing"

@@ -76,7 +76,7 @@
                    :body {:message (str result " users deleted")}})))})
 
 
-(def user-get-logged-in ;; Non-functional
+(def user-get-logged-in
   {:summary "Retrieves the current logged-in user"
    :permission-level "student"
    ;:bypass-permission true
@@ -101,7 +101,7 @@
                          :body user-result}))))))})
 
 
-(def user-get-all-collections ;; Non-functional
+(def user-get-all-collections
   {:summary "Retrieves all collections the specified user owns"
    :permission-level "lab-assistant"
    :bypass-permission true
@@ -163,7 +163,7 @@
                         total-result (map (fn [arg]
                                               (let [raw-res-all (contents/READ-BY-COLLECTION-WITH-LAST-VERIFIED (:id arg))
                                                     ; TODO also need to indicate there are contents with no resource-access at all
-                                                    ; TODO they are currently just getting dropped and ignored
+                                                    ; they are currently just getting dropped and ignored
                                                     raw-res (doall (filter #(or (not (nil? (:last-verified %)))
                                                                                 (= "00000000-0000-0000-0000-000000000000" (str (:resource-id %))))
                                                                            raw-res-all))
@@ -189,7 +189,7 @@
                     {:status 200
                      :body total-result}))))})
 
-(def user-get-all-courses ;; Non-functional
+(def user-get-all-courses
   {:summary "Retrieves all courses for specified user"
    :permission-level "lab-assistant"
    :bypass-permission true

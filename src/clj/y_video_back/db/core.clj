@@ -172,7 +172,7 @@
     (transform-keys csk/->kebab-case-keyword
                     (READ tk id))))
 
-; - - - - - - - Matthew inserting potentially useful code - - - - - - - ;
+; - - - - - - - more generic functions - - - - - - - ;
 
 (def spy #(do (println "DEBUG:" %) %))
 
