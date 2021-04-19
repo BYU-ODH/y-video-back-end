@@ -10,15 +10,16 @@
  :CONSUMER_SECRET ""
  :auth {:timeout 16200000} ; 4.5 hour - MUST CHANGE IN DB TRIGGER TOO
  :front-end-netid ""
- :FILES {:media-url ""
+ :FILES {:media-url "{filepath}"
+         :media-trash-url "{filepath}"
          :timeout 14400000 ; 4 hours - MUST CHANGE IN DB TRIGGER TOO
-         :log-path ""
-         :endpoint-log-path ""}
+         :log-path "{filepath}"
+         :endpoint-log-path "{filepath}"}
  :user-data-refresh-after 168 ; in hours - 7 days
  :user-courses-refresh-after 168 ; in hours - 7 days
- :resource-access-expire-after 168 ; in hours - 7 days
- :host ""
- :y-video-back {:site-url ""
+ :host "http://localhost:3000"
+ :admin-emails ["{email address}" "{email address}"]
+ :y-video-back {:site-url "http://localhost:3000"
                 :db {:database-name ""
                      :adapter ""
                      :auto-commit true
@@ -31,7 +32,7 @@
                      :connection-timeout 30000
                      :server-name ""
                      :read-only false
-                     :maximum-pool-size 10
+                     :maximum-pool-size 2
                      :idle-timeout 600000
                      :validation-timeout 5000
-                     :pool-name ""}}}
+                     :pool-name "db_pool"}}}

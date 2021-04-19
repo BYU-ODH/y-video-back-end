@@ -192,9 +192,10 @@
                 (and (not (and (or (:dev env) (:test env))
                                (= (:session-id-bypass env) (str session-id))))
                      (nil? (ru/token-to-user-id session-id))))
-          unauthorized-page
-          (if (= (:session-id-bypass env) (str session-id))
-            (handler request)
+          unauthorized-page  ; no user for session-id and session-id is not bypass from config
+          (if (= (and (or (:dev env) (:test env))
+                      (= (:session-id-bypass env) (str session-id))))
+            (handler request)  ; session-id is bypass from config
             (let [valid-type (and (not (nil? (get-permission-level request)))
                                   (<= (ru/get-user-type (ru/token-to-user-id session-id))
                                       (get-permission-level request)))

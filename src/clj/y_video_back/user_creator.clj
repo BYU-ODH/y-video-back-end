@@ -13,18 +13,6 @@
     [clojure.walk :as walk]))
 
 
-
-;; TODO talk to Peter about public collections
-
-; Everyone is a student unless they are/were an instructor within the past year (6 terms)
-; instructor_class_count > 0 => instructor
-; Only check on create account - will probably change this to check periodically
-; (maybe beginning of each term?)
-
-
-
-
-
 (defn create-user
   "Creates user with data from BYU api"
   [username]
