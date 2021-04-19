@@ -258,19 +258,6 @@ COMMENT ON TABLE email_logs IS 'Tracks all emails sent';
 DROP TABLE IF EXISTS collection_resources_assoc CASCADE;
 
 
-DROP TABLE IF EXISTS content_files_assoc CASCADE;
-DROP TABLE IF EXISTS resource_files_assoc CASCADE;
-/*CREATE TABLE resource_files_assoc (
-   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY
-   ,deleted TIMESTAMP DEFAULT NULL
-   ,updated TIMESTAMP DEFAULT NULL
-   ,created  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-   ,resource_id UUID REFERENCES resources(id)
-   ,file_id UUID REFERENCES files(id)
-   , CONSTRAINT no_duplicate_resource_files UNIQUE (resource_id, file_id)
-);
-COMMENT ON TABLE resource_files_assoc IS 'Many-to-many table connecting resources and files';
-*/
 -------------------------------
 -- Auto-update updated --
 -------------------------------
@@ -407,41 +394,6 @@ CREATE VIEW subtitles_by_resource AS
     JOIN resources_undeleted AS r
     ON r.id = contents_undeleted.resource_id;
 
-DROP VIEW IF EXISTS subtitles_by_content;
-
-
-DROP VIEW IF EXISTS collections_by_content;
-/*
-CREATE VIEW collections_by_content AS
-    SELECT collections_undeleted.*, cca.content_id
-    FROM collections_undeleted JOIN contents_undeleted AS cca
-    ON collections_undeleted.id = cca.collection_id;
-*/
-
-
-/*
-CREATE VIEW contents AS
-    SELECT scu.content_name,
-           scu.content_type,
-           scu.requester_email,
-           scu.thumbnail,
-           scu.copyrighted,
-           scu.physical_copy_exists,
-           scu.full_video,
-           scu.published,
-           scu.allow_definitions,
-           scu.allow_notes,
-           scu.allow_captions,
-           scu.date_validated,
-           scu.views,
-           scu.metadata AS resource_metadata,
-           annt.collection_id,
-           annt.content_id AS resource_id,
-           annt.id
-    FROM resources_undeleted AS scu JOIN contents_undeleted AS annt
-    ON scu.id = annt.content_id;
-*/
-
 DROP VIEW IF EXISTS collections_by_course;
 CREATE VIEW collections_by_course AS
     SELECT collections_undeleted.*, cca.course_id
@@ -454,20 +406,6 @@ CREATE VIEW courses_by_collection AS
     FROM courses_undeleted JOIN collection_courses_assoc_undeleted AS cca
     ON courses_undeleted.id = cca.course_id;
 
-/*
-DROP VIEW IF EXISTS resources_by_file;
-CREATE VIEW resources_by_file AS
-    SELECT resources_undeleted.*, rfa.file_id
-    FROM resources_undeleted JOIN resource_files_assoc_undeleted AS rfa
-    ON resources_undeleted.id = rfa.resource_id;
-*/
-/*
-DROP VIEW IF EXISTS files_by_resource;
-CREATE VIEW files_by_resource AS
-    SELECT files_undeleted.*, rfa.resource_id
-    FROM files_undeleted JOIN resource_files_assoc_undeleted AS rfa
-    ON files_undeleted.id = rfa.file_id;
-*/
 DROP VIEW IF EXISTS collections_by_users_via_courses;
 CREATE VIEW collections_by_users_via_courses AS
     SELECT collections_undeleted.*, uca.user_id

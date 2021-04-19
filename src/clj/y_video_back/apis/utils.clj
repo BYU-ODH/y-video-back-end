@@ -52,7 +52,6 @@
                                    :content-type "application/x-www-form-urlencoded"})
         new-token (get (json/read-str (:body tokenRes)) "access_token")]
     (def oauth-token new-token)
-    ;(println "setting new oatuh-token=" oauth-token)
     new-token))
 
 (def oauth-token "")
