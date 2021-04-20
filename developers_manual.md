@@ -352,7 +352,6 @@ Comments here focus on the structure and function of Y-Video, not how the Clojur
 
 *   Built with FastAPI in Python
 *   Has no authorization set up
-*   Currently relies on a Mongo db hosted on same server as back end
-    *   We have a Postgres db, we just need to transfer the data
+*   Relies on a Postgres db. Tory Anderson has access to the credentials if needed.
 *   Dictionaries taken from [https://github.com/open-dsl-dict/wiktionary-dict](https://github.com/open-dsl-dict/wiktionary-dict) under src/*.txt
 *   Code stored at [https://github.com/BYU-ODH/y-translate](https://github.com/BYU-ODH/y-translate)
