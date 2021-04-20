@@ -5,6 +5,26 @@ Created by Matthew Cheney
 April 19, 2021
 
 
+## Table of Contents
+
+
+* [Introduction](#introduction)
+* [Clojure Syntax](#clojure-syntax)
+* [Clojure and Other Tools](#clojure-and-other-tools)
+* [Endpoints](#endpoints)
+* [Database](#database)
+* [Middleware](#middleware)
+* [Permissions](#permissions)
+* [Models](#models)
+* [Config Files](#config-files)
+* [APIs](#apis)
+* [Creating Admins and Lab Assistants](#creating-admins-and-lab-assistants)
+* [Testing](#testing)
+* [Serving the Front End](#serving-the-front-end)
+* [Deployment](#deployment)
+* [Translation API](#translation-api)
+
+
 ## Introduction
 
 This is a reference for understanding how the back end for Y-Video works.
