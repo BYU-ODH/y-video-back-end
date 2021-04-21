@@ -184,7 +184,8 @@
    :permission-level "lab-assistant"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
-   :responses {200 {:body [string?]}
+   :responses {200 {:body [{:username string?
+                            :valid boolean?}]}
                500 {:body {:message string?}}
                404 {:body {:message string?}}}
    :handler (fn [{{{:keys [id]} :path} :parameters}]
@@ -192,4 +193,6 @@
                 {:status 404
                  :body {:message "resource not found"}}
                 {:status 200
-                 :body (map (fn [arg] (:username arg)) (resource-access/READ-USERNAMES-BY-RESOURCE id))}))})
+                 :body (map (fn [arg] {:username (:username arg)
+                                       :valid (utils/is-valid-access-time (:last-verified arg))})
+                            (resource-access/READ-USERNAMES-BY-RESOURCE id))}))})
