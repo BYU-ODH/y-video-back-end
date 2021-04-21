@@ -1,6 +1,5 @@
 (ns y-video-back.utils.utils)
 
-
 (defn to-uuid
   [text-in]
   (java.util.UUID/fromString text-in))

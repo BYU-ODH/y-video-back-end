@@ -1,4 +1,4 @@
-(ns legacy.routes.permissions.collection-tests
+(ns legacy.routes.permissions.basic-tests
   (:require
     [clojure.test :refer :all]
     [ring.mock.request :refer :all]

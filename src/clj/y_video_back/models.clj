@@ -2,21 +2,6 @@
   (:require
     [clojure.string :as str]))
 
-; (defn add-namespace
-;   "Converts all keywords to namespace-keywords, returns vector of keywords"
-;   [namespace m]
-;   (into []
-;     (map (fn [val]
-;             (keyword
-;               namespace
-;               (str/replace
-;                 (str
-;                   (get val 0))
-;                 ":"
-;                 "")))
-;       m)))
-
-
 (def echo-patch
   {:echo string?})
 
@@ -29,9 +14,6 @@
 
 (def user
   (into user-without-id {:id uuid?}))
-
-; (def user-without-id-ns-params  ; Not in use
-;   (add-namespace "user" {:variable string?}))
 
 (def word-without-id-or-user-id
   {:word string?
@@ -81,7 +63,6 @@
    :views int?
    :all-file-versions string?
    :metadata string?})
-   ;:public boolean?})
 
 (def resource
   (into resource-without-id {:id uuid?}))
@@ -109,7 +90,6 @@
    :published boolean?
    :words string?
    :clips string?})
-   ;:public boolean?})
 
 (def content-without-id
   (into content-without-any-ids {:resource-id uuid?
@@ -165,16 +145,6 @@
 (def user-courses-assoc
   (into user-courses-assoc-without-id {:id uuid?}))
 
-
-;(def collection-resources-assoc-without-any-ids
-;  {})
-
-;(def collection-resources-assoc-without-id
-;  (into collection-resources-assoc-without-any-ids {:collection-id uuid? :resource-id uuid?}))
-
-;(def collection-resources-assoc
-;  (into collection-resources-assoc-without-id {:id uuid?}))
-
 (def collection-courses-assoc-without-any-ids
   {})
 
@@ -183,13 +153,3 @@
 
 (def collection-courses-assoc
   (into collection-courses-assoc-without-id {:id uuid?}))
-
-
-;(def resource-files-assoc-without-any-ids
-;  {})
-
-;(def resource-files-assoc-without-id
-;  (into resource-files-assoc-without-any-ids {:resource-id uuid? :file-id uuid?}))
-
-;(def resource-files-assoc
-;  (into resource-files-assoc-without-id {:id uuid?}))

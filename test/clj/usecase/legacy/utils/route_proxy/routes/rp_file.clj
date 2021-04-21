@@ -16,9 +16,7 @@
   "Create a file via app's post request"
   ([session-id file-db filecontent]
    (ap2 (-> (request :post (str "/api/file"))
-            ;(json-body (get file-data 0))
             (header :session-id session-id)
-            ;(assoc :params file-db)
             (assoc :multipart-params {"file" filecontent
                                       :file-version (:file-version file-db)
                                       :metadata (:metadata file-db)

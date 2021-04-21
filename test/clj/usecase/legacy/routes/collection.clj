@@ -41,7 +41,6 @@
       (let [res (rp/collection-post coll-one)]
         (is (= 200 (:status res)))
         (let [id (ut/to-uuid (:id (m/decode-response-body res)))]
-              ;header (m/decode-response-body res)]
           (is (= (into coll-one {:id id})
                  (ut/remove-db-only (collections/READ id)))))))))
 
@@ -110,33 +109,6 @@
                         :username (:username user-one)
                         :account-role 0})
                  (map ut/remove-db-only (user-collections-assoc/READ-BY-IDS [(:id coll-one) (:username user-one)])))))))))
-  ; (testing "add user to collection, user not in db"
-  ;   ; Add collection, connect to username
-  ;   (let [coll-one (db-pop/add-collection)
-  ;         user-one {:username (get-in env [:test-user :username])}]
-  ;     (is (= '() (user-collections-assoc/READ-BY-IDS [(:id coll-one) (:username user-one)])))
-  ;     (is (= '() (users/READ-BY-USERNAME [(:username user-one)])))
-  ;     (let [res (rp/collection-id-add-user (:id coll-one)
-  ;                                          (:username user-one)
-  ;                                          0)]
-  ;       (is (= 200 (:status res)))
-  ;       (let [id (ut/to-uuid (:id (m/decode-response-body res)))]
-  ;         (is (= (list {:id id
-  ;                       :collection-id (:id coll-one)
-  ;                       :username (:username user-one)
-  ;                       :account-role 0})
-  ;                (map ut/remove-db-only (user-collections-assoc/READ-BY-IDS [(:id coll-one) (:username user-one)]))))))
-  ;     ; Check user was created
-  ;     (is (= (:username user-one) (:username (first (users/READ-BY-USERNAME [(:username user-one)])))))
-  ;     ; Check if collection in get collections by logged in
-  ;     (let [user-one-res (first (users/READ-BY-USERNAME [(:username user-one)]))
-  ;           res (rp/collections-by-logged-in (uc/user-id-to-session-id (:id user-one-res)))]
-  ;       (is (= [(-> coll-one
-  ;                   (ut/remove-db-only)
-  ;                   (update :id str)
-  ;                   (update :owner str)
-  ;                   (assoc :content []))]
-  ;              (m/decode-response-body res)))))))
 
 (deftest coll-add-users
   (testing "add list of users to collection"
@@ -383,11 +355,9 @@
       (is (= 200 (:status res-two)))
       (is (= (-> crse-one
                  (update :id str)
-                 ;(into {:collection-id (str (:id coll-one))})
                  (list))
              (map ut/remove-db-only (m/decode-response-body res-one))))
       (is (= (-> crse-two
                  (update :id str)
-                 ;(into {:collection-id (str (:id coll-two))})
                  (list))
              (map ut/remove-db-only (m/decode-response-body res-two)))))))

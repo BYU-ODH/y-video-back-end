@@ -2,8 +2,6 @@
   (:require
     [y-video-back.config :refer [env]]
     [clojure.test :refer [use-fixtures deftest testing is]]
-    ;[ring.mock.request :refer :all]
-    ;[y-video-back.handler :refer :all]
     [legacy.db.test-util :as tcore]
     [muuntaja.core :as m]
     [clojure.java.jdbc :as jdbc]

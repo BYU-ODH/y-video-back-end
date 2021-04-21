@@ -67,8 +67,7 @@
              :responses {200 {:body {:message string?}}}
              :handler (fn [req]
                         {:status 200
-                         :body {:message "Use the Force, Luke!"}})}}]
-      ;{:get (constantly (response/ok {:message "pong"}))}]
+                         :body {:message "pong"}})}}]
      ["/auth-ping"
       {:get {:summary "ping, requires valid session-id"
              :security :admin
@@ -82,7 +81,7 @@
      ["/surely-a-get-method"
       {:post (constantly (response/ok {:message "pong"}))}]
 
-     ["/jedi-council"
+     ["/jedi-council"  ; This illustrates a 401 response
       {:get {:validate false
              :permission-level "master"
              :handler (fn [] "doesn't matter")}}]]
@@ -105,7 +104,6 @@
                             {:status 200
                              :body {:session-id (str (uc/get-session-id username))}})))}}]]
 
-
     ["/echo"
      {:swagger {:tags ["echo"]}}
 
@@ -115,18 +113,14 @@
              :parameters {:query {:echo string?}}
              :responses {200 {:body {:echo string?}}}
              :handler (fn [{{{:keys [echo]} :query} :parameters}]
-                        ;(println (str "In the echo get route with query: " echo))
                         {:status 200
                          :body {:echo echo}})}
        :post {:summary "echo parameter post"
               :permission-level "admin"
               :parameters {:header {:session-id uuid?}
                            :body {:echo string?}}
-                           ;:multipart {"file" multipart/temp-file-part}}
-                           ;:multipart {:data {:echo string?}}}
               :responses {200 {:body {:echo string?}}}
               :handler (fn [req]
-                         ;(println "req=" req)
                          {:status 200
                           :body (get-in req [:parameters :body])})}
        :patch service-handlers/echo-patch}]
@@ -141,16 +135,7 @@
                         {:status 200
                          :body {:echo word
                                 :second second}})}}]]
-    ;["/cas-testing"
-    ; {:swagger {:tags ["cas-testing"]}}
 
-    ; [""
-    ;  {:get {:summary "return username"
-    ;         :parameters {}
-    ;         :responses {200 {:body {:username string?}}}
-    ;         :handler (fn [{{{:keys [username]} :body} :parameters}]
-    ;                    {:status 200
-    ;                     :body {:username username}})}}]]
     ["/user"
      {:swagger {:tags ["user"]}}
      [""
@@ -181,13 +166,13 @@
      {:swagger {:tags ["collections"]}}
 
      [""
-      {:get service-handlers/user-get-all-collections-by-logged-in}]]  ;; This method is a place holder - it is used elsewhere
+      {:get service-handlers/user-get-all-collections-by-logged-in}]]
 
     ["/refresh-courses"
      {:swagger {:tags ["refresh-courses"]}}
 
      [""
-      {:post service-handlers/refresh-courses}]]  ;; This method is a place holder - it is used elsewhere
+      {:post service-handlers/refresh-courses}]]
 
     ["/collection"
      {:swagger {:tags ["collection"]}}
@@ -214,7 +199,7 @@
      ["/{id}/users"
       {:get service-handlers/collection-get-all-users}]]
 
-    [ "/course"
+    ["/course"
      {:swagger {:tags ["course"]}}
      [""
       {:post service-handlers/course-create}]
@@ -222,10 +207,6 @@
       {:get service-handlers/course-get-by-id
        :patch service-handlers/course-update
        :delete service-handlers/course-delete}]
-     ;["/{id}/add-collection"
-     ; {:post service-handlers/course-add-collection}]
-     ;["/{id}/remove-collection"
-     ; {:post service-handlers/course-remove-collection}]
      ["/{id}/collections"
       {:get service-handlers/course-get-all-collections}]
      ["/{id}/add-user"
@@ -244,12 +225,8 @@
       {:get service-handlers/resource-get-by-id
        :patch service-handlers/resource-update
        :delete service-handlers/resource-delete}]
-     ;["/{id}/connect-file"
-     ; {:post service-handlers/resource-connect-file}]
      ["/{id}/files"
       {:get service-handlers/resource-get-all-files}]
-     ;["/{id}/add-view"
-     ; {:post service-handlers/resource-add-view}]
      ["/{id}/collections"
       {:get service-handlers/resource-get-all-collections}]
      ["/{id}/contents"
@@ -274,10 +251,6 @@
        :delete service-handlers/content-delete}]
      ["/{id}/add-view"
       {:post service-handlers/content-add-view}]
-     ;["/{id}/add-subtitle"
-     ; {:post service-handlers/content-add-subtitle}]
-     ;["/{id}/remove-subtitle"
-     ; {:post service-handlers/content-remove-subtitle}]
      ["/{id}/subtitles"
       {:get service-handlers/content-subtitles}]
      ["/{id}/clone-subtitle"
@@ -309,11 +282,6 @@
      ["/{id}"
       {:delete service-handlers/language-delete}]]
 
-    ;["/connect-collection-and-course"
-    ; {:swagger {:tags ["connect"]}}
-    ; [""
-    ;  {:post service-handlers/connect-collection-and-course}]]
-
     ["/admin"
      {:swagger {:tags ["admin"]}}
      ["/user/{term}"
@@ -330,17 +298,17 @@
 
     ["/media"
      {:swagger {:tags ["media"]}}
-     ;["/upload-file"
-     ; {:post service-handlers/upload-file}}
      ["/get-file-key/{file-id}"
       {:get service-handlers/get-file-key}]
      ["/stream-media/{file-key}"
       {:get service-handlers/stream-media}]]
+
     ["/partial-media"
      {:swagger {:tags ["media"]}
       :middleware [wrap-partial-content]}
      ["/stream-media/{file-key}"
       {:get service-handlers/stream-partial-media}]]
+
     ["/email"
      {:swagger {:tags ["email"]}}
      ["/no-attachment"

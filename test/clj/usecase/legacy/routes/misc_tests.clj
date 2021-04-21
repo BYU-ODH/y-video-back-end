@@ -50,9 +50,3 @@
             new-resource (resources/READ (:resource-id cont-one))]
         (is (= (+ 1 (:views cont-one)) (:views new-content)))
         (is (= (+ 1 (:views rsrc-one)) (:views new-resource)))))))
-
-; (deftest read-where-and-res
-;   (testing "temp"
-;     (let [id-one (java.util.UUID/randomUUID)
-;           id-two (java.util.UUID/randomUUID)]
-;       (is (= "" (core/read-where-and :content-subtitles-assoc-undeleted [:content-id :subtitle-id] [id-one id-two]))))))

@@ -21,7 +21,7 @@
   (println (get-in request [:query-params]))
   (if (nil? (:username request))
       (layout/render request "index.html" {:logged-in false})
-    (let [session-id (uc/get-session-id (:username request))] ; temporary fix
+    (let [session-id (uc/get-session-id (:username request))]
       (println "checking user courses")
       (check-courses-with-api (:username request))
       (println (str "user from CAS: " (:username request)))
@@ -31,14 +31,10 @@
 (defn get-routes-r
   "Recursive helper for get-routes"
   [arg]
-  ;(println "arg=" arg)
   (let [key (get arg 0) ; string uri piece
         val (get arg 1)] ; map - potentially endpoint info
-    ;(println "key=" key)
-    ;(println "val=" val)
     (if (contains? val :swagger)
       (do
-        ;(println "swagger")
         (reduce concat
           (map (fn [a] (let [res (get-routes-r a)]
                          (vec (map (fn [b] (list (str key (get b 0))
@@ -49,22 +45,12 @@
       (map (fn [c] (vec (list key c (get val c))))
            (keys val)))))
 
-
-        ; (map #(let [res (get-routes-r %)]
-        ;         (list (str key (get res 0))
-        ;               (get res 1)))
-        ;      (subvec arg 2))]])))
-
-
 (defn get-routes
   "Gets only route-specific information from arg"
   [arg]
   (let [all-routes (map #(vec (get-routes-r %)) (subvec arg 2))]
     (sort #(compare (first %1) (first %2))
           (reduce concat all-routes))))
-  ; (map #(list (str (get arg 0) (get % 0))
-  ;             (get-routes-r %))
-  ;       (subvec arg 2)))
 
 (defn permission-docs-page [request]
   (layout/render request "permissions.html" {:routes (get-routes (service-routes))
@@ -88,23 +74,26 @@
          ["/hello" {:get hello-page}]
          ["/who-am-i" {:get (fn [request] {:status 200 :body {:username (:username request)}})}]
          ;["/show-request" {:get (fn [request] {:status 200 :body {:request (str request)}})}]
+
+         ; Direct-to-back-end routes
          ["/permission-docs" {:get permission-docs-page}]
          ["/login" {:get (constantly (redirect "/"))}]
 
          ["/logout" {:get {:handler (fn [req] (cas/logout-resp (:host env)))}}] ; placeholder url until we get a login page going
-         ; ["/logout" {:get {:handler (redirect (str "/?logout=true"))}}]
-         ; serving videos routes
 
          ; React BrowserRouter support
+         ; These should match yvideo-client/src/components/c/Root/index.jsx
          ["/index" {:get index-page}]
+         ["/search-public-collections" (:get index-page)]
          ["/admin" {:get index-page}]
          ["/collections" {:get index-page}]
          ["/lab-assistant" {:get index-page}]
          ["/manage-resource" {:get index-page}]
-         ["/feedback" {:get index-page}]
          ["/lab-assistant-manager/:professorId" {:get index-page}]
          ["/lab-assistant-manager/:professorId/:collectionId" {:get index-page}]
          ["/manager" {:get index-page}]
          ["/manager/:id" {:get index-page}]
+         ["/public-manager/:id?" (:get index-page)]
          ["/player/:id" {:get index-page}]
-         ["/trackeditor/:id" {:get index-page}])))
+         ["/trackeditor/:id" {:get index-page}]
+         ["/feedback" {:get index-page}])))

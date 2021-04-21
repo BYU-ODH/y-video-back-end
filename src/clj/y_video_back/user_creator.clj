@@ -12,7 +12,6 @@
     [clojure.string :as str]
     [clojure.walk :as walk]))
 
-
 (defn create-user
   "Creates user with data from BYU api"
   [username]

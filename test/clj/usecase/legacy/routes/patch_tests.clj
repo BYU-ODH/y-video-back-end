@@ -1,8 +1,8 @@
-;; For each model, test:
-;; 1) update fields one at a time
-;; 2) update some, but not all, fields at once
-;; 3) update all fields at once
-;; 1-3 for updating to self as well
+; For each model, test:
+; 1) update fields one at a time
+; 2) update some, but not all, fields at once
+; 3) update all fields at once
+; 1-3 for updating to self as well
 
 (ns legacy.routes.patch-tests
   (:require

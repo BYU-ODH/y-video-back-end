@@ -58,7 +58,7 @@
                   {:status 404
                    :body {:message "requested user not found"}}
                   {:status 200
-                   :body {:message (str 1 " users updated")}})))})  ; I know, hard coded. Will change later.
+                   :body {:message (str 1 " users updated")}})))})  ; TODO Check that only 1 user really was updated
 
 (def user-delete
   {:summary "Deletes specified user"
@@ -79,11 +79,8 @@
 (def user-get-logged-in
   {:summary "Retrieves the current logged-in user"
    :permission-level "student"
-   ;:bypass-permission true
    :parameters {:header {:session-id uuid?}}
    :responses {200 {:body models/user}
-                     ;:header {:Access-Control-Allow-Origin "http://localhost:3000"}}
-               ;403 {:body {:message string?}}
                404 {:body {:message string?}}
                500 {:body {:message string?}}}
    :handler (fn [{{{:keys [session-id]} :header} :parameters}]

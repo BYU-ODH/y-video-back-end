@@ -208,7 +208,6 @@
           user-result (map #(-> %
                                 (utils/remove-db-only)
                                 (dissoc :collection-id))
-                                ; (dissoc :account-role))
                            user-collections-result)]
         {:status 200
          :body user-result})))

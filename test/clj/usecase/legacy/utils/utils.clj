@@ -64,7 +64,7 @@
 (defn check-header
   "Checks if session-id is in response header"
   [res]
-  (is (contains? (:headers res) "session-id")) ;; Change to actually decode header then check
+  (is (contains? (:headers res) "session-id")) ; TODO Change to actually decode header then check
   res)
 
 (defn create-temp-file
@@ -75,7 +75,6 @@
         file-name-with-ext (last (clojure.string/split file-path #"/"))
         file-name (first (clojure.string/split file-name-with-ext #"\."))
         file-ext (str "." (last (clojure.string/split file-name-with-ext #"\.")))
-        ;trash (println (-> env :FILES :test-temp))
         temp-file (java.io.File/createTempFile file-name file-ext (io/file (-> env :FILES :test-temp)))]
     (io/copy (io/file file-path) temp-file)
     temp-file))

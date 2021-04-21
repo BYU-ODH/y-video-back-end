@@ -3,10 +3,10 @@
    [hiccup.page :as hp]
    [hiccup.element :refer [javascript-tag]]
    [ring.util.http-response :refer [ok] :as ru]
-   [selmer.parser :as parser] ;; Probably a temporary fix
+   [selmer.parser :as parser]
    [ring.util.anti-forgery :refer [anti-forgery-field]]
    [ring.middleware.anti-forgery :refer [*anti-forgery-token*]]
-   [ring.util.http-response :refer [content-type ok]] ;; Probably a temporary fix
+   [ring.util.http-response :refer [content-type ok]]
    [selmer.filters :as filters]))
 
 
@@ -129,7 +129,7 @@
        [:div.content (str application)]]))
     "text/html; charset=utf-8")))
 
-;; Probably a temporary fix \/ \/ \/
+; This is where the front end pages are rendered
 
 (filters/add-filter! :string? string?)
 (filters/add-filter! :get-i (fn [data i]
@@ -149,7 +149,3 @@
           :page template
           :csrf-token *anti-forgery-token*)))
     "text/html; charset=utf-8"))
-
-
-
-;; Probably a temporary fix /\ /\ /\

@@ -15,20 +15,14 @@
   {:summary "Creates a new file. MUST INCLUDE FILE AS UPLOAD."
    :permission-level "lab-assistant"
    :parameters {:header {:session-id uuid?}
-                ;:body {:file-version string?}
                 :multipart {:file multipart/temp-file-part
                             :resource-id uuid?
                             :file-version string?
                             :metadata string?}}
-                ;:body (dissoc models/file-without-id :filepath)
    :responses {200 {:body {:message string?
                            :id string?}}
                500 {:body {:message string?}}}
    :handler (fn [{{{:keys [file resource-id file-version metadata]} :multipart} :parameters}]
-              ;(println "req=" req)
-              ;(if (nil? (get-in req [:multipart-params "file"]))
-              ;  {:status 394
-              ;   :body {:message "missing file to upload"}]
               (let [file-name (utils/get-filename (:filename file))]
                 (if-not (resources/EXISTS? resource-id)
                   {:status 500

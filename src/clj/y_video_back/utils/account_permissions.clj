@@ -1,5 +1,10 @@
 (ns y-video-back.utils.account-permissions)
 
+; Explanation: account types and roles are stored in the database
+; and passed to the front end as integers. These methods allow the
+; back end code to use strings instead. This may be an area to change
+; in the future.
+
 (def to-string-type
   {0 "admin"
    1 "lab-assistant"

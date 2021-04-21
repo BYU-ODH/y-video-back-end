@@ -13,22 +13,7 @@
    [y-video-back.log :as log-ut]
    [y-video-back.utils.account-permissions :as ac]))
 
-(def upload-file
-  {:summary "Uploads file"
-   :permission-level "admin"
-   :responses {200 {:body {:message string?}}}
-   :handler (fn [p]
-              (let [file-params (get-in p [:params "file"])
-                    body (:body p)]
-                ;(println "DEBUG: file-params=" file-params)
-                ;(println "DEBUG: body=" body)
-                (io/copy (:tempfile file-params)
-                         (io/file (str (-> env :FILES :media-url) (:filename file-params)))))
-              {:status 200
-               :schema swagger-upload/TempFileUpload})})
-
-
-;; TODO - check if user has permission to stream requested file
+; TODO - check if user has permission to stream requested file
 
 (def get-file-key
   {:summary "Gets volatile url for streaming specified media file. If accessing public file as public user, use '00000000-0000-0000-0000-000000000000' as session-id."
@@ -42,18 +27,12 @@
                     file-key (file-keys/CREATE {:file-id file-id
                                                 :user-id user-id})
                     file-res (files/READ file-id)]
-                ;(println "filepath in handler=" (:filepath file-res))
                 {:status 200
                  :body {:file-key (:id file-key)}}))})
 
-(def stream-media ;; TODO - require session-id?
+(def stream-media ; TODO - require session-id?
   {:summary "Stream media referenced by file-key"
-   :parameters {
-                ;:header {:session-id uuid?}
-                :path {:file-key uuid?}}
-   ;:responses {200 {:body "file response body"}
-   ;            404 (:body {:message string?})
-   ;:handler (fn [{{{:keys [session-id]} :header {:keys [file-id]} :path} :parameters}])
+   :parameters {:path {:file-key uuid?}}
    :handler (fn [{{{:keys [file-key]} :path} :parameters}]
               (let [file-key-res (file-keys/READ-UNEXPIRED file-key)]
                 (if (nil? file-key-res)
@@ -65,14 +44,9 @@
                                                 :username (:username user-res)}))
                     (file-response (utils/file-id-to-path (:file-id file-key-res)))))))})
 
-(def stream-partial-media ;; TODO - require session-id?
+(def stream-partial-media ; TODO - require session-id?
   {:summary "Stream partial media referenced by file-key"
-   :parameters {
-                ;:header {:session-id uuid?}
-                :path {:file-key uuid?}}
-   ;:responses {200 {:body "file response body"}
-   ;            404 (:body {:message string?})
-   ;:handler (fn [{{{:keys [session-id]} :header {:keys [file-id]} :path} :parameters}])
+   :parameters {:path {:file-key uuid?}}
    :handler (fn [{{{:keys [file-key]} :path} :parameters}]
               (let [file-key-res (file-keys/READ-UNEXPIRED file-key)]
                 (if (nil? file-key-res)

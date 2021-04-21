@@ -268,8 +268,6 @@
                                       (update :owner str)
                                       (assoc :content '[])
                                       (assoc :expired-content '[]))
-                                      ;(assoc :account-role 1)
-                                      ;(assoc :user-id (str user-id)))
                                  [coll-one coll-two])
             updated-indirects (map #(-> %
                                         (ut/remove-db-only)
@@ -277,8 +275,6 @@
                                         (update :owner str)
                                         (assoc :content '[])
                                         (assoc :expired-content '[]))
-                                        ;(assoc :account-role 2)
-                                        ;(assoc :user-id (str user-id)))
                                    [coll-thr coll-fou])]
         (is (= (frequencies (concat updated-directs updated-indirects))
                (frequencies (m/decode-response-body res))))))))

@@ -59,7 +59,7 @@
           res (rp/content-post (uc/user-id-to-session-id (:id user-one))
                                cont-one)]
       (is (= 200 (:status res)))))
-  ; TODO finish this test when we check for resource access via user-coll
+  ; TODO finish this test when we check for resource access via user-coll (i.e. TA access)
   ; (testing "instructor, content-post, instructor via user-coll, has resource access"
   ;   (let [user-one (db-pop/add-user "instructor")
   ;         coll-one (db-pop/add-collection)

@@ -11,10 +11,7 @@
             [immutant.web.middleware :refer [wrap-session]]
             [ring.middleware.defaults :refer [site-defaults wrap-defaults]]
             [byu-cas.core :as cas]
-            ;[cheshire.generate :as cheshire]
-            ;[cognitect.transit :as transit]
             [y-video-back.middleware.formats :as formats]
-            ;[muuntaja.middleware :refer [wrap-format wrap-params]]
             [ring-ttl-session.core :refer [ttl-memory-store]]
             [y-video-back.routes.service-handlers.utils.utils :as sh-utils]
             [ring.middleware.cors :refer [wrap-cors]]
@@ -39,12 +36,9 @@
   (fn [request]
     ((cas/wrap-cas handler {:timeout 120 :host-override (:host env) :no-redirect? (constantly (not (= "/login" (str (:path-info request)))))})
      request)))
-    ;((cas/wrap-cas handler (str (-> env :y-video-back :site-url) (str (:uri request))))
-    ; request))
 
 (defn wrap-pre-cas [handler]
   (fn [request]
-    ;(println "request-in-pre-cas=" request)
     (let [res (handler request)]
       (if (= 403 (:status res))
           (layout/render request "index.html" {:session-id ""})
@@ -242,18 +236,6 @@
       (-> ((:middleware defaults) handler)
           (wrap-cors :access-control-allow-origin #"http://localhost:3000" :access-control-allow-methods [:get :put :post :delete :patch]
                      :access-control-allow-credentials "true" :access-control-expose-headers "session-id"))))
-          ;check-csrf)))
-          ;check-permission)))
-          ;wrap-flash
-          ;;wrap-cas
-          ;wrap-csrf)))
-          ;(wrap-session {:cookie-attrs {:http-only true}})
-          ;(wrap-defaults
-          ;  (-> site-defaults
-          ;      (assoc-in [:security :anti-forgery] false)
-          ;      (dissoc :session)
-          ;wrap-context
-          ;wrap-internal-error)))
 
 (defn wrap-api-post [handler]
   (-> handler
@@ -268,7 +250,6 @@
       wrap-post-cas
       wrap-cas
       wrap-pre-cas
-      ;wrap-csrf
       (wrap-session {:cookie-attrs {:http-only true}})
       (wrap-defaults
         (-> site-defaults

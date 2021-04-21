@@ -13,13 +13,10 @@
   (or (str/starts-with? uri "/api/get-session-id/")
       (str/starts-with? uri "/api/docs")
       (str/starts-with? uri "/api/swagger")
-      (str/starts-with? uri "/api/video")
       (str/starts-with? uri "/api/admin/public-collection/")
-      (str/starts-with? uri "/api/get-video-url");temporary
-      (str/starts-with? uri "/api/media/stream-media/");temporary
-      (str/starts-with? uri "/api/partial-media/stream-media/");temporary
-      (str/starts-with? uri "/api/upload");temporary))
-      (str/starts-with? uri "/api/ping")));temporary))
+      (str/starts-with? uri "/api/media/stream-media/")
+      (str/starts-with? uri "/api/partial-media/stream-media/")
+      (str/starts-with? uri "/api/ping")))
 
 (defn token-to-user-id
   "Returns user-id associated with token. Returns nil if token invalid."
@@ -51,10 +48,6 @@
   (let [int-role (ac/to-int-role role)
         object-collections (set (map #(:collection-id %) (permissions/READ-ALL-BY-OBJ-ID obj-id [:collection-id])))
         user-collections (set (map #(:collection-id %) (filter #(<= (:role %) int-role) (permissions/READ-BY-USER user-id [:collection-id :role]))))]
-    ;(println "in check-user-role with: " user-id obj-id int-role)
-    ;(println "object-collections: " object-collections)
-    ;(println "user-collections: " user-collections)
-    ;(println "intersection: " (set/intersection object-collections user-collections))
     (> (count (set/intersection object-collections user-collections))
        0)))
 
@@ -85,7 +78,6 @@
   "Generate new session-id, associated with same user as given session-id. Invalidate old session-id."
   [session-id]
   (let [new-session-id (:id (auth-tokens/CREATE {:user-id (:user-id (auth-tokens/READ-UNEXPIRED session-id))}))]
-    ;(println "deleting auth-token: " session-id)
     (auth-tokens/DELETE session-id)
     new-session-id))
 

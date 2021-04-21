@@ -14,16 +14,6 @@
                           event)
                     :escape-slash false)))
 
-; (defn init []
-;   (timbre/merge-config! {:output-fn json-output}))
-
-; (defn log-media-access
-;   [message]
-;   (timbre/with-config {:level :info
-;                        :appenders {:spit1 (timbre/spit-appender {:fname (str (get-in env [:FILES :log-path]) (.format (new java.text.SimpleDateFormat "yyyy-MM-dd") (java.util.Date.)) ".log")
-;                                                                  :output-fn json-output})}}
-;     (info message)))
-
 (defn log-media-access
   [message]
   (timbre/with-config {:level :info

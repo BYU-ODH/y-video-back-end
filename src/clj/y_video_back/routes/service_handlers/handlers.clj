@@ -44,7 +44,7 @@
 (def collection-get-all-courses collections/collection-get-all-courses)
 (def collection-get-all-users collections/collection-get-all-users)
 
-; Content handlers
+; Resource handlers
 (def resource-create resources/resource-create)
 (def resource-get-by-id resources/resource-get-by-id)
 (def resource-update resources/resource-update)
@@ -56,9 +56,8 @@
 (def resource-add-access resources/resource-add-access)
 (def resource-remove-access resources/resource-remove-access)
 (def resource-read-all-access resources/resource-read-all-access)
-;(def resource-add-view resources/resource-add-view)
 
-; Subtitle handlers
+; Language handlers
 (def language-create languages/language-create)
 (def language-delete languages/language-delete)
 (def language-get-all languages/language-get-all)
@@ -91,14 +90,12 @@
 (def word-update words/word-update)
 (def word-delete words/word-delete)
 
-; Annotation handlers
+; Content handlers
 (def content-create contents/content-create)
 (def content-get-by-id contents/content-get-by-id)
 (def content-update contents/content-update)
 (def content-delete contents/content-delete)
 (def content-add-view contents/content-add-view)
-;(def content-add-subtitle contents/content-add-subtitle)
-;(def content-remove-subtitle contents/content-remove-subtitle)
 (def content-subtitles contents/content-subtitles)
 (def content-clone-subtitle contents/content-clone-subtitle)
 
@@ -110,7 +107,6 @@
 (def search-by-resource admin/search-by-resource)
 
 ; Media handlers
-(def upload-file media/upload-file)
 (def get-file-key media/get-file-key)
 (def stream-media media/stream-media)
 (def stream-partial-media media/stream-partial-media)

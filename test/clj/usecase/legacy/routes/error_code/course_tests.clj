@@ -36,11 +36,6 @@
     (f)))
 
 (tcore/basic-transaction-fixtures
-  ;(def test-user-one (ut/under-to-hyphen (users/CREATE (g/get-random-user-without-id))))
-  ;(def test-user-two (ut/under-to-hyphen (users/CREATE (g/get-random-user-without-id))))
-  ;(def test-coll-one (ut/under-to-hyphen (collections/CREATE (into (g/get-random-collection-without-id-or-owner) {:owner (:id test-user-one)}))))
-  ;(def test-rsrc-one (ut/under-to-hyphen (resources/CREATE (g/get-random-resource-without-id))))
-  ;(def test-crse-one (ut/under-to-hyphen (courses/CREATE (g/get-random-course-without-id))))
   (def test-user-one (ut/under-to-hyphen (users/CREATE (g/get-random-user-without-id))))
   (def test-coll-one (ut/under-to-hyphen (collections/CREATE (into (g/get-random-collection-without-id-or-owner) {:owner (:id test-user-one)}))))
   (def test-rsrc-one (ut/under-to-hyphen (resources/CREATE (g/get-random-resource-without-id))))

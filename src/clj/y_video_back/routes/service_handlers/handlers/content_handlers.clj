@@ -30,9 +30,6 @@
                   (if-not (resources/EXISTS? (:resource-id body))
                     {:status 500
                      :body {:message "resource not found"}}
-                    ;(if (contents/EXISTS-COLL-CONT? (:collection-id body) (:resource-id body))
-                    ;  {:status 500
-                    ;   :body {:message "content connecting collection and resource already exists"}
                     (if (or (= (:session-id-bypass env) (str session-id))
                             (= (ut/to-uuid "00000000-0000-0000-0000-000000000000") (:resource-id body))
                             (ut/has-resource-permission (:resource-id body) (:collection-id body)))

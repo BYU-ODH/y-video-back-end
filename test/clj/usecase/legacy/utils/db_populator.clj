@@ -1,14 +1,14 @@
-;; All get functions - set up db such that target object could be add,
-;; but do not add target object. Return target object.
+; All get functions - set up db such that target object could be add,
+; but do not add target object. Return target object.
 
-;; For example: each Word requires a User (for its user-id field).
-;; (get-word) creates a new User and adds it to the database, creates
-;; a new Word with that User's id as its user-id, and returns the new
-;; Word. However, it does not add the Word to the database.
+; For example: each Word requires a User (for its user-id field).
+; (get-word) creates a new User and adds it to the database, creates
+; a new Word with that User's id as its user-id, and returns the new
+; Word. However, it does not add the Word to the database.
 
-;; All add functions - same as get functions, with additional step of
-;; adding target object to the db. Target object is returned with
-;; id included.
+; All add functions - same as get functions, with additional step of
+; adding target object to the db. Target object is returned with
+; id included.
 
 (ns legacy.utils.db-populator
     (:require
@@ -343,7 +343,6 @@
 (defn get-resource-access
   "Creates resource-id, ready to be added to db"
   [username resource-id]
-  ; (g/get-random-resource-access-without-id username resource-id))
   {:username username :resource-id resource-id})
 
 (defn add-resource-access
