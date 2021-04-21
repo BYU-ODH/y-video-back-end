@@ -74,6 +74,20 @@ Comments here focus on the structure and function of Y-Video, not how the Clojur
 
 These are some common tasks and the current workflows for executing them.
 
+### Making changes to the back end
+
+Do not make any changes directly on development or master. To make any changes:
+
+1. Pull the most recent commit on development.
+2. Make a branch for the new feature.
+3. Make your changes.
+4. Push the branch to Github.
+5. On Github, create a pull request into development.
+6. An admin will approve the pull request into development.
+7. Switch back to development on your machine and pull again.
+
+Eventually, merging into development will trigger an automatic redeployment of the back end to the development server.
+
 ### Redeploying the front end without testing
 
 If the front end has any changes they need deployed, follow these steps on the appropriate server:
