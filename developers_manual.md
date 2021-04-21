@@ -24,6 +24,7 @@ April 19, 2021
 * [Serving the Front End](#serving-the-front-end)
 * [Deployment](#deployment)
 * [Translation API](#translation-api)
+* [TODO Next](#todo-next)
 
 
 ## Introduction
@@ -407,3 +408,16 @@ The changes will be visible after about a minute.
 *   Relies on a Postgres db. Tory Anderson has access to the credentials if needed.
 *   Dictionaries taken from [https://github.com/open-dsl-dict/wiktionary-dict](https://github.com/open-dsl-dict/wiktionary-dict) under src/*.txt
 *   Code stored at [https://github.com/BYU-ODH/y-translate](https://github.com/BYU-ODH/y-translate)
+
+
+## TODO Next
+
+
+These are updates that would be good to implement next as time allows.
+
+1. When a browser first loads Y-Video, it makes a call to https://yvideo.byu.edu/api/user. If the user is not logged in, then the request lacks a session-id and the browser gets a 400 error, which prompts it to show the public landing page. While this works, it fills the log files on the back end with request coercion errors. We need to coordinate an error-free method with the front end team for checking if a user is logged in or not. The back end currently supplies a boolean called :logged-in when rendering the index page. The front end could use this.
+2. The most jerry-rigged part of the back end is checking user permissions for endpoints. This may warrant a complete overhaul. There should be enough tests in the test suite to ensure any new system matches the functionality of the current one.
+3. There are no tests to check that the API parsing functions in y-video-back.apis work correctly.
+4. Line coverage in general can be improved. Refer to the [Clojure and Other Tools](#clojure-and-other-tools) section to learn how to generate coverage reports with Cloverage.
+5. The resource-access restriction was added most recently, and is therefore most likely to have some bugs in it. The front end will likely find these first, but writing more tests for them would be useful.
+6. Almost all of the tests are integration tests right now. It would be useful to go through and fill out the unit tests.
