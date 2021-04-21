@@ -160,6 +160,8 @@
                                               (let [raw-res-all (contents/READ-BY-COLLECTION-WITH-LAST-VERIFIED (:id arg))
                                                     ; TODO also need to indicate there are contents with no resource-access at all
                                                     ; they are currently just getting dropped and ignored
+                                                    ; TODO Currently, public collections still require a valid resource-access for
+                                                    ; the owner. Ask Rob is this is correct, of if we need to change that.
                                                     raw-res (doall (filter #(or (not (nil? (:last-verified %)))
                                                                                 (= "00000000-0000-0000-0000-000000000000" (str (:resource-id %))))
                                                                            raw-res-all))
