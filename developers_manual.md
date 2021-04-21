@@ -11,6 +11,7 @@ April 19, 2021
 * [Introduction](#introduction)
 * [Clojure Syntax](#clojure-syntax)
 * [Clojure and Other Tools](#clojure-and-other-tools)
+* [Common Tasks](#common-tasks)
 * [Endpoints](#endpoints)
 * [Database](#database)
 * [Middleware](#middleware)
@@ -66,6 +67,57 @@ Comments here focus on the structure and function of Y-Video, not how the Clojur
     *   There are many other options: [https://gist.github.com/jasongilman/d1f70507bed021b48625](https://gist.github.com/jasongilman/d1f70507bed021b48625)
 *   The back end is equipped with Swagger UI. This automatically generates documentation, which serves as a reference for the front end team. It can be accessed at [https://yvideo.byu.edu/api/docs](https://yvideo.byu.edu/api/docs). Following the pattern of existing endpoints for adding new ones will keep this documentation up-to-date.
 *   To generate visual representations of the database, use DbVisualizer (the free version is fine): [https://www.dbvis.com/](https://www.dbvis.com/). Be sure to check “All Tables” and “Referenced Only” when generating the diagram.
+
+
+## Common Tasks
+
+These are some common tasks and the current workflows for executing them.
+
+### Redeploying the front end without testing
+
+If the front end has any changes they need deployed, follow these steps on the appropriate server:
+
+1. $ cd /srv/y-video-back-end/y-video-back-end/yvideo-client
+2. Make sure you're on the correct branch (usually develop)
+3. $ sudo git pull
+4. Check the front end config file: /srv/y-video-back-end/y-video-back-end/yvideo-client/.env.production
+5. $ cd /srv/y-video-back-end/y-video-back-end
+6. $ sudo ./build-front-end.sh
+7. $ sudo lein clean
+8. $ sudo lein uberjar
+9. $ sudo cp target/y-video-back-end.jar ../y-video-back-end.jar
+10. $ sudo systemctl restart y-video-back-end.service
+
+The changes will be visible after about a minute.
+
+### Redeploying the back end without testing
+
+If the back end has any changes that need to be deployed, follow these steps on the appropriate server. If the front end has been changed, follow steps 1-6 from above before running lein clean and uberjar.
+
+1. $ cd /srv/y-video-back-end/y-video-back-end
+2. Make sure you're on the correct branch (usually development)
+3. $ sudo git pull
+4. Check the back end config file: /srv/y-video-back-end/y-video-back-end/env/prod/resources/config.edn
+7. $ sudo lein clean
+8. $ sudo lein uberjar
+9. $ sudo cp target/y-video-back-end.jar ../y-video-back-end.jar
+10. $ sudo systemctl restart y-video-back-end.service
+
+The changes will be visible after about a minute.
+
+### Redeploying the front and back ends to the development server
+
+Redeploying changes to the development server is easier, but takes longer. If you want it to go faster, you can skip the testing stage by following the workflows for deploying the front and back ends separately.
+
+1. $ cd /srv/y-video-back-end/y-video-back-end/yvideo-client
+2. Make sure you're on the correct branch (usually develop)
+3. $ sudo git pull
+4. Check the front end config file: /srv/y-video-back-end/y-video-back-end/yvideo-client/.env.production
+5. $ cd /srv/y-video-back-end/y-video-back-end
+6. $ sudo ./build-stage.sh
+7. If all the tests pass, run: $ sudo systemctl restart y-video-back-end.service
+
+The changes will be visible after about a minute.
 
 
 ## Endpoints
