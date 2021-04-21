@@ -68,6 +68,7 @@ Comments here focus on the structure and function of Y-Video, not how the Clojur
     *   There are many other options: [https://gist.github.com/jasongilman/d1f70507bed021b48625](https://gist.github.com/jasongilman/d1f70507bed021b48625)
 *   The back end is equipped with Swagger UI. This automatically generates documentation, which serves as a reference for the front end team. It can be accessed at [https://yvideo.byu.edu/api/docs](https://yvideo.byu.edu/api/docs). Following the pattern of existing endpoints for adding new ones will keep this documentation up-to-date.
 *   To generate visual representations of the database, use DbVisualizer (the free version is fine): [https://www.dbvis.com/](https://www.dbvis.com/). Be sure to check “All Tables” and “Referenced Only” when generating the diagram.
+*   To run a check for unused variables and such, run: $ lein eastwood
 
 
 ## Common Tasks
