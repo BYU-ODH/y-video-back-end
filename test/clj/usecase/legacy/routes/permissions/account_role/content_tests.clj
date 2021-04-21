@@ -1,30 +1,15 @@
 (ns legacy.routes.permissions.account-role.content-tests
   (:require
-    [y-video-back.config :refer [env]]
-    [clojure.test :refer :all]
-    [ring.mock.request :refer :all]
-    [y-video-back.handler :refer :all]
-    [legacy.db.test-util :as tcore]
-    [muuntaja.core :as m]
     [clojure.java.jdbc :as jdbc]
-    [mount.core :as mount]
-    [legacy.utils.model-generator :as g]
-    [legacy.utils.route-proxy.proxy :as rp]
-    [y-video-back.db.core :refer [*db*] :as db]
-    [y-video-back.db.contents :as contents]
-    [y-video-back.db.collections-contents-assoc :as collection-contents-assoc]
-    [y-video-back.db.users-by-collection :as users-by-collection]
-    [y-video-back.db.collections-courses-assoc :as collection-courses-assoc]
-    [y-video-back.db.collections :as collections]
-    [y-video-back.db.resources :as resources]
-    [y-video-back.db.courses :as courses]
-    [y-video-back.db.files :as files]
-    [y-video-back.db.user-collections-assoc :as user-collections-assoc]
-    [y-video-back.db.user-courses-assoc :as user-courses-assoc]
-    [y-video-back.db.users :as users]
-    [y-video-back.db.words :as words]
-    [legacy.utils.utils :as ut]
+    [clojure.test :refer :all]
+    [legacy.db.test-util :as tcore]
     [legacy.utils.db-populator :as db-pop]
+    [legacy.utils.route-proxy.proxy :as rp]
+    [legacy.utils.utils :as ut]
+    [mount.core :as mount]
+    [y-video-back.config :refer [env]]
+    [y-video-back.db.core :refer [*db*] :as db]
+    [y-video-back.handler :refer :all]
     [y-video-back.user-creator :as uc]))
 
 (declare ^:dynamic *txn*)
@@ -59,7 +44,7 @@
           res (rp/content-post (uc/user-id-to-session-id (:id user-one))
                                cont-one)]
       (is (= 200 (:status res)))))
-  ; TODO finish this test when we check for resource access via user-coll
+  ; TODO finish this test when we check for resource access via user-coll (i.e. TA access)
   ; (testing "instructor, content-post, instructor via user-coll, has resource access"
   ;   (let [user-one (db-pop/add-user "instructor")
   ;         coll-one (db-pop/add-collection)

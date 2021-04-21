@@ -1,13 +1,11 @@
 (ns legacy.routes.subtitle
     (:require
       [clojure.test :refer :all]
-      [ring.mock.request :refer :all]
       [y-video-back.handler :refer :all]
       [legacy.db.test-util :as tcore]
       [muuntaja.core :as m]
       [clojure.java.jdbc :as jdbc]
       [mount.core :as mount]
-      [legacy.utils.model-generator :as g]
       [legacy.utils.route-proxy.proxy :as rp]
       [y-video-back.db.core :refer [*db*] :as db]
       [legacy.utils.utils :as ut]
@@ -56,3 +54,5 @@
           res (rp/subtitle-id-delete (:id sbtl-one))]
       (is (= 200 (:status res)))
       (is (= nil (subtitles/READ (:id sbtl-one)))))))
+
+

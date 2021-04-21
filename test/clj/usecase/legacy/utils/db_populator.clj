@@ -1,27 +1,18 @@
-;; All get functions - set up db such that target object could be add,
-;; but do not add target object. Return target object.
+; All get functions - set up db such that target object could be add,
+; but do not add target object. Return target object.
 
-;; For example: each Word requires a User (for its user-id field).
-;; (get-word) creates a new User and adds it to the database, creates
-;; a new Word with that User's id as its user-id, and returns the new
-;; Word. However, it does not add the Word to the database.
+; For example: each Word requires a User (for its user-id field).
+; (get-word) creates a new User and adds it to the database, creates
+; a new Word with that User's id as its user-id, and returns the new
+; Word. However, it does not add the Word to the database.
 
-;; All add functions - same as get functions, with additional step of
-;; adding target object to the db. Target object is returned with
-;; id included.
+; All add functions - same as get functions, with additional step of
+; adding target object to the db. Target object is returned with
+; id included.
 
 (ns legacy.utils.db-populator
     (:require
-      [clojure.test :refer :all]
-      [ring.mock.request :refer :all]
-      [y-video-back.handler :refer :all]
-      [legacy.db.test-util :as tcore]
-      [muuntaja.core :as m]
-      [clojure.java.jdbc :as jdbc]
-      [mount.core :as mount]
       [legacy.utils.model-generator :as g]
-      [legacy.utils.route-proxy.proxy :as rp]
-      [y-video-back.db.core :refer [*db*] :as db]
       [legacy.utils.utils :as ut]
       [y-video-back.db.contents :as contents]
       [y-video-back.db.collections :as collections]
@@ -343,7 +334,6 @@
 (defn get-resource-access
   "Creates resource-id, ready to be added to db"
   [username resource-id]
-  ; (g/get-random-resource-access-without-id username resource-id))
   {:username username :resource-id resource-id})
 
 (defn add-resource-access
@@ -353,3 +343,12 @@
          rsrc-acc-add (resource-access/CREATE rsrc-acc)
          temp (resource-access/READ (:id rsrc-acc-add))]
      (assoc rsrc-acc :id (:id rsrc-acc-add)))))
+
+
+
+
+
+
+
+
+

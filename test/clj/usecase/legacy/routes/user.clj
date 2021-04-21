@@ -2,7 +2,6 @@
     (:require
       [y-video-back.config :refer [env]]
       [clojure.test :refer :all]
-      [ring.mock.request :refer :all]
       [y-video-back.handler :refer :all]
       [legacy.db.test-util :as tcore]
       [muuntaja.core :as m]
@@ -14,8 +13,7 @@
       [legacy.utils.utils :as ut]
       [legacy.utils.db-populator :as db-pop]
       [y-video-back.db.users :as users]
-      [y-video-back.db.user-courses-assoc :as user-courses-assoc]
-      [y-video-back.user-creator :as uc]))
+      [y-video-back.db.user-courses-assoc :as user-courses-assoc]))
 
 (declare ^:dynamic *txn*)
 
@@ -77,8 +75,6 @@
       (is (= (frequencies (map #(-> %
                                     (update :id str)
                                     (update :owner str)
-                                    ;(into {:user-id (str (:id user-two))
-                                    ;                :account-role (:account-role user-coll-two))
                                     (ut/remove-db-only))
                                [coll-thr coll-fou]))
              (frequencies (map ut/remove-db-only (m/decode-response-body res-two))))))))
@@ -98,14 +94,10 @@
       (is (= 200 (:status res-two)))
       (is (= (-> crse-one
                  (update :id str)
-                 ;(into {:user-id (str (:id user-one))
-                 ;                :account-role (:account-role user-crse-one))
                  (list))
              (map ut/remove-db-only (m/decode-response-body res-one))))
       (is (= (-> crse-two
                  (update :id str)
-                 ;(into {:user-id (str (:id user-two))
-                 ;                :account-role (:account-role user-crse-two))
                  (list))
              (map ut/remove-db-only (m/decode-response-body res-two)))))))
 
@@ -120,22 +112,3 @@
   (is (= (frequencies (get-in env [:test-user
                                    :courses]))
          (frequencies (map remove-course-db-fields (user-courses-assoc/READ-COURSES-BY-USER user-id))))))
-
-
-; Need to mock api before uncommenting
-; (deftest user-refresh-courses
-;   (testing "refresh courses - no course enrollments, student"
-;     (let [pre-log (System/currentTimeMillis)
-;           user-one (db-pop/get-user "student")
-;           user-one-add (users/CREATE (assoc (dissoc user-one :username :byu-person-id)
-;                                             :username (get-in env [:test-user :username])
-;                                             :byu-person-id (get-in env [:test-user :byu-person-id])))]
-;       (is (= []
-;              (user-courses-assoc/READ-COURSES-BY-USER (:id user-one-add))))
-;       (let [res (rp/refresh-courses (uc/user-id-to-session-id (:id user-one-add)))
-;             post-log (System/currentTimeMillis)
-;             user-res (users/READ (:id user-one-add))]
-;         (is (= 200 (:status res)))
-;         (is (< pre-log (inst-ms (:last-course-api user-res))))
-;         (is (> post-log (inst-ms (:last-course-api user-res))))
-;         (check-against-test-user (:id user-one-add))))))

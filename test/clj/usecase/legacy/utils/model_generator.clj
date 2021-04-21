@@ -118,12 +118,6 @@
   ([user-id course-id]
    (into (get-random-model models/user-courses-assoc-without-any-ids) {:user-id user-id :course-id course-id})))
 
-;(defn get-random-collection-resources-assoc-without-id
-;  ([]
-;   (get-random-model models/collection-resources-assoc-without-id))
-;  ([collection-id resource-id]
-;   (into (get-random-model models/collection-resources-assoc-without-any-ids) {:collection-id collection-id :resource-id resource-id})))
-
 (defn get-random-collection-courses-assoc-without-id
   ([]
    (get-random-model models/collection-courses-assoc-without-id))
@@ -134,7 +128,6 @@
   ([]
    (get-random-model models/content-without-id))
   ([collection-id resource-id]
-   ;(println "DEBUG: resource-id is of type " (type resource-id) " ; " resource-id)
    (into (get-random-model models/content-without-any-ids) {:collection-id collection-id :resource-id resource-id})))
 
 ; - - - - - - - - - INVALID MODEL GENERATORS - - - - - - - - ;

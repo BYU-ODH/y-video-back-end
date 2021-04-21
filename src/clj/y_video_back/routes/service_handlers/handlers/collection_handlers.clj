@@ -1,18 +1,11 @@
 (ns y-video-back.routes.service-handlers.handlers.collection-handlers
   (:require
    [y-video-back.config :refer [env]]
-   [y-video-back.db.collections-courses-assoc :as collection-courses-assoc]
-   [y-video-back.db.user-collections-assoc :as user-collections-assoc]
    [y-video-back.db.collections :as collections]
-   [y-video-back.db.users :as users]
-   [y-video-back.db.courses :as courses]
-   [y-video-back.db.contents :as contents]
    [y-video-back.models :as models]
    [y-video-back.model-specs :as sp]
-   [y-video-back.routes.service-handlers.utils.utils :as utils]
    [y-video-back.routes.service-handlers.utils.role-utils :as ru]
    [y-video-back.utils.account-permissions :as ac]
-   [y-video-back.user-creator :as uc]
    [y-video-back.routes.service-handlers.handlers.collection-methods :as methods]))
 
 (def collection-create
@@ -213,3 +206,10 @@
                404 (:body {:message string?})}
    :handler (fn [{{{:keys [id]} :path} :parameters}]
               (methods/collection-get-all-users id))})
+
+
+
+
+
+
+

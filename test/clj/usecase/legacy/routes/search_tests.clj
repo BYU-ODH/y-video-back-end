@@ -1,25 +1,18 @@
 (ns legacy.routes.search-tests
     (:require
       [clojure.test :refer :all]
-      [ring.mock.request :refer :all]
       [y-video-back.handler :refer :all]
       [legacy.db.test-util :as tcore]
       [muuntaja.core :as m]
       [clojure.java.jdbc :as jdbc]
       [mount.core :as mount]
-      [legacy.utils.model-generator :as g]
       [legacy.utils.route-proxy.proxy :as rp]
       [y-video-back.db.core :refer [*db*] :as db]
       [y-video-back.db.contents :as contents]
-      [y-video-back.db.users-by-collection :as users-by-collection]
-      [y-video-back.db.collections-courses-assoc :as collection-courses-assoc]
       [y-video-back.db.collections :as collections]
       [y-video-back.db.resources :as resources]
       [y-video-back.db.courses :as courses]
-      [y-video-back.db.files :as files]
-      [y-video-back.db.user-collections-assoc :as user-collections-assoc]
       [y-video-back.db.users :as users]
-      [y-video-back.db.words :as words]
       [legacy.utils.utils :as ut]))
 
 (declare ^:dynamic *txn*)
@@ -84,7 +77,6 @@
                                                             :date-validated "a while ago"
                                                             :views 0
                                                             :all_file_versions "[book]"
-                                                            ;:public false
                                                             :metadata "so meta"})))
   (def test-rsrc-two (ut/under-to-hyphen (resources/CREATE {:resource-name "Twelve Fail-Safe Ways to Charm Witches"
                                                             :resource-type "book 2"
@@ -96,7 +88,6 @@
                                                             :date-validated "recently"
                                                             :views 0
                                                             :all_file_versions "[book]"
-                                                            ;:public false
                                                             :metadata "so meta"})))
   (def test-rsrc-thr (ut/under-to-hyphen (resources/CREATE {:resource-name "Hogwarts: A History"
                                                             :resource-type "book 2"
@@ -108,7 +99,6 @@
                                                             :date-validated "every day"
                                                             :views 0
                                                             :all_file_versions "[book]"
-                                                            ;:public false
                                                             :metadata "so meta"})))
   (def test-crse-one (ut/under-to-hyphen (courses/CREATE {:department "Transfiguration"
                                                           :catalog-number "ClockAndMap 101"
@@ -129,7 +119,6 @@
                                                            :allow-definitions false
                                                            :allow-notes false
                                                            :allow-captions false
-                                                           ;:public false
                                                            :views 0
                                                            :file-version "f"
                                                            :published true
@@ -147,7 +136,6 @@
                                                            :allow-definitions false
                                                            :allow-notes false
                                                            :allow-captions false
-                                                           ;:public false
                                                            :views 0
                                                            :file-version "f"
                                                            :published true
@@ -165,7 +153,6 @@
                                                            :allow-definitions false
                                                            :allow-notes false
                                                            :allow-captions false
-                                                           ;:public false
                                                            :views 0
                                                            :file-version "f"
                                                            :published true
@@ -177,17 +164,6 @@
 
 
   (mount.core/start #'y-video-back.handler/app))
-
-; For testing master search route - may add that feature in future
-;(defn test-search-table
-;  [table-key query-term expected-users]
-;  (let [res (rp/search query-term)]
-;    (is (= 200 (:status res)))
-;    (if (= table-key :collections)
-;      (is (= (into [] (map #(update (update (ut/remove-db-only %) :id str) :owner str) expected-users))
-;             (table-key (m/decode-response-body res))
-;      (is (= (into [] (map #(update (ut/remove-db-only %) :id str) expected-users))
-;             (table-key (m/decode-response-body res))))
 
 (defn test-search-table
   [table-key query-term expected-res]
@@ -346,3 +322,10 @@
     (test-search-table :public-collections
                        "Bard"
                        [(assoc test-coll-pub :username (:username test-user-adm))])))
+
+
+
+
+
+
+

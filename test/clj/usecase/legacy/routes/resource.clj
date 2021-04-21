@@ -1,20 +1,17 @@
 (ns legacy.routes.resource
     (:require
       [clojure.test :refer :all]
-      [ring.mock.request :refer :all]
       [y-video-back.handler :refer :all]
       [legacy.db.test-util :as tcore]
-      [muuntaja.core :as m]
       [clojure.java.jdbc :as jdbc]
       [mount.core :as mount]
-      [legacy.utils.model-generator :as g]
+      [muuntaja.core :as m]
       [legacy.utils.route-proxy.proxy :as rp]
       [y-video-back.db.core :refer [*db*] :as db]
       [legacy.utils.utils :as ut]
       [legacy.utils.db-populator :as db-pop]
       [y-video-back.db.resources :as resources]
-      [y-video-back.db.resource-access :as resource-access]
-      [clj-time.core :as t]))
+      [y-video-back.db.resource-access :as resource-access]))
 
 (declare ^:dynamic *txn*)
 

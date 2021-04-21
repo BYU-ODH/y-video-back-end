@@ -1,12 +1,9 @@
 (ns y-video-back.routes.service-handlers.handlers.admin-handlers
   (:require
-   [y-video-back.config :refer [env]]
    [y-video-back.db.users :as users]
-   [y-video-back.db.courses :as courses]
    [y-video-back.models :as models]
    [y-video-back.routes.service-handlers.utils.utils :as utils]
-   [y-video-back.db.core :as db]
-   [y-video-back.utils.account-permissions :as ac]))
+   [y-video-back.db.core :as db]))
 
 ; TODO - sort results by more than just alphabetical
 

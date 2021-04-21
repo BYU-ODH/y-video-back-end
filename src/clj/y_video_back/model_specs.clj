@@ -44,7 +44,6 @@
 (s/def :resource/physical-copy-exists boolean?)
 (s/def :resource/full-video boolean?)
 (s/def :resource/published boolean?)
-;(s/def :resource/public boolean?)
 (s/def :resource/date-validated string?)
 (s/def :resource/views int?)
 (s/def :resource/all-file-versions string?)
@@ -57,7 +56,6 @@
                    :resource/physical-copy-exists
                    :resource/full-video
                    :resource/published
-                   ;:resource/public
                    :resource/date-validated
                    :resource/views
                    :resource/all-file-versions
@@ -73,7 +71,6 @@
 (s/def :content/allow-definitions boolean?)
 (s/def :content/allow-notes boolean?)
 (s/def :content/allow-captions boolean?)
-;(s/def :content/public boolean?)
 (s/def :content/views integer?)
 (s/def :content/file-version string?)
 (s/def :content/published boolean?)
@@ -92,7 +89,6 @@
                    :content/allow-definitions
                    :content/allow-notes
                    :content/allow-captions
-                   ;:content/public
                    :content/views
                    :content/file-version
                    :content/published

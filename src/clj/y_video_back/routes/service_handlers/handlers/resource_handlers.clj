@@ -2,13 +2,9 @@
   (:require
    [y-video-back.db.resources :as resources]
    [y-video-back.db.resource-access :as resource-access]
-   [y-video-back.db.subtitles :as subtitles]
    [y-video-back.models :as models]
    [y-video-back.model-specs :as sp]
-   [y-video-back.routes.service-handlers.utils.utils :as utils]
-   [y-video-back.utils.account-permissions :as ac]
-   [clj-time.core :as t]))
-
+   [y-video-back.routes.service-handlers.utils.utils :as utils]))
 
 (def resource-create
   {:summary "Creates new resource"
@@ -102,7 +98,7 @@
                  :body {:message "resource not found"}}
                 (let [content-resources-result (resources/CONTENTS-BY-RESOURCE id)
                       content-result (map #(utils/remove-db-only %) content-resources-result)]
-                  {:status 200 ; Not implemented yet
+                  {:status 200
                    :body content-result})))})
 
 (def resource-get-all-subtitles
@@ -118,7 +114,7 @@
                 {:status 404
                  :body {:message "resource not found"}}
                 (let [res (resources/READ-SBTL-BY-RSRC id)]
-                  {:status 200 ; Not implemented yet
+                  {:status 200
                    :body (map #(-> %
                                    (dissoc :resource-id)
                                    (utils/remove-db-only))
@@ -139,7 +135,7 @@
                  :body {:message "resource not found"}}
                 (let [file-resources-result (resources/FILES-BY-RESOURCE id)
                       file-result (map #(utils/remove-db-only %) file-resources-result)]
-                  {:status 200 ; Not implemented yet
+                  {:status 200
                    :body file-result})))})
 
 (def resource-add-access

@@ -3,17 +3,13 @@
   (:require
     [y-video-back.config :refer [env]]
     [clojure.test :refer [use-fixtures deftest testing is]]
-    ;[ring.mock.request :refer :all]
-    ;[y-video-back.handler :refer :all]
     [legacy.db.test-util :as tcore]
-    [muuntaja.core :as m]
     [clojure.java.jdbc :as jdbc]
     [mount.core :as mount]
     [legacy.utils.route-proxy.proxy :as rp]
     [y-video-back.db.core :refer [*db*] :as db]
     [legacy.utils.utils :as ut]
-    [legacy.utils.db-populator :as db-pop]
-    [y-video-back.user-creator :as uc]))
+    [legacy.utils.db-populator :as db-pop]))
 
 (declare ^:dynamic *txn*)
 
@@ -28,10 +24,6 @@
 
 (tcore/basic-transaction-fixtures
   (mount.core/start #'y-video-back.handler/app))
-
-(deftest temp-test
-  (testing "temp"
-    (is true)))
 
 ; post:  /api/course
 (deftest course-post

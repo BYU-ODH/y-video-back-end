@@ -1,13 +1,9 @@
 (ns y-video-back.apis.utils
   (:require
     [y-video-back.config :refer [env]]
-    [y-video-back.db.users :as users]
-    [y-video-back.db.user-type-exceptions :as user-type-exceptions]
-    [y-video-back.db.auth-tokens :as auth-tokens]
     [clj-http.client :as client]
     [java-time :as t]
     [clojure.data.json :as json]
-    [clojure.string :as str]
     [clojure.walk :as walk]))
 
 (defn get-current-sem-real
@@ -55,3 +51,7 @@
     new-token))
 
 (def oauth-token "")
+
+
+
+

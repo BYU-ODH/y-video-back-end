@@ -1,24 +1,16 @@
 (ns legacy.routes.error-code.word-tests
     (:require
       [clojure.test :refer :all]
-      [ring.mock.request :refer :all]
       [y-video-back.handler :refer :all]
       [legacy.db.test-util :as tcore]
-      [muuntaja.core :as m]
       [clojure.java.jdbc :as jdbc]
       [mount.core :as mount]
       [legacy.utils.model-generator :as g]
       [legacy.utils.route-proxy.proxy :as rp]
       [y-video-back.db.core :refer [*db*] :as db]
-      [y-video-back.db.contents :as contents]
-      [y-video-back.db.users-by-collection :as users-by-collection]
-      [y-video-back.db.collections-courses-assoc :as collection-courses-assoc]
       [y-video-back.db.collections :as collections]
       [y-video-back.db.resources :as resources]
       [y-video-back.db.courses :as courses]
-      [y-video-back.db.files :as files]
-      [y-video-back.db.user-collections-assoc :as user-collections-assoc]
-      [y-video-back.db.user-courses-assoc :as user-courses-assoc]
       [y-video-back.db.users :as users]
       [y-video-back.db.words :as words]
       [legacy.utils.utils :as ut]))
@@ -35,11 +27,6 @@
     (f)))
 
 (tcore/basic-transaction-fixtures
-  ;(def test-user-one (ut/under-to-hyphen (users/CREATE (g/get-random-user-without-id))))
-  ;(def test-user-two (ut/under-to-hyphen (users/CREATE (g/get-random-user-without-id))))
-  ;(def test-coll-one (ut/under-to-hyphen (collections/CREATE (into (g/get-random-collection-without-id-or-owner) {:owner (:id test-user-one)}))))
-  ;(def test-cont-one (ut/under-to-hyphen (resources/CREATE (g/get-random-resource-without-id))))
-  ;(def test-crse-one (ut/under-to-hyphen (courses/CREATE (g/get-random-course-without-id))))
   (def test-user-one (ut/under-to-hyphen (users/CREATE (g/get-random-user-without-id))))
   (def test-user-two (ut/under-to-hyphen (users/CREATE (g/get-random-user-without-id))))
   (def test-coll-one (ut/under-to-hyphen (collections/CREATE (into (g/get-random-collection-without-id-or-owner) {:owner (:id test-user-one)}))))
@@ -128,3 +115,11 @@
   (testing "delete nonexistent word"
     (let [res (rp/word-id-delete (java.util.UUID/randomUUID))]
       (is (= 404 (:status res))))))
+
+
+
+
+
+
+
+

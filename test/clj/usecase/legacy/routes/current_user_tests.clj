@@ -1,7 +1,6 @@
 (ns legacy.routes.current-user-tests
     (:require
       [clojure.test :refer :all]
-      [ring.mock.request :refer :all]
       [y-video-back.handler :refer :all]
       [legacy.db.test-util :as tcore]
       [muuntaja.core :as m]
@@ -10,17 +9,13 @@
       [legacy.utils.model-generator :as g]
       [legacy.utils.route-proxy.proxy :as rp]
       [y-video-back.db.core :refer [*db*] :as db]
-      [y-video-back.db.contents :as contents]
-      [y-video-back.db.users-by-collection :as users-by-collection]
       [y-video-back.db.collections-courses-assoc :as collection-courses-assoc]
       [y-video-back.db.collections :as collections]
       [y-video-back.db.resources :as resources]
       [y-video-back.db.courses :as courses]
-      [y-video-back.db.files :as files]
       [y-video-back.db.user-collections-assoc :as user-collections-assoc]
       [y-video-back.db.user-courses-assoc :as user-courses-assoc]
       [y-video-back.db.users :as users]
-      [y-video-back.db.words :as words]
       [legacy.utils.utils :as ut]
       [legacy.utils.db-populator :as db-pop]
       [y-video-back.user-creator :as uc]))
@@ -268,8 +263,6 @@
                                       (update :owner str)
                                       (assoc :content '[])
                                       (assoc :expired-content '[]))
-                                      ;(assoc :account-role 1)
-                                      ;(assoc :user-id (str user-id)))
                                  [coll-one coll-two])
             updated-indirects (map #(-> %
                                         (ut/remove-db-only)
@@ -277,8 +270,6 @@
                                         (update :owner str)
                                         (assoc :content '[])
                                         (assoc :expired-content '[]))
-                                        ;(assoc :account-role 2)
-                                        ;(assoc :user-id (str user-id)))
                                    [coll-thr coll-fou])]
         (is (= (frequencies (concat updated-directs updated-indirects))
                (frequencies (m/decode-response-body res))))))))

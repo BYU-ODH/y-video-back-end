@@ -1,24 +1,20 @@
-;; For each model, test:
-;; 1) update fields one at a time
-;; 2) update some, but not all, fields at once
-;; 3) update all fields at once
-;; 1-3 for updating to self as well
+; For each model, test:
+; 1) update fields one at a time
+; 2) update some, but not all, fields at once
+; 3) update all fields at once
+; 1-3 for updating to self as well
 
 (ns legacy.routes.patch-tests
   (:require
     [clojure.test :refer :all]
-    [ring.mock.request :refer :all]
     [y-video-back.handler :refer :all]
     [legacy.db.test-util :as tcore]
-    [muuntaja.core :as m]
     [clojure.java.jdbc :as jdbc]
     [mount.core :as mount]
     [legacy.utils.model-generator :as g]
     [legacy.utils.route-proxy.proxy :as rp]
     [y-video-back.db.core :refer [*db*] :as db]
     [y-video-back.db.contents :as contents]
-    [y-video-back.db.users-by-collection :as users-by-collection]
-    [y-video-back.db.collections-courses-assoc :as collection-courses-assoc]
     [y-video-back.db.collections :as collections]
     [y-video-back.db.resources :as resources]
     [y-video-back.db.courses :as courses]
@@ -463,3 +459,7 @@
         (is (= 200 (:status res))))
       (is (= (ut/remove-db-only (merge new-content {:id id}))
              (ut/remove-db-only (contents/READ id)))))))
+
+
+
+

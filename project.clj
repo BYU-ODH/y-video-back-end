@@ -46,8 +46,9 @@
 
   :min-lein-version "2.0.0"
   :eastwood {:linters [:all]
-             :exclude-linters [:unused-private-vars :unused-fn-args :duplicate-params :unused-locals :keyword-typos :unused-namespaces]
-             :exclude-namespaces [:test-paths]}
+             :exclude-linters [:keyword-typos :unused-locals :redefd-vars]}
+             ; :exclude-linters [:unused-private-vars :unused-fn-args :duplicate-params :unused-locals :keyword-typos :unused-namespaces]
+             ; :exclude-namespaces [:test-paths]}
   :test-paths ["test/clj/unit" "test/clj/usecase"]
   :jvm-opts ["-server" "-Dconf=.lein-env"]
   :source-paths ["src/clj" "src/cljc" "src/cljs"]
@@ -57,7 +58,8 @@
   :plugins [[lein-cprop "1.0.3"]
             [migratus-lein "0.7.2"]
             [lein-immutant "2.1.0"]
-            [lein-cloverage "1.1.2"]]
+            [lein-cloverage "1.1.2"]
+            [jonase/eastwood "0.4.0"]]
   :clean-targets ^{:protect false}
   [:target-path [:builds :app :compiler :output-dir] [:builds :app :compiler :output-to]]
 

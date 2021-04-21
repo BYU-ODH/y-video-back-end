@@ -1,10 +1,7 @@
 (ns legacy.utils.route-proxy.routes.rp-public
   (:require
-    [y-video-back.config :refer [env]]
-    [clojure.test :refer :all]
     [ring.mock.request :refer :all]
-    [y-video-back.handler :refer :all]
-    [legacy.utils.utils :as ut]))
+    [y-video-back.handler :refer :all]))
 
 ; get collection by id
 (defn collection-id-get

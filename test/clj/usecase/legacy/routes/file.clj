@@ -2,13 +2,11 @@
     (:require
       [y-video-back.config :refer [env]]
       [clojure.test :refer :all]
-      [ring.mock.request :refer :all]
       [y-video-back.handler :refer :all]
       [legacy.db.test-util :as tcore]
       [muuntaja.core :as m]
       [clojure.java.jdbc :as jdbc]
       [mount.core :as mount]
-      [legacy.utils.model-generator :as g]
       [legacy.utils.route-proxy.proxy :as rp]
       [y-video-back.db.core :refer [*db*] :as db]
       [legacy.utils.utils :as ut]
@@ -108,3 +106,5 @@
             (is (= nil (files/READ id)))
             (is (not (.exists (io/as-file (str (-> env :FILES :media-url) (:filepath db-file))))))
             (is (.exists (io/as-file (str (-> env :FILES :media-trash-url) (:filepath db-file)))))))))))
+
+
