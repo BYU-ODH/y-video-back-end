@@ -134,6 +134,9 @@ Redeploying changes to the development server is easier, but takes longer. If yo
 
 The changes will be visible after about a minute.
 
+### Updating the database schema
+
+For small changes to init.sql, you can often add them to the live development and production databases with ALTER TABLE statements. For large changes, just reset the development database by running all of init.sql again. To implement large changes on the production server.... just hope that doesn't happen.
 
 ## Endpoints
 
