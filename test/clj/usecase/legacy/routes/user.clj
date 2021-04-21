@@ -2,7 +2,6 @@
     (:require
       [y-video-back.config :refer [env]]
       [clojure.test :refer :all]
-      [ring.mock.request :refer :all]
       [y-video-back.handler :refer :all]
       [legacy.db.test-util :as tcore]
       [muuntaja.core :as m]
@@ -14,8 +13,7 @@
       [legacy.utils.utils :as ut]
       [legacy.utils.db-populator :as db-pop]
       [y-video-back.db.users :as users]
-      [y-video-back.db.user-courses-assoc :as user-courses-assoc]
-      [y-video-back.user-creator :as uc]))
+      [y-video-back.db.user-courses-assoc :as user-courses-assoc]))
 
 (declare ^:dynamic *txn*)
 
