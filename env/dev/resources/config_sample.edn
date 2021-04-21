@@ -1,32 +1,38 @@
+;; ALL FILE PATHS MUST HAVE TRAILING FORWARD SLASH
+
 ;; env/dev/resources/config.edn
 {:dev true
- :port 3030
- :session-id-bypass "f1d1a6cc-e3db-4a6c-b0c5-13407887fb51"
+ :port 3000
+ :session-id-bypass ""
  :nrepl-port 7000
- :ADMIN 0
- :LA 1
- :INSTR 2
- :STUD 3
- :CRSE-STUD 2
- :TA 1
- :OWNER 2
- :NEW-USER-PASSWORD "ae91e6b1-e29c-458f-8ddc-1a6fa2ba141b"
- :CONSUMER_KEY "fc028869ad27420ba215d5b99efeacfe"
- :CONSUMER_SECRET "48b7593d27c946ec8be2abdf0b8f3837"
- :y-video-back {:site-url "http://localhost:3030"
-                :db {:database-name "my-db"
-                     :adapter "postgresql"
+ :NEW-USER-PASSWORD ""
+ :CONSUMER_KEY ""
+ :CONSUMER_SECRET ""
+ :auth {:timeout 16200000} ; 4.5 hour - MUST CHANGE IN DB TRIGGER TOO
+ :front-end-netid ""
+ :FILES {:media-url "{filepath}"
+         :media-trash-url "{filepath}"
+         :timeout 14400000 ; 4 hours - MUST CHANGE IN DB TRIGGER TOO
+         :log-path "{filepath}"
+         :endpoint-log-path "{filepath}"}
+ :user-data-refresh-after 168 ; in hours - 7 days
+ :user-courses-refresh-after 168 ; in hours - 7 days
+ :host "http://localhost:3000"
+ :admin-emails ["{email address}" "{email address}"]
+ :y-video-back {:site-url "http://localhost:3000"
+                :db {:database-name ""
+                     :adapter ""
                      :auto-commit true
                      :register-mbeans false
-                     :password "12345"
+                     :password ""
                      :port-number 5432
-                     :username "a-user"
+                     :username ""
                      :max-lifetime 1800000
                      :minimum-idle 10
                      :connection-timeout 30000
-                     :server-name "localhost"
+                     :server-name ""
                      :read-only false
-                     :maximum-pool-size 10
+                     :maximum-pool-size 2
                      :idle-timeout 600000
                      :validation-timeout 5000
-                     :pool-name "local-db-pool"}}}
+                     :pool-name "db_pool"}}}

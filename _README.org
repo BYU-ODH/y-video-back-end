@@ -1,5 +1,0 @@
-#+TITLE: Y-Video back-end
-Swagger API for DB manipulations for Y-Video
-
-* License
-Copyright © 2020 Brigham Young University

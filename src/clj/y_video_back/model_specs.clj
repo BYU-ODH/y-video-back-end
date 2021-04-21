@@ -1,7 +1,6 @@
 (ns y-video-back.model-specs
   (:require
-   [clojure.spec.alpha :as s]
-   [spec-tools.core :as st]))
+   [clojure.spec.alpha :as s]))
 
 
 (s/def :user/email string?)
@@ -29,11 +28,13 @@
 (s/def :collection/collection-name string?)
 (s/def :collection/published boolean?)
 (s/def :collection/archived boolean?)
+(s/def :collection/public boolean?)
 (s/def :collection/owner uuid?)
 (s/def ::collection
   (s/keys :opt-un [:collection/collection-name
                    :collection/published
                    :collection/archived
+                   :collection/public
                    :collection/owner]))
 
 (s/def :resource/resource-name string?)
@@ -72,6 +73,9 @@
 (s/def :content/allow-captions boolean?)
 (s/def :content/views integer?)
 (s/def :content/file-version string?)
+(s/def :content/published boolean?)
+(s/def :content/words string?)
+(s/def :content/clips string?)
 (s/def :content/resource-id uuid?)
 (s/def :content/collection-id uuid?)
 (s/def ::content
@@ -87,6 +91,9 @@
                    :content/allow-captions
                    :content/views
                    :content/file-version
+                   :content/published
+                   :content/words
+                   :content/clips
                    :content/resource-id
                    :content/collection-id]))
 
@@ -94,23 +101,23 @@
 (s/def :subtitle/title string?)
 (s/def :subtitle/language string?)
 (s/def :subtitle/content string?)
-(s/def :subtitle/resource-id uuid?)
+(s/def :subtitle/words string?)
+(s/def :subtitle/content-id uuid?)
 (s/def ::subtitle
   (s/keys :opt-un [:subtitle/title
                    :subtitle/language
                    :subtitle/content
-                   :subtitle/resource-id]))
+                   :subtitle/words
+                   :subtitle/content-id]))
 
 
 (s/def :file/filepath string?)
 (s/def :file/file-version string?)
-(s/def :file/mime string?)
 (s/def :file/resource-id uuid?)
 (s/def :file/metadata string?)
 (s/def ::file
   (s/keys :opt-un [:file/filepath
                    :file/file-version
-                   :file/mime
                    :file/resource-id
                    :file/metadata]))
 

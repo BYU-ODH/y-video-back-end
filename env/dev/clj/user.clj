@@ -1,7 +1,7 @@
 (ns user
   (:require [mount.core :as mount]
-            [y-video-back.figwheel :refer [start-fw stop-fw cljs]]
-            [y-video-back.core]
+            ; [y-video-back.figwheel :refer [start-fw stop-fw cljs]]
+            ; [y-video-back.core]
             ))
 
 (defn start []
@@ -13,5 +13,3 @@
 (defn restart []
   (stop)
   (start))
-
-

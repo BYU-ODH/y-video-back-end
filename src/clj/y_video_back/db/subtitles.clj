@@ -10,3 +10,4 @@
 (def PERMANENT-DELETE (partial db/DELETE :subtitles))
 (defn EXISTS? [id] (not (nil? (db/READ :subtitles-undeleted id))))
 (def READ-BY-TITLE-RSRC (partial db/read-where-and :subtitles-undeleted [:title :resource-id]))
+(def READ-BY-CONTENT-ID (partial db/read-all-where :subtitles-undeleted :content-id))

@@ -1,33 +1,4 @@
-(ns y-video-back.models
-  (:require [schema.core :as sch]
-            [spec-tools.core :as st]
-            [clojure.spec.alpha :as s]))
-
-(defn add-namespace
-  "Converts all keywords to namespace-keywords, returns vector of keywords"
-  [namespace m]
-  (into []
-    (map (fn [val]
-            (keyword
-              namespace
-              (clojure.string/replace
-                (str
-                  (get val 0))
-                ":"
-                "")))
-      m)))
-
-(defn to-uuid
-  [text-in]
-  (java.util.UUID/fromString text-in))
-
-
-(defn nuuid?
-  "Returns true if val is uuid or nil"
-  [val]
-  (or (nil? val)
-      (uuid? val)
-      (uuid? (to-uuid val))))
+(ns y-video-back.models)
 
 (def echo-patch
   {:echo string?})
@@ -41,9 +12,6 @@
 
 (def user
   (into user-without-id {:id uuid?}))
-
-(def user-without-id-ns-params  ; Not in use
-  (add-namespace "user" {:variable string?}))
 
 (def word-without-id-or-user-id
   {:word string?
@@ -59,7 +27,8 @@
 (def collection-without-id-or-owner
   {:collection-name string?
    :published boolean?
-   :archived boolean?})
+   :archived boolean?
+   :public boolean?})
 
 (def collection-without-id
   (into collection-without-id-or-owner {:owner uuid?}))
@@ -96,6 +65,13 @@
 (def resource
   (into resource-without-id {:id uuid?}))
 
+(def resource-access-without-id
+  {:username string?
+   :resource-id string?})
+
+(def resource-access
+  (into resource-access-without-id {:id uuid?}))
+
 (def content-without-any-ids
   {:title string?
    :content-type string?
@@ -108,7 +84,10 @@
    :allow-notes boolean?
    :allow-captions boolean?
    :views integer?
-   :file-version string?})
+   :file-version string?
+   :published boolean?
+   :words string?
+   :clips string?})
 
 (def content-without-id
   (into content-without-any-ids {:resource-id uuid?
@@ -119,11 +98,12 @@
 
 (def subtitle-without-any-ids
   {:title string?
+   :content string?
    :language string?
-   :content string?})
+   :words string?})
 
 (def subtitle-without-id
-  (into subtitle-without-any-ids {:resource-id uuid?}))
+  (into subtitle-without-any-ids {:content-id uuid?}))
 
 (def subtitle
   (into subtitle-without-id {:id uuid?}))
@@ -131,7 +111,6 @@
 (def file-without-any-ids
   {:filepath string?
    :file-version string?
-   :mime string?
    :metadata string?})
 
 (def file-without-id
@@ -140,11 +119,17 @@
 (def file
   (into file-without-id {:id uuid?}))
 
+(def language-without-id
+  {:id string?})
+
+(def language
+  language-without-id)
+
 (def user-collections-assoc-without-any-ids
   {:account-role int?})
 
 (def user-collections-assoc-without-id
-  (into user-collections-assoc-without-any-ids {:user-id uuid? :collection-id uuid?}))
+  (into user-collections-assoc-without-any-ids {:username string? :collection-id uuid?}))
 
 (def user-collections-assoc
   (into user-collections-assoc-without-id {:id uuid?}))
@@ -158,16 +143,6 @@
 (def user-courses-assoc
   (into user-courses-assoc-without-id {:id uuid?}))
 
-
-;(def collection-resources-assoc-without-any-ids
-;  {})
-
-;(def collection-resources-assoc-without-id
-;  (into collection-resources-assoc-without-any-ids {:collection-id uuid? :resource-id uuid?}))
-
-;(def collection-resources-assoc
-;  (into collection-resources-assoc-without-id {:id uuid?}))
-
 (def collection-courses-assoc-without-any-ids
   {})
 
@@ -176,22 +151,3 @@
 
 (def collection-courses-assoc
   (into collection-courses-assoc-without-id {:id uuid?}))
-
-(def content-subtitles-assoc-without-any-ids
-  {})
-
-(def content-subtitles-assoc-without-id
-  (into content-subtitles-assoc-without-any-ids {:content-id uuid? :subtitle-id uuid?}))
-
-(def content-subtitles-assoc
-  (into content-subtitles-assoc-without-id {:id uuid?}))
-
-
-;(def resource-files-assoc-without-any-ids
-;  {})
-
-;(def resource-files-assoc-without-id
-;  (into resource-files-assoc-without-any-ids {:resource-id uuid? :file-id uuid?}))
-
-;(def resource-files-assoc
-;  (into resource-files-assoc-without-id {:id uuid?}))

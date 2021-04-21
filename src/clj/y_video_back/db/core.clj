@@ -10,6 +10,7 @@
    [camel-snake-kebab.extras :refer [transform-keys]]
    [honeysql.core :as sql]
    [honeysql.helpers :as helpers]
+   [honeysql-postgres.format :refer :all]
    [clojure.string :refer [join]]
    [tick.alpha.api :as t]
    [y-video-back.utils.utils :as ut])
@@ -171,9 +172,15 @@
     (transform-keys csk/->kebab-case-keyword
                     (READ tk id))))
 
-; - - - - - - - Matthew inserting potentially useful code - - - - - - - ;
+; - - - - - - - more generic functions - - - - - - - ;
 
 (def spy #(do (println "DEBUG:" %) %))
+
+(defn update-resource-access-last-verified  ; TODO - generalize this function
+  "Sets last verified in resource-access to current timestamp"
+  [id]
+  (let [sql-query (str "UPDATE resource_access SET last_verified=CURRENT_TIMESTAMP WHERE id='" id "';")]
+    (dbdo! sql-query)))
 
 (defn read-where-and
   "Get entry from table by column(s), conditionals joined by AND"
@@ -218,19 +225,18 @@
            :from [table-keyword]}
     id (assoc :where [:= column-keyword id])
     true sql/format
-    true dbr
-    (= 1 (count select-field-keys))
-    (#((first select-field-keys) %))))
+    ;true (spy)
+    true dbr))
+    ;(= 1 (count select-field-keys)) (#((first select-field-keys) %))))
 
 (defn read-all-pattern
   "Get all entries from table by column and pattern"
   [table-keyword column-keywords pattern &[select-field-keys]]
   (cond-> (helpers/select (or select-field-keys :*))
           true (helpers/from table-keyword)
-          (> (count column-keywords) 0) (helpers/where [:!= :id ut/nil-uuid] (into [:or] (map #(vector "LIKE" %1 pattern) column-keywords)))
+          (> (count column-keywords) 0) (helpers/where [:!= :id ut/nil-uuid] (into [:or] (map #(vector :ilike %1 pattern) column-keywords)))
           true sql/format
-          ;true (clojure.string/replace "=" "LIKE")
-          false (spy)
+          ;true (spy)
           true dbr))
 
 (defn increment-field
@@ -242,6 +248,15 @@
           true sql/format
           ;true (spy)
           true dbdo!))
+
+(defn read-all
+  "Get all entries from table"
+  [table-keyword &[select-field-keys]]
+  (cond-> {:select (or select-field-keys [:*])
+           :from [table-keyword]}
+    true sql/format
+    ;true (spy)
+    true dbr))
 
 ; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ;
 

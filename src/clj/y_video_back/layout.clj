@@ -3,10 +3,11 @@
    [hiccup.page :as hp]
    [hiccup.element :refer [javascript-tag]]
    [ring.util.http-response :refer [ok] :as ru]
-   [selmer.parser :as parser] ;; Probably a temporary fix
+   [selmer.parser :as parser]
    [ring.util.anti-forgery :refer [anti-forgery-field]]
    [ring.middleware.anti-forgery :refer [*anti-forgery-token*]]
-   [ring.util.http-response :refer [content-type ok]])) ;; Probably a temporary fix
+   [ring.util.http-response :refer [content-type ok]]
+   [selmer.filters :as filters]))
 
 
 (parser/set-resource-path!  (clojure.java.io/resource "html"))
@@ -50,7 +51,7 @@
    [:div.container
     [:h1.title "Welcome to the swagger API for Y-Video"]
     [:h1.title [:a {:href "api/ping"} "ping"]]
-    [:h1.title [:a {:href "api/api-docs/"} "api docs"]]]])
+    [:h1.title [:a {:href "api/docs/"} "docs"]]]])
 
 (defn cljs-app-footer []
   [:div#footer
@@ -98,7 +99,8 @@
    and the status specified by the status key"
   [error-details]
   {:status  (:status error-details)
-   :headers {"Content-Type" "text/html; charset=utf-8"}
+   :headers {"Content-Type" "text/html; charset=utf-8"
+             "session-id" nil}
    :body (hp/html5
           (top-matter)
           (boiler-plate)
@@ -106,7 +108,7 @@
            [:div {:class "column is-half"}
             [:div.alert.alert-warning]
             [:h1 {:class "title"} (or (:title error-details) (str "Error " (:status error-details)))]
-            [:div [:img {:class "is-centered" :src (str images-path "/" (:image error-details))}]]
+            [:div [:img {:class "is-centered" :src (str (:image error-details))}]]
             [:div [:h1.title (:caption error-details)]]
             [:div.error-details (:message error-details)]]])})
 
@@ -127,7 +129,13 @@
        [:div.content (str application)]]))
     "text/html; charset=utf-8")))
 
-;; Probably a temporary fix \/ \/ \/
+; This is where the front end pages are rendered
+
+(filters/add-filter! :string? string?)
+(filters/add-filter! :get-i (fn [data i]
+                              (get (vec data) (Integer/parseInt i))))
+(filters/add-filter! :get-k (fn [data i]
+                              ((keyword i) data)))
 
 (defn render
   "renders the HTML template located relative to resources/html"
@@ -141,7 +149,3 @@
           :page template
           :csrf-token *anti-forgery-token*)))
     "text/html; charset=utf-8"))
-
-
-
-;; Probably a temporary fix /\ /\ /\

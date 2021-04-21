@@ -1,0 +1,47 @@
+;; ALL FILE PATHS MUST HAVE TRAILING FORWARD SLASH
+
+;; env/prod/resources/config.edn
+{:prod true
+ :port 8080
+ :session-id-bypass ""
+ :nrepl-port 7000
+ :admin 0
+ :lab-assistant 1
+ :instructor 2
+ :student 3
+ :instructor-role 0
+ :ta-role 1
+ :student-role 2
+ :auditing-role 3
+ :NEW-USER-PASSWORD ""
+ :CONSUMER_KEY ""  ;; production
+ :CONSUMER_SECRET "" ;; production
+ :auth {:timeout 3600000} ; 1 hour
+ :FILES {:media-url "{filepath}"
+         :timeout 14400000 ; 4 hours
+         :log-path "{filepath}"
+         :endpoint-log-path "{filepath}"
+         :media-trash-url "{filepath}"}
+ :front-end-netid ""
+ :user-data-refresh-after 168 ; in hours - 7 days
+ :user-courses-refresh-after 168 ; in hours - 7 days
+ :resource-access-expire-after 8760 ; in hours - 365 days
+ :host "https://yvideo.byu.edu"
+ :admin-emails ["{email address}" "{email address}"]
+ :y-video-back {:site-url "https://yvideo.byu.edu"
+                :db {:database-name ""
+                     :adapter ""
+                     :auto-commit true
+                     :register-mbeans false
+                     :password ""
+                     :port-number 5432
+                     :username ""
+                     :max-lifetime 1800000
+                     :minimum-idle 10
+                     :connection-timeout 30000
+                     :server-name ""
+                     :read-only false
+                     :maximum-pool-size 10
+                     :idle-timeout 600000
+                     :validation-timeout 5000
+                     :pool-name "db_pool"}}}

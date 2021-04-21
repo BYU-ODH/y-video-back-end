@@ -1,0 +1,36 @@
+;; ALL FILE PATHS MUST HAVE TRAILING FORWARD SLASH
+
+;; env/dev/resources/config.edn
+{:test true
+ :port 3030
+ :session-id-bypass ""
+ :nrepl-port 7000
+ :NEW-USER-PASSWORD ""
+ :auth {:timeout 5000} ; 5 seconds
+ :FILES {:media-url "{filepath}"
+         :media-trash-url "{filepath}"  ; ANYTHING IN THIS DIRECTORY WILL BE DELETED
+         :timeout 5000 ; 5 seconds
+         :test-temp "{filepath}"
+         :log-path "{filepath}"}
+ :user-data-refresh-after 0.00138889 ; in hours - 5 seconds
+ :user-courses-refresh-after 0.00138889 ; in hours - 5 seconds
+ :resource-access-expire-after 0.00138889 ; in hours - 5 seconds
+ :host "http://localhost:3030"
+ :admin-emails ["{email address}" "{email address}"]
+ :y-video-back {:site-url "http://localhost:3030"
+                :db {:database-name ""
+                     :adapter ""
+                     :auto-commit true
+                     :register-mbeans false
+                     :password ""
+                     :port-number 5432
+                     :username ""
+                     :max-lifetime 1800000
+                     :minimum-idle 10
+                     :connection-timeout 30000
+                     :server-name ""
+                     :read-only false
+                     :maximum-pool-size 2
+                     :idle-timeout 600000
+                     :validation-timeout 5000
+                     :pool-name "db_pool"}}}
