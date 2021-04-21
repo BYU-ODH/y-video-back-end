@@ -2,13 +2,9 @@
   (:require
    [y-video-back.db.resources :as resources]
    [y-video-back.db.resource-access :as resource-access]
-   [y-video-back.db.subtitles :as subtitles]
    [y-video-back.models :as models]
    [y-video-back.model-specs :as sp]
-   [y-video-back.routes.service-handlers.utils.utils :as utils]
-   [y-video-back.utils.account-permissions :as ac]
-   [clj-time.core :as t]))
-
+   [y-video-back.routes.service-handlers.utils.utils :as utils]))
 
 (def resource-create
   {:summary "Creates new resource"

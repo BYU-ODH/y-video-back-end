@@ -1,6 +1,5 @@
 (ns y-video-back.routes.service-handlers.handlers.email-handlers
   (:require
-   [y-video-back.config :refer [env]]
    [y-video-back.email.mail :as mail]
    [reitit.ring.middleware.multipart :as multipart]
    [y-video-back.routes.service-handlers.utils.role-utils :as role-utils]))
@@ -41,3 +40,4 @@
                                           :content message}]
                                   :message message  ; For use in logging
                                   :user-id (role-utils/token-to-user-id-all session-id)}))})  ; For use in logging
+

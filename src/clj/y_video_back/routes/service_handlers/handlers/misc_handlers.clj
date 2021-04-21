@@ -1,7 +1,6 @@
 (ns y-video-back.routes.service-handlers.handlers.misc-handlers
   (:require
-   [clojure.spec.alpha :as s]
-   [y-video-back.utils.account-permissions :as ac]))
+   [clojure.spec.alpha :as s]))
 
 
 (s/def :echo/first string?)

@@ -1,7 +1,6 @@
 (ns legacy.routes.course
     (:require
       [clojure.test :refer :all]
-      [ring.mock.request :refer :all]
       [y-video-back.handler :refer :all]
       [legacy.db.test-util :as tcore]
       [muuntaja.core :as m]
@@ -132,3 +131,4 @@
                  (update :owner str)
                  (list))
              (map ut/remove-db-only (m/decode-response-body res-two)))))))
+

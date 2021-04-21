@@ -2,15 +2,9 @@
   (:require
     [y-video-back.config :refer [env]]
     [y-video-back.db.users :as users]
-    [y-video-back.db.user-type-exceptions :as user-type-exceptions]
     [y-video-back.db.auth-tokens :as auth-tokens]
     [y-video-back.apis.persons :as persons-api]
-    [y-video-back.course-creator :as cc]
-    [clj-http.client :as client]
-    [java-time :as t]
-    [clojure.data.json :as json]
-    [clojure.string :as str]
-    [clojure.walk :as walk]))
+    [y-video-back.course-creator :as cc]))
 
 (defn create-user
   "Creates user with data from BYU api"

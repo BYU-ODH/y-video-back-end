@@ -8,8 +8,7 @@
    [y-video-back.model-specs :as sp]
    [y-video-back.routes.service-handlers.utils.utils :as utils]
    [reitit.ring.middleware.multipart :as multipart]
-   [clojure.java.io :as io]
-   [y-video-back.utils.account-permissions :as ac]))
+   [clojure.java.io :as io]))
 
 (def file-create
   {:summary "Creates a new file. MUST INCLUDE FILE AS UPLOAD."

@@ -1,6 +1,4 @@
-(ns y-video-back.models
-  (:require
-    [clojure.string :as str]))
+(ns y-video-back.models)
 
 (def echo-patch
   {:echo string?})

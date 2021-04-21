@@ -12,16 +12,7 @@
 
 (ns legacy.utils.db-populator
     (:require
-      [clojure.test :refer :all]
-      [ring.mock.request :refer :all]
-      [y-video-back.handler :refer :all]
-      [legacy.db.test-util :as tcore]
-      [muuntaja.core :as m]
-      [clojure.java.jdbc :as jdbc]
-      [mount.core :as mount]
       [legacy.utils.model-generator :as g]
-      [legacy.utils.route-proxy.proxy :as rp]
-      [y-video-back.db.core :refer [*db*] :as db]
       [legacy.utils.utils :as ut]
       [y-video-back.db.contents :as contents]
       [y-video-back.db.collections :as collections]
@@ -352,3 +343,12 @@
          rsrc-acc-add (resource-access/CREATE rsrc-acc)
          temp (resource-access/READ (:id rsrc-acc-add))]
      (assoc rsrc-acc :id (:id rsrc-acc-add)))))
+
+
+
+
+
+
+
+
+

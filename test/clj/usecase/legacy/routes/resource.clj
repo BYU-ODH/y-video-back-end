@@ -11,8 +11,7 @@
       [legacy.utils.utils :as ut]
       [legacy.utils.db-populator :as db-pop]
       [y-video-back.db.resources :as resources]
-      [y-video-back.db.resource-access :as resource-access]
-      [clj-time.core :as t]))
+      [y-video-back.db.resource-access :as resource-access]))
 
 (declare ^:dynamic *txn*)
 

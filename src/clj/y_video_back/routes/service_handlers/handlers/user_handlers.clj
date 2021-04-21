@@ -10,8 +10,7 @@
    [y-video-back.model-specs :as sp]
    [y-video-back.routes.service-handlers.utils.utils :as utils]
    [y-video-back.routes.service-handlers.utils.role-utils :as ru]
-   [y-video-back.course-creator :as cc]
-   [y-video-back.utils.account-permissions :as ac]))
+   [y-video-back.course-creator :as cc]))
 
 (def user-create
   {:summary "Creates a new user - FOR DEVELOPMENT ONLY"

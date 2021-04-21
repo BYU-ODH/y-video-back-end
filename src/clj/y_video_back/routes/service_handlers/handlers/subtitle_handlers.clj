@@ -1,7 +1,6 @@
 (ns y-video-back.routes.service-handlers.handlers.subtitle-handlers
   (:require
    [y-video-back.db.subtitles :as subtitles]
-   [y-video-back.db.resources :as resources]
    [y-video-back.db.contents :as contents]
    [y-video-back.models :as models]
    [y-video-back.model-specs :as sp]
@@ -82,3 +81,4 @@
                    :body {:message "requested subtitle not found"}}
                   {:status 200
                    :body {:message (str result " subtitles deleted")}})))})
+

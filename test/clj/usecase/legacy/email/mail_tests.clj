@@ -2,17 +2,12 @@
     (:require
       [y-video-back.config :refer [env]]
       [clojure.test :refer :all]
-      [ring.mock.request :refer :all]
       [y-video-back.handler :refer :all]
       [legacy.db.test-util :as tcore]
-      [muuntaja.core :as m]
       [clojure.java.jdbc :as jdbc]
       [mount.core :as mount]
-      [legacy.utils.model-generator :as g]
-      [legacy.utils.route-proxy.proxy :as rp]
       [y-video-back.db.core :refer [*db*] :as db]
       [legacy.utils.utils :as ut]
-      [legacy.utils.db-populator :as db-pop]
       [y-video-back.email.mail :as mail]
       [y-video-back.db.email-logs :as email-logs]))
 
@@ -53,3 +48,8 @@
         (with-redefs-fn {#'mail/log-message (fn [email] "")
                          #'mail/send-message (fn [email] valid-res)}
           #(is (= valid-res (mail/send-email {}))))))))
+
+
+
+
+

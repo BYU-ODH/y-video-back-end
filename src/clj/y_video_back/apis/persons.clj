@@ -1,15 +1,11 @@
 (ns y-video-back.apis.persons
   (:require
     [y-video-back.config :refer [env]]
-    [y-video-back.db.users :as users]
     [y-video-back.db.user-type-exceptions :as user-type-exceptions]
-    [y-video-back.db.auth-tokens :as auth-tokens]
     [y-video-back.apis.utils :as ut]
     [clj-http.client :as client]
-    [java-time :as t]
     [clojure.data.json :as json]
-    [clojure.string :as str]
-    [clojure.walk :as walk]))
+    [clojure.string :as str]))
 
 (defn get-cats-from-json
   [js]

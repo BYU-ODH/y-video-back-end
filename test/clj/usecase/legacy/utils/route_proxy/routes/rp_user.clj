@@ -1,7 +1,6 @@
 (ns legacy.utils.route-proxy.routes.rp-user
   (:require
     [y-video-back.config :refer [env]]
-    [clojure.test :refer :all]
     [ring.mock.request :refer :all]
     [y-video-back.handler :refer :all]
     [legacy.utils.utils :as ut]))
@@ -84,3 +83,4 @@
    (app (-> (request :get (str "/api/get-session-id/" username "/" password)))))
   ([username]
    (login-current-user username (:NEW-USER-PASSWORD env))))
+

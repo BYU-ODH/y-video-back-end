@@ -4,16 +4,9 @@
     [y-video-back.db.users :as users]
     [y-video-back.db.courses :as courses]
     [y-video-back.db.user-courses-assoc :as user-courses-assoc]
-    [y-video-back.db.user-type-exceptions :as user-type-exceptions]
-    [y-video-back.db.auth-tokens :as auth-tokens]
     [y-video-back.apis.student-schedule :as schedule-api]
     [y-video-back.utils.account-permissions :as ac]
-    [y-video-back.routes.service-handlers.utils.utils :as ut]
-    [clj-http.client :as client]
-    [java-time :as t]
-    [clojure.data.json :as json]
-    [clojure.string :as str]
-    [clojure.walk :as walk]))
+    [y-video-back.routes.service-handlers.utils.utils :as ut]))
 
 (defn remove-course-db-fields
   [course]

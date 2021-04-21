@@ -3,15 +3,11 @@
    [y-video-back.config :refer [env]]
    [y-video-back.db.file-keys :as file-keys]
    [y-video-back.db.files :as files]
-   [y-video-back.db.resources :as resources]
    [y-video-back.db.users :as users]
    [y-video-back.routes.service-handlers.utils.utils :as utils]
    [y-video-back.routes.service-handlers.utils.role-utils :as ru]
-   [ring.swagger.upload :as swagger-upload]
    [ring.util.response :refer [file-response]]
-   [clojure.java.io :as io]
-   [y-video-back.log :as log-ut]
-   [y-video-back.utils.account-permissions :as ac]))
+   [y-video-back.log :as log-ut]))
 
 ; TODO - check if user has permission to stream requested file
 

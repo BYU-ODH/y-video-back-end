@@ -1,12 +1,8 @@
 (ns y-video-back.routes.service-handlers.handlers.language-handlers
   (:require
    [y-video-back.db.languages :as languages]
-   [y-video-back.db.resources :as resources]
-   [y-video-back.db.contents :as contents]
    [y-video-back.models :as models]
-   [y-video-back.model-specs :as sp]
-   [y-video-back.routes.service-handlers.utils.utils :as utils]
-   [y-video-back.utils.account-permissions :as ac]))
+   [y-video-back.routes.service-handlers.utils.utils :as utils]))
 
 (def language-create
   {:summary "Creates a new language"

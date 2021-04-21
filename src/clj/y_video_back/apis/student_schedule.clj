@@ -1,15 +1,8 @@
 (ns y-video-back.apis.student-schedule
   (:require
-    [y-video-back.config :refer [env]]
-    [y-video-back.db.users :as users]
-    [y-video-back.db.user-type-exceptions :as user-type-exceptions]
-    [y-video-back.db.auth-tokens :as auth-tokens]
     [y-video-back.apis.utils :as ut]
     [clj-http.client :as client]
-    [java-time :as t]
-    [clojure.data.json :as json]
-    [clojure.string :as str]
-    [clojure.walk :as walk]))
+    [clojure.data.json :as json]))
 
 (defn get-courses-from-json
   [js]

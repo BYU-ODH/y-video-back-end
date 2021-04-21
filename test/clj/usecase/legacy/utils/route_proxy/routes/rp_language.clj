@@ -1,7 +1,6 @@
 (ns legacy.utils.route-proxy.routes.rp-language
   (:require
     [y-video-back.config :refer [env]]
-    [clojure.test :refer :all]
     [ring.mock.request :refer :all]
     [y-video-back.handler :refer :all]
     [legacy.utils.utils :as ut]))
@@ -36,3 +35,4 @@
             (header :session-id session-id))))
   ([]
    (language-get-all (:session-id-bypass env))))
+

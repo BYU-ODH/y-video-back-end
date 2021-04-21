@@ -4,13 +4,10 @@
    [y-video-back.db.contents :as contents]
    [y-video-back.db.collections :as collections]
    [y-video-back.db.resources :as resources]
-   [y-video-back.db.resource-access :as resource-access]
    [y-video-back.db.subtitles :as subtitles]
    [y-video-back.models :as models]
    [y-video-back.model-specs :as sp]
-   [y-video-back.routes.service-handlers.utils.role-utils :as ru]
-   [y-video-back.routes.service-handlers.utils.utils :as ut]
-   [y-video-back.utils.account-permissions :as ac]))
+   [y-video-back.routes.service-handlers.utils.utils :as ut]))
 
 (def content-create
   {:summary "Creates new content"
