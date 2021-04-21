@@ -1,6 +1,6 @@
 ## Y-Video back-end
 
-> Note: Y-Video back-end is currently in Development.
+> Note: This readme is outdated in many parts. See developers_manual.md for more accurate documentation.
 
 Swagger API for DB manipulations for Y-Video
 
