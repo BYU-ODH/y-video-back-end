@@ -143,15 +143,22 @@
           res-zer (rp/resource-read-all-access (:id rsrc-one))
           acc-one (db-pop/add-resource-access username-one (:id rsrc-one))
           res-one (rp/resource-read-all-access (:id rsrc-one))
-          acc-two (db-pop/add-resource-access username-two (:id rsrc-one))
+          rsrc-acc-one {:username username-two
+                        :resource-id (:id rsrc-one)
+                        :last-verified (java.sql.Timestamp/valueOf "2004-10-19 10:23:54")}
+          rsrc-acc-one-create (resource-access/CREATE rsrc-acc-one)
           acc-thr (db-pop/add-resource-access username-thr (:id rsrc-one))
           res-two (rp/resource-read-all-access (:id rsrc-one))]
       (is (= 200 (:status res-zer)))
       (is (= 200 (:status res-one)))
       (is (= 200 (:status res-two)))
       (is (= '() (m/decode-response-body res-zer)))
-      (is (= (frequencies (list username-one)) (frequencies (m/decode-response-body res-one))))
-      (is (= (frequencies (list username-one username-two username-thr)) (frequencies (m/decode-response-body res-two))))))
+      (is (= (frequencies (list {:valid true :username username-one}))
+             (frequencies (m/decode-response-body res-one))))
+      (is (= (frequencies (list {:valid true :username username-one}
+                                {:valid false :username username-two}
+                                {:valid true :username username-thr}))
+             (frequencies (m/decode-response-body res-two))))))
   (testing "read all users from nonexistant resource"
     (let [fake-id (java.util.UUID/randomUUID)
           res-one (rp/resource-read-all-access fake-id)]
