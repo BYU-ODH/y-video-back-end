@@ -298,7 +298,7 @@ CREATE OR REPLACE FUNCTION delete_expired_auth_tokens() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
 BEGIN
-  DELETE FROM auth_tokens WHERE created < NOW() - INTERVAL '4 hours 30 minutes';
+  DELETE FROM auth_tokens WHERE created < NOW() - INTERVAL '8 hours 30 minutes';
   RETURN NEW;
 END;
 $$;
@@ -315,7 +315,7 @@ CREATE OR REPLACE FUNCTION delete_expired_file_keys() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
 BEGIN
-  DELETE FROM file_keys WHERE created < NOW() - INTERVAL '4 hours';
+  DELETE FROM file_keys WHERE created < NOW() - INTERVAL '6 hours';
   RETURN NEW;
 END;
 $$;
