@@ -26,6 +26,6 @@
            [username resource-id])))
 
 (defn READ-USERNAMES-BY-RESOURCE
-  "Returns all usernames connected resource"
+  "Returns all usernames connected to resource"
   [resource-id]
-  (db/read-all-where :resource-access-undeleted :resource-id resource-id [:username]))
+  (db/read-all-where :resource-access-undeleted :resource-id resource-id [:username :last-verified]))

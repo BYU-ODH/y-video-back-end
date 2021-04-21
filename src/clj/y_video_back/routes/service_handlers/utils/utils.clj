@@ -92,6 +92,13 @@
        (str "." (last (str/split given-name #"\.")))))
 
 
+(defn is-valid-access-time
+  "Checks whether resource-access last-verified time is recent enough"
+  [last-verified]
+  (> (inst-ms last-verified)
+     (- (System/currentTimeMillis) (* 3600000 (-> env :resource-access-expire-after)))))
+
+
 (defn has-resource-permission
   "Checks if user with username has permission to add resource to content. Body must contain resource-id and collection-id. Must verify collection and resource before calling."
   [resource-id collection-id]

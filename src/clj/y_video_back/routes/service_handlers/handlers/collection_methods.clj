@@ -171,12 +171,10 @@
      :body {:message "collection not found"}}
     (let [raw-res (contents/READ-BY-COLLECTION-WITH-LAST-VERIFIED id)
           raw-valid (doall (filter #(or (= "00000000-0000-0000-0000-000000000000" (str (:resource-id %)))
-                                        (> (inst-ms (:last-verified %))
-                                           (- (System/currentTimeMillis) (* 3600000 (-> env :resource-access-expire-after)))))
+                                        (utils/is-valid-access-time (:last-verified %)))
                                    raw-res))
           raw-expired (doall (filter #(and (not (= "00000000-0000-0000-0000-000000000000" (str (:resource-id %))))
-                                           (< (inst-ms (:last-verified %))
-                                              (- (System/currentTimeMillis) (* 3600000 (-> env :resource-access-expire-after)))))
+                                           (not (utils/is-valid-access-time (:last-verified %))))
                                      raw-res))
           res-valid (map #(utils/remove-db-only %) raw-valid)
           res-expired (map (fn [arg]
