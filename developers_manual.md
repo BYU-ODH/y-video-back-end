@@ -438,3 +438,4 @@ These are updates that would be good to implement next as time allows.
 4. Line coverage in general can be improved. Refer to the [Clojure and Other Tools](#clojure-and-other-tools) section to learn how to generate coverage reports with Cloverage.
 5. The resource-access restriction was added most recently, and is therefore most likely to have some bugs in it. The front end will likely find these first, but writing more tests for them would be useful.
 6. Almost all of the tests are integration tests right now. It would be useful to go through and fill out the unit tests.
+7. Paginate results for search endpoints. Currently, they return all results in one response.
