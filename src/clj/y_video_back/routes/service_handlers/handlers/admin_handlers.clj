@@ -51,7 +51,12 @@
                                   (db/read-all-pattern :public-collections-undeleted
                                                        [:collection-name]
                                                        (str "%" term "%")))
-                    res (map #(into % {:username (:username (users/READ (:owner %)))})
+                    res (map #(into % {
+                                       :username (:username (users/READ (:owner %))) 
+                                       :content (map utils/remove-db-only
+                                                     (db/read-all-where :contents-undeleted
+                                                                        :collection-id (:id %)))
+                                       })
                              coll-res)]
                 {:status 200
                  :body res}))})

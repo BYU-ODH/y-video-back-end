@@ -61,6 +61,7 @@ CREATE TABLE collections (
    ,published BOOLEAN
    ,archived BOOLEAN
    ,public BOOLEAN
+   ,copyrighted BOOLEAN
    , CONSTRAINT no_duplicate_owner_names UNIQUE (deleted, owner, collection_name)
 );
 COMMENT ON TABLE collections IS 'Collections of content/resources';
