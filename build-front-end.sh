@@ -10,7 +10,8 @@ rm -rf resources/public/static
 cd yvideo-client
 rm -rf build
 
-NODE_ENV=dev npm run build --dev --configuration=dev
+npm run build
+#NODE_ENV=dev npm run build --dev --configuration=dev
 
 cd ../
 

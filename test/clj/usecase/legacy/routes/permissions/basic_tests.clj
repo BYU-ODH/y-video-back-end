@@ -1,5 +1,6 @@
 (ns legacy.routes.permissions.basic-tests
   (:require
+    [y-video-back.config :refer [env]]
     [clojure.test :refer :all]
     [y-video-back.handler :refer :all]
     [legacy.db.test-util :as tcore]
@@ -28,7 +29,7 @@
 
 (deftest no-session-id-for-testing
   (testing "no session id"
-    (let [res (rp/echo-post "6bc824a6-f446-416d-8dd6-06350ae577f4" "hey")]
+    (let [res (rp/echo-post (:session-id-bypass env) "hey")]
       (is (= 200 (:status res)))
       (is (= {:echo "hey"} (m/decode-response-body res))))
     (let [res (rp/echo-post "there")]
