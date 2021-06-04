@@ -74,12 +74,28 @@
   (let [user-colls (users/READ-COLLECTIONS-BY-USER-VIA-COURSES user-id)]
     (contains? (set (map #(:id %) user-colls)) collection-id)))
 
+; (defn get-new-session-id
+;   ; "Generate new session-id, associated with same user as given session-id. Invalidate old session-id."
+;   "TODO: If the session-id time stamp is still within certain time then we do not renew"
+;   [session-id]
+;   (let [new-session-id (:id (auth-tokens/CREATE {:user-id (:user-id (auth-tokens/READ-UNEXPIRED session-id))}))]
+;     (auth-tokens/DELETE session-id)
+;     new-session-id))
+
 (defn get-new-session-id
-  "Generate new session-id, associated with same user as given session-id. Invalidate old session-id."
+  ; "Generate new session-id, associated with same user as given session-id. Invalidate old session-id."
+  "TODO: If the session-id time stamp is still within certain time then we do not renew"
   [session-id]
-  (let [new-session-id (:id (auth-tokens/CREATE {:user-id (:user-id (auth-tokens/READ-UNEXPIRED session-id))}))]
-    (auth-tokens/DELETE session-id)
-    new-session-id))
+  (let [current-session (auth-tokens/READ-UNEXPIRED session-id)]
+    (if (> (- (inst-ms (java.time.Instant/now)) (inst-ms (get current-session :created))) 120000)
+      ;Instead of returning a new session-id return to the CAS login page or logout the user
+      ;; ((let [new-session-id (:id (auth-tokens/CREATE {:user-id (:user-id (auth-tokens/READ-UNEXPIRED session-id))}))]
+      ;;    (auth-tokens/DELETE session-id)
+      ;;    new-session-id))
+      (let [c-id session-id] 
+        (auth-tokens/DELETE c-id) "expired")
+      (let [c-id session-id] 
+        (db/UPDATE :auth-tokens c-id (assoc current-session :created (java.time.Instant/now))) c-id))));add 4 hours to the created time 
 
 (def forbidden-page
   (error-page {:status 401, :title "401 - Unauthorized",
