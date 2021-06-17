@@ -105,6 +105,7 @@
 (def search-public-collections admin/search-public-collections)
 (def search-by-content admin/search-by-content)
 (def search-by-resource admin/search-by-resource)
+(def search-by-byu admin/get-byu-data)
 
 ; Media handlers
 (def get-file-key media/get-file-key)
