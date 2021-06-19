@@ -101,6 +101,6 @@
    :responses {200 {:body models/user-byu}}
    :handler (fn [{{{:keys [username]} :path} :parameters}]
               (let [username (java.net.URLDecoder/decode username)
-                    res (persons/get-user-data username)]
+                    res (dissoc (persons/get-user-data username) :byu-id :person-id)]
                 {:status 200
                  :body res}))})
