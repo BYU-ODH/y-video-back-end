@@ -10,6 +10,11 @@
    :account-type int?
    :username string?})
 
+(def user-byu 
+  {:full-name string?
+   :email string?
+   :account-type int?})
+
 (def user
   (into user-without-id {:id uuid?}))
 

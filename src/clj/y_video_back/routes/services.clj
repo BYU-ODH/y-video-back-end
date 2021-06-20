@@ -293,7 +293,9 @@
      ["/content/{term}"
       {:get service-handlers/search-by-content}]
      ["/resource/{term}"
-      {:get service-handlers/search-by-resource}]]
+      {:get service-handlers/search-by-resource}]
+     ["/user-data/{username}"
+      {:get service-handlers/search-by-byu}]]
 
 
     ["/media"

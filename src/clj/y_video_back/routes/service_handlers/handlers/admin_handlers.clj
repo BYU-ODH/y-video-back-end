@@ -3,7 +3,8 @@
    [y-video-back.db.users :as users]
    [y-video-back.models :as models]
    [y-video-back.routes.service-handlers.utils.utils :as utils]
-   [y-video-back.db.core :as db]))
+   [y-video-back.db.core :as db]
+   [y-video-back.apis.persons :as persons]))
 
 ; TODO - sort results by more than just alphabetical
 
@@ -89,5 +90,17 @@
                              (db/read-all-pattern :resources-undeleted
                                                   [:resource-name :resource-type :requester-email]
                                                   (str "%" term "%")))]
+                {:status 200
+                 :body res}))})
+
+(def get-byu-data 
+  {:summary "Populate user data from BYU"
+   :permission-level "admin"
+   :parameters {:header {:session-id uuid?}
+                :path {:username string?}}
+   :responses {200 {:body models/user-byu}}
+   :handler (fn [{{{:keys [username]} :path} :parameters}]
+              (let [username (java.net.URLDecoder/decode username)
+                    res (dissoc (persons/get-user-data username) :byu-id :person-id)]
                 {:status 200
                  :body res}))})
