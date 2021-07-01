@@ -10,7 +10,8 @@
    [y-video-back.model-specs :as sp]
    [y-video-back.routes.service-handlers.utils.utils :as utils]
    [y-video-back.routes.service-handlers.utils.role-utils :as ru]
-   [y-video-back.course-creator :as cc]))
+   [y-video-back.course-creator :as cc]
+   [y-video-back.apis.persons :as persons]))
 
 (def user-create
   {:summary "Creates a new user - FOR DEVELOPMENT ONLY"
@@ -26,7 +27,13 @@
                  :body {:message "username already taken"}}
                 {:status 200
                  :body {:message "1 user created"
-                        :id (utils/get-id (users/CREATE body))}}))})
+                        :id (let [body body
+                                  byu-data (dissoc (persons/get-user-data (:username body)) :byu-id)
+                                  res (assoc body
+                                             :account-name (get byu-data :full-name)
+                                             :account-type (int (:account-type byu-data))
+                                             :email (get byu-data :email))]
+                              (utils/get-id (users/CREATE res)))}}))})
 
 (def user-get-by-id
   {:summary "Retrieves specified user"
