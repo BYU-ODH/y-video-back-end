@@ -21,7 +21,7 @@
    :responses {200 {:body {:message string?
                            :id string?}}
                500 {:body {:message string?}}}
-   :handler (fn [{{:keys [body]} :parameters,}]
+   :handler (fn [{{:keys [body]} :parameters}]
               (if-not (= '() (users/READ-BY-USERNAME [(:username body)]))
                 {:status 500
                  :body {:message "username already taken"}}
@@ -34,6 +34,32 @@
                                              :account-type (int (:account-type byu-data))
                                              :email (get byu-data :email))]
                               (utils/get-id (users/CREATE res)))}}))})
+
+
+(def user-create-from-byu
+  {:summary "Creates a new user only if byu data is valid"
+   :permission-level "admin"
+   :parameters {:header {:session-id uuid?}
+                :body models/user-without-id}
+   :responses {200 {:body {:message string?
+                           :id string?}}
+               500 {:body {:message string?}}}
+   :handler (fn [{{:keys [body]} :parameters}]
+              (if-not (= '() (users/READ-BY-USERNAME [(:username body)]))
+                {:status 500
+                 :body {:message "username already taken"}}
+                {:status 200
+                 :body {:message "1 user created"
+                        :id (let [body body
+                                  byu-data (persons/get-user-data (:username body))
+                                  res (assoc body
+                                             :account-name (get byu-data :full-name)
+                                             :account-type (int (:account-type byu-data))
+                                             :email (get byu-data :email))]
+                              (if (get byu-data :byu-id) 
+                                (utils/get-id (users/CREATE res))
+                                "Not a BYU username"))}}))})
+                 
 
 (def user-get-by-id
   {:summary "Retrieves specified user"

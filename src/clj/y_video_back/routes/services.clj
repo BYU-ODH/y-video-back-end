@@ -141,6 +141,8 @@
      [""
       {:post service-handlers/user-create
        :get service-handlers/user-get-logged-in}]
+     ["/byu/create"
+      {:post service-handlers/user-create-from-byu}]
      ["/{id}"
       {:get service-handlers/user-get-by-id
        :patch service-handlers/user-update
@@ -149,7 +151,6 @@
       {:get service-handlers/user-get-all-collections}]
      ["/{id}/courses"
       {:get service-handlers/user-get-all-courses}]
-
      ["/{id}/words"
       {:get service-handlers/user-get-all-words}]]
 
@@ -293,9 +294,7 @@
      ["/content/{term}"
       {:get service-handlers/search-by-content}]
      ["/resource/{term}"
-      {:get service-handlers/search-by-resource}]
-     ["/user-data/{username}"
-      {:get service-handlers/search-by-byu}]]
+      {:get service-handlers/search-by-resource}]]
 
 
     ["/media"
