@@ -24,7 +24,7 @@
   "Updates user with data from BYU api"
   [username user-id]
   (let [user-data (persons-api/get-user-data username)
-    current-data (users/user-get-by-id user-id)]
+        current-data (users/READ-BY-USERNAME (:username username))]
     (users/UPDATE user-id
                   {:email (:email user-data)
                    :account-type (if (= (:account-type current-data) 0)

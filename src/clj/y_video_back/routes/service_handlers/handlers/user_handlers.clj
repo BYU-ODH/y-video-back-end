@@ -27,13 +27,7 @@
                  :body {:message "username already taken"}}
                 {:status 200
                  :body {:message "1 user created"
-                        :id (let [body body
-                                  byu-data (dissoc (persons/get-user-data (:username body)) :byu-id)
-                                  res (assoc body
-                                             :account-name (get byu-data :full-name)
-                                             :account-type (int (:account-type byu-data))
-                                             :email (get byu-data :email))]
-                              (utils/get-id (users/CREATE res)))}}))})
+                        :id (utils/get-id (users/CREATE body))}}))})
 
 
 (def user-create-from-byu
@@ -49,16 +43,17 @@
                 {:status 500
                  :body {:message "username already taken"}}
                 {:status 200
-                 :body {:message "1 user created"
-                        :id (let [body body
+                 :body (let [body body
                                   byu-data (persons/get-user-data (:username body))
                                   res (assoc body
                                              :account-name (get byu-data :full-name)
                                              :account-type (int (:account-type byu-data))
                                              :email (get byu-data :email))]
                               (if (get byu-data :byu-id) 
-                                (utils/get-id (users/CREATE res))
-                                "Not a BYU username"))}}))})
+                                {:message "1 user created"
+                                 :id (utils/get-id (users/CREATE res))}
+                                {:message "username not created invalid BYU username" 
+                                 :id "-"}))}))})
                  
 
 (def user-get-by-id
