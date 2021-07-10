@@ -25,12 +25,13 @@
   "Updates user with data from BYU api"
   [username user-id]
   (let [user-data (persons-api/get-user-data username)
-        current-data (db/read-all-where :users-undeleted [:username username])]
+        current-data (first (db/read-all-where :users-undeleted username))
+        role (if (= (:account-type current-data) 0)
+               (:account-type current-data)
+               (:account-type user-data))]
     (users/UPDATE user-id
                   {:email (:email user-data)
-                   :account-type (if (= (:account-type current-data) 0)
-                                   (:account-type current-data)
-                                   (:account-type user-data))
+                   :account-type role
                    :account-name (:full-name user-data)
                    :last-person-api (java.sql.Timestamp. (System/currentTimeMillis))
                    :byu-person-id (:person-id user-data)})))
