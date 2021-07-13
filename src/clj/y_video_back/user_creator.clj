@@ -26,7 +26,7 @@
   [username user-id]
   (let [user-data (persons-api/get-user-data username)
         current-data (first (db/read-all-where :users-undeleted username))
-        role (if (= (:account-type current-data) 0)
+        role (if (or (= (:account-type current-data) 0) (= (:account-type current-data) 1))
                (:account-type current-data)
                (:account-type user-data))]
     (users/UPDATE user-id
