@@ -20,6 +20,7 @@
 
 ; User handlers
 (def user-create users/user-create)
+(def user-create-from-byu users/user-create-from-byu)
 (def user-get-by-id users/user-get-by-id)
 (def user-update users/user-update)
 (def user-delete users/user-delete)
@@ -105,7 +106,6 @@
 (def search-public-collections admin/search-public-collections)
 (def search-by-content admin/search-by-content)
 (def search-by-resource admin/search-by-resource)
-(def search-by-byu admin/get-byu-data)
 
 ; Media handlers
 (def get-file-key media/get-file-key)

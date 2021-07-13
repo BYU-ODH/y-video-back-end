@@ -92,15 +92,3 @@
                                                   (str "%" term "%")))]
                 {:status 200
                  :body res}))})
-
-(def get-byu-data 
-  {:summary "Populate user data from BYU"
-   :permission-level "admin"
-   :parameters {:header {:session-id uuid?}
-                :path {:username string?}}
-   :responses {200 {:body models/user-byu}}
-   :handler (fn [{{{:keys [username]} :path} :parameters}]
-              (let [username (java.net.URLDecoder/decode username)
-                    res (dissoc (persons/get-user-data username) :byu-id :person-id)]
-                {:status 200
-                 :body res}))})
