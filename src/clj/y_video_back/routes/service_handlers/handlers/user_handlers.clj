@@ -6,6 +6,7 @@
    [y-video-back.db.users :as users]
    [y-video-back.db.contents :as contents]
    [y-video-back.db.collections :as collections]
+   [y-video-back.routes.service-handlers.handlers.collection-methods :as coll-methods]
    [y-video-back.models :as models]
    [y-video-back.model-specs :as sp]
    [y-video-back.routes.service-handlers.utils.utils :as utils]
@@ -87,6 +88,7 @@
                   {:status 200
                    :body {:message (str 1 " users updated")}})))})  ; TODO Check that only 1 user really was updated
 
+; delete everything that belongs to this user
 (def user-delete
   {:summary "Deletes specified user"
    :permission-level "admin"
@@ -101,6 +103,25 @@
                    :body {:message "requested user not found"}}
                   {:status 200
                    :body {:message (str result " users deleted")}})))})
+
+
+(def user-delete-with-collections
+  {:summary "Deletes specified user and the collections"
+   :permission-level "admin"
+   :parameters {:header {:session-id uuid?}
+                :path {:id uuid?}}
+   :responses {200 {:body {:message string?}}
+               404 {:body {:message string?}}}
+   :handler (fn [{{{:keys [id]} :path} :parameters}]
+              (let [result (users/DELETE id)]
+                (if (nil? result)
+                  {:status 404
+                   :body {:message "requested user not found"}}
+                  (let [coll-deleted (for [x (collections/READ-ALL-BY-OWNER [id])
+                              :let [y (:id x)]] (coll-methods/collection-delete y))] 
+                    {:status 200
+                     :body {:message (str (:username result) " user deleted. Called delete collections ->" coll-deleted)}})
+                  )))})
 
 
 (def user-get-logged-in
