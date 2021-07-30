@@ -148,7 +148,8 @@
        :patch service-handlers/user-update
        :delete service-handlers/user-delete}]
      ["/{id}/collections"
-      {:get service-handlers/user-get-all-collections}]
+      {:get service-handlers/user-get-all-collections
+       :delete service-handlers/user-delete-width-collections}]
      ["/{id}/courses"
       {:get service-handlers/user-get-all-courses}]
      ["/{id}/words"
