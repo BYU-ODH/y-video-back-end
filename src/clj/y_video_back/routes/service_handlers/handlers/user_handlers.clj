@@ -45,11 +45,11 @@
                  :body {:message "username already taken"}}
                 {:status 200
                  :body (let [body body
-                                  byu-data (persons/get-user-data (:username body))
-                                  res (assoc body
-                                             :account-name (get byu-data :full-name)
-                                             :account-type (int (:account-type byu-data))
-                                             :email (get byu-data :email))]
+                             byu-data (persons/get-user-data (:username body))
+                             res (assoc body
+                                        :account-name (get byu-data :full-name)
+                                        :account-type (int (:account-type byu-data))
+                                        :email (get byu-data :email))]
                               (if (get byu-data :byu-id) 
                                 {:message "1 user created"
                                  :id (utils/get-id (users/CREATE res))}
