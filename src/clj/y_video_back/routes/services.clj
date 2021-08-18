@@ -149,7 +149,7 @@
        :delete service-handlers/user-delete}]
      ["/{id}/collections"
       {:get service-handlers/user-get-all-collections
-       :delete service-handlers/user-delete-width-collections}]
+       :delete service-handlers/user-delete-with-collections}]
      ["/{id}/courses"
       {:get service-handlers/user-get-all-courses}]
      ["/{id}/words"

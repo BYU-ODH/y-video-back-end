@@ -55,7 +55,10 @@
                                                        [:collection-name]
                                                        (str "%" term "%")))
                     res (map #(into % {
-                                       :username (:username (users/READ (:owner %))) 
+                                       :username (let [username (:username (users/READ (:owner %)))] 
+                                                   (if (nil? username)
+                                                           "invalid"
+                                                           username)) 
                                        :content (map utils/remove-db-only
                                                      (db/read-all-where :contents-undeleted
                                                                         :collection-id (:id %)))
