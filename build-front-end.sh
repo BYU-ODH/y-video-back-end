@@ -6,6 +6,7 @@ rm resources/public/manifest.json
 rm resources/public/precache*.js
 rm resources/public/service-worker.js
 rm -rf resources/public/static
+rm -rf resources/public/videos
 
 cd yvideo-client
 rm -rf build
@@ -23,3 +24,4 @@ cp yvideo-client/build/manifest.json resources/public/
 cp yvideo-client/build/precache*.js resources/public/
 cp yvideo-client/build/service-worker.js resources/public/
 cp -r yvideo-client/build/static resources/public/
+cp -r yvideo-client/build/videos resources/public/
