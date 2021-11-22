@@ -97,7 +97,8 @@
 
 (def content-without-id
   (into content-without-any-ids {:resource-id uuid?
-                                 :collection-id uuid?}))
+                                 :collection-id uuid?
+                                 :file-id uuid?}))
 
 (def content
   (into content-without-id {:id uuid?}))
@@ -117,7 +118,8 @@
 (def file-without-any-ids
   {:filepath string?
    :file-version string?
-   :metadata string?})
+   :metadata string?
+   :aspect-ratio string?})
 
 (def file-without-id
   (into file-without-any-ids {:resource-id uuid?}))

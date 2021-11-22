@@ -8,7 +8,8 @@
    [y-video-back.model-specs :as sp]
    [y-video-back.routes.service-handlers.utils.utils :as utils]
    [reitit.ring.middleware.multipart :as multipart]
-   [clojure.java.io :as io]))
+   [clojure.java.io :as io]
+   [clojure.java.shell :as shell]))
 
 (def file-create
   {:summary "Creates a new file. MUST INCLUDE FILE AS UPLOAD."
@@ -29,15 +30,24 @@
                   (do
                     (if-not (languages/EXISTS? file-version)
                       (languages/CREATE {:id file-version}))
-                    (let [id (utils/get-id (files/CREATE {:filepath file-name
-                                                          :file-version file-version
-                                                          :metadata metadata
-                                                          :resource-id resource-id}))]
+                    (let
+                     [output (:out
+                              (shell/sh "ffprobe" "-v" "error" "-select_streams" "v:0" "-show_entries" "stream=width,height" "-of" "default" (-> (:tempfile file) .getAbsolutePath)))
+                      video-info (clojure.string/split output #"\n")
+                      aspect-ratio (clojure.string/replace (str (get video-info 1) "," (get video-info 2))
+                                                           #"[a-zA-z]+=" "")
+                      id (utils/get-id (files/CREATE {:filepath file-name
+                                                      :file-version file-version
+                                                      :metadata metadata
+                                                      :resource-id resource-id
+                                                      :aspect-ratio aspect-ratio}))]
+                      ; :FILES :media-url + file-name = file path for ffmpeg
                       (io/copy (:tempfile file)
                                (io/file (str (-> env :FILES :media-url) file-name)))
                       {:status 200
                        :body {:message "1 file created"
-                              :id id}})))))})
+                              :id id
+                              :aspect-ratio aspect-ratio}})))))})
 
 
 (def file-get-by-id
