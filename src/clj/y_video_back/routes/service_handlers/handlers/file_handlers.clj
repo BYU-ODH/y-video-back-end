@@ -49,7 +49,6 @@
                               :id id
                               :aspect-ratio aspect-ratio}})))))})
 
-
 (def file-get-by-id
   {:summary "Retrieves specified file"
    :permission-level "instructor"

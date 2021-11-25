@@ -132,6 +132,7 @@ CREATE TABLE files (
    ,filepath TEXT
    ,file_version TEXT REFERENCES languages(id)
    ,metadata TEXT
+--    ,aspect_ratio TEXT
    , CONSTRAINT no_duplicate_filepaths UNIQUE (deleted, filepath)
 );
 COMMENT ON TABLE files IS 'Files represent media (i.e. videos) with path to file and metadata';
@@ -170,6 +171,7 @@ CREATE TABLE contents (
     ,clips TEXT
     ,resource_id UUID REFERENCES resources(id)
     ,collection_id UUID REFERENCES collections(id)
+    -- ,file_id UUID REFERENCES files(id)
     --,public BOOLEAN
 );
 COMMENT ON TABLE contents IS 'Contains contents to be applied over resources';
@@ -517,3 +519,6 @@ COMMENT ON VIEW parent_collections IS 'Tracks which collections each content, re
 
 INSERT INTO resources (id, resource_name, resource_type, requester_email, copyrighted, physical_copy_exists, full_video, published, date_validated, views, all_file_versions, metadata)
 VALUES ('00000000-0000-0000-0000-000000000000', 'online-media', 'online-media', '', true, false, true, true, '', 0, '', '');
+
+-- INSERT INTO files (id, resource_id, filepath, file_version, metadata, aspect_ratio) 
+-- VALUES ('00000000-0000-0000-0000-000000000000', '00000000-0000-0000-0000-000000000000', 'empty', 'English', '', '0,0');
