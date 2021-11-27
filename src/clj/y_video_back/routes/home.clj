@@ -95,5 +95,7 @@
          ["/manager/:id" {:get index-page}]
          ["/public-manager/:id?" (:get index-page)]
          ["/player/:id" {:get index-page}]
-         ["/trackeditor/:id" {:get index-page}]
+         ["/videoeditor/:id" {:get index-page}]
+         ["/subtitleeditor/:id" {:get index-page}]
+         ["/clipeditor/:id" {:get index-page}]
          ["/feedback" {:get index-page}])))

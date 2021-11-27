@@ -93,16 +93,19 @@ Eventually, merging into development will trigger an automatic redeployment of t
 
 If the front end has any changes they need deployed, follow these steps on the appropriate server:
 
-1. $ cd /srv/y-video-back-end/y-video-back-end/yvideo-client
-2. Make sure you're on the correct branch (usually develop)
-3. $ sudo git pull
-4. Check the front end config file: /srv/y-video-back-end/y-video-back-end/yvideo-client/.env.production
-5. $ cd /srv/y-video-back-end/y-video-back-end
-6. $ sudo ./build-front-end.sh
-7. $ sudo lein clean
-8. $ sudo lein uberjar
-9. $ sudo cp target/y-video-back-end.jar ../y-video-back-end.jar
-10. $ sudo systemctl restart y-video-back-end.service
+1. $ cd /srv/y-video-back-end/y-video-back-end/
+2. $ sudo su jenkins (do not use root)
+3. $ cd yvideo-client
+4. Make sure you're on the correct branch (usually develop)
+5. $ git pull
+6. Check the front end config file: /srv/y-video-back-end/y-video-back-end/yvideo-client/.env.production
+7. $ cd /srv/y-video-back-end/y-video-back-end
+8. $ ./build-front-end.sh
+9. $ lein clean
+10. $ lein uberjar
+11. $ cp target/y-video-back-end.jar ../y-video-back-end.jar
+12. $ exit (exit the jenkins user) 
+13. $ sudo systemctl restart y-video-back-end.service
 
 The changes will be visible after about a minute.
 
@@ -111,13 +114,15 @@ The changes will be visible after about a minute.
 If the back end has any changes that need to be deployed, follow these steps on the appropriate server. If the front end has been changed, follow steps 1-6 from above before running lein clean and uberjar.
 
 1. $ cd /srv/y-video-back-end/y-video-back-end
-2. Make sure you're on the correct branch (usually development)
-3. $ sudo git pull
-4. Check the back end config file: /srv/y-video-back-end/y-video-back-end/env/prod/resources/config.edn
-7. $ sudo lein clean
-8. $ sudo lein uberjar
-9. $ sudo cp target/y-video-back-end.jar ../y-video-back-end.jar
-10. $ sudo systemctl restart y-video-back-end.service
+2. $ sudo su jenkins
+3. Make sure you're on the correct branch (usually development)
+4. $ git pull
+5. Check the back end config file: /srv/y-video-back-end/y-video-back-end/env/prod/resources/config.edn
+7. $ lein clean
+8. $ lein uberjar
+9. $ cp target/y-video-back-end.jar ../y-video-back-end.jar
+10. $ exit
+11. $ sudo systemctl restart y-video-back-end.service
 
 The changes will be visible after about a minute.
 
@@ -126,12 +131,14 @@ The changes will be visible after about a minute.
 Redeploying changes to the development server is easier, but takes longer. If you want it to go faster, you can skip the testing stage by following the workflows for deploying the front and back ends separately.
 
 1. $ cd /srv/y-video-back-end/y-video-back-end/yvideo-client
-2. Make sure you're on the correct branch (usually develop)
-3. $ sudo git pull
-4. Check the front end config file: /srv/y-video-back-end/y-video-back-end/yvideo-client/.env.production
-5. $ cd /srv/y-video-back-end/y-video-back-end
-6. $ sudo ./build-stage.sh
-7. If all the tests pass, run: $ sudo systemctl restart y-video-back-end.service
+2. $ sudo su jenkins
+3. Make sure you're on the correct branch (usually develop)
+4. $ git pull
+5. Check the front end config file: /srv/y-video-back-end/y-video-back-end/yvideo-client/.env.production
+6. $ cd /srv/y-video-back-end/y-video-back-end
+7. $ ./build-stage.sh
+8. $ exit
+9. If all the tests pass, run: $ sudo systemctl restart y-video-back-end.service
 
 The changes will be visible after about a minute.
 

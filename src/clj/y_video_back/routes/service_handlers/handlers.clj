@@ -24,6 +24,7 @@
 (def user-get-by-id users/user-get-by-id)
 (def user-update users/user-update)
 (def user-delete users/user-delete)
+(def user-delete-with-collections users/user-delete-with-collections)
 (def user-get-logged-in users/user-get-logged-in)
 (def user-get-all-collections users/user-get-all-collections)
 (def user-get-all-collections-by-logged-in users/user-get-all-collections-by-logged-in)
