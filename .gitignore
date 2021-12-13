@@ -50,3 +50,4 @@ resources/public/static/cat_sleep.mp4
 /.calva
 /.lsp
 /.clj-kondo
+*.webm
