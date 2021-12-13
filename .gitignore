@@ -49,5 +49,9 @@ resources/public/static/test_kitten.mp4
 resources/public/static/cat_sleep.mp4
 /.calva
 /.lsp
+<<<<<<< HEAD
 /.clj-kondo
 *.webm
+=======
+/.clj-kondo
+>>>>>>> fc4dcc5d87f4222b96d8a8729f6c9c3a9bc7deb2
