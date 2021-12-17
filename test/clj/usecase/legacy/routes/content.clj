@@ -43,15 +43,18 @@
                  (ut/remove-db-only)
                  (update :id str)
                  (update :collection-id str)
-                 (update :resource-id str))
+                 (update :resource-id str)
+                 (update :file-id str))
              (ut/remove-db-only (m/decode-response-body res))))))
   (testing "content UPDATE"
     (let [cont-one (contents/CREATE (db-pop/get-content))
           cont-two (db-pop/get-content)]
       (let [res (rp/content-id-patch (:id cont-one) cont-two)]
         (is (= 200 (:status res)))
-        (is (= (into cont-two {:id (:id cont-one)}) (ut/remove-db-only (contents/READ (:id cont-one))))))))
-  (testing "content DELETE"
+        (is (= 
+             (into cont-two {:id (:id cont-one)}) 
+             (ut/remove-db-only (contents/READ (:id cont-one))))))))
+  (testing "content DELETE" ;this is not used in the application
     (let [cont-one (contents/CREATE (db-pop/get-content))
           res (rp/content-id-delete (:id cont-one))]
       (is (= 200 (:status res)))
@@ -93,8 +96,8 @@
     (let [coll-one (db-pop/add-collection)
           coll-two (db-pop/add-collection)
           rsrc-one (db-pop/add-resource)
-          cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
-          cont-two (db-pop/add-content (:id coll-two) (:id rsrc-one))
+          cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one) (ut/to-uuid "00000000-0000-0000-0000-000000000000"))
+          cont-two (db-pop/add-content (:id coll-two) (:id rsrc-one) (ut/to-uuid "00000000-0000-0000-0000-000000000000"))
           sbtl-one (db-pop/add-subtitle (:id cont-one))
           res (rp/content-id-clone-subtitle (:id cont-two) (:id sbtl-one))]
       (is (= 200 (:status res)))
@@ -109,8 +112,8 @@
     (let [coll-one (db-pop/add-collection)
           coll-two (db-pop/add-collection)
           rsrc-one (db-pop/add-resource)
-          cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
-          cont-two (db-pop/add-content (:id coll-two) (:id rsrc-one))
+          cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one) (ut/to-uuid "00000000-0000-0000-0000-000000000000"))
+          cont-two (db-pop/add-content (:id coll-two) (:id rsrc-one) (ut/to-uuid "00000000-0000-0000-0000-000000000000"))
           sbtl-one (db-pop/add-subtitle (:id cont-one))
           sbtl-two (db-pop/add-subtitle (:id cont-two))
           res (rp/content-id-clone-subtitle (:id cont-two) (:id sbtl-one))]

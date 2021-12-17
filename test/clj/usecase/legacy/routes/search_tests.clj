@@ -50,21 +50,25 @@
   (def test-coll-one (ut/under-to-hyphen (collections/CREATE {:collection-name "Quidditch Books"
                                                               :published true
                                                               :archived false
+                                                              :copyrighted true
                                                               :public false
                                                               :owner (:id test-user-one)})))
   (def test-coll-two (ut/under-to-hyphen (collections/CREATE {:collection-name "Self-help Books"
                                                               :published true
                                                               :archived true
+                                                              :copyrighted true
                                                               :public false
                                                               :owner (:id test-user-two)})))
   (def test-coll-thr (ut/under-to-hyphen (collections/CREATE {:collection-name "Non-fiction Books"
                                                               :published false
                                                               :archived true
+                                                              :copyrighted true
                                                               :public false
                                                               :owner (:id test-user-thr)})))
   (def test-coll-pub (ut/under-to-hyphen (collections/CREATE {:collection-name "The Tales of Beedle the Bard"
                                                               :published false
                                                               :archived true
+                                                              :copyrighted true
                                                               :public true
                                                               :owner (:id test-user-adm)})))
   (def test-rsrc-one (ut/under-to-hyphen (resources/CREATE {:resource-name "Quidditch Through the Ages"
@@ -121,6 +125,7 @@
                                                            :allow-captions false
                                                            :views 0
                                                            :file-version "f"
+                                                           :file-id #uuid "00000000-0000-0000-0000-000000000000"
                                                            :published true
                                                            :words ""
                                                            :clips ""
@@ -138,6 +143,7 @@
                                                            :allow-captions false
                                                            :views 0
                                                            :file-version "f"
+                                                           :file-id #uuid "00000000-0000-0000-0000-000000000000"
                                                            :published true
                                                            :words ""
                                                            :clips ""
@@ -155,6 +161,7 @@
                                                            :allow-captions false
                                                            :views 0
                                                            :file-version "f"
+                                                           :file-id #uuid "00000000-0000-0000-0000-000000000000"
                                                            :published true
                                                            :words ""
                                                            :clips ""
@@ -175,7 +182,9 @@
               :contents (rp/search-by-content query-term))]
     (is (= 200 (:status res)))
     (if (or (= table-key :collections) (= table-key :public-collections))
-      (is (= (frequencies (into [] (map #(update (update (ut/remove-db-only %) :id str) :owner str) expected-res)))
+      (is (= (frequencies (into [] (map #(update 
+                                          (update (ut/remove-db-only %) :id str) 
+                                          :owner str) expected-res)))
              (frequencies (m/decode-response-body res))))
       (is (= (frequencies (into [] (map #(update (ut/remove-db-only %) :id str) expected-res)))
              (frequencies (m/decode-response-body res)))))))
@@ -252,6 +261,7 @@
     (test-search-table :collections
                        "FICTION"
                        [(assoc test-coll-thr :username (:username test-user-thr))])))
+
 (deftest test-search-resources
   (testing "all conts name"
     (test-search-table :resources
@@ -302,13 +312,13 @@
   (testing "all conts"
     (test-search-table :contents
                        "a"
-                       [(update (update test-cont-one :resource-id str) :collection-id str)
-                        (update (update test-cont-two :resource-id str) :collection-id str)
-                        (update (update test-cont-thr :resource-id str) :collection-id str)]))
+                       [(update (update (update test-cont-one :file-id str) :resource-id str) :collection-id str)
+                        (update (update (update test-cont-two :file-id str) :resource-id str) :collection-id str)
+                        (update (update (update test-cont-thr :file-id str) :resource-id str) :collection-id str)]))
   (testing "one cont"
     (test-search-table :contents
                        "adfwe"
-                       [(update (update test-cont-two :resource-id str) :collection-id str)]))
+                       [(update (update (update test-cont-two :file-id str) :resource-id str) :collection-id str)]))
   (testing "no conts"
     (test-search-table :contents
                        "z"
@@ -316,12 +326,13 @@
   (testing "case insensitive"
     (test-search-table :contents
                        "adfwE"
-                       [(update (update test-cont-two :resource-id str) :collection-id str)])))
+                       [(update (update (update test-cont-two :file-id str) :resource-id str) :collection-id str)])))
+
 (deftest test-search-public-collections
   (testing "all colls name"
     (test-search-table :public-collections
                        "Bard"
-                       [(assoc test-coll-pub :username (:username test-user-adm))])))
+                       [(assoc test-coll-pub :username (:username test-user-adm) :content [])])))
 
 
 
