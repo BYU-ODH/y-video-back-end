@@ -29,12 +29,14 @@
 (s/def :collection/published boolean?)
 (s/def :collection/archived boolean?)
 (s/def :collection/public boolean?)
+(s/def :collection/copyrighted boolean?)
 (s/def :collection/owner uuid?)
 (s/def ::collection
   (s/keys :opt-un [:collection/collection-name
                    :collection/published
                    :collection/archived
                    :collection/public
+                   :collection/copyrighted
                    :collection/owner]))
 
 (s/def :resource/resource-name string?)
