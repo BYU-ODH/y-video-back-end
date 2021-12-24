@@ -86,7 +86,7 @@
              (m/decode-response-body res)))))
   (testing "get collections - owner only, online resource"
     (let [coll-one (db-pop/add-collection)
-          cont-one (db-pop/add-content (:id coll-one) (ut/to-uuid "00000000-0000-0000-0000-000000000000"))
+          cont-one (db-pop/add-content (:id coll-one) (ut/to-uuid "00000000-0000-0000-0000-000000000000") (ut/to-uuid "00000000-0000-0000-0000-000000000000"))
           res (rp/collections-by-logged-in (uc/user-id-to-session-id (:owner coll-one)))]
       (is (= 200 (:status res)))
       (is (= [(-> coll-one
@@ -97,7 +97,8 @@
                                         (ut/remove-db-only)
                                         (update :id str)
                                         (update :collection-id str)
-                                        (update :resource-id str))])
+                                        (update :resource-id str)
+                                        (update :file-id str))])
                    (assoc :expired-content '[]))]
              (m/decode-response-body res)))))
   (testing "get collections - direct user-coll assoc only"
@@ -112,7 +113,7 @@
           ; Create content for coll-two
           rsrc-one (db-pop/add-resource)
           res-acc (db-pop/add-resource-access (:username user-two) (:id rsrc-one))
-          cont-one (db-pop/add-content (:id coll-two) (:id rsrc-one))
+          cont-one (db-pop/add-content (:id coll-two) (:id rsrc-one) (ut/to-uuid "00000000-0000-0000-0000-000000000000"))
           ; Connect user to collections
           user-coll-one (user-collections-assoc/CREATE {:collection-id (:id coll-one)
                                                         :username username
@@ -131,15 +132,17 @@
                                (assoc :expired-content []))
 
                            (-> coll-two
-                                        (ut/remove-db-only)
-                                        (update :id str)
-                                        (update :owner str)
-                                        (assoc :content [(-> cont-one
-                                                             (ut/remove-db-only)
-                                                             (update :id str)
-                                                             (update :collection-id str)
-                                                             (update :resource-id str))])
-                                        (assoc :expired-content '[]))])
+                               (ut/remove-db-only)
+                               (update :id str)
+                               (update :owner str)
+                               (assoc :content [(-> cont-one
+                                                    (ut/remove-db-only)
+                                                    (update :id str)
+                                                    (update :collection-id str)
+                                                    (update :resource-id str)
+                                                    (update :file-id str)
+                                                    )])
+                               (assoc :expired-content '[]))])
              (frequencies (map ut/remove-db-only (m/decode-response-body res)))))))
 
   (testing "get collections - direct user-coll assoc and owner of same"
@@ -153,7 +156,7 @@
           ; Create content for coll-two
           rsrc-one (db-pop/add-resource)
           res-acc (db-pop/add-resource-access (:username user-one) (:id rsrc-one))
-          cont-one (db-pop/add-content (:id coll-two) (:id rsrc-one))
+          cont-one (db-pop/add-content (:id coll-two) (:id rsrc-one) (ut/to-uuid "00000000-0000-0000-0000-000000000000"))
           ; Connect user to collections
           user-coll-one (user-collections-assoc/CREATE {:collection-id (:id coll-one)
                                                         :username username
@@ -178,7 +181,8 @@
                                                              (ut/remove-db-only)
                                                              (update :id str)
                                                              (update :collection-id str)
-                                                             (update :resource-id str))])
+                                                             (update :resource-id str)
+                                                             (update :file-id str))])
                                         (assoc :expired-content '[]))])
              (frequencies (map ut/remove-db-only (m/decode-response-body res)))))))
 
@@ -192,7 +196,7 @@
           ; Create content for coll-two
           rsrc-one (db-pop/add-resource)
           res-acc (db-pop/add-resource-access (:username user-two) (:id rsrc-one))
-          cont-one (db-pop/add-content (:id coll-two) (:id rsrc-one))
+          cont-one (db-pop/add-content (:id coll-two) (:id rsrc-one) (ut/to-uuid "00000000-0000-0000-0000-000000000000"))
           ; Create courses
           crse-one (courses/CREATE (g/get-random-course-without-id))
           crse-two (courses/CREATE (g/get-random-course-without-id))
@@ -223,7 +227,8 @@
                                                                (ut/remove-db-only)
                                                                (update :id str)
                                                                (update :collection-id str)
-                                                               (update :resource-id str))])
+                                                               (update :resource-id str)
+                                                               (update :file-id str))])
                                           (assoc :expired-content '[]))])
                (frequencies (map ut/remove-db-only (m/decode-response-body res)))))))
   (testing "get collections - user-coll and via course"

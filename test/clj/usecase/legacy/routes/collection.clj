@@ -238,7 +238,6 @@
         (is (= 200 (:status res)))
         (is (= '() (collection-courses-assoc/READ-BY-IDS [(:id coll-one) (:id crse-one)])))))))
 
-
 (deftest coll-all-users
   (testing "find all users by collection"
     (let [user-one (db-pop/add-user)
@@ -269,26 +268,32 @@
           coll-one (db-pop/add-collection (:id user-one))
           rsrc-one (db-pop/add-resource)
           rsrc-acc (db-pop/add-resource-access (:username user-one) (:id rsrc-one))
-          cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
+          file-one (db-pop/add-file (:id rsrc-one))
+          cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one) (:id file-one))
           res (rp/collection-id-contents (uc/user-id-to-session-id (:id user-one)) (:id coll-one))]
       (is (= 200 (:status res)))
       (is (= {:content (-> cont-one
                            (update :id str)
                            (update :collection-id str)
                            (update :resource-id str)
+                           (update :file-id str)
                            (list))
               :expired-content '()}
              (m/decode-response-body res)))))
   (testing "find all contents by collection"
     (let [user-one (db-pop/add-user "instructor")
           coll-one (db-pop/add-collection (:id user-one))
-          cont-one (db-pop/add-content (:id coll-one) (ut/to-uuid "00000000-0000-0000-0000-000000000000"))
+          cont-one (db-pop/add-content 
+                    (:id coll-one) 
+                    (ut/to-uuid "00000000-0000-0000-0000-000000000000") 
+                    (ut/to-uuid "00000000-0000-0000-0000-000000000000"))
           res (rp/collection-id-contents (uc/user-id-to-session-id (:id user-one)) (:id coll-one))]
       (is (= 200 (:status res)))
       (is (= {:content (-> cont-one
                            (update :id str)
                            (update :collection-id str)
                            (update :resource-id str)
+                           (update :file-id str)
                            (list))
               :expired-content '()}
              (m/decode-response-body res)))))
@@ -299,16 +304,19 @@
           rsrc-acc-one (resource-access/CREATE {:username (:username user-one)
                                                 :resource-id (:id rsrc-one)
                                                 :last-verified (java.sql.Timestamp/valueOf "2004-10-19 10:23:54")})
-          cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
+          file-one (db-pop/add-file (:id rsrc-one))
+          cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one) (:id file-one))
           rsrc-two (db-pop/add-resource)
           rsrc-acc-two (db-pop/add-resource-access (:username user-one) (:id rsrc-two))
-          cont-two (db-pop/add-content (:id coll-one) (:id rsrc-two))
+          file-two (db-pop/add-file (:id rsrc-two))
+          cont-two (db-pop/add-content (:id coll-one) (:id rsrc-two) (:id file-two))
           res (rp/collection-id-contents (:id coll-one))]
       (is (= 200 (:status res)))
       (is (= {:content (-> cont-two
                            (update :id str)
                            (update :collection-id str)
                            (update :resource-id str)
+                           (update :file-id str)
                            (list))
               :expired-content (list {:content-title (:title cont-one)
                                       :content-id (str (:id cont-one))
@@ -321,12 +329,14 @@
           rsrc-acc-one (resource-access/CREATE {:username (:username user-one)
                                                 :resource-id (:id rsrc-one)
                                                 :last-verified (java.sql.Timestamp/valueOf "2004-10-19 10:23:54")})
-          cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
+          file-one (db-pop/add-file (:id rsrc-one))
+          cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one) (:id file-one))
           rsrc-two (db-pop/add-resource)
           rsrc-acc-one (resource-access/CREATE {:username (:username user-one)
                                                 :resource-id (:id rsrc-two)
                                                 :last-verified (java.sql.Timestamp/valueOf "2010-10-19 10:23:54")})
-          cont-two (db-pop/add-content (:id coll-one) (:id rsrc-two))
+          file-two (db-pop/add-file (:id rsrc-two))
+          cont-two (db-pop/add-content (:id coll-one) (:id rsrc-two) (:id file-two))
           res (rp/collection-id-contents (:id coll-one))
           res-json (m/decode-response-body res)]
       (is (= 200 (:status res)))

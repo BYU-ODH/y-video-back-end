@@ -33,8 +33,8 @@
           coll-one (db-pop/add-collection)
           user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "instructor")
           rsrc-one (db-pop/add-resource)
-          cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           file-one (db-pop/add-file (:id rsrc-one))
+          cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one) (:id file-one))
           res (rp/get-file-key (uc/user-id-to-session-id (:id user-one))
                                (:id file-one))]
       (is (= 200 (:status res)))))
@@ -45,8 +45,8 @@
           user-crse-add (db-pop/add-user-crse-assoc (:id user-one) (:id crse-one) "instructor")
           coll-crse-add (db-pop/add-coll-crse-assoc (:id coll-one) (:id crse-one))
           rsrc-one (db-pop/add-resource)
-          cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           file-one (db-pop/add-file (:id rsrc-one))
+          cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one) (:id file-one))
           res (rp/get-file-key (uc/user-id-to-session-id (:id user-one))
                                (:id file-one))]
       (is (= 200 (:status res)))))
@@ -55,8 +55,8 @@
           coll-one (db-pop/add-collection)
           user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "ta")
           rsrc-one (db-pop/add-resource)
-          cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           file-one (db-pop/add-file (:id rsrc-one))
+          cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one) (:id file-one))
           res (rp/get-file-key (uc/user-id-to-session-id (:id user-one))
                                (:id file-one))]
       (is (= 200 (:status res)))))
@@ -67,8 +67,8 @@
           user-crse-add (db-pop/add-user-crse-assoc (:id user-one) (:id crse-one) "ta")
           coll-crse-add (db-pop/add-coll-crse-assoc (:id coll-one) (:id crse-one))
           rsrc-one (db-pop/add-resource)
-          cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           file-one (db-pop/add-file (:id rsrc-one))
+          cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one) (:id file-one))
           res (rp/get-file-key (uc/user-id-to-session-id (:id user-one))
                                (:id file-one))]
       (is (= 200 (:status res)))))
@@ -77,8 +77,8 @@
           coll-one (db-pop/add-collection)
           user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "student")
           rsrc-one (db-pop/add-resource)
-          cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           file-one (db-pop/add-file (:id rsrc-one))
+          cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one) (:id file-one))
           res (rp/get-file-key (uc/user-id-to-session-id (:id user-one))
                                (:id file-one))]
       (is (= 200 (:status res)))))
@@ -89,8 +89,8 @@
           user-crse-add (db-pop/add-user-crse-assoc (:id user-one) (:id crse-one) "student")
           coll-crse-add (db-pop/add-coll-crse-assoc (:id coll-one) (:id crse-one))
           rsrc-one (db-pop/add-resource)
-          cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           file-one (db-pop/add-file (:id rsrc-one))
+          cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one) (:id file-one))
           res (rp/get-file-key (uc/user-id-to-session-id (:id user-one))
                                (:id file-one))]
       (is (= 200 (:status res)))))
@@ -99,8 +99,8 @@
           coll-one (db-pop/add-collection)
           user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "auditing")
           rsrc-one (db-pop/add-resource)
-          cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           file-one (db-pop/add-file (:id rsrc-one))
+          cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one) (:id file-one))
           res (rp/get-file-key (uc/user-id-to-session-id (:id user-one))
                                (:id file-one))]
       (is (= 200 (:status res)))))
@@ -111,8 +111,8 @@
           user-crse-add (db-pop/add-user-crse-assoc (:id user-one) (:id crse-one) "auditing")
           coll-crse-add (db-pop/add-coll-crse-assoc (:id coll-one) (:id crse-one))
           rsrc-one (db-pop/add-resource)
-          cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
           file-one (db-pop/add-file (:id rsrc-one))
+          cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one) (:id file-one))
           res (rp/get-file-key (uc/user-id-to-session-id (:id user-one))
                                (:id file-one))]
       (is (= 200 (:status res))))))

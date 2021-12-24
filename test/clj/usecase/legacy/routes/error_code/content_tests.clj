@@ -11,6 +11,7 @@
       [y-video-back.db.contents :as contents]
       [y-video-back.db.collections :as collections]
       [y-video-back.db.resources :as resources]
+      [y-video-back.db.files :as files]
       [y-video-back.db.courses :as courses]
       [y-video-back.db.users :as users]
       [legacy.utils.utils :as ut]
@@ -32,7 +33,7 @@
   (def test-user-two (ut/under-to-hyphen (users/CREATE (g/get-random-user-without-id))))
   (def test-coll-one (ut/under-to-hyphen (collections/CREATE (into (g/get-random-collection-without-id-or-owner) {:owner (:id test-user-one)}))))
   (def test-cont-one (ut/under-to-hyphen (resources/CREATE (g/get-random-resource-without-id))))
-  (def test-content-one (ut/under-to-hyphen (contents/CREATE (g/get-random-content-without-id (:id test-coll-one) (:id test-cont-one)))))
+  (def test-content-one (ut/under-to-hyphen (contents/CREATE (g/get-random-content-without-id (:id test-coll-one) (:id test-cont-one) (ut/to-uuid "00000000-0000-0000-0000-000000000000")))))
   (def test-crse-one (ut/under-to-hyphen (courses/CREATE (g/get-random-course-without-id))))
   (mount.core/start #'y-video-back.handler/app))
 
@@ -41,8 +42,9 @@
   []
   (let [new-user (users/CREATE (g/get-random-user-without-id))
         new-coll (collections/CREATE (into (g/get-random-collection-without-id) {:owner (:id new-user)}))
-        new-rsrc (resources/CREATE (g/get-random-resource-without-id))]
-    (g/get-random-content-without-id (:id new-coll) (:id new-rsrc))))
+        new-rsrc (resources/CREATE (g/get-random-resource-without-id))
+        new-file (files/CREATE (g/get-random-file-without-id (:id new-rsrc)))]
+    (g/get-random-content-without-id (:id new-coll) (:id new-rsrc) (:id new-file))))
 
 (deftest content-post
   (comment (testing "add duplicated content")

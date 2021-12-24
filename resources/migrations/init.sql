@@ -130,11 +130,15 @@ CREATE TABLE files (
    ,created  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
    ,resource_id UUID REFERENCES resources(id)
    ,filepath TEXT
-   ,file_version TEXT REFERENCES languages(id)
+   ,file_version TEXT
    ,metadata TEXT
---    ,aspect_ratio TEXT
    , CONSTRAINT no_duplicate_filepaths UNIQUE (deleted, filepath)
 );
+
+-- replace this line in files table for testing 
+-- ,file_version TEXT REFERENCES languages(id) -- for prod
+-- ,file_version TEXT -- for test
+
 COMMENT ON TABLE files IS 'Files represent media (i.e. videos) with path to file and metadata';
 
 DROP TABLE IF EXISTS file_keys CASCADE;
@@ -520,5 +524,15 @@ COMMENT ON VIEW parent_collections IS 'Tracks which collections each content, re
 INSERT INTO resources (id, resource_name, resource_type, requester_email, copyrighted, physical_copy_exists, full_video, published, date_validated, views, all_file_versions, metadata)
 VALUES ('00000000-0000-0000-0000-000000000000', 'online-media', 'online-media', '', true, false, true, true, '', 0, '', '');
 
--- INSERT INTO files (id, resource_id, filepath, file_version, metadata, aspect_ratio) 
--- VALUES ('00000000-0000-0000-0000-000000000000', '00000000-0000-0000-0000-000000000000', 'empty', 'English', '', '0,0');
+-- ALTER STATEMENTS FOR UPDATED DB
+
+ALTER TABLE files ADD COLUMN aspect_ratio VARCHAR DEFAULT '';
+
+INSERT INTO files (id, resource_id, filepath, file_version, metadata, aspect_ratio)
+VALUES ('00000000-0000-0000-0000-000000000000', '00000000-0000-0000-0000-000000000000', 'empty', 'English', '', '0,0');
+
+ALTER TABLE contents ADD COLUMN file_id UUID DEFAULT '00000000-0000-0000-0000-000000000000' REFERENCES files(id);
+
+CREATE OR REPLACE VIEW files_undeleted AS SELECT * FROM files WHERE deleted is NULL;
+
+CREATE OR REPLACE VIEW contents_undeleted AS SELECT * FROM contents WHERE deleted is NULL;
