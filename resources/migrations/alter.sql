@@ -1,4 +1,4 @@
-ALTER TABLE files ADD COLUMN aspect_ratio VARCHAR;
+ALTER TABLE files ADD COLUMN aspect_ratio VARCHAR DEFAULT '';
 
 INSERT INTO files (id, resource_id, filepath, file_version, metadata, aspect_ratio) VALUES ('00000000-0000-0000-0000-000000000000', '00000000-0000-0000-0000-000000000000', 'empty', 'English', '', '0,0');
 
