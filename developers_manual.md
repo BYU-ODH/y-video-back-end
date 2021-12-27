@@ -43,6 +43,7 @@ Comments here focus on the structure and function of Y-Video, not how the Clojur
 
 
 ## Clojure Syntax:
+## Clojure Syntax:
 
 
 *   Nested files indicated with period: y-video-back.routes.home → home.clj
