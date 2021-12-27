@@ -49,7 +49,7 @@ Comments here focus on the structure and function of Y-Video, not how the Clojur
 *   Functions within a file with slash: y-video-back.routes.home/home-page → the home-page function within home.clj
 *   Filenames all use underscores, which get converted to dashes in code
 *   Database tables all use underscores in the sql file, which get converted to dashes in code
-*   Keywords start with a colon, such as :id
+*   Keywords start with a colon, such as :id 
 
 
 ## Clojure and Other Tools:
