@@ -1,0 +1,17 @@
+name: Clojure CI
+
+on:
+  pull_request:
+    branches: -development
+
+jobs:
+  build:
+
+    runs-on: ubuntu-20.04
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install dependencies
+      run: lein deps
+    - name: Run tests
+      run: lein test
