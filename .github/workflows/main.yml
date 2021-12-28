@@ -1,0 +1,35 @@
+name: Clojure CI
+
+on:
+  pull_request:
+    branches: [ development ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: Harmon758/postgresql-action@v1.0.0
+      with:
+        postgresql db: yvideo_test
+        # POSTGRES_USER - create the specified user with superuser power
+        postgresql user: ${{ secrets.TEST_DB_USER }}
+        # POSTGRES_PASSWORD - superuser password
+        postgresql password: ${{ secrets.TEST_DB_USER }}
+        
+    - name: Create File
+      # You may pin to the exact commit or the version.
+      # uses: finnp/create-file-action@af8500fe0b0c5d8e04934f8bb62b9dda872c5803
+      uses: "finnp/create-file-action@master"
+      env:
+        FILE_NAME: "env/test/resource/config.edn"
+        FILE_DATA: ${{ secrets.TEST_CONFIG }}
+
+    - uses: actions/checkout@v2
+    - name: Print File
+      run: cat env/test/resource/config.edn
+    - name: Install dependencies
+      run: lein deps
+    - name: Run tests
+      run: lein test
