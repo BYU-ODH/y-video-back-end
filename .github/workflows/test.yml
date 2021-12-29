@@ -14,7 +14,6 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - uses: actions/setup-node@v2
-    - uses: FedericoCarboni/setup-ffmpeg@v1
       id: setup-ffmpeg
     - uses: Harmon758/postgresql-action@v1.0.0
       with:
@@ -26,6 +25,9 @@ jobs:
     
     - run: git clone https://github.com/BYU-ODH/yvideo-client.git
     
+    - name: Install ffmpeg / ffmprob
+      run: sudo apt-get install ffmpeg
+
     - name: Install node dependencies for front-end
       working-directory: ./yvideo-client
       run: | 
@@ -50,19 +52,10 @@ jobs:
     - name: Install dependencies
       run: lein deps
 
-    - name: Create Testing
+    - name: Create Testing Folders
       working-directory: ./test/clj/
       run: |
-        mkdir testing
-    
-    - name: Create Testing Sub-Folders
-      working-directory: ./test/clj/testing/
-      run: |
-        mkdir dest
-        mkdir temp
-        mkdir log
-        mkdir trash
-        mkdir src
+        mkdir -p testing/{dest,trash,temp,src,log}
 
     - name: Run tests
       run: lein test
