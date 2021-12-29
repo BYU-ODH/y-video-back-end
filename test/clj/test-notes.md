@@ -1,6 +1,21 @@
 Dec 2021
+# *GIT ACTION TESTING*
+Testing is done through git actions every time there is a pull request to the development branch. See workflow for more information
 
-# *NOTES*
+# *LOCAL TESTING*
+
+## **LOCAL ENVIRONMENT SETUP**
+*	Install ffmpeg
+*	Install postgres and create necessary users (check test config)
+*	Create testing directories
+	```
+	$ mkdir -p testing/{dest,trash,temp,src,log}
+	```
+*	Get testing config
+*	Git pull front-end and checkout the develop branch. Run ```npm install```
+*	Run ./build-front-end.sh
+
+## **NOTES**
 
 1. Testing is all done in the command line using ```lein test```
 
@@ -24,7 +39,7 @@ Dec 2021
 	b. Check lines 5,6, and 138 - 140 and make changes accordingly
 	b. ***<span style="color: red;">WARNING</span>*** Lein test uses db populator which looks at the init.sql file. But, it will only run init.sql. It does not run files with other names 
 
-**Test Example**
+**Individual Test Example**
 ```
 $ lein test
 
@@ -36,59 +51,6 @@ $ lein test :only legacy.subfolder.filename/function-name
 ```
 
 # **LEGACY TEST COVERAGE**
-## **AUTH**
 
-| auth | Status 			| auth.session-id-bypass | Status |
-|--|--|--|--|
-| auth-token 		| **Fixed** 	| admin 	| **Fixed** |
-| get-session-id 	| Passed 	|collection 	| **Fixed** |
-| home-login 		| Passed 	|content 	| **Fixed** |
-||					| course 	| **Fixed** |
-||					| file 	| **Fixed** |
-||					| language 	| **Fixed** |
-||					| media 	| **Fixed** |
-||					| resource 	| **Fixed** |
-||					| subtitle 	| **Fixed** |
-||					| user 	| **Fixed** |
-||					| word 	| **Fixed** |
-## **EMAIL**
-| email | Status |
-|--|--|
-| mail-tests 			| **Fixed** |
-## **ROUTES**
-| routes | Status 				| routes.error-code | Status
-|--|--|--|--|
-| admin 			| Passed 	| collection-tests 	| Passed |
-| collection 			| **Fixed** 	| content-tests 	| **Fixed** 	|
-| content 			| **Fixed** 	| course-tests 	| **Fixed** 	|
-| course 			| Passed 	| file-tests 		| **Fixed** 	|
-| create-user-on-login 	| Passed 	| resource-tests 	| **Fixed** 	|
-| current-users-tests 		| **Fixed** 	| user-tests 		| **Fixed** 	|
-| file 			| **Fixed** 	| word-tests 		| **Fixed** 	|
-| language 			| Passed 	|
-| media 			| **Fixed** 	|
-| misc-test	 		| Passed 	|
-| patch-test 			| **Fixed** 	|
-| refresh-courses-on-login 	| Passed 	|
-| resource 			| **Fixed** 	|
-| search-tests 		| **Fixed** 	|
-| subtitle 			| Passed 	|
-| test-util 			| Passed 	|
-| user 			| **Fixed**	|
-| word 			| Passed 	|
-| word-tests 			| Passed 	|
-
-
-|routes.permissions.account-role | Status 	| routes.permissions.account-type | Status |
-|--|--|--|--|
-| collection-tests 	| **Fixed** 		| admin_tests 		| **Fixed** |
-| content-tests 	| **Fixed** 		| collection-tests  	| **Fixed** |
-| course-tests 	| **Fixed** 		| content-tests  	| **Fixed** |
-| file-tests 		| **Fixed** 		| course-tests 	| **Fixed** |
-| media-tests 		| **Fixed** 		| file-tests 		| **Fixed** |
-| resource-tests 	| **Fixed** 		| language-tests 	| **Fixed** |
-| subtitle-tests 	| **Fixed** 		| media-tests  	| **Fixed** |
-| user-tests 		| **Fixed** 		| resource-tests 	| **Fixed** |
-| word-tests 		| **Fixed** 		| subtitle-tests  	| **Fixed** |
-||		  				| user-tests  		| **Fixed** |
-||  						| word-tests  		| **Fixed** |
+Run ``` lein with-profile test cloverage ```
+After running cloverage a report is created under target/coverage/index.html
