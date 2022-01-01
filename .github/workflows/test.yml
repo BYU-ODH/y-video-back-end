@@ -1,0 +1,61 @@
+name: Clojure CI
+
+on:
+  pull_request:
+    branches: [ development ]
+    
+env:
+  FILE_NAME: "env/test/resources/config.edn"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v2
+      id: setup-ffmpeg
+    - uses: Harmon758/postgresql-action@v1.0.0
+      with:
+        postgresql db: yvideo_test
+        # POSTGRES_USER - create the specified user with superuser power
+        postgresql user: ${{ secrets.TEST_DB_USER }}
+        # POSTGRES_PASSWORD - superuser password
+        postgresql password: ${{ secrets.TEST_DB_USER }}
+    
+    - run: git clone https://github.com/BYU-ODH/yvideo-client.git
+    
+    - name: Install ffmpeg / ffmprob
+      run: sudo apt-get install ffmpeg
+
+    - name: Install node dependencies for front-end
+      working-directory: ./yvideo-client
+      run: | 
+        git checkout develop
+        npm install
+    
+    - name: Build Front-end
+      env:
+        CI: ""
+      run: ./build-front-end.sh
+    
+    # - name: File Info
+    #   run: echo "${FILE_NAME}"
+    # - name: Current path
+    #   run: pwd
+    # - name: List
+    #   run: ls -l
+    - name: Create File with content
+      run: echo ${{ secrets.TEST_CONFIG }} | base64 -d > ${FILE_NAME}
+    # - name: Print File
+    #   run: cat ${FILE_NAME}
+    - name: Install dependencies
+      run: lein deps
+
+    - name: Create Testing Folders
+      working-directory: ./test/clj/
+      run: |
+        mkdir -p testing/{dest,trash,temp,src,log}
+
+    - name: Run tests
+      run: lein test
