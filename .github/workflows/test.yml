@@ -58,4 +58,4 @@ jobs:
         mkdir -p testing/{dest,trash,temp,src,log}
 
     - name: Run tests
-      run: lein test
+      run: lein with-profile test cloverage
