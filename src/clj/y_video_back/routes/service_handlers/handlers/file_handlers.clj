@@ -45,7 +45,9 @@
                       ; TODO: check first the cp command if it is successfull then add to the database
                       (io/copy (:tempfile file)
                                (io/file (str (-> env :FILES :media-url) file-name)))
-                      (io/delete-file (:tempfile file))
+                      (if (:test env)
+                        ()
+                        ((io/delete-file (:tempfile file))))
                       {:status 200
                        :body {:message "1 file created"
                               :id id
