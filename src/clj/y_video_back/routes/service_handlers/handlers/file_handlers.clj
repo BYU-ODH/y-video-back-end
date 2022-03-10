@@ -42,8 +42,12 @@
                                                       :resource-id resource-id
                                                       :aspect-ratio aspect-ratio}))]
                       ; :FILES :media-url + file-name = file path for ffmpeg
+                      ; TODO: check first the cp command if it is successfull then add to the database
                       (io/copy (:tempfile file)
                                (io/file (str (-> env :FILES :media-url) file-name)))
+                      (if (:test env)
+                        ()
+                        ((io/delete-file (:tempfile file))))
                       {:status 200
                        :body {:message "1 file created"
                               :id id
