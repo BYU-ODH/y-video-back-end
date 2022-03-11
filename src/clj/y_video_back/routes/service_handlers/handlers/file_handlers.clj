@@ -46,8 +46,8 @@
                       (io/copy (:tempfile file)
                                (io/file (str (-> env :FILES :media-url) file-name)))
                       (if (:test env)
-                        ()
-                        ((io/delete-file (:tempfile file))))
+                        (print "Testing environment")
+                        (io/delete-file (:tempfile file)))
                       {:status 200
                        :body {:message "1 file created"
                               :id id
