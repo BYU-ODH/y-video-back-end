@@ -131,8 +131,8 @@
 
 (def collection-add-course
   {:summary "Adds course to specified collection. Creates course in database if does not already exist."
-   :permission-level "lab-assistant"
-   :role-level "instructor"
+   :permission-level "instructor"
+   :role-level "ta"
    :permission-note "Instructors may add any course to any public collection."
    :bypass-permission true
    :parameters {:header {:session-id uuid?}

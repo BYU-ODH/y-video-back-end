@@ -31,6 +31,7 @@
 (def user-get-all-courses users/user-get-all-courses)
 (def user-get-all-words users/user-get-all-words)
 (def refresh-courses users/refresh-courses)
+(def user-ta-permissions users/user-ta-permissions)
 
 ; Collection handlers
 (def collection-create collections/collection-create)

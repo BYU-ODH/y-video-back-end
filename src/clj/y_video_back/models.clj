@@ -15,6 +15,9 @@
    :email string?
    :account-type int?})
 
+(def user-ta-permissions
+  {:ta-permission boolean?})
+
 (def user
   (into user-without-id {:id uuid?}))
 

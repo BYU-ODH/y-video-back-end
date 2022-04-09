@@ -536,3 +536,8 @@ ALTER TABLE contents ADD COLUMN file_id UUID DEFAULT '00000000-0000-0000-0000-00
 CREATE OR REPLACE VIEW files_undeleted AS SELECT * FROM files WHERE deleted is NULL;
 
 CREATE OR REPLACE VIEW contents_undeleted AS SELECT * FROM contents WHERE deleted is NULL;
+
+CREATE OR REPLACE VIEW users_collections_permissions_undeleted AS
+SELECT username FROM user_collections_assoc_undeleted 
+WHERE account_role < 2 -- 0 instructor, 1 ta, 2 student, 3 auditing
+GROUP BY username;
