@@ -12,7 +12,7 @@
 (def content-create
   {:summary "Creates new content"
    :permission-level "lab-assistant"
-   :role-level "instructor"
+   :role-level "ta"
    :path-to-id [:parameters :body :collection-id]
    :parameters {:header {:session-id uuid?}
                 :body models/content-without-id}
@@ -27,7 +27,7 @@
                   (if-not (resources/EXISTS? (:resource-id body))
                     {:status 500
                      :body {:message "resource not found"}}
-                    (if (or (= (:session-id-bypass env) (str session-id))
+                    (if (or (= (:session-id-bypass env) (str session-id)) ;check collection owner id for permissions for the resource
                             (= (ut/to-uuid "00000000-0000-0000-0000-000000000000") (:resource-id body))
                             (ut/has-resource-permission (:resource-id body) (:collection-id body)))
                       (let [new-thumbnail (first (filter #(not (= "" %)) [(:thumbnail body) (ut/get-thumbnail (:url body)) "none"]))

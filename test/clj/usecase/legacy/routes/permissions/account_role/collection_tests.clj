@@ -324,7 +324,7 @@
                                          (:id coll-one)
                                          (:username user-two)
                                          0)] ; role doesn't matter here
-      (is (= 403 (:status res)))))
+      (is (= 200 (:status res)))))
   (testing "student, collection-add-user, ta via course"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -336,7 +336,7 @@
                                          (:id coll-one)
                                          (:username user-two)
                                          0)] ; role doesn't matter here
-      (is (= 403 (:status res)))))
+      (is (= 200 (:status res)))))
   (testing "student, collection-add-user, student via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -528,7 +528,7 @@
                                            (:department crse-two)
                                            (:catalog-number crse-two)
                                            (:section-number crse-two))]
-      (is (= 403 (:status res)))))
+      (is (= 200 (:status res)))))
   (testing "student, collection-id-add-course, ta via course"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -541,7 +541,7 @@
                                            (:department crse-two)
                                            (:catalog-number crse-two)
                                            (:section-number crse-two))]
-      (is (= 403 (:status res)))))
+      (is (= 200 (:status res)))))
   (testing "student, collection-id-add-course, student via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)

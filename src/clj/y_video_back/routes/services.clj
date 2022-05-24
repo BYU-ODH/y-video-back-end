@@ -153,7 +153,9 @@
      ["/{id}/courses"
       {:get service-handlers/user-get-all-courses}]
      ["/{id}/words"
-      {:get service-handlers/user-get-all-words}]]
+      {:get service-handlers/user-get-all-words}]
+     ["/{username}/ta-permissions"
+      {:get service-handlers/user-ta-permissions}]]
 
     ["/word"
      {:swagger {:tags ["word"]}}

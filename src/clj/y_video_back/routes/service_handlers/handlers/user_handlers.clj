@@ -1,6 +1,7 @@
 (ns y-video-back.routes.service-handlers.handlers.user-handlers
   (:require
    [y-video-back.config :refer [env]]
+   [y-video-back.db.core :as db]
    [y-video-back.db.user-collections-assoc :as user-collections-assoc]
    [y-video-back.db.user-courses-assoc :as user-courses-assoc]
    [y-video-back.db.users :as users]
@@ -72,6 +73,27 @@
                   {:status 200
                    :body user-result})))})
 
+(def user-ta-permissions ; should a TA be determined by collections or as an overall role? Give instructor role to TAs?
+  {:summary "Returns true if a user is a TA for at least one collection"
+   :permission-level "student"
+   :role-level "student"
+   :parameters {:header {:session-id uuid?}
+                :path {:username string?}}
+   :responses {200 {:body models/user-ta-permissions}
+               404 {:body {:message string?}}}
+   :handler (fn [{{{:keys [username]} :path} :parameters}]
+              (let [user-result (users/READ-BY-USERNAME [username])
+                    role-result (if (nil? user-result)
+                                  (print user-result nil)
+                                  (db/read-all-where :users-collections-permissions-undeleted [username]))
+                    ta-permissions (if (nil? role-result)
+                                     false
+                                     true)]
+                (if (nil? role-result)
+                  {:status 400
+                   :body {:message "Invalid username " }}
+                  {:status 200
+                   :body {:ta-permission ta-permissions}})))})
 
 (def user-update
   {:summary "Updates specified user"

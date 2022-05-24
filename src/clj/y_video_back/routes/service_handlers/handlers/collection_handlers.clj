@@ -78,7 +78,7 @@
 (def collection-add-user
   {:summary "Adds user to specified collection"
    :permission-level "lab-assistant"
-   :role-level "instructor"
+   :role-level "ta"
    :permission-note "If collection is public, any user may add other user to collection as auditing"
    :bypass-permission true
    :parameters {:header {:session-id uuid?}
@@ -96,7 +96,7 @@
 (def collection-add-users
   {:summary "Adds list of users to specified collection. All will have same role. Will not override existing connections."
    :permission-level "lab-assistant"
-   :role-level "instructor"
+   :role-level "ta"
    :bypass-permission true
    :permission-note "If collection is public, instructors may add any users to collection as auditing."
    :parameters {:header {:session-id uuid?}
@@ -131,8 +131,8 @@
 
 (def collection-add-course
   {:summary "Adds course to specified collection. Creates course in database if does not already exist."
-   :permission-level "lab-assistant"
-   :role-level "instructor"
+   :permission-level "instructor"
+   :role-level "ta"
    :permission-note "Instructors may add any course to any public collection."
    :bypass-permission true
    :parameters {:header {:session-id uuid?}

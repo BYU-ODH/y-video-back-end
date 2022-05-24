@@ -349,7 +349,7 @@
                                            (:department crse-one)
                                            (:catalog-number crse-one)
                                            (:section-number crse-one))]
-      (is (= 403 (:status res)))))
+      (is (= 200 (:status res)))))
   (testing "student - no connection, collection-add-course"
     (let [user-one (db-pop/add-user "student")
           crse-one (db-pop/get-course)
