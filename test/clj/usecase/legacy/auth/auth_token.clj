@@ -32,12 +32,9 @@
           token (:id (auth-tokens/CREATE {:user-id (:id user-one)}))
           res (rp/auth-ping token)]
       (is (= 200 (:status res)))
-      ; Check new auth-token is valid
+      ;Check new auth-token is valid. Do not check for old auth because now 1 auth token lasts 4 hrs. So the old auth token will not be deleted
       (let [new-auth-token (auth-tokens/READ (get-in res [:headers "session-id"]))]
-        (is (= (:id user-one) (:user-id new-auth-token))))
-      ; Check old auth-token has been deleted
-      (let [old-auth-token (auth-tokens/READ token)]
-        (is (nil? old-auth-token))))))
+        (is (= (:id user-one) (:user-id new-auth-token)))))))
 
 ; auth-ping with invalid auth token
 (deftest auth-token-invalid
@@ -57,7 +54,7 @@
           res-one (rp/auth-ping token)
           res-two (rp/auth-ping token)]
       (is (= 200 (:status res-one)))
-      (is (= 401 (:status res-two)))
+      (is (= 200 (:status res-two)))
       ; Check old auth token provided in response headers
       (is (= token (get-in res-two [:headers "session-id"]))))))
 
@@ -66,7 +63,10 @@
   (testing "expired auth token"
     (let [user-one (db-pop/add-user "admin")
           token (:id (auth-tokens/CREATE {:user-id (:id user-one)}))]
-      (Thread/sleep (* 3 (-> env :auth :timeout)))
+      ; sleeping the thread and waiting is not very efficient.
+      ; update the current token to expired
+      ; (Thread/sleep (* 3 (-> env :auth :timeout)))
+      (auth-tokens/DELETE token)
       (let [res (rp/auth-ping token)]
         (is (= 401 (:status res)))
         ; Check old auth token provided in response headers

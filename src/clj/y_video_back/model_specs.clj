@@ -29,12 +29,14 @@
 (s/def :collection/published boolean?)
 (s/def :collection/archived boolean?)
 (s/def :collection/public boolean?)
+(s/def :collection/copyrighted boolean?)
 (s/def :collection/owner uuid?)
 (s/def ::collection
   (s/keys :opt-un [:collection/collection-name
                    :collection/published
                    :collection/archived
                    :collection/public
+                   :collection/copyrighted
                    :collection/owner]))
 
 (s/def :resource/resource-name string?)
@@ -78,6 +80,7 @@
 (s/def :content/clips string?)
 (s/def :content/resource-id uuid?)
 (s/def :content/collection-id uuid?)
+(s/def :content/file-id uuid?)
 (s/def ::content
   (s/keys :opt-un [:content/title
                    :content/content-type
@@ -95,7 +98,8 @@
                    :content/words
                    :content/clips
                    :content/resource-id
-                   :content/collection-id]))
+                   :content/collection-id
+                   :content/file-id]))
 
 
 (s/def :subtitle/title string?)
@@ -115,11 +119,13 @@
 (s/def :file/file-version string?)
 (s/def :file/resource-id uuid?)
 (s/def :file/metadata string?)
+(s/def :file/aspect-ratio string?)
 (s/def ::file
   (s/keys :opt-un [:file/filepath
                    :file/file-version
                    :file/resource-id
-                   :file/metadata]))
+                   :file/metadata
+                   :file/aspect-ratio]))
 
 (s/def :course/department string?)
 (s/def :course/catalog-number string?)

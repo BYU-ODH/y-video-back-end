@@ -36,24 +36,24 @@
 (deftest test-file
   (testing "file CREATE"
     (let [filecontent (ut/get-filecontent)
-          file-one (dissoc (db-pop/get-file) :filepath)]
+          file-one (dissoc (db-pop/get-file) :filepath :aspect-ratio)]
       (let [res (rp/file-post file-one filecontent)]
         (is (= 200 (:status res)))
         (let [id (ut/to-uuid (:id (m/decode-response-body res)))
-              db-file (ut/remove-db-only (files/READ id))]
+              db-file (dissoc (ut/remove-db-only (files/READ id)) :aspect-ratio)]
           (is (= (assoc (into file-one {:id id}) :filepath (:filepath db-file))
                  db-file))
           (is (.exists (io/as-file (str (-> env :FILES :media-url) (:filepath db-file)))))))))
   (testing "file CREATE session-id remains valid"
     (let [filecontent (ut/get-filecontent)
-          file-one (dissoc (db-pop/get-file) :filepath)
+          file-one (dissoc (db-pop/get-file) :filepath :aspect-ratio)
           user-one (db-pop/add-user "admin")
           token (:id (auth-tokens/CREATE {:user-id (:id user-one)}))]
       (is (not (nil? (auth-tokens/READ-UNEXPIRED token))))
       (let [res (rp/file-post token file-one filecontent)]
         (is (= 200 (:status res)))
         (let [id (ut/to-uuid (:id (m/decode-response-body res)))
-              db-file (ut/remove-db-only (files/READ id))]
+              db-file (dissoc (ut/remove-db-only (files/READ id)) :aspect-ratio)]
           (is (= (assoc (into file-one {:id id}) :filepath (:filepath db-file))
                  db-file))
           (is (.exists (io/as-file (str (-> env :FILES :media-url) (:filepath db-file)))))
@@ -63,13 +63,14 @@
           file-one (-> (db-pop/get-file)
                        (dissoc :filepath)
                        (dissoc :file-version)
+                       (dissoc :aspect-ratio)
                        (assoc :file-version "dasfowinvkjha"))]
       ; Check file-version is not in language table
       (is (not (languages/EXISTS? (:file-version file-one))))
       (let [res (rp/file-post file-one filecontent)]
         (is (= 200 (:status res)))
         (let [id (ut/to-uuid (:id (m/decode-response-body res)))
-              db-file (ut/remove-db-only (files/READ id))]
+              db-file (dissoc (ut/remove-db-only (files/READ id)) :aspect-ratio)]
           (is (= (assoc (into file-one {:id id}) :filepath (:filepath db-file))
                  db-file))
           (is (.exists (io/as-file (str (-> env :FILES :media-url) (:filepath db-file)))))))
@@ -93,11 +94,11 @@
         (is (= (into file-two {:id (:id file-one)}) (ut/remove-db-only (files/READ (:id file-one))))))))
   (testing "file DELETE"
     (let [filecontent (ut/get-filecontent)
-          file-one (dissoc (db-pop/get-file) :filepath)]
+          file-one (dissoc (db-pop/get-file) :filepath :aspect-ratio)]
       (let [res (rp/file-post file-one filecontent)]
         (is (= 200 (:status res)))
         (let [id (ut/to-uuid (:id (m/decode-response-body res)))
-              db-file (ut/remove-db-only (files/READ id))]
+              db-file (dissoc (ut/remove-db-only (files/READ id)) :aspect-ratio)]
           (is (= (assoc (into file-one {:id id}) :filepath (:filepath db-file))
                  db-file))
           (is (.exists (io/as-file (str (-> env :FILES :media-url) (:filepath db-file)))))

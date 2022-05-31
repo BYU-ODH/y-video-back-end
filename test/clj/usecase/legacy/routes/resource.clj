@@ -59,7 +59,7 @@
   (testing "find all collections by resource"
     (let [rsrc-one (db-pop/add-resource)
           coll-one (db-pop/add-collection)
-          cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one))
+          cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one) (ut/to-uuid "00000000-0000-0000-0000-000000000000"))
           res (rp/resource-id-collections (:id rsrc-one))]
       (is (= 200 (:status res)))
       (is (= (-> coll-one
@@ -78,6 +78,7 @@
                  (update :id str)
                  (update :collection-id str)
                  (update :resource-id str)
+                 (update :file-id str)
                  (list))
              (map ut/remove-db-only (m/decode-response-body res)))))))
 
@@ -95,7 +96,7 @@
   (testing "find all subtitles by resource (2 contents)"
     (let [cont-one (db-pop/add-content)
           coll-one (db-pop/add-collection)
-          cont-two (db-pop/add-content (:id coll-one) (:resource-id cont-one))
+          cont-two (db-pop/add-content (:id coll-one) (:resource-id cont-one) (ut/to-uuid "00000000-0000-0000-0000-000000000000"))
           sbtl-one (db-pop/add-subtitle (:id cont-one))
           sbtl-two (db-pop/add-subtitle (:id cont-two))
           res (rp/resource-id-subtitles (:resource-id cont-one))]

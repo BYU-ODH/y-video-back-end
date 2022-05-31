@@ -45,7 +45,11 @@ Clojure REPL
 trash
 _project.clj
 python/stress_test_api.py
+python/migration_config.py
 resources/public/static/test_kitten.mp4
 resources/public/static/cat_sleep.mp4
 /.calva
 /.lsp
+/.clj-kondo
+*.webm
+__pycache__

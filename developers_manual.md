@@ -58,14 +58,16 @@ Comments here focus on the structure and function of Y-Video, not how the Clojur
 *   To run the back end from the command line: $ lein run
 *   To run all tests for the back end: $ lein test
 *   To build the back end (with compiled front end) into a jar for deployment: $ lein uberjar
-*   To build coverage report: $ lein with-profile test cloverage
+*   To build coverage report: **$ lein with-profile test cloverage**
     *   Report generated at target/coverage/index.html
     *   Yes, it is spelled “cloverage” (this is the library being used)
 *   Most of the Clojure team uses emacs with special configurations for Clojure integration.
-*   I have used Atom with the following plugins:
+*   Atom:
     *   clojure-indent by Ciebiada. This helps predict proper indentation.
     *   parinfer by oakmax. This automatically updates parentheses based on indentation. This especially helps if the programmer is coming from Python.
     *   There are many other options: [https://gist.github.com/jasongilman/d1f70507bed021b48625](https://gist.github.com/jasongilman/d1f70507bed021b48625)
+*   Visual Studio Code:
+    *   Calva for REPL and coljure syntax
 *   The back end is equipped with Swagger UI. This automatically generates documentation, which serves as a reference for the front end team. It can be accessed at [https://yvideo.byu.edu/api/docs](https://yvideo.byu.edu/api/docs). Following the pattern of existing endpoints for adding new ones will keep this documentation up-to-date.
 *   To generate visual representations of the database, use DbVisualizer (the free version is fine): [https://www.dbvis.com/](https://www.dbvis.com/). Be sure to check “All Tables” and “Referenced Only” when generating the diagram.
 *   To run a check for unused variables and such, run: $ lein eastwood
@@ -84,8 +86,9 @@ Do not make any changes directly on development or master. To make any changes:
 3. Make your changes.
 4. Push the branch to Github.
 5. On Github, create a pull request into development.
-6. An admin will approve the pull request into development.
-7. Switch back to development on your machine and pull again.
+6. Check for testing workflow
+7. An admin will approve the pull request into development.
+8. Switch back to development on your machine and pull again.
 
 Eventually, merging into development will trigger an automatic redeployment of the back end to the development server.
 
@@ -93,16 +96,19 @@ Eventually, merging into development will trigger an automatic redeployment of t
 
 If the front end has any changes they need deployed, follow these steps on the appropriate server:
 
-1. $ cd /srv/y-video-back-end/y-video-back-end/yvideo-client
-2. Make sure you're on the correct branch (usually develop)
-3. $ sudo git pull
-4. Check the front end config file: /srv/y-video-back-end/y-video-back-end/yvideo-client/.env.production
-5. $ cd /srv/y-video-back-end/y-video-back-end
-6. $ sudo ./build-front-end.sh
-7. $ sudo lein clean
-8. $ sudo lein uberjar
-9. $ sudo cp target/y-video-back-end.jar ../y-video-back-end.jar
-10. $ sudo systemctl restart y-video-back-end.service
+1. $ cd /srv/y-video-back-end/y-video-back-end/
+2. $ sudo su jenkins (do not use root)
+3. $ cd yvideo-client
+4. Make sure you're on the correct branch (usually develop)
+5. $ git pull
+6. Check the front end config file: /srv/y-video-back-end/y-video-back-end/yvideo-client/.env.production
+7. $ cd /srv/y-video-back-end/y-video-back-end
+8. $ ./build-front-end.sh
+9. $ lein clean
+10. $ lein uberjar
+11. $ cp target/y-video-back-end.jar ../y-video-back-end.jar
+12. $ exit (exit the jenkins user) 
+13. $ sudo systemctl restart y-video-back-end.service
 
 The changes will be visible after about a minute.
 
@@ -111,13 +117,15 @@ The changes will be visible after about a minute.
 If the back end has any changes that need to be deployed, follow these steps on the appropriate server. If the front end has been changed, follow steps 1-6 from above before running lein clean and uberjar.
 
 1. $ cd /srv/y-video-back-end/y-video-back-end
-2. Make sure you're on the correct branch (usually development)
-3. $ sudo git pull
-4. Check the back end config file: /srv/y-video-back-end/y-video-back-end/env/prod/resources/config.edn
-7. $ sudo lein clean
-8. $ sudo lein uberjar
-9. $ sudo cp target/y-video-back-end.jar ../y-video-back-end.jar
-10. $ sudo systemctl restart y-video-back-end.service
+2. $ sudo su jenkins
+3. Make sure you're on the correct branch (usually development)
+4. $ git pull
+5. Check the back end config file: /srv/y-video-back-end/y-video-back-end/env/prod/resources/config.edn
+7. $ lein clean
+8. $ lein uberjar
+9. $ cp target/y-video-back-end.jar ../y-video-back-end.jar
+10. $ exit
+11. $ sudo systemctl restart y-video-back-end.service
 
 The changes will be visible after about a minute.
 
@@ -126,12 +134,14 @@ The changes will be visible after about a minute.
 Redeploying changes to the development server is easier, but takes longer. If you want it to go faster, you can skip the testing stage by following the workflows for deploying the front and back ends separately.
 
 1. $ cd /srv/y-video-back-end/y-video-back-end/yvideo-client
-2. Make sure you're on the correct branch (usually develop)
-3. $ sudo git pull
-4. Check the front end config file: /srv/y-video-back-end/y-video-back-end/yvideo-client/.env.production
-5. $ cd /srv/y-video-back-end/y-video-back-end
-6. $ sudo ./build-stage.sh
-7. If all the tests pass, run: $ sudo systemctl restart y-video-back-end.service
+2. $ sudo su jenkins
+3. Make sure you're on the correct branch (usually develop)
+4. $ git pull
+5. Check the front end config file: /srv/y-video-back-end/y-video-back-end/yvideo-client/.env.production
+6. $ cd /srv/y-video-back-end/y-video-back-end
+7. $ ./build-stage.sh
+8. $ exit
+9. If all the tests pass, run: $ sudo systemctl restart y-video-back-end.service
 
 The changes will be visible after about a minute.
 
@@ -185,13 +195,17 @@ For small changes to init.sql, you can often add them to the live development an
 
 
 *   Accessing the database
-    *   Connection credentials in config under :y-video-back :db
+    *   To access the database find the server and the credentials in the config. (Each config has different credentials)
+    *   It is possible to use pgAdmin to access the server remotely. 
+    *   Install BYU VPN software to connect to vpn.byu.edu for database server access
     *   y-video-back.db.core defines several generic functions
         *   Almost all changes are under line marked “more generic functions”
     *   Other files in y-video-back.db use those functions to manipulate different tables
         *   Example: y-video-back.db.collections
 *   Structure of the database
     *   Defined in resources/migrations/init.sql
+    *   At the end of the init.sql file there are some alter statements. Any changes should be added to the alter section and not directly to the initial script.
+    *   Always run any changes to the database locally before even trying to make changes to the dev database
     *   Visual representation in y-video-db.png
     *   3 main groups of tables. Those that rely on users, collections, and resources.
     *   **user group:**
@@ -332,6 +346,7 @@ For small changes to init.sql, you can often add them to the live development an
 *   To access these files in code, include [y-video-back.config :refer [env]] in the requires at the top of the file, and then access env like a map.
 *   Not every instance of the back end will need every config file. For example, the production server will likely not have a development config file. This is fine.
 *   Config values not discussed elsewhere:
+    *   :SESSION_TIMEOUT - this is use to automatically log out a user when the session expires
     *   :auth :timeout - this is how long an auth token lasts. The trigger must be updated in the database to match.
     *   :session-id-bypass - this session-id allows access to any endpoint. It should be disabled for production, as it is meant for testing.
     *   :NEW-USER-PASSWORD - the endpoint /api/get-session-id/{username}/{password} returns a session id for the given username. This is meant for testing.
@@ -399,6 +414,7 @@ For small changes to init.sql, you can often add them to the live development an
 *   An individual file or test may be run with the :only argument on the command line, such as:
     *   $ lein test :only legacy.routes.resource
     *   $ lein test :only legacy.routes.resource/rsrc-all-colls
+* **TO KNOW HOW TO SET UP A LOCAL TESTING ENVIRONMENT GO TO test/clj/test-notes.md**
 
 
 ## Serving the Front End

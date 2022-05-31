@@ -2,6 +2,7 @@
   (:require [y-video-back.layout :refer [error-page]]
             [y-video-back.db.core :as db]
             [y-video-back.db.users :as users]
+            [y-video-back.config :refer [env]]
             [y-video-back.db.permissions :as permissions]
             [y-video-back.db.auth-tokens :as auth-tokens]
             [y-video-back.utils.account-permissions :as ac]
@@ -75,11 +76,15 @@
     (contains? (set (map #(:id %) user-colls)) collection-id)))
 
 (defn get-new-session-id
-  "Generate new session-id, associated with same user as given session-id. Invalidate old session-id."
+  ; "Generate new session-id, associated with same user as given session-id. Invalidate old session-id."
+  "If the session-id time stamp is still within certain time then we do not renew"
   [session-id]
-  (let [new-session-id (:id (auth-tokens/CREATE {:user-id (:user-id (auth-tokens/READ-UNEXPIRED session-id))}))]
-    (auth-tokens/DELETE session-id)
-    new-session-id))
+  (let [current-session (auth-tokens/READ-UNEXPIRED session-id)]
+    (if (> (- (inst-ms (java.time.Instant/now)) (inst-ms (get current-session :created))) (-> env :SESSION_TIMEOUT))
+      (let [c-id session-id] 
+        (auth-tokens/DELETE c-id) "expired")
+      (let [c-id session-id] 
+        (db/UPDATE :auth-tokens c-id (assoc current-session :created (java.time.Instant/now))) c-id))));add 4 hours to current session or in other words renew the creating date
 
 (def forbidden-page
   (error-page {:status 401, :title "401 - Unauthorized",

@@ -160,15 +160,48 @@
         rsrc-one-add (resources/CREATE rsrc-one)]
     (assoc rsrc-one :id (:id rsrc-one-add))))
 
+(defn get-language
+  "Creates language, ready to be added to db"
+  ([]
+   (g/get-random-language-without-id)))
+
+(defn add-language
+  "Creates language, adds to db"
+  []
+  (let [lang-one (get-language)
+        lang-one-add (languages/CREATE lang-one)]
+    (assoc lang-one :id (:id lang-one-add))))
+
+(defn get-file
+  "Creates file, ready to be added to db. Contains random filepath."
+  ([]
+   (get-file (:id (add-resource))))
+  ([resource-id]
+   (assoc (dissoc (g/get-random-file-without-id resource-id)
+                  :file-version)
+          :file-version
+          (:id (add-language)))))
+
+(defn add-file
+  "Creates file, adds to db. Contains random filepath."
+  ([]
+   (let [file-one (get-file)
+         file-one-add (files/CREATE file-one)]
+     (assoc file-one :id (:id file-one-add))))
+  ([resource-id]
+   (let [file-one (get-file resource-id)
+         file-one-add (files/CREATE file-one)]
+     (assoc file-one :id (:id file-one-add)))))
 
 (defn get-content
   "Creates content, ready to be added to db"
   ([]
    (let [new-coll (ut/under-to-hyphen (collections/CREATE (get-collection)))
-         new-rsrc (ut/under-to-hyphen (resources/CREATE (g/get-random-resource-without-id)))]
-     (g/get-random-content-without-id (:id new-coll) (:id new-rsrc))))
-  ([collection-id resource-id]
-   (g/get-random-content-without-id collection-id resource-id)))
+         new-rsrc (ut/under-to-hyphen (resources/CREATE (g/get-random-resource-without-id)))
+         new-file (ut/under-to-hyphen (files/CREATE (get-file)))]
+     (g/get-random-content-without-id (:id new-coll) (:id new-rsrc) (:id new-file))))
+  ([collection-id resource-id file-id]
+   (g/get-random-content-without-id collection-id resource-id file-id)))
 
 (defn add-content
   "Creates content, adds to db"
@@ -176,8 +209,8 @@
    (let [cont-one (get-content)
          cont-one-add (contents/CREATE cont-one)]
      (assoc cont-one :id (:id cont-one-add))))
-  ([collection-id resource-id]
-   (let [cont-one (get-content collection-id resource-id)
+  ([collection-id resource-id file-id]
+   (let [cont-one (get-content collection-id resource-id file-id)
          cont-one-add (contents/CREATE cont-one)]
      (assoc cont-one :id (:id cont-one-add)))))
 
@@ -205,17 +238,6 @@
          cont-one-add (contents/CREATE cont-one)]
      (assoc cont-one :id (:id cont-one-add)))))
 
-(defn get-language
-  "Creates language, ready to be added to db"
-  ([]
-   (g/get-random-language-without-id)))
-(defn add-language
-  "Creates language, adds to db"
-  []
-  (let [lang-one (get-language)
-        lang-one-add (languages/CREATE lang-one)]
-    (assoc lang-one :id (:id lang-one-add))))
-
 (defn get-subtitle
   "Creates subtitle, ready to be added to db"
   ([]
@@ -231,27 +253,6 @@
    (let [sbtl-one (get-subtitle content-id)
          sbtl-one-add (subtitles/CREATE sbtl-one)]
      (assoc sbtl-one :id (:id sbtl-one-add)))))
-
-(defn get-file
-  "Creates file, ready to be added to db. Contains random filepath."
-  ([]
-   (get-file (:id (add-resource))))
-  ([resource-id]
-   (assoc (dissoc (g/get-random-file-without-id resource-id)
-                  :file-version)
-          :file-version
-          (:id (add-language)))))
-
-(defn add-file
-  "Creates file, adds to db. Contains random filepath."
-  ([]
-   (let [file-one (get-file)
-         file-one-add (files/CREATE file-one)]
-     (assoc file-one :id (:id file-one-add))))
-  ([resource-id]
-   (let [file-one (get-file resource-id)
-         file-one-add (files/CREATE file-one)]
-     (assoc file-one :id (:id file-one-add)))))
 
 (defn get-user-coll-assoc
   "Creates user-coll-assoc, ready to be added to db"

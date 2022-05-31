@@ -1,21 +1,22 @@
 (ns legacy.routes.media
     (:require
-      [y-video-back.config :refer [env]]
-      [clojure.test :refer :all]
-      [y-video-back.handler :refer :all]
-      [legacy.db.test-util :as tcore]
-      [muuntaja.core :as m]
-      [clojure.java.jdbc :as jdbc]
-      [mount.core :as mount]
-      [legacy.utils.route-proxy.proxy :as rp]
-      [y-video-back.db.core :refer [*db*] :as db]
-      [legacy.utils.utils :as ut]
-      [legacy.utils.db-populator :as db-pop]
-      [y-video-back.db.users :as users]
-      [y-video-back.db.files :as files]
-      [y-video-back.db.file-keys :as file-keys]
-      [y-video-back.user-creator :as uc]
-      [clojure.java.io :as io]))
+     [y-video-back.config :refer [env]]
+     [clojure.test :refer :all]
+     [y-video-back.handler :refer :all]
+     [legacy.db.test-util :as tcore]
+     [muuntaja.core :as m]
+     [clojure.java.jdbc :as jdbc]
+     [mount.core :as mount]
+     [legacy.utils.route-proxy.proxy :as rp]
+     [y-video-back.db.core :refer [*db*] :as db]
+     [legacy.utils.utils :as ut]
+     [legacy.utils.db-populator :as db-pop]
+     [y-video-back.db.users :as users]
+     [y-video-back.db.files :as files]
+     [y-video-back.db.file-keys :as file-keys]
+     [y-video-back.user-creator :as uc]
+     [clojure.java.io :as io]
+     [clojure.java.shell :as shell]))
 
 (declare ^:dynamic *txn*)
 
@@ -51,7 +52,7 @@
             res (rp/stream-media file-key)]
         (is (= 200 (:status res)))
         (is (= java.io.File (type (:body res))))
-        (is (= (str (-> env :FILES :media-url) (:filepath file-one)) (.getAbsolutePath (:body res)))))))
+        (is (= (str (clojure.string/trim-newline (:out (shell/sh "pwd"))) "/" (-> env :FILES :media-url) (:filepath file-one)) (.getAbsolutePath (:body res)))))))
   (testing "get file-key with admin user, then let expire"
     (let [res (rp/get-file-key (uc/user-id-to-session-id (:id user-one)) (:id file-one))
           res-body (m/decode-response-body res)]

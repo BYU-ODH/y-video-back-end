@@ -8,7 +8,8 @@
    [y-video-back.model-specs :as sp]
    [y-video-back.routes.service-handlers.utils.utils :as utils]
    [reitit.ring.middleware.multipart :as multipart]
-   [clojure.java.io :as io]))
+   [clojure.java.io :as io]
+   [clojure.java.shell :as shell]))
 
 (def file-create
   {:summary "Creates a new file. MUST INCLUDE FILE AS UPLOAD."
@@ -29,16 +30,33 @@
                   (do
                     (if-not (languages/EXISTS? file-version)
                       (languages/CREATE {:id file-version}))
-                    (let [id (utils/get-id (files/CREATE {:filepath file-name
-                                                          :file-version file-version
-                                                          :metadata metadata
-                                                          :resource-id resource-id}))]
-                      (io/copy (:tempfile file)
-                               (io/file (str (-> env :FILES :media-url) file-name)))
+                    (let
+                     [output (:out
+                              (shell/sh "ffprobe" "-v" "error" "-select_streams" "v:0" "-show_entries" "stream=width,height" "-of" "default" (-> (:tempfile file) .getAbsolutePath)))
+                      video-info (clojure.string/split output #"\n")
+                      aspect-ratio (clojure.string/replace (str (get video-info 1) "," (get video-info 2))
+                                                           #"[a-zA-z]+=" "")
+                      copy-result (io/copy (:tempfile file)
+                                           (io/file (str (-> env :FILES :media-url) file-name)))
+                      id (if (nil? copy-result)
+                           (utils/get-id (files/CREATE {:filepath file-name
+                                                        :file-version file-version
+                                                        :metadata metadata
+                                                        :resource-id resource-id
+                                                        :aspect-ratio aspect-ratio}))
+                           (print "Failed to create file in media directory"))]
+                      ;; ; :FILES :media-url + file-name = file path for ffmpeg
+                      ;; ; TODO: check first the cp command if it is successfull then add to the database
+                      ;; (try (io/copy (:tempfile file)
+                      ;;               (io/file (str (-> env :FILES :media-url) file-name)))
+                      ;;      (catch Exception e (str "caught exception: " (.getMessage e))))
+        
+                      (if (:test env)
+                        (print "Testing environment")
+                        (io/delete-file (:tempfile file)))
                       {:status 200
                        :body {:message "1 file created"
                               :id id}})))))})
-
 
 (def file-get-by-id
   {:summary "Retrieves specified file"

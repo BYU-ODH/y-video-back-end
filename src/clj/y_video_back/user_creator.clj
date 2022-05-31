@@ -1,10 +1,11 @@
 (ns y-video-back.user-creator
   (:require
-    [y-video-back.config :refer [env]]
-    [y-video-back.db.users :as users]
-    [y-video-back.db.auth-tokens :as auth-tokens]
-    [y-video-back.apis.persons :as persons-api]
-    [y-video-back.course-creator :as cc]))
+   [y-video-back.config :refer [env]]
+   [y-video-back.db.users :as users]
+   [y-video-back.db.core :as db]
+   [y-video-back.db.auth-tokens :as auth-tokens]
+   [y-video-back.apis.persons :as persons-api]
+   [y-video-back.course-creator :as cc]))
 
 (defn create-user
   "Creates user with data from BYU api"
@@ -23,10 +24,14 @@
 (defn update-user
   "Updates user with data from BYU api"
   [username user-id]
-  (let [user-data (persons-api/get-user-data username)]
+  (let [user-data (persons-api/get-user-data username)
+        current-data (first (db/read-all-where :users-undeleted username))
+        role (if (or (= (:account-type current-data) 0) (= (:account-type current-data) 1))
+               (:account-type current-data)
+               (:account-type user-data))]
     (users/UPDATE user-id
                   {:email (:email user-data)
-                   :account-type (:account-type user-data)
+                   :account-type role
                    :account-name (:full-name user-data)
                    :last-person-api (java.sql.Timestamp. (System/currentTimeMillis))
                    :byu-person-id (:person-id user-data)})))

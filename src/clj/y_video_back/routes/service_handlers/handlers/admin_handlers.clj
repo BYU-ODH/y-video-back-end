@@ -3,7 +3,8 @@
    [y-video-back.db.users :as users]
    [y-video-back.models :as models]
    [y-video-back.routes.service-handlers.utils.utils :as utils]
-   [y-video-back.db.core :as db]))
+   [y-video-back.db.core :as db]
+   [y-video-back.apis.persons :as persons]))
 
 ; TODO - sort results by more than just alphabetical
 
@@ -34,7 +35,9 @@
                                   (db/read-all-pattern :collections-undeleted
                                                        [:collection-name]
                                                        (str "%" term "%")))
-                    res (map #(into % {:username (:username (users/READ (:owner %)))})
+                    res (map #(into % {:username (if (nil? (:username (users/READ (:owner %))))
+                                                   ""
+                                                   (:username (users/READ (:owner %))))})
                              coll-res)]
                 {:status 200
                  :body res}))})
@@ -52,7 +55,10 @@
                                                        [:collection-name]
                                                        (str "%" term "%")))
                     res (map #(into % {
-                                       :username (:username (users/READ (:owner %))) 
+                                       :username (let [username (:username (users/READ (:owner %)))] 
+                                                   (if (nil? username)
+                                                           "invalid"
+                                                           username)) 
                                        :content (map utils/remove-db-only
                                                      (db/read-all-where :contents-undeleted
                                                                         :collection-id (:id %)))

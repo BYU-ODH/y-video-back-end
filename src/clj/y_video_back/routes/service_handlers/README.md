@@ -38,7 +38,7 @@ All handlers begin be checking the request's permissions. They do this by callin
 
 ### session-id
 
-Almost all responses include a `session-id` in their header. Eventually, each session-id will be single-use, and each handler will generate and return a new session-id with each response. Currently, the session-id is not changed in each handler, and is actually just the user's id.
+Almost all responses include a `session-id` in their header. All session-id's have a determined life. If a session id is not used for a certain amount of time the session-id will expire. If the session-id is in used it will push back it's expiration time.
 
 ## adding new endpoints
 

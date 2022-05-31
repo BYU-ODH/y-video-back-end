@@ -127,8 +127,8 @@
 (defn get-random-content-without-id
   ([]
    (get-random-model models/content-without-id))
-  ([collection-id resource-id]
-   (into (get-random-model models/content-without-any-ids) {:collection-id collection-id :resource-id resource-id})))
+  ([collection-id resource-id file-id]
+   (into (get-random-model models/content-without-any-ids) {:collection-id collection-id :resource-id resource-id :file-id file-id})))
 
 ; - - - - - - - - - INVALID MODEL GENERATORS - - - - - - - - ;
 

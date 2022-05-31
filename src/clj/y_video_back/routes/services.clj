@@ -141,17 +141,21 @@
      [""
       {:post service-handlers/user-create
        :get service-handlers/user-get-logged-in}]
+     ["/byu/create"
+      {:post service-handlers/user-create-from-byu}]
      ["/{id}"
       {:get service-handlers/user-get-by-id
        :patch service-handlers/user-update
        :delete service-handlers/user-delete}]
      ["/{id}/collections"
-      {:get service-handlers/user-get-all-collections}]
+      {:get service-handlers/user-get-all-collections
+       :delete service-handlers/user-delete-with-collections}]
      ["/{id}/courses"
       {:get service-handlers/user-get-all-courses}]
-
      ["/{id}/words"
-      {:get service-handlers/user-get-all-words}]]
+      {:get service-handlers/user-get-all-words}]
+     ["/{username}/ta-permissions"
+      {:get service-handlers/user-ta-permissions}]]
 
     ["/word"
      {:swagger {:tags ["word"]}}
