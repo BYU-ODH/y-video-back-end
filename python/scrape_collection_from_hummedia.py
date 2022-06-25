@@ -6,14 +6,17 @@ from datetime import timedelta
 from io import StringIO
 import json
 # import logging
+import multiprocessing
 import os
 from pprint import pprint
 import re
 from shlex import quote
-from shutil import rmtree
+# from shutil import rmtree
+from shutil import which
 import subprocess
 from time import sleep
 import warnings
+import sys
 
 import langcodes
 import parsrt  # for parsing srt files
@@ -58,6 +61,7 @@ print(args)
 
 TMP_DIR = '/tmp/hummedia_migration'
 FILE_VERSION = 'Cakchiquel'  # All videos are initialized with this language; users should correct them
+WGET = which('wget')
 
 
 def add_yvideo_user(username, headers):
@@ -134,8 +138,12 @@ def upload_file(title, filename, resource_id, headers, might_skip=False):
         while not os.path.exists(complete_fname):
             sleep(0.5)
     if might_skip:
-        file_size = int(subprocess.check_output(f'stat --format=%s {quote(filename)}', shell=True).strip())
-        sysVsum, blocks, _ = subprocess.check_output(f'sum -s {quote(filename)}', shell=True).strip().split(maxsplit=2)
+        file_size = os.stat(filename).st_size
+        if sys.platform == 'darwin':
+            sum_cmd = f'gsum -s {quote(filename)}'
+        else:
+            sum_cmd = f'sum -s {quote(filename)}'
+        sysVsum, blocks, _ = subprocess.check_output(sum_cmd, shell=True).strip().split(maxsplit=2)
         sysVsum, blocks = int(sysVsum), int(blocks)
         matches = [f for f in files_json
                    if f['file_size'] == file_size and f['sysVsum'] == sysVsum and f['blocks'] == blocks]
@@ -294,7 +302,7 @@ def create_content(collection_id, resource_id, file_id, vid_title, vid_descripti
                'clips': '',
                'collection-id': collection_id,
                'content-type': 'video',
-               'description': vid_description,
+               'description': vid_description or '',
                'file-id': '00000000-0000-0000-0000-000000000000',
                'file-version': FILE_VERSION,
                'published': True,
@@ -386,6 +394,24 @@ def transform_annotations(annotations):
     return json.dumps(yv_json)
 
 
+# def download_mp4(vid_url, vid_fname):
+#     subprocess.Popen(f'{WGET} -q {vid_url} -O "{vid_fname}" && touch "{vid_fname}.DONE.tmp"', shell=True)
+
+
+def download_mp4(url, fname, force=False):
+    done_fname = f'{fname}.DONE.tmp'
+    if not force and os.path.exists(fname) and os.path.exists(done_fname):
+        print(f'{fname} already downloaded. Skipping...')
+        return
+    print(f'    downloading {fname} ...')
+    with requests.get(url, stream=True) as r:
+        r.raise_for_status()
+        with open(fname, 'wb') as f:
+            for chunk in r.iter_content(chunk_size=8192):
+                f.write(chunk)
+    open(done_fname, 'w').close()
+
+
 def migrate_collection(args):
     driver = webdriver.Chrome()
     driver.implicitly_wait(20)  # seconds
@@ -423,17 +449,17 @@ def migrate_collection(args):
             'Courses': courses,
             'TAs': TAs,
             'auditors': auditors})
-    tmp_dir = f'{TMP_DIR}/{title}'
-    try:
-        rmtree(tmp_dir)
-    except FileNotFoundError:
-        pass
+    tmp_dir = f'{TMP_DIR}/{args.collection}_{title}'
+    # try:
+    #     rmtree(tmp_dir)
+    # except FileNotFoundError:
+    #     pass
     os.makedirs(tmp_dir, exist_ok=True)
 
     collection_id = create_collection(title, owner_user_id, owner_headers)
     # TODO add courses, TAs, and auditors
 
-    # collection data and start downloads
+    # collection data
     vids = []
     for vid_dict in collection_json['videos']:
         vid_id = vid_dict['pid']
@@ -466,7 +492,6 @@ def migrate_collection(args):
                     print('Invalid input.')
         vid_extension = vid_url.split('.')[-1]
         vid_fname = f'{vid_fname}.{vid_extension}'
-        subprocess.Popen(f'/usr/bin/wget -q {vid_url} -O "{vid_fname}" && touch "{vid_fname}.DONE.tmp"', shell=True)
         new_vid_dict = {'id': vid_id,
                         'title': vid_title,
                         'description': vid_description,
@@ -475,6 +500,10 @@ def migrate_collection(args):
                         'json': vid_json,
                         'url': vid_url}
         vids.append(new_vid_dict)
+
+    downloads = [(v['url'], v['fname']) for v in vids]
+    with multiprocessing.Pool() as p:
+        p.starmap(download_mp4, downloads)
 
     for vid in vids:
         # get annotations
