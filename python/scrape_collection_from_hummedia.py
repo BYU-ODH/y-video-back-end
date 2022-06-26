@@ -189,7 +189,9 @@ def create_resource(title, netid, filename, headers):
     """Create new resource."""
     print('create_resource:', title, netid, filename, headers)
     if not args.force:
-        r = requests.get(f'{yvideo_url}/api/admin/resource/{title}', headers=headers)
+        url = f'{yvideo_url}/api/admin/resource/{title.replace("/", "%252F")}'
+        print(f'Getting the following url: {url}')
+        r = requests.get(url, headers=headers)
         resources_json = json.loads(r.text)
         if resources_json:
             print(f'{len(resources_json)} resources found')
@@ -465,7 +467,7 @@ def migrate_collection(args):
         vid_id = vid_dict['pid']
         vid_title = vid_dict['ma:title']
         vid_description = vid_dict['ma:description']
-        vid_fname = f'{tmp_dir}/{vid_title}'
+        vid_fname = f'{tmp_dir}/{vid_title.replace("/", "")}'
         annotation_ids = vid_dict['ma:hasPolicy']
         driver.get(f'https://hummedia.byu.edu/api/v2/video/{vid_id}')
         vid_json = json.loads(driver.find_element(By.TAG_NAME, 'pre').text)
