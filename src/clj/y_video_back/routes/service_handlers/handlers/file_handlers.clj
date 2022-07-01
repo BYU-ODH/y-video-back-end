@@ -70,6 +70,7 @@
               (let [res (files/READ id)]
                 (if (nil? res)
                   {:status 404
+                   :data-range ,,,
                    :body {:message "requested file not found"}}
                   {:status 200
                    :body res})))})

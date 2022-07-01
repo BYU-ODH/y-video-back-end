@@ -4,6 +4,7 @@
             [y-video-back.layout :as layout]
             [y-video-back.layout :refer [*app-context* error-page]]
             [ring.middleware.anti-forgery :refer [wrap-anti-forgery]]
+            [ring.middleware.head :as head]
             [ring.middleware.webjars :refer [wrap-webjars]]
             [ring.middleware.format :refer [wrap-restful-format]]
             [y-video-back.config :refer [env]]
@@ -250,6 +251,7 @@
       wrap-post-cas
       wrap-cas
       wrap-pre-cas
+      head/wrap-head
       (wrap-session {:cookie-attrs {:http-only true}})
       (wrap-defaults
         (-> site-defaults
