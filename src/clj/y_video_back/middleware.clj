@@ -160,7 +160,7 @@
 
 (def unauthorized-page
   (error-page {:status 401, :title "401 - Unauthorized",
-               :image "https://rossonl.files.wordpress.com/2014/01/4ba90-moriariddle.jpg", :caption "Your session id has expired. Please sign in again"}))
+               :image "https://rossonl.files.wordpress.com/2014/01/4ba90-moriariddle.jpg", :caption "Your session id has expired. Please sign in again."}))
 
 (defn add-id-and-username
   "Adds user id and username to request. Adds nil if values do not exist."
