@@ -13,7 +13,12 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - uses: actions/setup-node@v2
+    - name: Setup node
+      uses: actions/setup-node@v2
+      with:
+        node-version: 14.x
+        cache: 'npm'
+
       id: setup-ffmpeg
     - uses: Harmon758/postgresql-action@v1.0.0
       with:
