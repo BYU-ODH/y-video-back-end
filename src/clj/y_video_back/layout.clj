@@ -101,16 +101,7 @@
   {:status  (:status error-details)
    :headers {"Content-Type" "text/html; charset=utf-8"
              "session-id" nil}
-   :body (hp/html5
-          (top-matter)
-          (boiler-plate)
-          [:div {:style "margin-top: 10px;" :class "columns is-centered has-text-centered"}
-           [:div {:class "column is-half"}
-            [:div.alert.alert-warning]
-            [:h1 {:class "title"} (or (:title error-details) (str "Error " (:status error-details)))]
-            [:div [:img {:class "is-centered" :src (str (:image error-details))}]]
-            [:div [:h1.title (:caption error-details)]]
-            [:div.error-details (:message error-details)]]])})
+   :body (:caption error-details)})
 
 (defn receipt-page
   ([]
