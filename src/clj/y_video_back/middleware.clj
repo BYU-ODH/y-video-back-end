@@ -106,7 +106,7 @@
        {:status 403
         :title "403 - Invalid anti-forgery token"
         :image "lack_of_faith.jpg"
-        :caption "I find your lack of valid anti-forgery token disturbing."})}))
+        :caption "Sorry, your anti-forgery token is invalid. Try getting a real one then come back."})}))
 
 (defn wrap-formats
   "Ensure that json<>map conversion is in place"
@@ -156,11 +156,11 @@
 
 (def forbidden-page
   (error-page {:status 403, :title "403 - Forbidden",
-               :image "https://www.cheatsheet.com/wp-content/uploads/2020/02/anakin_council_ROTS.jpg", :caption "It's unfair! How can you be on this website and not be an admin?!"}))
+              :caption "It's unfair! We do not grant you the permission to access this page!"}))
 
 (def unauthorized-page
   (error-page {:status 401, :title "401 - Unauthorized",
-               :image "https://rossonl.files.wordpress.com/2014/01/4ba90-moriariddle.jpg", :caption "Pippin: What are you going to do then?<br/>Gandalf: Knock your head against this endpoint, Peregrin Took!"}))
+              :caption "Pippin: What are you going to do then?<br/>Gandalf: Knock your head against this endpoint, Peregrin Took!"}))
 
 (defn add-id-and-username
   "Adds user id and username to request. Adds nil if values do not exist."
