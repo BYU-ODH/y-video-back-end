@@ -28,14 +28,14 @@
       (ring/create-default-handler
        {:unauthorized
         (constantly (error-page {:status 401, :title "401 - Unauthorized",
-                                 :image "https://www.cheatsheet.com/wp-content/uploads/2020/02/anakin_council_ROTS.jpg", :caption "It's unfair! How can you be on this website and not be an admin?!"}))
+                                 :caption "Your session id has expired. Please sign in again."}))
 
         :not-found
         (constantly (error-page {:status 404, :title "404 - Page not found",
-                                 :image "https://3.bp.blogspot.com/-zf1CzBCGBNA/VySWoH97jgI/AAAAAAAAlXI/R7kDYKnRjvMSIbljRljViev9PhxA1jkZwCLcB/s1600/SEARCHING%2BFOR%2BKAMINO.jpg", :caption "This page ought to be here... but it isn't."}))
+                                 :caption "We couldn't find the page you were looking for. Double check the URL and try again."}))
         :method-not-allowed
         (constantly (error-page {:status 405, :title "405 - Not allowed",
-                                 :image "https://d13ezvd6yrslxm.cloudfront.net/wp/wp-content/images/revenge-of-the-sith-novelization-3-700x300.jpg", :caption "Obi-Wan: Anakin, this is a get method!<br/><br/>Anakin: From my point of view, this is a post method!"}))
+                                 :caption "Sorry, this action is not allowed for this page. Please try another request."}))
         :not-acceptable
         (constantly (error-page {:status 406, :title "406 - Not acceptable"
-                                 :image "https://pbs.twimg.com/media/EI3UsHrU4AE9Ck9.jpg", :caption "<br/>This response... It's some form of elvish. I can't render it."}))})))))
+                                 :caption "We're sorry, your request is not supported by this page. Try another request."}))})))))
