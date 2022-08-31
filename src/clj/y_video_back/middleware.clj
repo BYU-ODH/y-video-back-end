@@ -86,7 +86,7 @@
         (log/error t)
         (error-page {:status 500
                      :title "Something very bad has happened!"
-                     :message "We've dispatched a team of highly trained gnomes to take care of the problem."})))))
+                     :message "We have ecountered an unexpected error. We are working to fix it. Please try again later."})))))
 
 (defn print-handler [handler]
   (fn [req]
@@ -105,8 +105,7 @@
      (error-page
        {:status 403
         :title "403 - Invalid anti-forgery token"
-        :image "lack_of_faith.jpg"
-        :caption "I find your lack of valid anti-forgery token disturbing."})}))
+        :caption "Sorry, you are not authorized to access this page. Check your credentials and try again."})}))
 
 (defn wrap-formats
   "Ensure that json<>map conversion is in place"
@@ -156,7 +155,7 @@
 
 (def forbidden-page
   (error-page {:status 403, :title "403 - Forbidden",
-               :image "https://www.cheatsheet.com/wp-content/uploads/2020/02/anakin_council_ROTS.jpg", :caption "It's unfair! How can you be on this website and not be an admin?!"}))
+              :caption "Sorry, you are not authorized to access this page. Check your credentials and try again."}))
 
 (def unauthorized-page
   (error-page {:status 401, :title "401 - Unauthorized",
