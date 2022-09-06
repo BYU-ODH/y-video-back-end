@@ -25,7 +25,10 @@ import langcodes
 import parsrt  # for parsing srt files
 import requests
 from selenium import webdriver
+from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
 import webvtt
 
 import migration_config
@@ -286,12 +289,14 @@ def create_collection(name, owner_id, headers):
             pprint(list(enumerate(match_names)), stream=log_file)
             while True:
                 alert()
-                c_input = input(f'{name!r} already exists. Which one to use or (C)reate new? ')
+                c_input = input(f'{name!r} already exists. Which one to use or (C)reate new or (S)kip? ')
                 if re.match(r'[0-9]+$', c_input):
                     return [c for c in matches if c['collection-name'] == match_names[int(c_input)]][0]['id']
                 elif c_input in 'Cc':
                     name = increment_name(name, match_names)
                     break
+                elif c_input in 'Ss':
+                    return
                 else:
                     print(f'Invalid input {c_input!r}.', file=log_file)
     payload = {'archived': False,
@@ -322,7 +327,7 @@ def create_content(collection_id, vid, headers):
                 c_input = '0'
             else:
                 alert()
-                c_input = input('Which one to patch or (C)reate new? ')
+                c_input = input('Which one to patch or (C)reate new or (S)kip? ')
             if re.match(r'[0-9]+$', c_input):
                 patch = True
                 content_id = matches[int(c_input)]['id']
@@ -331,6 +336,8 @@ def create_content(collection_id, vid, headers):
                 patch = False
                 vid['title'] = increment_name(vid['title'], [c['title'] for c in matches])
                 break
+            elif c_input in 'Ss':
+                return
             else:
                 print(f'Invalid input {c_input!r}.', file=log_file)
     if vid['resource_id'] == '00000000-0000-0000-0000-000000000000':
@@ -506,6 +513,8 @@ def migrate_collection(args):
     os.makedirs(tmp_dir, exist_ok=True)
 
     collection_id = create_collection(title, owner_user_id, owner_headers)
+    if collection_id is None:
+        return
     # TODO add courses, TAs, and auditors
 
     # collection data
@@ -598,6 +607,8 @@ def migrate_collection(args):
                                                              admin_headers)
         # add content
         content_id = create_content(collection_id, vid, owner_headers)
+        if content_id is None:
+            return
 
         # get subtitles
         vid_subtitles = [s for s in vid['json']['ma:hasRelatedResource']
@@ -649,6 +660,14 @@ if __name__ == '__main__':
         with webdriver.Chrome() as wd:
             wd.implicitly_wait(20)  # seconds
             wd.get('https://hummedia.byu.edu')
+            try:
+                WebDriverWait(wd, 3).until(EC.alert_is_present(),
+                                           'Timed out waiting for PA creation ' +
+                                           'confirmation popup to appear.')
+                hummedia_alert = wd.switch_to.alert
+                hummedia_alert.accept()
+            except TimeoutException:
+                pass
             wd.find_element(By.ID, 'login-link').click()
             wd.find_element(By.ID, 'byubutton').click()
             wd.find_element(By.ID, 'dont-trust-browser-button').click()
@@ -672,3 +691,4 @@ if __name__ == '__main__':
                 if WAS_WARNING:
                     print(f'There were warnings for {collection}. Search the output for "UserWarning".', file=log_file)
                 WAS_WARNING = False
+    subprocess.run(['spd-say', '-t', 'female1', 'The dishes are done!'])
