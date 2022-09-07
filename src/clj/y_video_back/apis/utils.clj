@@ -51,7 +51,3 @@
     new-token))
 
 (def oauth-token "")
-
-
-
-

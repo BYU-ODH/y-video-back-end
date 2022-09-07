@@ -26,7 +26,7 @@
     2
     3))
 
-(defn get-account-type
+(defn get-account-type ;; TODO debug
   "If username in user-type-exceptions, returns that value. Else, returns value from json."
   [username js]
   (let [exc-res (user-type-exceptions/READ-BY-USERNAME [username])]
@@ -40,7 +40,7 @@
 
 (defn get-user-data
   "Gets data from AcademicRecordsStudentStatusInfo"
-  [netid]
+  [netid] ;; (def netid "nbown16")
   (if (= (:front-end-netid env) netid)
     {:full-name (str netid " no_name")
      :byu-id nil
@@ -56,7 +56,7 @@
             full-name (get-in (get-cats-from-json json-res) ["basic" "preferred_name" "value"])
             byu-id (get-in (get-cats-from-json json-res) ["basic" "byu_id" "value"])
             email (first (filter #(not (nil? %)) [(get-email-from-json json-res), "none"]))
-            account-type (get-account-type netid json-res)
+            account-type (get-account-type netid json-res) ;; ERROR
             person-id (get-person-id-from-json json-res)]
         {:full-name full-name
          :byu-id byu-id
