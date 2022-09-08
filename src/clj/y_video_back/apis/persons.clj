@@ -21,18 +21,21 @@
                         (get-in (get-cats-from-json js) ["email_addresses" "values"]))))))
 
 (defn get-account-type-from-json
-  [js]
-  (if (= "FAC" (str/upper-case (get-in (get-cats-from-json js) ["employee_summary" "employee_classification_code" "value"])))
-    2
-    3))
+  [json-res]
+  (let [categories (get-cats-from-json json-res)
+        account-type (get-in categories ["employee_summary" "employee_classification_code" "value"])]
+    (if (and account-type
+             (= "FAC" (str/upper-case account-type)))
+      2
+      3)))
 
 (defn get-account-type ;; TODO debug
   "If username in user-type-exceptions, returns that value. Else, returns value from json."
-  [username js]
-  (let [exc-res (user-type-exceptions/READ-BY-USERNAME [username])]
-    (if (= 0 (count exc-res))
-      (get-account-type-from-json js)
-      (:account-type (first exc-res)))))
+  [netid json-res]
+  (let [exception-result (user-type-exceptions/READ-BY-USERNAME [netid])]
+    (if (empty? exception-result)
+      (get-account-type-from-json json-res)
+      (:account-type (first exception-result)))))
 
 (defn get-person-id-from-json
   [js]
@@ -40,7 +43,7 @@
 
 (defn get-user-data
   "Gets data from AcademicRecordsStudentStatusInfo"
-  [netid] ;; (def netid "nbown16")
+  [netid] ;; (def netid "nbown16") (def netid "rjr45")
   (if (= (:front-end-netid env) netid)
     {:full-name (str netid " no_name")
      :byu-id nil
