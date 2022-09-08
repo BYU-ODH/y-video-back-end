@@ -59,7 +59,7 @@
             full-name (get-in (get-cats-from-json json-res) ["basic" "preferred_name" "value"])
             byu-id (get-in (get-cats-from-json json-res) ["basic" "byu_id" "value"])
             email (first (filter #(not (nil? %)) [(get-email-from-json json-res), "none"]))
-            account-type (get-account-type netid json-res) ;; ERROR
+            account-type (get-account-type netid json-res)
             person-id (get-person-id-from-json json-res)]
         {:full-name full-name
          :byu-id byu-id
