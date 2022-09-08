@@ -29,7 +29,7 @@
       2
       3)))
 
-(defn get-account-type ;; TODO debug
+(defn get-account-type
   "If username in user-type-exceptions, returns that value. Else, returns value from json."
   [netid json-res]
   (let [exception-result (user-type-exceptions/READ-BY-USERNAME [netid])]
