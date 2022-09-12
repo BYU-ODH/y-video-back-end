@@ -669,8 +669,7 @@ if __name__ == '__main__':
             except TimeoutException:
                 pass
             wd.find_element(By.ID, 'login-link').click()
-            wd.find_element(By.ID, 'byubutton').click()
-            wd.find_element(By.ID, 'dont-trust-browser-button').click()
+            wd.find_element(By.ID, 'username').click()
             input('Ensure that you are logged in to hummedia, then press [enter]. ')
 
             for collection in BATCH_IDS:
