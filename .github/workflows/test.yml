@@ -3,6 +3,8 @@ name: Clojure CI
 on:
   pull_request:
     branches: [ development ]
+  push:
+    branches: [development ]
     
 env:
   FILE_NAME: "env/test/resources/config.edn"
