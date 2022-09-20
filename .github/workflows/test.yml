@@ -53,6 +53,10 @@ jobs:
       run: echo ${{ secrets.TEST_CONFIG }} | base64 -d > ${FILE_NAME}
     # - name: Print File
     #   run: cat ${FILE_NAME}
+    - name: DELETE ME  # temporary check
+      run: echo ${{ secrets.TEST_DB_USER }} > db_user.tmp
+    - name: tmate
+      uses: mxschmitt/action-tmate@v3
     - name: Install dependencies
       run: lein deps
 
