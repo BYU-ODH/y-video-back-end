@@ -35,9 +35,14 @@
                                   (db/read-all-pattern :collections-undeleted
                                                        [:collection-name]
                                                        (str "%" term "%")))
-                    res (map #(into % {:username (if (nil? (:username (users/READ (:owner %))))
+                    res (map #(into % {
+                                        :username (if (nil? (:username (users/READ (:owner %))))
                                                    ""
-                                                   (:username (users/READ (:owner %))))})
+                                                   (:username (users/READ (:owner %))))
+                                        :account-name (if (nil? (:account-name (users/READ (:owner %))))
+                                                    ""
+                                                    (:account-name (users/READ (:owner %))))
+                                      })
                              coll-res)]
                 {:status 200
                  :body res}))})
