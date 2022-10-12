@@ -177,7 +177,8 @@
 
 (def resource-read-all-access
   {:summary "Returns usernames of all users with access to add this resource to contents"
-   :permission-level "lab-assistant"
+   :permission-level "student"
+   :role-level "ta"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
    :responses {200 {:body [{:username string?
