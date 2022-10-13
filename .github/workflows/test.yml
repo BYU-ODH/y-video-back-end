@@ -2,7 +2,6 @@ name: Clojure CI
 
 on:
   pull_request:
-    branches: [ development ]
   push:
     branches: [ development ]
     
@@ -51,10 +50,10 @@ jobs:
     #   run: pwd
     # - name: List
     #   run: ls -l
-    - name: Create File with content
-      run: echo ${{ secrets.TEST_CONFIG }} | base64 -d > ${FILE_NAME}
+    # - name: Create File with content
+    #   run: echo ${{ secrets.TEST_CONFIG }} | base64 -d > ${FILE_NAME}
     # - name: Make file to read using tmate
-    #   run: echo ${{ secrets.TEST_DB_USER }} > db_user.tmp
+    #   run: echo ${{ secrets.TEST_DB_USER }} > db_user.tmp && echo '${{ secrets.TEST_CONFIG }}' > test_config.tmp
     # - name: tmate
     #   uses: mxschmitt/action-tmate@v3
     - name: Install dependencies
