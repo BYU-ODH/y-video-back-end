@@ -2,7 +2,6 @@ name: Clojure CI
 
 on:
   pull_request:
-    branches: [ development ]
   push:
     branches: [ development ]
     
