@@ -45,18 +45,8 @@ jobs:
         CI: ""
       run: ./build-front-end.sh
     
-    # - name: File Info
-    #   run: echo "${FILE_NAME}"
-    # - name: Current path
-    #   run: pwd
-    # - name: List
-    #   run: ls -l
     - name: Create File with content
       run: echo ${{ secrets.TEST_CONFIG }} | base64 -d > ${FILE_NAME}
-    # - name: Make file to read using tmate
-    #   run: echo ${{ secrets.TEST_DB_USER }} > db_user.tmp
-    # - name: tmate
-    #   uses: mxschmitt/action-tmate@v3
     - name: Install dependencies
       run: lein deps
 
