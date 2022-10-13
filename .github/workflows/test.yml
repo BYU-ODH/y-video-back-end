@@ -2,7 +2,6 @@ name: Clojure CI
 
 on:
   pull_request:
-    branches: [ development ]
   push:
     branches: [ development ]
     
@@ -47,6 +46,7 @@ jobs:
     
     - name: Create File with content
       run: echo ${{ secrets.TEST_CONFIG }} | base64 -d > ${FILE_NAME}
+
     - name: Install dependencies
       run: lein deps
 
