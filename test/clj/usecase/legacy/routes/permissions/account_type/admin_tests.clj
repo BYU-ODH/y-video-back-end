@@ -118,4 +118,4 @@
     (let [user-one (db-pop/add-user "student")
           res (rp/search-by-resource (uc/user-id-to-session-id (:id user-one))
                                      "test")]
-      (is (= 403 (:status res))))))
+      (is (= 200 (:status res))))))
