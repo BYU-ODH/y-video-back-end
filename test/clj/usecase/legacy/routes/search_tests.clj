@@ -240,8 +240,11 @@
     (test-search-table :collections
                        "Books"
                        [(assoc test-coll-one :username (:username test-user-one))
+                        (assoc test-coll-one :account-name (:account-name test-user-one))
                         (assoc test-coll-two :username (:username test-user-two))
-                        (assoc test-coll-thr :username (:username test-user-thr))]))
+                        (assoc test-coll-two :account-name (:account-name test-user-two))
+                        (assoc test-coll-thr :username (:username test-user-thr))
+                        (assoc test-coll-thr :account-name (:account-name test-user-thr))]))
   (testing "one coll name"
     (test-search-table :collections
                        "fiction"
