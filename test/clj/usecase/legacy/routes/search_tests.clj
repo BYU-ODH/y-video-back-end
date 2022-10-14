@@ -240,12 +240,12 @@
     (test-search-table :collections
                        "Books"
                        [(assoc test-coll-one :username (:username test-user-one) :account-name (:account-name test-user-one))
-                        (assoc test-coll-two :username (:username test-user-two) :account-name (:account-name test-user-one))
-                        (assoc test-coll-thr :username (:username test-user-thr) :account-name (:account-name test-user-one))]))
+                        (assoc test-coll-two :username (:username test-user-two) :account-name (:account-name test-user-two))
+                        (assoc test-coll-thr :username (:username test-user-thr) :account-name (:account-name test-user-thr))]))
   (testing "one coll name"
     (test-search-table :collections
                        "fiction"
-                       [(assoc test-coll-thr :username (:username test-user-thr))]))
+                       [(assoc test-coll-thr :username (:username test-user-thr) :account-name (:account-name test-user-thr))]))
   (testing "no colls name"
     (test-search-table :collections
                        "Movies"
@@ -253,14 +253,14 @@
   (testing "only a space"
     (test-search-table :collections
                        " "
-                       [(assoc test-coll-one :username (:username test-user-one))
-                        (assoc test-coll-two :username (:username test-user-two))
-                        (assoc test-coll-thr :username (:username test-user-thr))
-                        (assoc test-coll-pub :username (:username test-user-adm))]))
+                       [(assoc test-coll-one :username (:username test-user-one) :account-name (:account-name test-user-one))
+                        (assoc test-coll-two :username (:username test-user-two) :account-name (:account-name test-user-two))
+                        (assoc test-coll-thr :username (:username test-user-thr) :account-name (:account-name test-user-thr))
+                        (assoc test-coll-pub :username (:username test-user-adm) :account-name (:account-name test-user-adm))]))
   (testing "case insensitive"
     (test-search-table :collections
                        "FICTION"
-                       [(assoc test-coll-thr :username (:username test-user-thr))])))
+                       [(assoc test-coll-thr :username (:username test-user-thr)) :account-name (:account-name test-user-thr)])))
 
 (deftest test-search-resources
   (testing "all conts name"
