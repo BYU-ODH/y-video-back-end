@@ -85,7 +85,8 @@
 
 (def search-by-resource
   {:summary "Searches resources by search term"
-   :permission-level "instructor"
+   :permission-level "student"
+   :role-level "ta"
    :parameters {:header {:session-id uuid?}
                 :path {:term string?}}
    :responses {200 {:body [models/resource]}}
