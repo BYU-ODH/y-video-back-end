@@ -182,8 +182,8 @@
               :contents (rp/search-by-content query-term))]
     (is (= 200 (:status res)))
     (if (or (= table-key :collections) (= table-key :public-collections))
-      (is (= (frequencies (into [] (map #(update 
-                                          (update (ut/remove-db-only %) :id str) 
+      (is (= (frequencies (into [] (map #(update
+                                          (update (ut/remove-db-only %) :id str)
                                           :owner str) expected-res)))
              (frequencies (m/decode-response-body res))))
       (is (= (frequencies (into [] (map #(update (ut/remove-db-only %) :id str) expected-res)))
@@ -260,7 +260,7 @@
   (testing "case insensitive"
     (test-search-table :collections
                        "FICTION"
-                       [(assoc test-coll-thr :username (:username test-user-thr)) :account-name (:account-name test-user-thr)])))
+                       [(assoc test-coll-thr :username (:username test-user-thr) :account-name (:account-name test-user-thr))]))
 
 (deftest test-search-resources
   (testing "all conts name"
@@ -333,10 +333,3 @@
     (test-search-table :public-collections
                        "Bard"
                        [(assoc test-coll-pub :username (:username test-user-adm) :content [])])))
-
-
-
-
-
-
-
