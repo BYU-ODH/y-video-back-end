@@ -260,7 +260,7 @@
   (testing "case insensitive"
     (test-search-table :collections
                        "FICTION"
-                       [(assoc test-coll-thr :username (:username test-user-thr) :account-name (:account-name test-user-thr))]))
+                       [(assoc test-coll-thr :username (:username test-user-thr) :account-name (:account-name test-user-thr))])))
 
 (deftest test-search-resources
   (testing "all conts name"
