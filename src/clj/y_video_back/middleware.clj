@@ -34,6 +34,8 @@
 (defn wrap-cas [handler]
     "Validates CAS login. If invalid, only prompts login if given /login path-info"
   (fn [request]
+    #_((cas/wrap-cas handler {:timeout 120 :host-override (:host env) :no-redirect? (constantly (not (= "/login" (str (:path-info request)))))})
+     request)
     (let [should-redirect? #(not= "/login" (str (:path-info request)))
           cas-map {:timeout 120
                    :host-override (:host env)
