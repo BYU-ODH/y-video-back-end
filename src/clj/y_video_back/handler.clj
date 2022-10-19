@@ -4,6 +4,7 @@
             [y-video-back.routes.home :refer [home-routes]]
             [y-video-back.routes.services :refer [service-routes]]
             [reitit.ring :as ring]
+            [ring.middleware.content-type :refer [wrap-content-type]]
             [ring.middleware.webjars :refer [wrap-webjars]]
             [y-video-back.env :refer [defaults]]
             [mount.core :as mount]))
@@ -24,7 +25,7 @@
      (ring/routes
       (ring/create-resource-handler
        {:path "/"})
-      (wrap-webjars (constantly nil))
+      (wrap-content-type (wrap-webjars (constantly nil)))
       (ring/create-default-handler
        {:unauthorized
         (constantly (error-page {:status 401, :title "401 - Unauthorized",

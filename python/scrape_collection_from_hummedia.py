@@ -1,6 +1,7 @@
 """Scrape mp4's and json annotations from hummedia."""
 
 import argparse
+from datetime import datetime
 from datetime import timedelta
 from glob import glob
 # import http.client as http_client
@@ -24,12 +25,18 @@ import langcodes
 import parsrt  # for parsing srt files
 import requests
 from selenium import webdriver
+from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
 import webvtt
 
 import migration_config
 
 parser = argparse.ArgumentParser(description='Scrape mp4 and json annotations from hummedia.')
+parser.add_argument('-b', '--batch', default=None,
+                    help='The filename of IDs of the collections on hummedia.')
 parser.add_argument('-c', '--collection', default=None,
                     help='The ID of the collection on hummedia.')
 parser.add_argument('-a', '--admin', default=migration_config.admin,
@@ -43,10 +50,18 @@ parser.add_argument('-m', '--manual', action='store_true',
 parser.add_argument('-u', '--user', default=None,
                     help='The netid of the new owner on Y-video (override hummedia owner).')
 
+BATCH_IDS = None
 args = parser.parse_args()
-if args.collection is None:
-    args.collection = input('Please enter the collection id: ')
-print(args)
+if args.batch is None and args.collection is None:
+    args.collection = input('Please enter the collection id: ').strip()
+elif args.batch is not None and args.collection is not None:
+    raise AssertionError('Cannot use --batch and --collection arguments at the same time.')
+
+if args.batch is not None and args.collection is None:
+    with open(args.batch) as f:
+        BATCH_IDS = [line.strip() for line in f if line.strip()]
+elif args.batch is None and args.collection is not None:
+    BATCH_IDS = [args.collection]
 
 # These two lines enable debugging at httplib level (requests->urllib3->http.client)
 # You will see the REQUEST, including HEADERS and DATA, and RESPONSE with HEADERS but without DATA.
@@ -65,6 +80,10 @@ TMP_DIR = '/tmp/hummedia_migration'
 FILE_VERSION = 'Cakchiquel'  # All videos are initialized with this language; users should correct them
 WGET = which('wget')
 WAS_WARNING = False  # If there is a warning, give message at the end to search for Warnings
+
+
+def alert():
+    subprocess.run(['spd-say', '-t', 'female1', 'migration needs attention'])
 
 
 def add_yvideo_user(username, headers):
@@ -114,6 +133,7 @@ def upload_file(vid, headers, might_skip=False):
         if files_json:
             while True:
                 if args.manual:
+                    alert()
                     skip_input = input('Would you like to compare the current file '
                                        'with files already uploaded to Y-video? Type '
                                        '`Y` to wait and compare. Type `n` to just '
@@ -140,7 +160,7 @@ def upload_file(vid, headers, might_skip=False):
 
     complete_fname = vid['fname'] + '.DONE.tmp'
     if not os.path.exists(complete_fname):
-        print(f'Waiting for {vid["fname"]} to finish downloading...')
+        print(f'Waiting for {vid["fname"]} to finish downloading...', file=log_file)
         while not os.path.exists(complete_fname):
             sleep(0.5)
     if might_skip:
@@ -154,23 +174,24 @@ def upload_file(vid, headers, might_skip=False):
         matches = [f for f in files_json
                    if f['file_size'] == file_size and f['sysVsum'] == sysVsum and f['blocks'] == blocks]
         if not matches:
-            print('No matching files found. Uploading file from Hummedia...')
+            print('No matching files found. Uploading file from Hummedia...', file=log_file)
         else:
-            print('The following file(s) match the file from Hummedia:')
+            print('The following file(s) match the file from Hummedia:', file=log_file)
             for i, m in enumerate(matches):
-                print(i, ')')
-                pprint(matches)
+                print(i, ')', file=log_file)
+                pprint(matches, stream=log_file)
             while True:
                 if not args.manual and len(matches) == 1:
                     file_input = '0'
                 else:
+                    alert()
                     file_input = input('Which file should be used? (Type `X` to upload file from Hummedia) ')
                 if file_input == 'X':
                     break
                 elif re.match(r'[0-9]+$', file_input):
                     return matches[int(file_input)]['id']
                 else:
-                    print(f'Invalid input {file_input!r}')
+                    print(f'Invalid input {file_input!r}', file=log_file)
     try:
         r = requests.post(f'{yvideo_url}/api/file',
                           files={'file': (vid['fname'].split('/')[-1],
@@ -184,6 +205,7 @@ def upload_file(vid, headers, might_skip=False):
         file_id = json.loads(r.text)['id']
         return file_id
     except OverflowError:
+        alert()
         file_id = input(f'File too large for {vid["title"]} ({vid["fname"]}). Please upload file manually now and paste file-id here: ')
         return file_id
 
@@ -197,24 +219,28 @@ def add_access_to_resource(resource_id, netid, headers):
 
 def create_resource(vid, netid, headers):
     """Create new resource."""
-    print('create_resource:', vid['title'], netid, vid['fname'], headers)
+    print('create_resource:', vid['title'], netid, vid['fname'], headers, file=log_file)
     if re.search(r'youtu\.be|youtube.com', vid['url']):
-        print('\t...this is a youtube video. No resource needed.')
+        print('\t...this is a youtube video. No resource needed.', file=log_file)
         return ('00000000-0000-0000-0000-000000000000', '00000000-0000-0000-0000-000000000000')
     if not args.force:
         url = f'{yvideo_url}/api/admin/resource/{vid["title"].replace("/", "%252F")}'
-        print(f'Getting the following url: {url}')
+        print(f'Getting the following url: {url}', file=log_file)
         r = requests.get(url, headers=headers)
         resources_json = json.loads(r.text)
         if resources_json:
-            print(f'{len(resources_json)} resources found')
+            print(f'{len(resources_json)} resources found', file=log_file)
             for i, rsrc in enumerate(resources_json):
-                print(i, ')')
-                pprint(rsrc)
+                print(i, ')', file=log_file)
+                pprint(rsrc, stream=log_file)
             while True:
-                if not args.manual and len(resources_json) == 1:
-                    rsrc_input = '0'
+                if not args.manual and len([r for r in resources_json if r['resource-name'] == vid['title']]) == 1:
+                    for i, r in enumerate(resources_json):
+                        if r['resource-name'] == vid['title']:
+                            rsrc_input = str(i)
+                            break
                 else:
+                    alert()
                     rsrc_input = input(f'Which of the above resources should be used for {vid["title"]!r}? (Type X to create new resource)  ')
                 if rsrc_input == 'X':
                     break
@@ -223,7 +249,7 @@ def create_resource(vid, netid, headers):
                     add_access_to_resource(vid['resource_id'], netid, headers)
                     return vid['resource_id'], upload_file(vid, headers, might_skip=True)
                 else:
-                    print(f'Invalid input {rsrc_input!r}. Please type an integer or "X".')
+                    print(f'Invalid input {rsrc_input!r}. Please type an integer or "X".', file=log_file)
     payload = {
                'copyrighted': True,
                'resource-name': vid['title'],
@@ -261,16 +287,19 @@ def create_collection(name, owner_id, headers):
         matches = [c for c in collections if name and name in c['collection-name']]
         match_names = [c['collection-name'] for c in collections]
         if matches:
-            pprint(list(enumerate(match_names)))
+            pprint(list(enumerate(match_names)), stream=log_file)
             while True:
-                c_input = input(f'{name!r} already exists. Which one to use or (C)reate new? ')
+                alert()
+                c_input = input(f'{name!r} already exists. Which one to use or (C)reate new or (S)kip? ')
                 if re.match(r'[0-9]+$', c_input):
                     return [c for c in matches if c['collection-name'] == match_names[int(c_input)]][0]['id']
                 elif c_input in 'Cc':
                     name = increment_name(name, match_names)
                     break
+                elif c_input in 'Ss':
+                    return
                 else:
-                    print(f'Invalid input {c_input!r}.')
+                    print(f'Invalid input {c_input!r}.', file=log_file)
     payload = {'archived': False,
                'collection-name': name,
                'copyrighted': True,
@@ -284,7 +313,7 @@ def create_collection(name, owner_id, headers):
 
 
 def create_content(collection_id, vid, headers):
-    print(f'create_content: collection_id={collection_id}, vid={vid}')
+    print(f'create_content: collection_id={collection_id}, vid={vid}', file=log_file)
     r = requests.get(f'{yvideo_url}/api/collection/{collection_id}/contents', headers=headers)
     assert 200 <= r.status_code < 300, (r.__dict__, r.request.__dict__)
     contents_json = json.loads(r.text)
@@ -292,13 +321,14 @@ def create_content(collection_id, vid, headers):
     if not matches:
         patch = False
     else:
-        pprint(list(enumerate(matches)))
-        print(f'Content with title {vid["title"]!r} already exists:')
+        pprint(list(enumerate(matches)), stream=log_file)
+        print(f'Content with title {vid["title"]!r} already exists:', file=log_file)
         while True:
             if not args.manual and len(matches) == 1:
                 c_input = '0'
             else:
-                c_input = input('Which one to patch or (C)reate new? ')
+                alert()
+                c_input = input('Which one to patch or (C)reate new or (S)kip? ')
             if re.match(r'[0-9]+$', c_input):
                 patch = True
                 content_id = matches[int(c_input)]['id']
@@ -307,8 +337,10 @@ def create_content(collection_id, vid, headers):
                 patch = False
                 vid['title'] = increment_name(vid['title'], [c['title'] for c in matches])
                 break
+            elif c_input in 'Ss':
+                return
             else:
-                print(f'Invalid input {c_input!r}.')
+                print(f'Invalid input {c_input!r}.', file=log_file)
     if vid['resource_id'] == '00000000-0000-0000-0000-000000000000':
         url = vid['url']
     else:
@@ -355,12 +387,13 @@ def add_subtitles(content_id, subtitles, headers, language=FILE_VERSION, name=''
         subtitles_json = json.loads(r.text)
         matches = [s for s in subtitles_json if s['content'] == subtitles]
         if matches:
-            pprint(list(enumerate(matches)))
-            print('Subtitles matching these already exists:')
+            pprint(list(enumerate(matches)), stream=log_file)
+            print('Subtitles matching these already exists:', file=log_file)
             while True:
                 if not args.manual and len(matches) == 1:
                     s_input = '0'
                 else:
+                    alert()
                     s_input = input('Which one to use or (C)reate new? ')
                 if re.match(r'[0-9]+$', s_input):
                     return matches[int(s_input)]['id']
@@ -368,7 +401,7 @@ def add_subtitles(content_id, subtitles, headers, language=FILE_VERSION, name=''
                     name = increment_name(name, [s['title'] for s in matches])
                     break
                 else:
-                    print(f'Invalid input {s_input!r}.')
+                    print(f'Invalid input {s_input!r}.', file=log_file)
     if not isinstance(subtitles, str):
         subtitles = json.dumps(subtitles)
     if len(language) == 2 and language.islower():
@@ -386,8 +419,8 @@ def add_subtitles(content_id, subtitles, headers, language=FILE_VERSION, name=''
 
 def transform_annotations(annotations):
     global WAS_WARNING
-    print('transform_annotations:')
-    pprint(annotations)
+    print('transform_annotations:', file=log_file)
+    pprint(annotations, stream=log_file)
     if not annotations:
         return '[]'
     yv_json = []
@@ -409,9 +442,10 @@ def transform_annotations(annotations):
             try:
                 options['type'], options['layer'], options['icon'] = X[e['type']]
                 yv_json.append(options)
-            except KeyError:
-                WAS_WARNING = True
-                warnings.warn(f'\n{"="*79}\nWARNING\nEvent "{e["type"]}" not implemented. The following annotation was skipped: {e!r}\n{"="*79}')
+            except KeyError as e:
+                # WAS_WARNING = True
+                # warnings.warn(f'\n{"="*79}\nWARNING\nEvent "{e["type"]}" not implemented. The following annotation was skipped: {e!r}\n{"="*79}')
+                raise IOError(f'\n{"="*79}\nWARNING\nEvent "{e["type"]}" not implemented. The following annotation was skipped: {e!r}\n{"="*79}') from e
             if e['type'] == 'comment':
                 options['comment'] = e['popcornOptions']['text']
                 options['position'] = {'x': 50, 'y': 80}
@@ -427,9 +461,9 @@ def download_mp4(url, fname, force=False):
     global WAS_WARNING
     done_fname = f'{fname}.DONE.tmp'
     if not force and os.path.exists(fname) and os.path.exists(done_fname):
-        print(f'{fname!r} already downloaded. Skipping...')
+        print(f'{fname!r} already downloaded. Skipping...', file=log_file)
         return
-    print(f'    downloading {fname!r} ({url})...')
+    print(f'    downloading {fname!r} ({url})...', file=log_file)
     try:
         with requests.get(url, stream=True) as r:
             r.raise_for_status()
@@ -444,184 +478,218 @@ def download_mp4(url, fname, force=False):
 
 def migrate_collection(args):
     global WAS_WARNING
-    with webdriver.Chrome() as wd:
-        wd.implicitly_wait(20)  # seconds
-        wd.get('https://hummedia.byu.edu')
-        wd.find_element(By.ID, 'login-link').click()
-        wd.find_element(By.ID, 'byubutton').click()
-        wd.find_element(By.ID, 'dont-trust-browser-button').click()
+    wd.get(f'https://hummedia.byu.edu/api/v2/collection/{args.collection}')
 
-        input('Ensure that you are logged in to hummedia, then press [enter]. ')
-        wd.get(f'https://hummedia.byu.edu/api/v2/collection/{args.collection}')
+    json_src = wd.find_element(By.TAG_NAME, 'pre').text
+    collection_json = json.loads(json_src)
+    title = collection_json['dc:title']
+    desc = collection_json['dc:description']
+    courses = collection_json['dc:relation']
+    owner = collection_json['dc:creator']
+    if args.user is not None:
+        owner = args.user
+    owner_user_id = add_yvideo_user(owner, headers=admin_headers)
+    owner_sess_id = get_yvideo_sess_id(username=owner, dev=not args.production)
+    owner_headers = {'session-id': owner_sess_id}
+    owner_user_id_tmp = get_yvideo_user_id(headers=owner_headers)
+    if owner_user_id is not None:  # Sanity check
+        assert owner_user_id == owner_user_id_tmp, (owner_user_id, owner_user_id_tmp)
+    owner_user_id = owner_user_id_tmp
+    print('Y-video owner user_id:', owner_user_id, file=log_file)
 
-        json_src = wd.find_element(By.TAG_NAME, 'pre').text
-        collection_json = json.loads(json_src)
-        title = collection_json['dc:title']
-        desc = collection_json['dc:description']
-        courses = collection_json['dc:relation']
-        owner = collection_json['dc:creator']
-        if args.user is None:
-            args.user = owner
-        owner_user_id = add_yvideo_user(args.user, headers=admin_headers)
-        owner_sess_id = get_yvideo_sess_id(username=args.user, dev=not args.production)
-        owner_headers = {'session-id': owner_sess_id}
-        owner_user_id_tmp = get_yvideo_user_id(headers=owner_headers)
-        if owner_user_id is not None:  # Sanity check
-            assert owner_user_id == owner_user_id_tmp, (owner_user_id, owner_user_id_tmp)
-        owner_user_id = owner_user_id_tmp
-        print('Y-video owner user_id:', owner_user_id)
+    TAs = [n for n in collection_json['dc:rights']['write'] if n != owner]
+    auditors = [n for n in collection_json['dc:rights']['read'] if n not in TAs + [owner]]
 
-        TAs = [n for n in collection_json['dc:rights']['write'] if n != owner]
-        auditors = [n for n in collection_json['dc:rights']['read'] if n not in TAs + [owner]]
+    pprint({'Title': title,
+            'Owner': owner,
+            'Description': desc,
+            'Courses': courses,
+            'TAs': TAs,
+            'auditors': auditors}, stream=log_file)
+    tmp_dir = f'{TMP_DIR}/{args.collection}_{title}'
+    # try:
+    #     rmtree(tmp_dir)
+    # except FileNotFoundError:
+    #     pass
+    os.makedirs(tmp_dir, exist_ok=True)
 
-        pprint({'Title': title,
-                'Owner': owner,
-                'Description': desc,
-                'Courses': courses,
-                'TAs': TAs,
-                'auditors': auditors})
-        tmp_dir = f'{TMP_DIR}/{args.collection}_{title}'
-        # try:
-        #     rmtree(tmp_dir)
-        # except FileNotFoundError:
-        #     pass
-        os.makedirs(tmp_dir, exist_ok=True)
+    collection_id = create_collection(title, owner_user_id, owner_headers)
+    if collection_id is None:
+        return
+    # TODO add courses, TAs, and auditors
 
-        collection_id = create_collection(title, owner_user_id, owner_headers)
-        # TODO add courses, TAs, and auditors
-
-        # collection data
-        vids = []
-        for vid_dict in collection_json['videos']:
-            vid_id = vid_dict['pid']
-            vid_title = vid_dict['ma:title']
-            vid_description = vid_dict['ma:description']
-            vid_fname = f'{tmp_dir}/{vid_title.replace("/", "")}'
-            annotation_ids = vid_dict['ma:hasPolicy']
-            wd.get(f'https://hummedia.byu.edu/api/v2/video/{vid_id}')
-            vid_json = json.loads(wd.find_element(By.TAG_NAME, 'pre').text)
-            mp4s = [u for u in vid_json['url'] if u.endswith('mp4')]
-            if len(vid_json['url']) == 0:
-                WAS_WARNING = True
-                warnings.warn(f'WARNING: No URLs available for {vid_title}.')
-                vid_url = ''
-            elif len(vid_json['url']) == 1:
-                vid_url = vid_json['url'][0]
-            elif len(vid_json['url']) > 1:
-                pprint(list(enumerate(vid_json['url'])))
-                while True:
-                    if not args.manual and len(mp4s) == 1:
-                        v_input = str(vid_json['url'].index(mp4s[0]))
-                    else:
-                        v_input = input(f'Which URL should be used for {vid_title!r}? ')
-                    if re.match(r'[0-9]+$', v_input):
-                        try:
-                            vid_url = vid_json['url'][int(v_input)]
-                            break
-                        except IndexError:
-                            print('Invalid input.')
-                    else:
-                        print('Invalid input.')
-            vid_extension = re.search(r'(\.(?:mp4|webm))?$', vid_url).group(1) or ''
-            vid_fname = f'{vid_fname}{vid_extension}'
-            new_vid_dict = {'id': vid_id,
-                            'title': vid_title,
-                            'description': vid_description,
-                            'annotation_ids': annotation_ids,
-                            'fname': vid_fname,
-                            'json': vid_json,
-                            'url': vid_url}
-            vids.append(new_vid_dict)
-
-        # sort vids so that shortest names are processed first
-        vids = sorted(vids, key=lambda x: len(x['title']))
-
-        downloads = [(v['url'], v['fname']) for v in vids
-                     if v['url'] and not re.search(r'youtu\.be|youtube.com', v['url'])]
-        with multiprocessing.Pool() as p:
-            p.starmap(download_mp4, downloads)
-
-        for vid in vids:
-            if not vid['url']:
-                continue
-            # get annotations
-            annotation_jsons = []
-            for annotation_id in vid['annotation_ids']:
-                wd.get(f'https://hummedia.byu.edu/api/v2/annotation/{annotation_id}?client=popcorn')
-                vid_annotations = json.loads(wd.find_element(By.TAG_NAME, 'pre').text)
-                if [e for t in vid_annotations['media'][0]['tracks'] for e in t['trackEvents']]:
-                    annotation_jsons.append(vid_annotations)
-            if len(annotation_jsons) == 0:
-                vid['annotations'] = '[]'
-            elif len(annotation_jsons) == 1:
-                vid['annotations'] = transform_annotations(annotation_jsons[0])
-            elif len(annotation_jsons) > 1:
-                pprint(list(enumerate(annotation_jsons)))
-                while True:
-                    a_input = input(f'Which annotation should be used for {vid["title"]}? ')
-                    if re.match(r'[0-9]+$', a_input):
-                        vid['annotations'] = transform_annotations(annotation_jsons[int(a_input)])
+    # collection data
+    vids = []
+    for vid_dict in collection_json['videos']:
+        vid_id = vid_dict['pid']
+        vid_title = vid_dict['ma:title']
+        vid_description = vid_dict['ma:description']
+        vid_fname = f'{tmp_dir}/{vid_title.replace("/", "")}'
+        annotation_ids = vid_dict['ma:hasPolicy']
+        wd.get(f'https://hummedia.byu.edu/api/v2/video/{vid_id}')
+        vid_json = json.loads(wd.find_element(By.TAG_NAME, 'pre').text)
+        mp4s = [u for u in vid_json['url'] if u.endswith('mp4')]
+        if len(vid_json['url']) == 0:
+            WAS_WARNING = True
+            warnings.warn(f'WARNING: No URLs available for {vid_title}.')
+            vid_url = ''
+        elif len(vid_json['url']) == 1:
+            vid_url = vid_json['url'][0]
+        elif len(vid_json['url']) > 1:
+            pprint(list(enumerate(vid_json['url'])), stream=log_file)
+            while True:
+                if not args.manual and len(mp4s) == 1:
+                    v_input = str(vid_json['url'].index(mp4s[0]))
+                else:
+                    alert()
+                    v_input = input(f'Which URL should be used for {vid_title!r}? ')
+                if re.match(r'[0-9]+$', v_input):
+                    try:
+                        vid_url = vid_json['url'][int(v_input)]
                         break
-                    else:
-                        print('Invalid input. Must be integer from those listed.')
+                    except IndexError:
+                        print('Invalid input.', file=log_file)
+                else:
+                    print('Invalid input.', file=log_file)
+        vid_extension = re.search(r'(\.(?:mp4|webm))?$', vid_url).group(1) or ''
+        vid_fname = f'{vid_fname}{vid_extension}'
+        new_vid_dict = {'id': vid_id,
+                        'title': vid_title,
+                        'description': vid_description,
+                        'annotation_ids': annotation_ids,
+                        'fname': vid_fname,
+                        'json': vid_json,
+                        'url': vid_url}
+        vids.append(new_vid_dict)
 
-            with open(f'{vid["fname"]}.hummedia_annotation_ids.json', 'w') as f:
-                print(vid['annotation_ids'], file=f)
-            with open(f'{vid["fname"]}.hummedia_annotations.json', 'w') as f:
-                pprint(annotation_jsons, stream=f)
-            with open(f'{vid["fname"]}.yvideo_annotations.json', 'w') as f:
-                print(vid['annotations'], file=f)
+    # sort vids so that shortest names are processed first
+    vids = sorted(vids, key=lambda x: len(x['title']))
 
-            # add resource
-            vid['resource_id'], vid['file_id'] = create_resource(vid,
-                                                                 args.user,
-                                                                 admin_headers)
-            # add content
-            content_id = create_content(collection_id, vid, owner_headers)
+    downloads = [(v['url'], v['fname']) for v in vids
+                 if v['url'] and not re.search(r'youtu\.be|youtube.com', v['url'])]
+    with multiprocessing.Pool() as p:
+        p.starmap(download_mp4, downloads)
 
-            # get subtitles
-            vid_subtitles = [s for s in vid['json']['ma:hasRelatedResource']
-                             if s['type'] in {'srt', 'vtt'}]
-            for s in vid_subtitles:
-                s['txt'] = requests.get(s['@id']).text
+    for vid in vids:
+        if not vid['url']:
+            continue
+        # get annotations
+        annotation_jsons = []
+        for annotation_id in vid['annotation_ids']:
+            wd.get(f'https://hummedia.byu.edu/api/v2/annotation/{annotation_id}?client=popcorn')
+            vid_annotations = json.loads(wd.find_element(By.TAG_NAME, 'pre').text)
+            if [e for t in vid_annotations['media'][0]['tracks'] for e in t['trackEvents']]:
+                annotation_jsons.append(vid_annotations)
+        if len(annotation_jsons) == 0:
+            vid['annotations'] = '[]'
+        elif len(annotation_jsons) == 1:
+            vid['annotations'] = transform_annotations(annotation_jsons[0])
+        elif len(annotation_jsons) > 1:
+            pprint(list(enumerate(annotation_jsons)), stream=log_file)
+            while True:
+                alert()
+                a_input = input(f'Which annotation should be used for {vid["title"]}? ')
+                if re.match(r'[0-9]+$', a_input):
+                    vid['annotations'] = transform_annotations(annotation_jsons[int(a_input)])
+                    break
+                else:
+                    print('Invalid input. Must be integer from those listed.', file=log_file)
 
-            # add subtitles
-            for subtitle in vid_subtitles:
-                if subtitle['type'] == 'srt':
-                    subtitle_json = [{'start': s.time[0].total_seconds(),
-                                      'end': s.time[1].total_seconds(),
-                                      'text': s.text}
-                                     for s in parsrt.parse_str(subtitle['txt'])]
-                elif subtitle['type'] == 'vtt':
+        with open(f'{vid["fname"]}.hummedia_annotation_ids.json', 'w') as f:
+            print(vid['annotation_ids'], file=f)
+        with open(f'{vid["fname"]}.hummedia_annotations.json', 'w') as f:
+            pprint(annotation_jsons, stream=f)
+        with open(f'{vid["fname"]}.yvideo_annotations.json', 'w') as f:
+            print(vid['annotations'], file=f)
+
+        # add resource
+        vid['resource_id'], vid['file_id'] = create_resource(vid,
+                                                             owner,
+                                                             admin_headers)
+        # add content
+        content_id = create_content(collection_id, vid, owner_headers)
+        if content_id is None:
+            return
+
+        # get subtitles
+        vid_subtitles = [s for s in vid['json']['ma:hasRelatedResource']
+                         if s['type'] in {'srt', 'vtt'}]
+        for s in vid_subtitles:
+            s['txt'] = requests.get(s['@id']).text
+
+        # add subtitles
+        for subtitle in vid_subtitles:
+            if subtitle['type'] == 'srt':
+                subtitle_json = [{'start': s.time[0].total_seconds(),
+                                  'end': s.time[1].total_seconds(),
+                                  'text': s.text}
+                                 for s in parsrt.parse_str(subtitle['txt'])]
+            elif subtitle['type'] == 'vtt':
+                try:
                     subtitle_json = [{'start': hms2seconds(s.start),
                                       'end': hms2seconds(s.end),
                                       'text': s.text}
                                      for s in webvtt.read_buffer(StringIO(subtitle['txt']))]
-                else:
-                    WAS_WARNING = True
-                    warnings.warn(f'subtitles {subtitle["@id"]} could not be parsed')
-                    continue
-                subtitle_name = subtitle['@id'].split('/')[-1].replace('.vtt', '').replace('.srt', '')
-                try:
-                    add_subtitles(content_id, subtitle_json, owner_headers, FILE_VERSION, subtitle_name)
-                except KeyError as e:
-                    print(subtitle)
-                    raise e
+                except webvtt.errors.MalformedFileError:
+                    subtitle_json = []
+                    pass
+            else:
+                WAS_WARNING = True
+                warnings.warn(f'subtitles {subtitle["@id"]} could not be parsed')
+                continue
+            subtitle_name = subtitle['@id'].split('/')[-1].replace('.vtt', '').replace('.srt', '')
+            try:
+                add_subtitles(content_id, subtitle_json, owner_headers, FILE_VERSION, subtitle_name)
+            except KeyError as e:
+                raise IOError(str(subtitle)) from e
 
 
 if __name__ == '__main__':
-    admin_sess_id = get_yvideo_sess_id(args.admin, dev=not args.production)
-    admin_headers = {'session-id': admin_sess_id}
-    admin_user_id = get_yvideo_user_id(headers=admin_headers)
-    print('Y-video admin user_id:', admin_user_id)
+    TIMESTAMP = datetime.now().isoformat(timespec='seconds')
+    print('Sending output to {TIMESTAMP}.log...')
 
-    migrate_collection(args)
-    cache_glob = f'/tmp/hummedia_migration/{args.collection}_*'
-    cache_dirs = glob(cache_glob)
-    print(cache_dirs, f'(taken from {cache_glob})')
-    cleanup = input('Delete the directories listed above? (y/N) ')
-    if cleanup in {'Y', 'y', 'yes', 'Yes'}:
-        for cache_dir in cache_dirs:
-            rmtree(cache_dir)
-    if WAS_WARNING:
-        print('There were warnings. Search the output for "UserWarning".')
+    with open(f'{TIMESTAMP}.log', 'w') as log_file, open(f'{TIMESTAMP}-complete.txt', 'w') as c_file, open(f'{TIMESTAMP}-partial.txt', 'w') as p_file:
+        log_file = sys.stdout  # override log_file
+        print(args, file=log_file)
+        print(BATCH_IDS, file=log_file)
+
+        admin_sess_id = get_yvideo_sess_id(args.admin, dev=not args.production)
+        admin_headers = {'session-id': admin_sess_id}
+        admin_user_id = get_yvideo_user_id(headers=admin_headers)
+        print('Y-video admin user_id:', admin_user_id, file=log_file)
+
+        with webdriver.Chrome() as wd:
+            wd.implicitly_wait(20)  # seconds
+            wd.get('https://hummedia.byu.edu')
+            try:
+                WebDriverWait(wd, 3).until(EC.alert_is_present(),
+                                           'Timed out waiting for PA creation ' +
+                                           'confirmation popup to appear.')
+                hummedia_alert = wd.switch_to.alert
+                hummedia_alert.accept()
+            except TimeoutException:
+                pass
+            wd.find_element(By.ID, 'login-link').click()
+            wd.find_element(By.ID, 'username').send_keys(migration_config.admin)
+            wd.find_element(By.ID, 'pword').send_keys(migration_config.password, Keys.ENTER)
+            input('Ensure that you are logged in to hummedia, then press [enter]. ')
+
+            for collection in BATCH_IDS:
+                args.collection = collection
+                try:
+                    migrate_collection(args)
+                    print(args.collection, file=c_file, flush=True)
+                except IOError:
+                    print(args.collection, file=p_file, flush=True)
+                finally:
+                    cache_glob = f'/tmp/hummedia_migration/{args.collection}_*'
+                    cache_dirs = glob(cache_glob)
+                    if (args.batch is not None
+                            or alert()  # always Falsey
+                            or input(f'Delete {cache_dirs} (taken from {cache_glob})? (y/N) ') in {'Y', 'y', 'yes', 'Yes'}):
+                        for cache_dir in cache_dirs:
+                            rmtree(cache_dir)
+                if WAS_WARNING:
+                    print(f'There were warnings for {collection}. Search the output for "UserWarning".', file=log_file)
+                WAS_WARNING = False
+    subprocess.run(['spd-say', '-t', 'female1', 'The dishes are done!'])

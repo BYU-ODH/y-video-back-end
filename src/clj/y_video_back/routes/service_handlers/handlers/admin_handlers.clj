@@ -35,9 +35,9 @@
                                   (db/read-all-pattern :collections-undeleted
                                                        [:collection-name]
                                                        (str "%" term "%")))
-                    res (map #(into % {:username (if (nil? (:username (users/READ (:owner %))))
-                                                   ""
-                                                   (:username (users/READ (:owner %))))})
+                    res (map #(into % (let [owner (users/READ (:owner %))]
+                                        {:username (-> owner :username str)
+                                         :account-name (-> owner :account-name str)}))
                              coll-res)]
                 {:status 200
                  :body res}))})
@@ -85,7 +85,8 @@
 
 (def search-by-resource
   {:summary "Searches resources by search term"
-   :permission-level "instructor"
+   :permission-level "student"
+   :role-level "ta"
    :parameters {:header {:session-id uuid?}
                 :path {:term string?}}
    :responses {200 {:body [models/resource]}}
