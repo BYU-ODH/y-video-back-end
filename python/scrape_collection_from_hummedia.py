@@ -27,6 +27,7 @@ import requests
 from selenium import webdriver
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 import webvtt
@@ -669,7 +670,8 @@ if __name__ == '__main__':
             except TimeoutException:
                 pass
             wd.find_element(By.ID, 'login-link').click()
-            wd.find_element(By.ID, 'username').click()
+            wd.find_element(By.ID, 'username').send_keys(migration_config.admin)
+            wd.find_element(By.ID, 'pword').send_keys(migration_config.password, Keys.ENTER)
             input('Ensure that you are logged in to hummedia, then press [enter]. ')
 
             for collection in BATCH_IDS:
