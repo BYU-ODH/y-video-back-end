@@ -78,6 +78,7 @@
         temp-file (java.io.File/createTempFile file-name file-ext (io/file (-> env :FILES :test-temp)))]
     (io/copy (io/file file-path) temp-file)
     temp-file))
+;; (def file-path-raw "small_test_video.mp4")
 
 (defn get-filecontent
   "Generates filecontent to be included in file routes"
