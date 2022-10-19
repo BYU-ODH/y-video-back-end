@@ -29,7 +29,6 @@
 (deftest cas-redirect
   (testing "no login, access home page"
     (let [res (app (request :get "/"))]
-      (is (false? res))
       (is (= 200 (:status res)))
       (is (includes? (-> res :body str) "clj_session_id=\"\""))))
   (testing "no login, access api/ping"
