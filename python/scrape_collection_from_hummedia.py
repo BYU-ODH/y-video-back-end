@@ -83,7 +83,12 @@ WAS_WARNING = False  # If there is a warning, give message at the end to search 
 
 
 def alert():
-    subprocess.run(['spd-say', '-t', 'female1', 'migration needs attention'])
+    try:
+        subprocess.run(['spd-say', '-t', 'female1', 'migration needs attention'])
+    except FileNotFoundError:
+        subprocess.run(['say', 'migration needs attention'])
+    except:
+        print('\a')
 
 
 def add_yvideo_user(username, headers):
