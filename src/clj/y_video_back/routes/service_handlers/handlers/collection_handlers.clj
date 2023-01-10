@@ -188,7 +188,7 @@
 (def collection-get-all-courses
   {:summary "Retrieves all the courses for the specified collection"
    :permission-level "lab-assistant"
-   :role-level "instructor"
+   :role-level "ta"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
    :responses {200 {:body [models/course]}
@@ -199,17 +199,10 @@
 (def collection-get-all-users
   {:summary "Retrieves all users for the specified collection"
    :permission-level "lab-assistant"
-   :role-level "instructor"
+   :role-level "ta"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
    :responses {200 {:body [(assoc models/user :account-role int?)]}
                404 (:body {:message string?})}
    :handler (fn [{{{:keys [id]} :path} :parameters}]
               (methods/collection-get-all-users id))})
-
-
-
-
-
-
-

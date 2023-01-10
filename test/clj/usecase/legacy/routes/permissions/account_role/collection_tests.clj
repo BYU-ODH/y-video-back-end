@@ -794,7 +794,7 @@
           user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "ta")
           res (rp/collection-id-courses (uc/user-id-to-session-id (:id user-one))
                                         (:id coll-one))]
-      (is (= 403 (:status res)))))
+      (is (= 200 (:status res)))))
   (testing "student, collection-id-courses, ta via course"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -803,7 +803,7 @@
           coll-crse-add (db-pop/add-coll-crse-assoc (:id coll-one) (:id crse-one))
           res (rp/collection-id-courses (uc/user-id-to-session-id (:id user-one))
                                         (:id coll-one))]
-      (is (= 403 (:status res)))))
+      (is (= 200 (:status res)))))
   (testing "student, collection-id-courses, student via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -867,7 +867,7 @@
           user-coll-add (db-pop/add-user-coll-assoc (:username user-one) (:id coll-one) "ta")
           res (rp/collection-id-users (uc/user-id-to-session-id (:id user-one))
                                       (:id coll-one))]
-      (is (= 403 (:status res)))))
+      (is (= 200 (:status res)))))
   (testing "student, collection-id-users, ta via course"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -876,7 +876,7 @@
           coll-crse-add (db-pop/add-coll-crse-assoc (:id coll-one) (:id crse-one))
           res (rp/collection-id-users (uc/user-id-to-session-id (:id user-one))
                                       (:id coll-one))]
-      (is (= 403 (:status res)))))
+      (is (= 200 (:status res)))))
   (testing "student, collection-id-users, student via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
