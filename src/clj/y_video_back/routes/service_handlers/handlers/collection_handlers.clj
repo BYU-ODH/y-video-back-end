@@ -114,7 +114,7 @@
 (def collection-remove-user
   {:summary "Removes user from specified collection"
    :permission-level "lab-assistant"
-   :role-level "instructor"
+   :role-level "ta"
    :bypass-permission true
    :permission-note "If collection is public, users may remove self from collection."
    :parameters {:header {:session-id uuid?}
@@ -156,7 +156,7 @@
 (def collection-remove-course
   {:summary "Removes course from specified collection"
    :permission-level "lab-assistant"
-   :role-level "instructor"
+   :role-level "ta"
    :permission-note "Instructors must contact lab-assistants to remove a course from a public collection. This will likely be a temporary fix."
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?} :body {:course-id uuid?}}
