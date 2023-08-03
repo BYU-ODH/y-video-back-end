@@ -45,18 +45,24 @@
                 {:status 500
                  :body {:message "username already taken"}}
                 {:status 200
-                 :body (let [body body
-                             byu-data (persons/get-user-data (:username body))
+                 :body (let [byu-data (persons/get-user-data (:username body))
                              res (assoc body
                                         :account-name (get byu-data :full-name)
-                                        :account-type (int (:account-type byu-data))
+                                        :account-type (int (:account-type byu-data)) ;; I hate these magic numbers, though it's the service's fault and not ours...
                                         :email (get byu-data :email))]
                               (if (get byu-data :byu-id) 
                                 {:message "1 user created"
                                  :id (utils/get-id (users/CREATE res))}
                                 {:message "username not created invalid BYU username" 
                                  :id "-"}))}))})
-                 
+(comment
+  (let [username "a0315200"
+        u2 "torysa"]
+    (persons/get-user-data username)
+    ;; private account, so...
+    ;; {:full-name "a0315200 no_name", :byu-id nil, :email "a0315200@yvideobeta.byu.edu", :account-type 4, :person-id "000000000"}
+      )
+)                 
 
 (def user-get-by-id
   {:summary "Retrieves specified user"
