@@ -55,3 +55,4 @@ resources/public/static/cat_sleep.mp4
 /.clj-kondo
 *.webm
 __pycache__
+/env/dev/resources/config.edn.2023220
