@@ -61,7 +61,7 @@
     ;; (persons/get-user-data username)
     ;; private account, so...
     ;; {:full-name "a0315200 no_name", :byu-id nil, :email "a0315200@yvideobeta.byu.edu", :account-type 4, :person-id "000000000"}
-    (persons/get-user-data u2)
+    (persons/get-user-data username)
     ;; {:full-name "Tory Anderson", :byu-id "199733034", :email "tory_anderson@byu.edu", :account-type 3, :person-id "081270232"}
       )
 )                 
