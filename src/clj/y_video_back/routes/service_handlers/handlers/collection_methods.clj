@@ -180,6 +180,22 @@
        :body {:content res-valid
               :expired-content res-expired}})))
 
+
+(comment
+  "problem  with this"
+  {:description "In 1912 London, a young working mother is galvanized into radical political activism supporting the right for women to vote, and is willing to meet violence with violence to achieve this end.", :tags "", :allow-captions true, :deleted nil, :file-id #uuid "00000000-0000-0000-0000-000000000000", :collection-id #uuid "61889ee9-aadb-48cb-971e-03087f45aeec", :last-verified nil, :updated #time/instant "2022-08-17T13:43:02.600Z", :words "", :resource-id #uuid "6f304e9d-826d-42ce-a3d1-6ed79334f2c6", :created #time/instant "2022-08-15T21:46:38.321Z", :allow-definitions true, :title "Suffragette", :thumbnail "empty", :id #uuid "fbe561a5-a12a-4a16-8f36-1615e99a3619", :file-version "Cakchiquel", :url "", :clips "", :content-type "video", :annotations "[]", :published true, :allow-notes true, :views 0}
+  (let [id-of-resource #uuid "fbe561a5-a12a-4a16-8f36-1615e99a3619" ]
+    )
+)
+(comment
+  (let [bad-collection-id "61889ee9-aadb-48cb-971e-03087f45aeec"
+        id (java.util.UUID/fromString bad-collection-id)]
+    (collection-get-all-contents uid)
+    )
+  ;; 1. Unhandled java.lang.IllegalArgumentException
+  ;; No implementation of method: :inst-ms* of protocol: #'clojure.core/Inst found for class: nil
+
+  )
 (defn collection-get-all-courses
   [id]
   (if (not (collections/EXISTS? id))
