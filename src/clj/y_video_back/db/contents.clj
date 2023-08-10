@@ -24,9 +24,3 @@
                           res-without-ver)]
     (doall res-with-ver)))
 (def INCR-VIEWS (partial db/increment-field :contents :views))
-
-(comment
-  (let [broken-id #uuid "fbe561a5-a12a-4a16-8f36-1615e99a3619" ]
-    (READ-BY-COLLECTION-WITH-LAST-VERIFIED broken-id)
-    )
-)

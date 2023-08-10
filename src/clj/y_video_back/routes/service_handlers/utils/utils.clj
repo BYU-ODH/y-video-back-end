@@ -58,12 +58,6 @@
     (> (inst-ms last-verified)
        (- (System/currentTimeMillis) (* 3600000 (-> env :resource-access-expire-after))))))
 
-(comment
-  (let [bad-collection-id "61889ee9-aadb-48cb-971e-03087f45aeec"
-        uuid (java.util.UUID/fromString bad-collection-id)]
-    (collections/READ uuid)
-    )
-  )
 
 (defn has-resource-permission
   "Checks if user with username has permission to add resource to content. Body must contain resource-id and collection-id. Must verify collection and resource before calling."
