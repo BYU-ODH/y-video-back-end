@@ -31,7 +31,7 @@ jobs:
     - run: git clone https://github.com/BYU-ODH/yvideo-client.git
     
     - name: Install ffmpeg / ffmprob
-      run: sudo apt-get install ffmpeg
+      run: apt-get update && apt-get install ffmpeg
 
     - name: Install node dependencies for front-end
       working-directory: ./yvideo-client
