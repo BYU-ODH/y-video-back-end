@@ -54,8 +54,9 @@
 (defn is-valid-access-time
   "Checks whether resource-access last-verified time is recent enough"
   [last-verified]
-  (> (inst-ms last-verified)
-     (- (System/currentTimeMillis) (* 3600000 (-> env :resource-access-expire-after)))))
+  (when last-verified
+    (> (inst-ms last-verified)
+       (- (System/currentTimeMillis) (* 3600000 (-> env :resource-access-expire-after))))))
 
 
 (defn has-resource-permission
