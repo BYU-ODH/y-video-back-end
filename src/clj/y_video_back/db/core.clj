@@ -206,7 +206,10 @@
       (> (count column-keywords) 0) (assoc :where (into [:or] (map #(vector := %1 %2) column-keywords column-vals)))
       true sql/format
       ;;true (spy)
-      true dbr)))
+      true dbr)
+    (throw (ex-info "wrong arg syntax. Args need to be colls" {:cause :checking-for-arg-length-match
+                                                               :column-keywords column-keywords
+                                                               :column-vals column-vals}))))
 
 
 (defn delete-where-and
