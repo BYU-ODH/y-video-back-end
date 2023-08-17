@@ -185,13 +185,13 @@
 (defn read-where-and
   "Get entry from table by column(s), conditionals joined by AND"
   [table-keyword [& column-keywords] [& column-vals] &[select-field-keys]]
-  (if (= (count column-keywords) (count column-vals))
+  (when (= (count column-keywords) (count column-vals))
     (cond-> {:select (or select-field-keys [:*])
              :from [table-keyword]}
-      (> (count column-keywords) 0) (assoc :where (into [:and] (map #(vector := %1 %2) column-keywords column-vals)))
+      (> (count column-keywords) 0) (assoc :where (into [:and] (map #(vector := %1 %2) column-keywords column-vals))) ;; could this be done with zipmap?
       true sql/format
-      ;true (spy) ; <-- prints sql code just before it's executed
-      true dbr)))
+      #_#_true (spy) ; <-- prints sql code just before it's executed
+      #_#_true dbr)))
 
 (defn read-where-or
   "Get entry from table by column(s), conditionals joined by OR"
