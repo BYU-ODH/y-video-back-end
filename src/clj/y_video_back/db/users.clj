@@ -3,8 +3,19 @@
 
 (def CREATE (partial db/CREATE :users))
 (def READ  (partial db/READ :users-undeleted))
-(def READ-BY-USERNAME (partial db/read-where-and :users-undeleted [:username]))
-(def READ-BY-EMAIL (partial db/read-where-and :users-undeleted [:email]))
+
+(defn READ-BY-USERNAME
+  "READ user by username `un`, converting to a collection if necessary"
+  [un]
+  (let [un (if (coll? un) un [un])]
+    (db/read-where-and :users-undeleted [:username] un)))
+
+(defn READ-BY-EMAIL
+  "READ user by username `un`, converting to a collection if necessary"
+  [em]
+  (let [em (if (coll? em) em [em])]
+    (db/read-where-and :users-undeleted [:email] em)))
+
 (def READ-ALL  (partial db/READ :users))
 (def UPDATE (partial db/UPDATE :users))
 (def DELETE (partial db/mark-deleted :users))
