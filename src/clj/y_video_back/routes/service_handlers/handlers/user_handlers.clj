@@ -37,10 +37,10 @@
   [username]
   (let [yvideo-user-exists? (not-empty (users/READ-BY-USERNAME username)) 
         byu-data (when-not yvideo-user-exists? (persons/get-user-data username))
-        nominal-user-data       {:username username
-                                 :account-name (get byu-data :full-name)
-                                 :account-type (int (:account-type byu-data)) ;; I hate these magic numbers, though it's the service's fault and not ours...
-                                 :email (get byu-data :email)}] 
+        nominal-user-data  (when-let [d byu-data] {:username username
+                                                   :account-name (:full-name d)
+                                                   :account-type (int (:account-type d)) ;; I hate these magic numbers, though it's the service's fault and not ours...
+                                                   :email (:email d)})] 
     (when-not yvideo-user-exists?
       {:db-item (users/CREATE nominal-user-data)
        :user-data nominal-user-data})))
@@ -76,7 +76,7 @@
         #_#_payload {:parameters {:body {:username username}}}
         #_#_payload {:parameters {:body {:username u2}}}
         #_#_byu-data (persons/get-user-data username)
-        pre-payload-first-run (_user-create-from-byu username) 
+        pre-payload-first-run (_user-create-from-byu username)
         ]
     pre-payload-first-run
 ;; {:db-item {:deleted nil, :email "a0315200@yvideobeta.byu.edu", :account_type 0, :updated nil, :last_login nil, :username "a0315200", :created #time/instant "2023-08-17T22:58:46.011Z", :byu_person_id "000000000", :last_person_api #time/instant "2023-08-17T22:58:46.011Z", :id #uuid "6ea530c3-c26f-45f7-98c2-adcc8d6adc0d", :last_course_api #time/instant "2023-08-17T22:58:46.011Z", :account_name "a0315200 no_name"}, :user-data {:username "a0315200", :account-name "a0315200 no_name", :account-type 0, :email "a0315200@yvideobeta.byu.edu"}}
