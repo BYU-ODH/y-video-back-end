@@ -35,7 +35,7 @@
 (defn _user-create-from-byu
   "given `username` netid, when the user is new, query for their BYU data and use it to return a constructed new user"
   [username]
-  (let [yvideo-user-exists? (not-empty (users/READ-BY-USERNAME username)) ;; this fails to find private account a0315200
+  (let [yvideo-user-exists? (not-empty (users/READ-BY-USERNAME username)) 
         byu-data (when-not yvideo-user-exists? (persons/get-user-data username))
         nominal-user-data       {:username username
                                  :account-name (get byu-data :full-name)
