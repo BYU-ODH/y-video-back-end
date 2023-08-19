@@ -61,7 +61,7 @@
                    :body (let [response (merge body (:user-data user-data-from-byu))]
                            (if user-data-from-byu ;; this will be falsey if we we already had the user so didn't contact BYU
                                   {:message "1 user created"
-                                   :id (utils/get-id (:db-item response)) ;; This will fail if we've added a field it doesn't want
+                                   :id (utils/get-id (:db-item response)) ;; TODO This will fail if we've added a field it doesn't want
                                    }
                                   {:message "username not created invalid BYU username" 
                                    :id "-"}))}
