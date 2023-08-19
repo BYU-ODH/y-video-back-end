@@ -112,3 +112,11 @@
   (is (= (frequencies (get-in env [:test-user
                                    :courses]))
          (frequencies (map remove-course-db-fields (user-courses-assoc/READ-COURSES-BY-USER user-id))))))
+
+(deftest _user-create-from-byu
+  (testing "Works for new public users"
+    (is false))
+  (testing "works for new private users"
+    (is false))
+  (testing "Does nothing for existing users"
+     (is false)))
