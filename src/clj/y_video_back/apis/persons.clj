@@ -45,7 +45,7 @@
   "Gets data from AcademicRecordsStudentStatusInfo"
   [netid] ;; (def netid "nbown16") (def netid "rjr45")
   (if (= (:front-end-netid env) netid)
-    {:full-name (str netid " no_name")
+    {:full-name netid
      :byu-id nil
      :email (str netid "@yvideobeta.byu.edu")
      :account-type 0
@@ -67,7 +67,7 @@
          :account-type account-type
          :person-id person-id})
       (catch Exception e
-        {:full-name (str netid " no_name")
+        {:full-name netid
          :byu-id nil
          :email (str netid "@yvideobeta.byu.edu")
          :account-type (if (:test env) 3 4)
