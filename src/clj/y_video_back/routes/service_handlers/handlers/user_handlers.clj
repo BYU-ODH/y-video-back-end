@@ -83,9 +83,6 @@
 
     ;; (persons/get-user-data username)
     ;; private account, so...
-    ;; {:full-name "a0315200 no_name", :byu-id nil, :email "a0315200@yvideobeta.byu.edu", :account-type 4, :person-id "000000000"}
-    ;;(persons/get-user-data username)
-    ;; 2023228 ;{:full-name "a0315200 no_name", :byu-id nil, :email "a0315200@yvideobeta.byu.edu", :account-type 0, :person-id "000000000"}
     ;(user-create-from-byu payload)
     ;(user-get-by-id u2)
       )

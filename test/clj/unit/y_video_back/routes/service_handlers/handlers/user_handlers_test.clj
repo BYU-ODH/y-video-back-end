@@ -10,33 +10,26 @@
             [legacy.utils.utils :as ut]
             [taoensso.timbre :as log]))
 
-(use-fixtures
-  :once
-  (fn [f]
-    (mount/start #'y-video-back.config/env
-                 #'y-video-back.handler/app
-                 #'y-video-back.db.core/*db*)
-    (ut/renew-db)
-    (f)))
-
 (tcore/basic-transaction-fixtures
-  (mount.core/start #'y-video-back.handler/app))
+  (mount/start #'y-video-back.handler/app))
 
 (deftest _user-create-from-byu
   (let [get-user-count (fn [] (count (users/READ-ALL)))
-        pre-user-count (get-user-count)
-        private-user-data {:full-name "noname no_name", :byu-id nil, :email "noname@yvideobeta.byu.edu", :account-type 4, :person-id "000000000"}
-        public-user-data "TODO"
-        ]
-    
-    (log/info {:pre-user-count pre-user-count})
+        pre-user-count (atom (get-user-count))
+        private-user-id "a0315200"
+        public-user-id "torysa"]    
+    (log/info {:pre-user-count @pre-user-count})
     (testing "Initializing"
-       (is (= (get-user-count) pre-user-count)))
-
-    (testing "Works for new public users"
-      (is false))
-    (testing "works for new private users"
-      (is false))
+       (is (= (get-user-count) @pre-user-count)))
+    (testing "user created for new public users"
+      (subj/_user-create-from-byu public-user-id)
+      (swap! pre-user-count inc)
+      (is (= @pre-user-count (get-user-count)) "One new user created for public"))
+    (testing "user created for new private users"
+      (subj/_user-create-from-byu private-user-id)
+      (swap! pre-user-count inc)
+      (is (= @pre-user-count (get-user-count)) "one new user created for private"))
     (testing "Does nothing for existing users"
-       (is false))
-      ))
+      (subj/_user-create-from-byu private-user-id)
+      (subj/_user-create-from-byu public-user-id)
+      (is (= @pre-user-count (get-user-count)) "no new user created with duplicate public or private"))))
