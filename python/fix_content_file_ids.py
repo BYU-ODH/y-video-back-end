@@ -3,10 +3,9 @@ import json
 import psycopg2
 from tqdm import tqdm
 
-
 UUID_ZEROS = '00000000-0000-0000-0000-000000000000'
 
-with open('fix_content_file_ids.json') as f:
+with open('db_config.json') as f:
     config = json.loads(f.read())
 
 connection = psycopg2.connect(host=config['server'],

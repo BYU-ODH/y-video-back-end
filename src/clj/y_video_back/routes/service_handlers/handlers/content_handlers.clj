@@ -87,7 +87,8 @@
 
 (def content-delete
   {:summary "Deletes the specified content"
-   :permission-level "admin"
+   :permission-level "lab-assistant"
+   :role-level "ta"
    :parameters {:header {:session-id uuid?}
                 :path {:id uuid?}}
    :responses {200 {:body {:message string?}}
