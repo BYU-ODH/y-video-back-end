@@ -27,7 +27,7 @@
 
 (deftest create-user-on-login
   (testing "create user from empty db"
-    (is (= nil (users/READ-BY-USERNAME "bagginses")))
+    (is (empty? (users/READ-BY-USERNAME "bagginses")))
     (let [res (rp/login-current-user "bagginses")]
       (is (= 200 (:status res))))))
 
