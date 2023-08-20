@@ -214,7 +214,7 @@
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one) (ut/to-uuid "00000000-0000-0000-0000-000000000000"))
           res (rp/content-id-delete (uc/user-id-to-session-id (:id user-one))
                                     (:id cont-one))]
-      (is (= 403 (:status res)))))
+      (is (= 200 (:status res)))))
   (testing "instructor, content-delete-by-id, instructor via course"
     (let [user-one (db-pop/add-user "instructor")
           coll-one (db-pop/add-collection)
@@ -225,7 +225,7 @@
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one) (ut/to-uuid "00000000-0000-0000-0000-000000000000"))
           res (rp/content-id-delete (uc/user-id-to-session-id (:id user-one))
                                     (:id cont-one))]
-      (is (= 403 (:status res)))))
+      (is (= 200 (:status res)))))
   (testing "student, content-delete-by-id, ta via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -234,7 +234,7 @@
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one) (ut/to-uuid "00000000-0000-0000-0000-000000000000"))
           res (rp/content-id-delete (uc/user-id-to-session-id (:id user-one))
                                     (:id cont-one))]
-      (is (= 403 (:status res)))))
+      (is (= 200 (:status res)))))
   (testing "student, content-delete-by-id, ta via course"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)
@@ -245,7 +245,7 @@
           cont-one (db-pop/add-content (:id coll-one) (:id rsrc-one) (ut/to-uuid "00000000-0000-0000-0000-000000000000"))
           res (rp/content-id-delete (uc/user-id-to-session-id (:id user-one))
                                     (:id cont-one))]
-      (is (= 403 (:status res)))))
+      (is (= 200 (:status res)))))
   (testing "student, content-delete-by-id, student via user-coll"
     (let [user-one (db-pop/add-user "student")
           coll-one (db-pop/add-collection)

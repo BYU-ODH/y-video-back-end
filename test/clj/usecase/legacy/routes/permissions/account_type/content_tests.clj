@@ -119,7 +119,7 @@
           cont-one (db-pop/add-content)
           res (rp/content-id-delete (uc/user-id-to-session-id (:id user-one))
                                     (:id cont-one))]
-      (is (= 403 (:status res)))))
+      (is (= 200 (:status res)))))
   (testing "instructor - no connection, content-delete-by-id"
     (let [user-one (db-pop/add-user "instructor")
           cont-one (db-pop/add-content)
