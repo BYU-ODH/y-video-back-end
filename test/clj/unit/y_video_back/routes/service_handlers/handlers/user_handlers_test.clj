@@ -16,8 +16,8 @@
 (deftest _user-create-from-byu
   (let [get-user-count (fn [] (count (users/READ-ALL)))
         pre-user-count (atom (get-user-count))
-        private-user-id "a0315200"
-        public-user-id "torysa"]    
+        private-user-id "a0315200" ;; TODO these usernames need to be disassociated with any particular user
+        public-user-id "torysa"]
     (log/info {:pre-user-count @pre-user-count})
     (testing "Initializing"
        (is (= (get-user-count) @pre-user-count)))
