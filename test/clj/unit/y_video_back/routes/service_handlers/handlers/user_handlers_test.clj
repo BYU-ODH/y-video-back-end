@@ -11,7 +11,10 @@
             [taoensso.timbre :as log]))
 
 (tcore/basic-transaction-fixtures
-  (mount/start #'y-video-back.handler/app))
+ (mount/start #'y-video-back.handler/env)
+ (mount/start #'y-video-back.handler/db) 
+ (mount/start #'y-video-back.handler/app)
+ (ut/renew-db))
 
 (deftest _user-create-from-byu
   (let [get-user-count (fn [] (count (users/READ-ALL)))
