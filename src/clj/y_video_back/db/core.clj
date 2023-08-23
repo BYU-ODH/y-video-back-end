@@ -188,10 +188,14 @@
   (if (= (count column-keywords) (count column-vals))
     (cond-> {:select (or select-field-keys [:*])
              :from [table-keyword]}
-      (> (count column-keywords) 0) (assoc :where (into [:and] (map #(vector := %1 %2) column-keywords column-vals)))
+      (> (count column-keywords) 0) (assoc :where (into [:and] (map #(vector := %1 %2) column-keywords column-vals))) ;; could this be done with zipmap?
       true sql/format
-      ;true (spy) ; <-- prints sql code just before it's executed
-      true dbr)))
+      #_#_true (spy) ; <-- prints sql code just before it's executed
+      true dbr)
+    (throw (ex-info "wrong arg syntax. Args need to be colls" {:cause :checking-for-arg-length-match
+                                                            :column-keywords column-keywords
+                                                            :column-vals column-vals}))
+    ))
 
 (defn read-where-or
   "Get entry from table by column(s), conditionals joined by OR"
@@ -202,7 +206,10 @@
       (> (count column-keywords) 0) (assoc :where (into [:or] (map #(vector := %1 %2) column-keywords column-vals)))
       true sql/format
       ;;true (spy)
-      true dbr)))
+      true dbr)
+    (throw (ex-info "wrong arg syntax. Args need to be colls" {:cause :checking-for-arg-length-match
+                                                               :column-keywords column-keywords
+                                                               :column-vals column-vals}))))
 
 
 (defn delete-where-and

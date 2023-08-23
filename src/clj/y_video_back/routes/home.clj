@@ -16,17 +16,26 @@
 (defn hello-page [request]
   (layout/render request "hello.html"))
 
-(defn index-page [request]
+(defn index-page [{:keys [username] :as request}]
   (println (get-in request [:query-params]))
   (println (get-in request [:query-params]))
-  (if (nil? (:username request))
+  (if-not username
       (layout/render request "index.html" {:logged-in false})
-    (let [session-id (uc/get-session-id (:username request))]
-      (println "checking user courses")
-      (check-courses-with-api (:username request))
-      (println (str "user from CAS: " (:username request)))
-      (println (str "serving session-id from home.clj: " session-id))
-      (layout/render (into request {:session-id session-id}) "index.html" {:logged-in true}))))
+    (let [session-id (uc/get-session-id username)]
+      ;(println "checking user courses")
+      (check-courses-with-api username)
+      ;(println (str "user from CAS: " username))
+      ;(println (str "serving session-id from home.clj: " session-id))
+      (layout/render (assoc request :session-id session-id) "index.html" {:logged-in true}))))
+
+(comment
+  (let [username "a0315200"
+        u2 "torysa"]
+    #_(uc/get-session-id username)
+    (index-page {:username username})
+    ;; this appears to work fine
+      )
+)
 
 (defn get-routes-r
   "Recursive helper for get-routes"

@@ -32,6 +32,19 @@
                         :id (utils/get-id (users/CREATE body))}}))})
 
 
+(defn _user-create-from-byu
+  "given `username` netid, when the user is new, query for their BYU data and use it to return a constructed new user"
+  [username]
+  (let [yvideo-user-exists? (not-empty (users/READ-BY-USERNAME username)) 
+        byu-data (when-not yvideo-user-exists? (persons/get-user-data username))
+        nominal-user-data  (when-let [d byu-data] {:username username
+                                                   :account-name (:full-name d)
+                                                   :account-type (int (:account-type d)) ;; I hate these magic numbers, though it's the service's fault and not ours...
+                                                   :email (:email d)})] 
+    (when-not yvideo-user-exists?
+      {:db-item (users/CREATE nominal-user-data)
+       :user-data nominal-user-data})))
+
 (def user-create-from-byu
   {:summary "Creates a new user only if byu data is valid"
    :permission-level "admin"
@@ -40,23 +53,40 @@
    :responses {200 {:body {:message string?
                            :id string?}}
                500 {:body {:message string?}}}
-   :handler (fn [{{:keys [body]} :parameters}]
-              (if-not (= '() (users/READ-BY-USERNAME [(:username body)]))
-                {:status 500
-                 :body {:message "username already taken"}}
-                {:status 200
-                 :body (let [body body
-                             byu-data (persons/get-user-data (:username body))
-                             res (assoc body
-                                        :account-name (get byu-data :full-name)
-                                        :account-type (int (:account-type byu-data))
-                                        :email (get byu-data :email))]
-                              (if (get byu-data :byu-id) 
-                                {:message "1 user created"
-                                 :id (utils/get-id (users/CREATE res))}
-                                {:message "username not created invalid BYU username" 
-                                 :id "-"}))}))})
-                 
+   :handler (fn [request]
+              (let [body (:body request)
+                    username (get-in body [:parameters :username])]
+                (if-let [user-data-from-byu (_user-create-from-byu username)]                  
+                  {:status 200
+                   :body (let [response (merge body (:user-data user-data-from-byu))]
+                           (if user-data-from-byu ;; this will be falsey if we we already had the user so didn't contact BYU
+                                  {:message "1 user created"
+                                   :id (utils/get-id (:db-item response)) ;; TODO This will fail if we've added a field it doesn't want
+                                   }
+                                  {:message "username not created invalid BYU username" 
+                                   :id "-"}))}
+                  
+                  {:status 500
+                   :body {:message "username already taken"}}
+                  )
+                              ))})
+(comment
+  (let [username "a0315200"
+        u2 "torysa"
+        #_#_payload {:parameters {:body {:username username}}}
+        #_#_payload {:parameters {:body {:username u2}}}
+        #_#_byu-data (persons/get-user-data username)
+        pre-payload-first-run (_user-create-from-byu username)
+        ]
+    pre-payload-first-run
+;; {:db-item {:deleted nil, :email "a0315200@yvideobeta.byu.edu", :account_type 0, :updated nil, :last_login nil, :username "a0315200", :created #time/instant "2023-08-17T22:58:46.011Z", :byu_person_id "000000000", :last_person_api #time/instant "2023-08-17T22:58:46.011Z", :id #uuid "6ea530c3-c26f-45f7-98c2-adcc8d6adc0d", :last_course_api #time/instant "2023-08-17T22:58:46.011Z", :account_name "a0315200 no_name"}, :user-data {:username "a0315200", :account-name "a0315200 no_name", :account-type 0, :email "a0315200@yvideobeta.byu.edu"}}
+
+    ;; (persons/get-user-data username)
+    ;; private account, so...
+    ;(user-create-from-byu payload) 
+    ;(user-get-by-id u2)
+      )
+)                 
 
 (def user-get-by-id
   {:summary "Retrieves specified user"
