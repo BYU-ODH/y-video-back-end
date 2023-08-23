@@ -115,11 +115,11 @@
           user-one (db-pop/add-user)
           user-two (db-pop/add-user)
           user-thr (db-pop/add-user)]
-      (is (= '() (user-collections-assoc/READ-BY-COLLECTION (:id coll-one))))
+      (is (= '() (user-collections-assoc/READ-BY-COLLECTION (:id coll-one))) "No users added to the collection yet")
       (let [res (rp/collection-id-add-users (:id coll-one)
                                             [(:username user-one) (:username user-two) (:username user-thr)]
                                             0)]
-        (is (= 200 (:status res)))
+        (is (= 200 (:status res)) "successful addition to the collection")
         (is (= (frequencies (map #(into {}
                                         {:collection-id (:id coll-one)
                                          :username (:username %)
@@ -131,9 +131,9 @@
                                  (user-collections-assoc/READ-BY-COLLECTION (:id coll-one)))))))))
   (testing "add list of users to collection, not in db"
     (let [coll-one (db-pop/add-collection)
-          user-one (db-pop/get-user)
+          user-one (db-pop/get-user) ;; not added to the db
           user-two (db-pop/add-user)
-          user-thr (db-pop/get-user)
+          user-thr (db-pop/get-user) ;; not added to the db
           user-fou (db-pop/add-user)
           user-fou-add (db-pop/add-user-coll-assoc (:username user-fou) (:id coll-one) 1)]
       (is (= [{:username (:username user-fou)
@@ -370,5 +370,3 @@
                  (update :id str)
                  (list))
              (map ut/remove-db-only (m/decode-response-body res-two)))))))
-(comment
-  "rich comments may go here")
