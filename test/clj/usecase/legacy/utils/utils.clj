@@ -69,7 +69,7 @@
 
 (defn create-temp-file
   "Simulates the output from ring's wrap-multipart-params."
-  [file-path-raw]
+  [file-path-raw] ;; (def file-path-raw "small_test_video.mp4")
   (let [file-path-with-prefix (str (.toURI (io/resource file-path-raw)))
         file-path (subs file-path-with-prefix 5)
         file-name-with-ext (last (clojure.string/split file-path #"/"))
