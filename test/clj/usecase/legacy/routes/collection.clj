@@ -1,11 +1,10 @@
 (ns legacy.routes.collection
     (:require
       [y-video-back.config :refer [env]]
-      [clojure.test :refer :all]
+      [clojure.test :refer [use-fixtures deftest is testing]]
       [y-video-back.handler :refer :all]
       [legacy.db.test-util :as tcore]
       [muuntaja.core :as m]
-      [clojure.java.jdbc :as jdbc]
       [mount.core :as mount]
       [legacy.utils.model-generator :as g]
       [legacy.utils.route-proxy.proxy :as rp]
@@ -135,7 +134,7 @@
           user-two (db-pop/add-user)
           user-thr (db-pop/get-user) ;; not added to the db
           user-fou (db-pop/add-user)
-          user-fou-add (db-pop/add-user-coll-assoc (:username user-fou) (:id coll-one) 1)]
+          _user-fou-add (db-pop/add-user-coll-assoc (:username user-fou) (:id coll-one) 1)]
       (is (= [{:username (:username user-fou)
                :collection-id (:id coll-one)
                :account-role 1}]
