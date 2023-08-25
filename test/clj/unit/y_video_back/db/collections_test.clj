@@ -1,4 +1,4 @@
-(ns y-video-back.db.collections-tests
+(ns y-video-back.db.collections-test
     (:require
       [clojure.test :refer :all]
       [y-video-back.db.core :as db]

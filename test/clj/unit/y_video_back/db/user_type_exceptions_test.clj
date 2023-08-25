@@ -1,4 +1,4 @@
-(ns y-video-back.db.user-type-exceptions-tests
+(ns y-video-back.db.user-type-exceptions-test
     (:require
       [clojure.test :refer :all]
       [y-video-back.db.core :as db]

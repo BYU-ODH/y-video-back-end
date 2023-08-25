@@ -1,4 +1,4 @@
-(ns y-video-back.db.email-logs-tests
+(ns y-video-back.db.email-logs-tess
     (:require
       [clojure.test :refer :all]
       [y-video-back.db.core :as db]
