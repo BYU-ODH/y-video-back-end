@@ -9,6 +9,12 @@
   [un]
   (let [un (if (coll? un) un [un])]
     (db/read-where-and :users-undeleted [:username] un)))
+<<<<<<< HEAD
+=======
+;; (READ-BY-USERNAME "UHVFAUJCOKNQD")
+;; (READ-BY-USERNAME ["UHVFAUJCOKNQD"])
+;; (READ)
+>>>>>>> fdb0111 (changed partial to defn, so that errant call args can be caught)
 
 (defn READ-BY-EMAIL
   "READ user by username `un`, converting to a collection if necessary"
