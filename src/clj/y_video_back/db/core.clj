@@ -192,6 +192,7 @@
       true sql/format
       #_#_true (spy) ; <-- prints sql code just before it's executed
       true dbr)
+    
     (throw (ex-info "wrong arg syntax. Args need to be colls" {:cause :checking-for-arg-length-match
                                                             :column-keywords column-keywords
                                                             :column-vals column-vals}))
