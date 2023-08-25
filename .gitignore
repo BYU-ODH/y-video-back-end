@@ -16,12 +16,12 @@
 /.lsp
 /checkouts
 /classes
+/env/dev/resources/config.edn.2023220
 /lib
 /log
 /target
 Clojure REPL
 __pycache__
-_project.clj
 _project.clj
 api_config.txt
 config.py
@@ -57,18 +57,5 @@ temp.txt
 to-clojure.sh
 todo.txt
 trash
-_project.clj
-python/stress_test_api.py
-python/migration_config.py
-python/fix_content_file_ids.json
-python/content_file_ids.tsv
-resources/public/static/test_kitten.mp4
-resources/public/static/cat_sleep.mp4
-/.calva
-/.lsp
-/.clj-kondo
-*.webm
-__pycache__
-/env/dev/resources/config.edn.2023220
 upload.html
 yvideo-client
