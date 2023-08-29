@@ -21,7 +21,7 @@
 
 (declare ^:dynamic *txn*)
 
-(use-fixtures
+#_(use-fixtures
   :once
   (fn [f]
     (mount/start #'y-video-back.config/env
@@ -31,7 +31,11 @@
     (f)))
 
 (tcore/basic-transaction-fixtures
-  (mount.core/start #'y-video-back.handler/app))
+(mount/start #'y-video-back.config/env
+              #'y-video-back.handler/app
+              #'y-video-back.db.core/*db*)
+ (ut/renew-db)
+ )
 
 (deftest test-session-id-header
   (testing "coll CREATE - session id header"
