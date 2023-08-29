@@ -130,9 +130,9 @@
                                  (user-collections-assoc/READ-BY-COLLECTION (:id coll-one)))))))))
   (testing "add list of users to collection, not in db"
     (let [coll-one (db-pop/add-collection)
-          no-db-user-one (db-pop/get-user) ;; not added to the db
+          no-db-user-one (db-pop/get-user)
           user-two (db-pop/add-user)
-          no-db-user-thr (db-pop/get-user) ;; not added to the db
+          no-db-user-thr (db-pop/get-user)
           user-fou (db-pop/add-user)
           _user-fou-add (db-pop/add-user-coll-assoc (:username user-fou) (:id coll-one) 1)]
       (is (= [{:username (:username user-fou)
