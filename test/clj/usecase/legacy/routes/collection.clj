@@ -142,28 +142,29 @@
                        (ut/remove-db-only)
                        (dissoc :id))
                   (user-collections-assoc/READ-BY-COLLECTION (:id coll-one)))))
-      (is (= '() (users/READ-BY-USERNAME [(:username user-one)])))
-      (is (= '() (users/READ-BY-USERNAME [(:username user-thr)])))
+      (is (= '() (users/READ-BY-USERNAME [(:username no-db-user-one)])))
+      (is (= '() (users/READ-BY-USERNAME [(:username no-db-user-thr)])))
       (let [res (rp/collection-id-add-users (:id coll-one)
-                                            [(:username user-one) (:username user-two) (:username user-thr) (:username user-fou)]
-                                            0)]
+                                            [(:username no-db-user-one) (:username user-two) (:username no-db-user-thr) (:username user-fou)]
+                                            0)] ;; TODO this should add even the non-db users, apparently
+                                        ; TODO use mapv to remove the repeated :username, once this is working
         (is (= 200 (:status res)))
         (is (= (frequencies (map #(into {}
                                         {:collection-id (:id coll-one)
                                          :username (:username %)
                                          :account-role 0})
-                                 [user-one user-two user-thr user-fou]))
+                                 [no-db-user-one user-two no-db-user-thr user-fou]))
                (frequencies (map #(-> %
                                       (ut/remove-db-only)
                                       (dissoc :id))
                                  (user-collections-assoc/READ-BY-COLLECTION (:id coll-one)))))))
-      (is (= (:username user-two) (:username (first (users/READ-BY-USERNAME [(:username user-two)])))))
-      (is (= (:username user-fou) (:username (first (users/READ-BY-USERNAME [(:username user-fou)])))))
-      (let [user-one-res (first (users/READ-BY-USERNAME [(:username user-one)]))
-            user-thr-res (first (users/READ-BY-USERNAME [(:username user-thr)]))
-            res-one (rp/collections-by-logged-in (uc/user-id-to-session-id (:id user-one-res)))
+      (is (= (:username no-db-user-one) (:username (first (users/READ-BY-USERNAME [(:username no-db-user-one)])))) "User was not created by db-pop")
+      (is (= (:username no-db-user-thr) (:username (first (users/READ-BY-USERNAME [(:username no-db-user-thr)])))) "User was not created by db-pop")
+      (let [no-db-user-one-res (first (users/READ-BY-USERNAME [(:username no-db-user-one)]))
+            no-db-user-thr-res (first (users/READ-BY-USERNAME [(:username no-db-user-thr)]))
+            res-one (rp/collections-by-logged-in (uc/user-id-to-session-id (:id no-db-user-one-res)))
             res-two (rp/collections-by-logged-in (uc/user-id-to-session-id (:id user-two)))
-            res-thr (rp/collections-by-logged-in (uc/user-id-to-session-id (:id user-thr-res)))
+            res-thr (rp/collections-by-logged-in (uc/user-id-to-session-id (:id no-db-user-thr-res)))
             res-fou (rp/collections-by-logged-in (uc/user-id-to-session-id (:id user-fou)))]
         (is (= [{:username (:username user-fou)
                  :collection-id (:id coll-one)
