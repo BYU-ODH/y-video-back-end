@@ -70,9 +70,11 @@
   (let [lang-one (db-pop/add-language)
         lang-two (db-pop/add-language)
         lang-thr (db-pop/add-language)
+        ids-of-123 (map :id [lang-one lang-two lang-thr])
         res (rp/language-get-all)]
     (is (= 200 (:status res)))
-    (is (= (frequencies (map #(:id %) [lang-one lang-two lang-thr]))
-           (frequencies (m/decode-response-body res))))))
+    (is (= (frequencies ids-of-123)
+           (select-keys (frequencies (m/decode-response-body res)) ids-of-123))
+        "given languages are present just once")))
 
 
