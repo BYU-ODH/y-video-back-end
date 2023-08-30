@@ -1,16 +1,18 @@
 (ns legacy.routes.language
-    (:require
-      [clojure.test :refer :all]
-      [y-video-back.handler :refer :all]
-      [legacy.db.test-util :as tcore]
-      [muuntaja.core :as m]
-      [clojure.java.jdbc :as jdbc]
-      [mount.core :as mount]
-      [legacy.utils.route-proxy.proxy :as rp]
-      [y-video-back.db.core :refer [*db*] :as db]
-      [legacy.utils.utils :as ut]
-      [legacy.utils.db-populator :as db-pop]
-      [y-video-back.db.languages :as languages]))
+  (:require
+   [clojure.test :refer :all]
+   [y-video-back.handler :refer :all]
+   [legacy.db.test-util :as tcore]
+   [muuntaja.core :as m]
+   [clojure.java.jdbc :as jdbc]
+   [mount.core :as mount]
+   [legacy.utils.route-proxy.proxy :as rp]
+   [y-video-back.db.core :refer [*db*] :as db]
+   [legacy.utils.utils :as ut]
+   [legacy.utils.db-populator :as db-pop]
+   [y-video-back.db.languages :as languages]
+   [migratus.core :as migratus]
+   [y-video-back.db.migratus :as yv-migratus]))
 
 (declare ^:dynamic *txn*)
 
@@ -24,7 +26,8 @@
     (f)))
 
 (tcore/basic-transaction-fixtures
-  (mount.core/start #'y-video-back.handler/app))
+ (mount.core/start #'y-video-back.handler/app)
+ (def all-languages (languages/READ)))
 
 (deftest test-lang
   (testing "lang CREATE"
@@ -44,16 +47,23 @@
   (testing "get all languages from db (0)")
   (let [res (rp/language-get-all)]
     (is (= 200 (:status res)))
-    (is (= []
-           (m/decode-response-body res)))))
+    (is (= (count all-languages)
+           (count (m/decode-response-body res))))))
 
 (deftest lang-get-all-1
   (testing "get all languages from db (1)")
   (let [lang-one (db-pop/add-language)
+        lang-one-id (:id lang-one)
         res (rp/language-get-all)]
-    (is (= 200 (:status res)))
-    (is (= (frequencies (map #(:id %) [lang-one]))
-           (frequencies (m/decode-response-body res))))))
+    (is (= 200 (:status res)) "Response returns ok")
+    (is (= (select-keys (frequencies (m/decode-response-body res)) [lang-one-id])
+           (frequencies (map #(:id %) [lang-one]))
+           ) "The created item is present in the response")))
+(comment
+  (let [in-map {"foo" 321} ]
+    (select-keys in-map ["foo"])
+      ) ;; => {"foo" 321}
+  )
 
 (deftest lang-get-all-3
   (testing "get all languages from db (3)")

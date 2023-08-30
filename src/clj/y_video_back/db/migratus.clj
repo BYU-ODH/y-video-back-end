@@ -30,4 +30,8 @@
   (init)
   (reset))
 
+(defn down
+  [& ids]
+  (migratus/down (config) ids))
+
 #_(renew)
