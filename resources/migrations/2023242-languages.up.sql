@@ -1,7 +1,7 @@
 -- Adds languages to the database. These languages are used when creating resources
 
 INSERT INTO languages (id) VALUES
-   ('Afrikaans'),
+   ('Afrikaans')
   ,('Akan')
   ,('Albanian')
   ,('American Sign Language')
