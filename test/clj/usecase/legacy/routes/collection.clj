@@ -21,6 +21,15 @@
 
 (declare ^:dynamic *txn*)
 
+#_(use-fixtures
+  :once
+  (fn [f]
+    (mount/start #'y-video-back.config/env
+                 #'y-video-back.handler/app
+                 #'y-video-back.db.core/*db*)
+    (ut/renew-db)
+    (f)))
+
 (use-fixtures
   :once
   (fn [f]
@@ -35,7 +44,7 @@
 
 
 
-#_(tcore/basic-transaction-fixtures
+(tcore/basic-transaction-fixtures
 (mount/start #'y-video-back.config/env
               #'y-video-back.handler/app
               #'y-video-back.db.core/*db*)
