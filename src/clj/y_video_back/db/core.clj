@@ -183,11 +183,13 @@
 (defn read-where-and
   "Get entry from table by column(s), conditionals joined by AND"
   [table-keyword [& column-keywords] [& column-vals] &[select-field-keys]]
-  (let [run-the-query #(cond-> {:select (or select-field-keys [:*])
-                                :from [table-keyword]}
-                         (> (count column-keywords) 0) (assoc :where (into [:and] (map #(vector := %1 %2) column-keywords column-vals))) ;; could this be done with zipmap?
-                         true sql/format
-                         true dbr) ]
+  (let [run-the-query (fn run-read-where-and-query []
+                        (cond-> {:select (or select-field-keys [:*])
+                                 :from [table-keyword]}
+                          (> (count column-keywords) 0)
+                          (assoc :where (into [:and] (map #(vector := %1 %2) column-keywords column-vals))) ;; could this be done with zipmap?
+                        true sql/format
+                        true dbr))]
     (if (= (count column-keywords) (count column-vals))
       (run-the-query)
       (throw (ex-info "wrong arg syntax. Args need to be colls of equal length"
@@ -198,16 +200,19 @@
 (defn read-where-or
   "Get entry from table by column(s), conditionals joined by OR"
   [table-keyword [& column-keywords] [& column-vals] &[select-field-keys]]
-  (if (= (count column-keywords) (count column-vals))
-    (cond-> {:select (or select-field-keys [:*])
-             :from [table-keyword]}
-      (> (count column-keywords) 0) (assoc :where (into [:or] (map #(vector := %1 %2) column-keywords column-vals)))
-      true sql/format
-      true dbr)
-    (throw (ex-info "wrong arg syntax. Args need to be colls"
-                    {:cause :checking-for-arg-length-match
-                     :column-keywords column-keywords
-                     :column-vals column-vals}))))
+  (let [run-the-query (fn run-read-where-or-query []
+                        (cond-> {:select (or select-field-keys [:*])
+                                 :from [table-keyword]}
+                          (> (count column-keywords) 0)
+                          (assoc :where (into [:or] (map #(vector := %1 %2) column-keywords column-vals)))
+                          true sql/format
+                          true dbr))]
+    (if (= (count column-keywords) (count column-vals))
+      (run-the-query)
+      (throw (ex-info "wrong arg syntax. Args need to be colls"
+                      {:cause :checking-for-arg-length-match
+                       :column-keywords column-keywords
+                       :column-vals column-vals})))))
 
 (defn delete-where-and
   "Update delete status in table by column-keywords"
