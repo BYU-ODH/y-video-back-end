@@ -28,15 +28,6 @@
       ;(println (str "serving session-id from home.clj: " session-id))
       (layout/render (assoc request :session-id session-id) "index.html" {:logged-in true}))))
 
-(comment
-  (let [username "a0315200"
-        u2 "torysa"]
-    #_(uc/get-session-id username)
-    (index-page {:username username})
-    ;; this appears to work fine
-      )
-)
-
 (defn get-routes-r
   "Recursive helper for get-routes"
   [arg]
