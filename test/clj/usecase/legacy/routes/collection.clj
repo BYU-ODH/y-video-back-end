@@ -30,6 +30,20 @@
     (ut/renew-db)
     (f)))
 
+(use-fixtures
+  :once
+  (fn [f]
+    (mount/start #'y-video-back.config/env
+                 #'y-video-back.handler/app
+                 #'y-video-back.db.core/*db*)
+    (ut/renew-db)
+    (f)))
+
+(tcore/basic-transaction-fixtures
+  (mount.core/start #'y-video-back.handler/app))
+
+
+
 (tcore/basic-transaction-fixtures
 (mount/start #'y-video-back.config/env
               #'y-video-back.handler/app
