@@ -39,7 +39,7 @@
         byu-data (when-not yvideo-user-exists? (persons/get-user-data username))
         nominal-user-data  (when-let [d byu-data] {:username username
                                                    :account-name (:full-name d)
-                                                   :account-type (int (:account-type d)) ;; I hate these magic numbers, though it's the service's fault and not ours...
+                                                   :account-type (int (:account-type d)) ;; magic numbers 🙍
                                                    :email (:email d)})] 
     (when-not yvideo-user-exists?
       {:db-item (users/CREATE nominal-user-data)
@@ -59,34 +59,14 @@
                 (if-let [user-data-from-byu (_user-create-from-byu username)]                  
                   {:status 200
                    :body (let [response (merge body (:user-data user-data-from-byu))]
-                           (if user-data-from-byu ;; this will be falsey if we we already had the user so didn't contact BYU
-                                  {:message "1 user created"
-                                   :id (utils/get-id (:db-item response)) ;; TODO This will fail if we've added a field it doesn't want
-                                   }
-                                  {:message "username not created invalid BYU username" 
-                                   :id "-"}))}
+                           (if user-data-from-byu
+                             {:message "1 user created"
+                              :id (utils/get-id (:db-item response))}
+                             {:message "username not created invalid BYU username" 
+                              :id "-"}))}
                   
                   {:status 500
-                   :body {:message "username already taken"}}
-                  )
-                              ))})
-(comment
-  (let [username "a0315200"
-        u2 "torysa"
-        #_#_payload {:parameters {:body {:username username}}}
-        #_#_payload {:parameters {:body {:username u2}}}
-        #_#_byu-data (persons/get-user-data username)
-        pre-payload-first-run (_user-create-from-byu username)
-        ]
-    pre-payload-first-run
-;; {:db-item {:deleted nil, :email "a0315200@yvideobeta.byu.edu", :account_type 0, :updated nil, :last_login nil, :username "a0315200", :created #time/instant "2023-08-17T22:58:46.011Z", :byu_person_id "000000000", :last_person_api #time/instant "2023-08-17T22:58:46.011Z", :id #uuid "6ea530c3-c26f-45f7-98c2-adcc8d6adc0d", :last_course_api #time/instant "2023-08-17T22:58:46.011Z", :account_name "a0315200 no_name"}, :user-data {:username "a0315200", :account-name "a0315200 no_name", :account-type 0, :email "a0315200@yvideobeta.byu.edu"}}
-
-    ;; (persons/get-user-data username)
-    ;; private account, so...
-    ;(user-create-from-byu payload) 
-    ;(user-get-by-id u2)
-      )
-)                 
+                   :body {:message "username already taken"}})))})
 
 (def user-get-by-id
   {:summary "Retrieves specified user"
@@ -140,7 +120,7 @@
                   {:status 200
                    :body {:message (str 1 " users updated")}})))})  ; TODO Check that only 1 user really was updated
 
-; delete everything that belongs to this user
+                                        ; TODO delete everything that belongs to this user?
 (def user-delete
   {:summary "Deletes specified user"
    :permission-level "admin"
@@ -170,7 +150,7 @@
                   {:status 404
                    :body {:message "requested user not found"}}
                   (let [coll-deleted (for [x (collections/READ-ALL-BY-OWNER [id])
-                              :let [y (:id x)]] (coll-methods/collection-delete y))] 
+                                           :let [y (:id x)]] (coll-methods/collection-delete y))] 
                     {:status 200
                      :body {:message (str (:username result) " user deleted. Called delete collections ->" coll-deleted)}})
                   )))})
@@ -256,32 +236,32 @@
                         owner-result (map #(-> %
                                                (utils/remove-db-only)
                                                (dissoc :user-id))
-                                           user-owner-result)
+                                          user-owner-result)
                         total-result (map (fn [arg]
-                                              (let [raw-res-all (contents/READ-BY-COLLECTION-WITH-LAST-VERIFIED (:id arg))
-                                                    ; TODO also need to indicate there are contents with no resource-access at all
-                                                    ; they are currently just getting dropped and ignored
-                                                    ; TODO Currently, public collections still require a valid resource-access for
-                                                    ; the owner. Ask Rob is this is correct, of if we need to change that.
-                                                    raw-res (doall (filter #(or (not (nil? (:last-verified %)))
-                                                                                (= "00000000-0000-0000-0000-000000000000" (str (:resource-id %))))
-                                                                           raw-res-all))
-                                                    raw-valid (doall (filter #(or (= "00000000-0000-0000-0000-000000000000" (str (:resource-id %)))
-                                                                                  (utils/is-valid-access-time (:last-verified %)))
+                                            (let [raw-res-all (contents/READ-BY-COLLECTION-WITH-LAST-VERIFIED (:id arg))
+                                        ; TODO also need to indicate there are contents with no resource-access at all
+                                        ; they are currently just getting dropped and ignored
+                                        ; TODO Currently, public collections still require a valid resource-access for
+                                        ; the owner. Ask Rob is this is correct, of if we need to change that.
+                                                  raw-res (doall (filter #(or (not (nil? (:last-verified %)))
+                                                                              (= "00000000-0000-0000-0000-000000000000" (str (:resource-id %))))
+                                                                         raw-res-all))
+                                                  raw-valid (doall (filter #(or (= "00000000-0000-0000-0000-000000000000" (str (:resource-id %)))
+                                                                                (utils/is-valid-access-time (:last-verified %)))
+                                                                           raw-res))
+                                                  raw-expired (doall (filter #(and (not (= "00000000-0000-0000-0000-000000000000" (str (:resource-id %))))
+                                                                                   (not (utils/is-valid-access-time (:last-verified %))))
                                                                              raw-res))
-                                                    raw-expired (doall (filter #(and (not (= "00000000-0000-0000-0000-000000000000" (str (:resource-id %))))
-                                                                                     (not (utils/is-valid-access-time (:last-verified %))))
-                                                                               raw-res))
-                                                    res-valid (map #(utils/remove-db-only %) raw-valid)
-                                                    res-expired (map (fn [arg]
-                                                                       {:content-title (:title arg)
-                                                                        :content-id (:id arg)
-                                                                        :resource-id (:resource-id arg)})
-                                                                     raw-expired)]
+                                                  res-valid (map #(utils/remove-db-only %) raw-valid)
+                                                  res-expired (map (fn [arg]
+                                                                     {:content-title (:title arg)
+                                                                      :content-id (:id arg)
+                                                                      :resource-id (:resource-id arg)})
+                                                                   raw-expired)]
 
-                                                (-> arg
-                                                    (assoc :content res-valid)
-                                                    (assoc :expired-content res-expired))))
+                                              (-> arg
+                                                  (assoc :content res-valid)
+                                                  (assoc :expired-content res-expired))))
                                           (distinct (concat courses-result collections-result owner-result)))]
                     {:status 200
                      :body total-result}))))})
@@ -340,7 +320,7 @@
 (def refresh-courses
   {:summary "Queries api to refresh courses is enrolled in"
    :permission-level "student"
-   ;:bypass-permission true
+                                        ;:bypass-permission true
    :parameters {:header {:session-id uuid?}}
    :responses {200 {:body {:message string?}}
                404 {:body {:message string?}}}
