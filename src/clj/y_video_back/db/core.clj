@@ -187,7 +187,7 @@
                         (cond-> {:select (or select-field-keys [:*])
                                  :from [table-keyword]}
                           (> (count column-keywords) 0)
-                          (assoc :where (into [:and] (map #(vector := %1 %2) column-keywords column-vals))) ;; could this be done with zipmap?
+                          (assoc :where (into [:and] (map #(vector := %1 %2) column-keywords column-vals)))
                         true sql/format
                         true dbr))]
     (if (= (count column-keywords) (count column-vals))
