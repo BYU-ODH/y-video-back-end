@@ -152,13 +152,12 @@
                        (ut/remove-db-only)
                        (dissoc :id))
                   (user-collections-assoc/READ-BY-COLLECTION (:id coll-one)))))
-      (is (= '() (users/READ-BY-USERNAME [(:username no-db-user-one)])))
-      (is (= '() (users/READ-BY-USERNAME [(:username no-db-user-thr)])))
+      (is (empty? (users/READ-BY-USERNAME [(:username no-db-user-one)])))
+      (is (empty? (users/READ-BY-USERNAME [(:username no-db-user-thr)])))
       (let [res (rp/collection-id-add-users (:id coll-one)
                                             (map :username 
                                                   [no-db-user-one user-two no-db-user-thr user-fou])
-                                            0)] ;; TODO this should add even the non-db users, apparently
-                                        ; TODO use mapv to remove the repeated :username, once this is working
+                                            0)] ;; TODO this should add even the non-db users, apparently                                        
         (is (= 200 (:status res)))
         (is (= (frequencies (map #(into {}
                                         {:collection-id (:id coll-one)
