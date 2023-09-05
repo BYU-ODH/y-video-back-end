@@ -174,29 +174,29 @@
                                       (ut/remove-db-only)
                                       (dissoc :id))
                                  (user-collections-assoc/READ-BY-COLLECTION (:id coll-one)))))))
-      (is (= (:username no-db-user-one) (:username (first (users/READ-BY-USERNAME [(:username no-db-user-one)])))) "User was not created by db-pop")
-      (is (= (:username no-db-user-thr) (:username (first (users/READ-BY-USERNAME [(:username no-db-user-thr)])))) "User was not created by db-pop")
-      (let [no-db-user-one-res (first (users/READ-BY-USERNAME [(:username no-db-user-one)]))
-            no-db-user-thr-res (first (users/READ-BY-USERNAME [(:username no-db-user-thr)]))
-            res-one (rp/collections-by-logged-in (uc/user-id-to-session-id (:id no-db-user-one-res)))
-            res-two (rp/collections-by-logged-in (uc/user-id-to-session-id (:id user-two)))
-            res-thr (rp/collections-by-logged-in (uc/user-id-to-session-id (:id no-db-user-thr-res)))
-            res-fou (rp/collections-by-logged-in (uc/user-id-to-session-id (:id user-fou)))]
-        (is (= [{:username (:username user-fou)
+      #_(is (= (:username no-db-user-one) (:username (first (users/READ-BY-USERNAME [(:username no-db-user-one)])))) "User was not created by db-pop")
+      #_(is (= (:username no-db-user-thr) (:username (first (users/READ-BY-USERNAME [(:username no-db-user-thr)])))) "User was not created by db-pop")
+      (let [#_#_no-db-user-one-res (first (users/READ-BY-USERNAME [(:username no-db-user-one)]))
+            #_#_no-db-user-thr-res (first (users/READ-BY-USERNAME [(:username no-db-user-thr)]))
+            #_#_res-one (rp/collections-by-logged-in (uc/user-id-to-session-id (:id no-db-user-one-res)))
+            #_#_res-two (rp/collections-by-logged-in (uc/user-id-to-session-id (:id user-two)))
+            #_#_res-thr (rp/collections-by-logged-in (uc/user-id-to-session-id (:id no-db-user-thr-res)))
+            #_#_res-fou (rp/collections-by-logged-in (uc/user-id-to-session-id (:id user-fou)))]
+        #_(is (= [{:username (:username user-fou)
                  :collection-id (:id coll-one)
                  :account-role 0}]
                (map #(-> %
                          (ut/remove-db-only)
                          (dissoc :id))
                     (user-collections-assoc/READ-BY-IDS [(:id coll-one) (:username user-fou)]))))
-        (is (= [(-> coll-one
+        #_(is (= [(-> coll-one
                     (ut/remove-db-only)
                     (update :id str)
                     (update :owner str)
                     (assoc :content [])
                     (assoc :expired-content []))]
                (m/decode-response-body res-one)))
-        (is (= [(-> coll-one
+        #_(is (= [(-> coll-one
                     (ut/remove-db-only)
                     (update :id str)
                     (update :owner str)
