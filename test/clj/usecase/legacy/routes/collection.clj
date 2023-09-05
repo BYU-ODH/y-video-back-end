@@ -1,23 +1,24 @@
 (ns legacy.routes.collection
-    (:require
-      [y-video-back.config :refer [env]]
-      [clojure.test :refer [use-fixtures deftest is testing]]
-      [y-video-back.handler :refer :all]
-      [legacy.db.test-util :as tcore]
-      [muuntaja.core :as m]
-      [mount.core :as mount]
-      [legacy.utils.model-generator :as g]
-      [legacy.utils.route-proxy.proxy :as rp]
-      [y-video-back.db.core :refer [*db*] :as db]
-      [legacy.utils.utils :as ut]
-      [legacy.utils.db-populator :as db-pop]
-      [y-video-back.db.collections :as collections]
-      [y-video-back.db.users :as users]
-      [y-video-back.db.courses :as courses]
-      [y-video-back.db.resource-access :as resource-access]
-      [y-video-back.db.user-collections-assoc :as user-collections-assoc]
-      [y-video-back.db.collections-courses-assoc :as collection-courses-assoc]
-      [y-video-back.user-creator :as uc]))
+  (:require
+   [y-video-back.config :refer [env]]
+   [clojure.test :refer [use-fixtures deftest is testing]]
+   [y-video-back.handler :refer :all]
+   [legacy.db.test-util :as tcore]
+   [muuntaja.core :as m]
+   [mount.core :as mount]
+   [legacy.utils.model-generator :as g]
+   [legacy.utils.route-proxy.proxy :as rp]
+   [y-video-back.db.core :refer [*db*] :as db]
+   [legacy.utils.utils :as ut]
+   [legacy.utils.db-populator :as db-pop]
+   [y-video-back.db.collections :as collections]
+   [y-video-back.db.users :as users]
+   [y-video-back.db.courses :as courses]
+   [y-video-back.db.resource-access :as resource-access]
+   [y-video-back.db.user-collections-assoc :as user-collections-assoc]
+   [y-video-back.db.collections-courses-assoc :as collection-courses-assoc]
+   [y-video-back.user-creator :as uc]
+   [taoensso.timbre :as log]))
 
 (declare ^:dynamic *txn*)
 
@@ -145,6 +146,7 @@
           no-db-user-thr (db-pop/get-user)
           user-fou (db-pop/add-user)
           _user-fou-add (db-pop/add-user-coll-assoc (:username user-fou) (:id coll-one) 1)]
+      (log/info "Just attempted to add users. Fail first?")
       (is (= [{:username (:username user-fou)
                :collection-id (:id coll-one)
                :account-role 1}]
