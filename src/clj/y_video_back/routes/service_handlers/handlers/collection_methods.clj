@@ -206,8 +206,19 @@
         {:status 200
          :body user-result})))
 
-
-
-
-
-
+(defn collection-transfer-ownership
+  [id username]
+  (if (not (collections/EXISTS? id))
+    {:status 404
+     :body {:message "collection not found"}}
+    ;; TODO add logic here
+    ;; 1. Change `owner` in public.collection
+    ;; 2. Get all resources for which the new owner does not have permissions using the following
+    ;; SELECT resource_id from public.contents WHERE collection_id = uuid('<COLLECTION_ID>')
+    ;; AND resource_id NOT IN (SELECT resource_id from public.resource_access
+    ;;                         WHERE resource_id IN (SELECT resource_id from public.contents
+    ;;                                               WHERE collection_id = uuid('<COLLECTION_ID>'))
+    ;;                         AND username LIKE '<username>')
+    ;; 3. For every resource_id identified above, add username to resource_access table
+    ;;   * Factor out the handler in resource-handlers/resource-add-access and use the new function here
+)

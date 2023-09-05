@@ -206,3 +206,16 @@
                404 (:body {:message string?})}
    :handler (fn [{{{:keys [id]} :path} :parameters}]
               (methods/collection-get-all-users id))})
+
+(def collection-transfer-ownership
+  {:summary "Tranfers ownership of collection to specified username"
+   :permission-level "admin"
+   :parameters {:header {:session-id uuid?}
+                :path {:id uuid?
+                       :username string?}}
+   :responses {200 {:body {:message string?
+                           :id string?}}
+               500 {:body {:message string?}}}
+   :handler (fn [{{{:keys [id username]} :path} :parameters}]
+              (methods/collection-transfer-ownership id username))
+   })
