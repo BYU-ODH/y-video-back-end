@@ -155,7 +155,8 @@
       (is (= '() (users/READ-BY-USERNAME [(:username no-db-user-one)])))
       (is (= '() (users/READ-BY-USERNAME [(:username no-db-user-thr)])))
       (let [res (rp/collection-id-add-users (:id coll-one)
-                                            [(:username no-db-user-one) (:username user-two) (:username no-db-user-thr) (:username user-fou)]
+                                            (map :username 
+                                                  [no-db-user-one user-two no-db-user-thr user-fou])
                                             0)] ;; TODO this should add even the non-db users, apparently
                                         ; TODO use mapv to remove the repeated :username, once this is working
         (is (= 200 (:status res)))
