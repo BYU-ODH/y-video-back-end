@@ -147,12 +147,12 @@
     (log/info "about to add users not in db")
     (let [coll-one (db-pop/add-collection)
           no-db-user-one (db-pop/get-user)
-          #_#_user-two (db-pop/add-user)
-          #_#_no-db-user-thr (db-pop/get-user)
-          #_#_user-fou (db-pop/add-user)
+          user-two (db-pop/add-user)
+          no-db-user-thr (db-pop/get-user)
+          user-fou (db-pop/add-user)
           #_#_ _user-fou-add (db-pop/add-user-coll-assoc (:username user-fou) (:id coll-one) 1)]
       (log/info "Just attempted to add users. Fail first?")
-      #_ (is (= [{:username (:username user-fou)
+      #_(is (= [{:username (:username user-fou)
                :collection-id (:id coll-one)
                :account-role 1}]
              (map #(-> %
