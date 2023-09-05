@@ -142,16 +142,16 @@
 
 
 ;; This bit is where it first fails. Error occurs when attempting to add.
-#_(deftest coll-add-users-not-in-db
+(deftest coll-add-users-not-in-db
   (testing "add list of users to collection, not in db"
     (let [coll-one (db-pop/add-collection)
           no-db-user-one (db-pop/get-user)
           user-two (db-pop/add-user)
           no-db-user-thr (db-pop/get-user)
           user-fou (db-pop/add-user)
-          _user-fou-add (db-pop/add-user-coll-assoc (:username user-fou) (:id coll-one) 1)]
+          #_#_ _user-fou-add (db-pop/add-user-coll-assoc (:username user-fou) (:id coll-one) 1)]
       (log/info "Just attempted to add users. Fail first?")
-      (is (= [{:username (:username user-fou)
+      #_ (is (= [{:username (:username user-fou)
                :collection-id (:id coll-one)
                :account-role 1}]
              (map #(-> %
