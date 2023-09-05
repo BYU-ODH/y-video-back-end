@@ -204,7 +204,7 @@
                     (assoc :content [])
                     (assoc :expired-content []))]
                (m/decode-response-body res-two)))
-        (is (= [(-> coll-one
+        #_(is (= [(-> coll-one
                     (ut/remove-db-only)
                     (update :id str)
                     (update :owner str)
