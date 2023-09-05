@@ -1,7 +1,5 @@
 (defproject y-video-back "0.1.0-SNAPSHOT"
-
-  :description "Default template for a BYU ODH Clojure Program"
-  :url "http://example.com/FIXME"
+  :url "https://yvideo.byu.edu"
 
   :dependencies [[byu-odh/byu-cas "5"]
                  [camel-snake-kebab "0.4.1"]

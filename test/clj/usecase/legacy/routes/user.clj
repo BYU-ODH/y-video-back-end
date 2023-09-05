@@ -1,7 +1,7 @@
 (ns legacy.routes.user
     (:require
       [y-video-back.config :refer [env]]
-      [clojure.test :refer :all]
+      [clojure.test :refer [deftest is testing use-fixtures]]
       [y-video-back.handler :refer :all]
       [legacy.db.test-util :as tcore]
       [muuntaja.core :as m]
