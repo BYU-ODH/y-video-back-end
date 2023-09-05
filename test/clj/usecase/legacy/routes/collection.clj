@@ -82,7 +82,7 @@
       (is (= 200 (:status res)))
       (is (= nil (collections/READ (:id coll-one)))))))
 
-(deftest coll-add-user
+(deftest coll-add-user-db-first
   (testing "add user to collection, user already in db"
     (let [coll-one (db-pop/add-collection)
           user-one (db-pop/add-user)]
@@ -119,7 +119,7 @@
                         :account-role 0})
                  (map ut/remove-db-only (user-collections-assoc/READ-BY-IDS [(:id coll-one) (:username user-one)])))))))))
 
-(deftest coll-add-users
+(deftest coll-add-users-in-db
   (testing "add list of users to collection"
     (let [coll-one (db-pop/add-collection)
           user-one (db-pop/add-user)
@@ -138,7 +138,9 @@
                (frequencies (map #(-> %
                                       (ut/remove-db-only)
                                       (dissoc :id))
-                                 (user-collections-assoc/READ-BY-COLLECTION (:id coll-one)))))))))
+                                 (user-collections-assoc/READ-BY-COLLECTION (:id coll-one))))))))))
+;; This bit is where it first fails. Error occurs when attempting to add.
+(deftest coll-add-users-not-in-db
   (testing "add list of users to collection, not in db"
     (let [coll-one (db-pop/add-collection)
           no-db-user-one (db-pop/get-user)
@@ -151,8 +153,8 @@
                :collection-id (:id coll-one)
                :account-role 1}]
              (map #(-> %
-                       (ut/remove-db-only)
-                       (dissoc :id))
+                       (ut/remove-db-only)    
+                   (dissoc :id))
                   (user-collections-assoc/READ-BY-COLLECTION (:id coll-one)))))
       (is (empty? (users/READ-BY-USERNAME [(:username no-db-user-one)])))
       (is (empty? (users/READ-BY-USERNAME [(:username no-db-user-thr)])))
