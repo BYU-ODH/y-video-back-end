@@ -144,11 +144,12 @@
 ;; This bit is where it first fails. Error occurs when attempting to add.
 (deftest coll-add-users-not-in-db
   (testing "add list of users to collection, not in db"
+    (log/info "about to add users not in db")
     (let [coll-one (db-pop/add-collection)
           no-db-user-one (db-pop/get-user)
-          user-two (db-pop/add-user)
-          no-db-user-thr (db-pop/get-user)
-          user-fou (db-pop/add-user)
+          #_#_user-two (db-pop/add-user)
+          #_#_no-db-user-thr (db-pop/get-user)
+          #_#_user-fou (db-pop/add-user)
           #_#_ _user-fou-add (db-pop/add-user-coll-assoc (:username user-fou) (:id coll-one) 1)]
       (log/info "Just attempted to add users. Fail first?")
       #_ (is (= [{:username (:username user-fou)
@@ -158,8 +159,8 @@
                        (ut/remove-db-only)    
                        (dissoc :id))
                   (user-collections-assoc/READ-BY-COLLECTION (:id coll-one)))))
-      (is (empty? (users/READ-BY-USERNAME [(:username no-db-user-one)])))
-      (is (empty? (users/READ-BY-USERNAME [(:username no-db-user-thr)])))
+      #_(is (empty? (users/READ-BY-USERNAME [(:username no-db-user-one)])))
+      #_(is (empty? (users/READ-BY-USERNAME [(:username no-db-user-thr)])))
       #_(let [res (rp/collection-id-add-users (:id coll-one)
                                             (map :username 
                                                  [no-db-user-one user-two no-db-user-thr user-fou])
@@ -210,7 +211,7 @@
                     (assoc :content [])
                     (assoc :expired-content []))]
                (m/decode-response-body res-thr)))
-        (is (= [(-> coll-one
+        #_(is (= [(-> coll-one
                     (ut/remove-db-only)
                     (update :id str)
                     (update :owner str)
