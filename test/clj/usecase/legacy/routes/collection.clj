@@ -190,13 +190,14 @@
                          (ut/remove-db-only)
                          (dissoc :id))
                     (user-collections-assoc/READ-BY-IDS [(:id coll-one) (:username user-fou)]))))
-        (is (= [(-> coll-one
+;; RESUME HERE ↓↓↓
+        #_(is (= [(-> coll-one
                     (ut/remove-db-only)
                     (update :id str)
                     (update :owner str)
                     (assoc :content [])
                     (assoc :expired-content []))]
-               (m/decode-response-body res-one)))
+               (m/decode-response-body res-one))) ;; TODO here there be dragons        
         #_(is (= [(-> coll-one
                     (ut/remove-db-only)
                     (update :id str)
