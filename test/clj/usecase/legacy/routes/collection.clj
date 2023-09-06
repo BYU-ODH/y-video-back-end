@@ -152,7 +152,7 @@
           user-fou (db-pop/add-user)
           _user-fou-add (db-pop/add-user-coll-assoc (:username user-fou) (:id coll-one) 1)]
       (log/info "Just attempted to add users. Fail first?")
-      #_(is (= [{:username (:username user-fou)
+      (is (= [{:username (:username user-fou)
                :collection-id (:id coll-one)
                :account-role 1}]
              (map #(-> %
