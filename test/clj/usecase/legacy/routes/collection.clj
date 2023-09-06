@@ -190,7 +190,7 @@
                          (ut/remove-db-only)
                          (dissoc :id))
                     (user-collections-assoc/READ-BY-IDS [(:id coll-one) (:username user-fou)]))))
-        #_(is (= [(-> coll-one
+        (is (= [(-> coll-one
                     (ut/remove-db-only)
                     (update :id str)
                     (update :owner str)
