@@ -160,8 +160,8 @@
                        (dissoc :id))
                   (user-collections-assoc/READ-BY-COLLECTION (:id coll-one)))))
       (is (empty? (users/READ-BY-USERNAME [(:username no-db-user-one)])))
-      #_(is (empty? (users/READ-BY-USERNAME [(:username no-db-user-thr)])))
-      #_(let [res (rp/collection-id-add-users (:id coll-one)
+      (is (empty? (users/READ-BY-USERNAME [(:username no-db-user-thr)])))
+      (let [res (rp/collection-id-add-users (:id coll-one)
                                             (map :username 
                                                  [no-db-user-one user-two no-db-user-thr user-fou])
                                             0)] ;; TODO this should add even the non-db users, apparently                                        
