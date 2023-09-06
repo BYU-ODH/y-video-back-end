@@ -183,7 +183,7 @@
             res-two (rp/collections-by-logged-in (uc/user-id-to-session-id (:id user-two)))
             res-thr (rp/collections-by-logged-in (uc/user-id-to-session-id (:id no-db-user-thr-res)))
             res-fou (rp/collections-by-logged-in (uc/user-id-to-session-id (:id user-fou)))]
-        #_(is (= [{:username (:username user-fou)
+        (is (= [{:username (:username user-fou)
                  :collection-id (:id coll-one)
                  :account-role 0}]
                (map #(-> %
