@@ -189,8 +189,7 @@
                (map #(-> %
                          (ut/remove-db-only)
                          (dissoc :id))
-                    (user-collections-assoc/READ-BY-IDS [(:id coll-one) (:username user-fou)]))))
-        (log/debug "github config?" (prn-str env))
+                    (user-collections-assoc/READ-BY-IDS [(:id coll-one) (:username user-fou)]))))        
         (is (= [(-> coll-one
                     (ut/remove-db-only)
                     (update :id str)
@@ -219,8 +218,7 @@
                     (update :owner str)
                     (assoc :content [])
                     (assoc :expired-content []))]
-               (m/decode-response-body res-fou)))))))
-
+                 (m/decode-response-body res-fou)))))))
 (deftest coll-remove-user
   (testing "remove user from collection"
     (let [coll-one (collections/CREATE (db-pop/get-collection))
