@@ -182,7 +182,16 @@
             res-one (rp/collections-by-logged-in (uc/user-id-to-session-id (:id no-db-user-one-res)))
             res-two (rp/collections-by-logged-in (uc/user-id-to-session-id (:id user-two)))
             res-thr (rp/collections-by-logged-in (uc/user-id-to-session-id (:id no-db-user-thr-res)))
-            res-fou (rp/collections-by-logged-in (uc/user-id-to-session-id (:id user-fou)))]
+            res-fou (rp/collections-by-logged-in (uc/user-id-to-session-id (:id user-fou)))
+            sanitize (fn [yv-coll]
+                       (-> yv-coll
+                           (ut/remove-db-only) ;; should this remove session expiry concerns?
+                           (update :id str)
+                           (update :owner str)
+                           (assoc :content [])
+                           (assoc :expired-content [])))
+            sanitized-coll-one (sanitize coll-one)]
+        
         (is (= [{:username (:username user-fou)
                  :collection-id (:id coll-one)
                  :account-role 0}]
@@ -192,35 +201,16 @@
                     (user-collections-assoc/READ-BY-IDS [(:id coll-one) (:username user-fou)]))))        
         (log/debug "preparing to parse res-one, not in DB" {:no-db-user-one-res (prn-str no-db-user-one-res)
                                                             :response-one (prn-str res-one)})
-        (is (= [(-> coll-one
-                    (ut/remove-db-only) ;; should this remove session expiry concerns?
-                    (update :id str)
-                    (update :owner str)
-                    (assoc :content [])
-                    (assoc :expired-content []))]
+        (is (= [sanitized-coll-one]
                (m/decode-response-body res-one))) ;; TODO here there be dragons        
-        (is (= [(-> coll-one
-                    (ut/remove-db-only)
-                    (update :id str)
-                    (update :owner str)
-                    (assoc :content [])
-                    (assoc :expired-content []))]
+        (is (= [sanitized-coll-one]
                (m/decode-response-body res-two)))
         ;; RESUME HERE ↓↓↓
-        #_(is (= [(-> coll-one
-                    (ut/remove-db-only)
-                    (update :id str)
-                    (update :owner str)
-                    (assoc :content [])
-                    (assoc :expired-content []))]
+        #_(is (= [sanitized-coll-one]
                (m/decode-response-body res-thr)))
-        #_(is (= [(-> coll-one
-                    (ut/remove-db-only)
-                    (update :id str)
-                    (update :owner str)
-                    (assoc :content [])
-                    (assoc :expired-content []))]
+        #_(is (= [sanitized-coll-one]
                  (m/decode-response-body res-fou)))))))
+
 (deftest coll-remove-user
   (testing "remove user from collection"
     (let [coll-one (collections/CREATE (db-pop/get-collection))
