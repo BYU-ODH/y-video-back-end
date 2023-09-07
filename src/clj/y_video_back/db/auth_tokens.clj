@@ -1,6 +1,7 @@
 (ns y-video-back.db.auth-tokens
   (:require [y-video-back.config :refer [env]]
-            [y-video-back.db.core :as db]))
+            [y-video-back.db.core :as db]
+            [taoensso.timbre :as log]))
 
 (def CREATE (partial db/CREATE :auth-tokens))
 (def READ  (partial db/READ :auth-tokens-undeleted))
@@ -12,9 +13,12 @@
 (defn READ-UNEXPIRED
   "Reads unexpired auth-tokens. If expired, deletes and returns nil."
   [auth-token-id]
+  (log/debug "" {:auth-token-id (str auth-token-id)})
   (if (nil? auth-token-id)
     nil
     (let [auth-token (READ auth-token-id)]
+      (log/debug "" {:auth-token-id (str auth-token-id)
+                     :auth-token (str auth-token)})
       (if (nil? auth-token)
         nil
         (if-not (< (inst-ms (:created auth-token)) (- (System/currentTimeMillis) (-> env :auth :timeout)))

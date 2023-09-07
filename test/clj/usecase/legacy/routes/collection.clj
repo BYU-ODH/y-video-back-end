@@ -190,6 +190,8 @@
                          (ut/remove-db-only)
                          (dissoc :id))
                     (user-collections-assoc/READ-BY-IDS [(:id coll-one) (:username user-fou)]))))        
+        (log/debug "preparing to parse res-one, not in DB" {:no-db-user-one-res (prn-str no-db-user-one-res)
+                                                            :response-one (prn-str res-one)})
         (is (= [(-> coll-one
                     (ut/remove-db-only)
                     (update :id str)
@@ -197,7 +199,6 @@
                     (assoc :content [])
                     (assoc :expired-content []))]
                (m/decode-response-body res-one))) ;; TODO here there be dragons        
-        
         (is (= [(-> coll-one
                     (ut/remove-db-only)
                     (update :id str)
