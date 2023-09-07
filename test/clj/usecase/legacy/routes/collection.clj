@@ -190,14 +190,15 @@
                          (ut/remove-db-only)
                          (dissoc :id))
                     (user-collections-assoc/READ-BY-IDS [(:id coll-one) (:username user-fou)]))))
-;; RESUME HERE ↓↓↓
-        #_(is (= [(-> coll-one
+        (log/debug "github config?" (prn-str env))
+        (is (= [(-> coll-one
                     (ut/remove-db-only)
                     (update :id str)
                     (update :owner str)
                     (assoc :content [])
                     (assoc :expired-content []))]
                (m/decode-response-body res-one))) ;; TODO here there be dragons        
+        ;; RESUME HERE ↓↓↓
         #_(is (= [(-> coll-one
                     (ut/remove-db-only)
                     (update :id str)
