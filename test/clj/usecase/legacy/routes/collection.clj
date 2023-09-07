@@ -193,7 +193,7 @@
         (log/debug "preparing to parse res-one, not in DB" {:no-db-user-one-res (prn-str no-db-user-one-res)
                                                             :response-one (prn-str res-one)})
         (is (= [(-> coll-one
-                    (ut/remove-db-only)
+                    (ut/remove-db-only) ;; should this remove session expiry concerns?
                     (update :id str)
                     (update :owner str)
                     (assoc :content [])
