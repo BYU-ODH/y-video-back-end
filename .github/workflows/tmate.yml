@@ -5,5 +5,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+    - run: echo ${{ secrets.TEST_CONFIG }} | base4 -d > test_config.edn
     - name: Setup tmate session
       uses: mxschmitt/action-tmate@v3
