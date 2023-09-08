@@ -25,3 +25,20 @@
           auth-token
           (do (DELETE auth-token-id)
               nil))))))
+
+#_(defn READ-UNEXPIRED
+  "Reads unexpired auth-tokens. If expired, deletes and returns nil."
+  [auth-token-id]
+  (when auth-token-id
+    (let [auth-token (READ auth-token-id)
+          now (System/currentTimeMillis)
+          created (when auth-token (inst-ms (:created auth-token)))
+          timeout (-> env :auth :timeout)
+          expired? (< created (- now timeout))
+          expired-delete-this! (fn [] (DELETE auth-token-id) nil)]
+      (log/debug "" {:auth-token-id (str auth-token-id)
+                     :auth-token (str auth-token)})
+      (if (and auth-token
+               (not expired?))
+        auth-token
+        expired-delete-this!))))
