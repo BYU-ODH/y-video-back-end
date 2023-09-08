@@ -10,7 +10,7 @@
 (def DELETE (partial db/mark-deleted :auth-tokens))
 (def CLONE (partial db/CLONE :auth-tokens))
 (def PERMANENT-DELETE (partial db/DELETE :auth-tokens))
-(defn READ-UNEXPIRED
+(defn orig-READ-UNEXPIRED
   "Reads unexpired auth-tokens. If expired, deletes and returns nil."
   [auth-token-id]
   (log/debug "" {:auth-token-id (str auth-token-id)})
@@ -18,6 +18,20 @@
     nil
     (let [auth-token (READ auth-token-id)]
       (log/debug "" {:auth-token-id (str auth-token-id)
+                     :auth-token (str auth-token)})
+      (if (nil? auth-token)
+        nil
+        (if-not (< (inst-ms (:created auth-token)) (- (System/currentTimeMillis) (-> env :auth :timeout)))
+          auth-token
+          (do (DELETE auth-token-id)
+              nil))))))
+
+(defn READ-UNEXPIRED
+  "Reads unexpired auth-tokens. If expired, deletes and returns nil."
+  [auth-token-id]
+  (when auth-token-id    
+    (let [auth-token (READ auth-token-id)]
+      #_(log/debug "" {:auth-token-id (str auth-token-id)
                      :auth-token (str auth-token)})
       (if (nil? auth-token)
         nil
