@@ -29,13 +29,16 @@
 (defn READ-UNEXPIRED
   "Reads unexpired auth-tokens. If expired, deletes and returns nil."
   [auth-token-id]
-  (when auth-token-id    
-    (when-let [auth-token (READ auth-token-id)]
-       (if-not (< (inst-ms (:created auth-token)) (- (System/currentTimeMillis) (-> env :auth :timeout)))
-         auth-token
-         (do (DELETE auth-token-id)
-             nil))))) ;; TODO resume refactoring carefully here
-
+  (when-let* [auth-token (READ auth-token-id)
+              created (-> auth-token :created)]
+     (if-not (< (inst-ms created) (- (System/currentTimeMillis) (-> env :auth :timeout)))
+       auth-token
+       (do (DELETE auth-token-id)
+           nil)))) ;; TODO resume refactoring carefully here
+(comment
+  (when-let [a (:a {:b "no a"})]
+    "It was when") ;; => nil
+  )
 #_(defn READ-UNEXPIRED
   "Reads unexpired auth-tokens. If expired, deletes and returns nil."
   [auth-token-id]
