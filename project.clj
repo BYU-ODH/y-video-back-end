@@ -40,7 +40,9 @@
                  [clojure.java-time "0.3.1"]
                  [org.clojure/data.json "1.0.0"]
                  [nilenso/honeysql-postgres "0.2.6"]
-                 [com.taoensso/timbre "6.0.3"]]
+                 [com.taoensso/timbre "6.0.3"]
+
+                 [tupelo "23.07.04"]]
 
 
 
