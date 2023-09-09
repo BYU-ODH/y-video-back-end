@@ -5,7 +5,8 @@
    [y-video-back.db.auth-tokens :as subj]
    [legacy.utils.route-proxy.proxy :as rp]
    [legacy.db.test-util :as tcore]
-   [legacy.utils.db-populator :as db-pop])
+   [legacy.utils.db-populator :as db-pop]
+   [tick.alpha.api :as t])
   )
 
 (tcore/basic-transaction-fixtures
@@ -26,7 +27,7 @@
           orig-count (count-tokens-now)]
       (is false "deals with an expired token")
       (is (= (dec orig-count) (count-tokens-now)) "Old token deleted"))
-    #_(let [before-timeout nil ;; are we using Tick for time logic?
+    #_(let [before-timeout nil
             expired-token (update auth-token-id :created)]
-      (is (nil? (subj/READ-UNEXPIRED expired-token)))))
+        (is (nil? (subj/READ-UNEXPIRED expired-token)))))
   )
