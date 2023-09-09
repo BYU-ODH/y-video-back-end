@@ -10,7 +10,8 @@
 (def DELETE (partial db/mark-deleted :auth-tokens))
 (def CLONE (partial db/CLONE :auth-tokens))
 (def PERMANENT-DELETE (partial db/DELETE :auth-tokens))
-(defn orig-READ-UNEXPIRED
+
+(defn READ-UNEXPIRED ;; original being refactored
   "Reads unexpired auth-tokens. If expired, deletes and returns nil."
   [auth-token-id]
   (log/debug "" {:auth-token-id (str auth-token-id)})
@@ -26,12 +27,13 @@
           (do (DELETE auth-token-id)
               nil))))))
 
-(defn READ-UNEXPIRED
+#_(defn READ-UNEXPIRED ;; new one
   "Reads unexpired auth-tokens. If expired, deletes and returns nil."
   [auth-token-id]
-  (when-let* [auth-token (READ auth-token-id)
-              created (-> auth-token :created)]
-     (if-not (< (inst-ms created) (- (System/currentTimeMillis) (-> env :auth :timeout)))
+  (let [auth-token (READ auth-token-id)
+        created (-> auth-token :created)
+        ms-created (when created (inst-ms created))]
+     (if-not (< ms-created (- (System/currentTimeMillis) (-> env :auth :timeout)))
        auth-token
        (do (DELETE auth-token-id)
            nil)))) ;; TODO resume refactoring carefully here
