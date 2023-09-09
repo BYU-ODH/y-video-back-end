@@ -3,9 +3,11 @@
    [clojure.test :refer [use-fixtures deftest is testing]]
    [mount.core :as mount]
    [y-video-back.db.auth-tokens :as subj]
+   [y-video-back.config :refer [env]]
    [legacy.utils.route-proxy.proxy :as rp]
    [legacy.db.test-util :as tcore]
    [legacy.utils.db-populator :as db-pop]
+   
    [tick.alpha.api :as t])
   )
 
@@ -24,8 +26,12 @@
            (:id user-one))))
   (testing "Expired token"
     (let [count-tokens-now #(count (subj/READ nil [:id]))
-          orig-count (count-tokens-now)]
-      (is false "deals with an expired token")
+          orig-count (count-tokens-now)
+          timeout-limit-minutes (-> env :auth :timeout (* 1000))
+          _expire-token! (subj/UPDATE auth-token-id
+                                      {:created (t/- (:created auth-token)
+                                                     (t/of-minutes timeout-limit-minutes))})]
+      (is (nil? (subj/READ-UNEXPIRED auth-token-id)) "deals with an expired token")
       (is (= (dec orig-count) (count-tokens-now)) "Old token deleted"))
     #_(let [before-timeout nil
             expired-token (update auth-token-id :created)]

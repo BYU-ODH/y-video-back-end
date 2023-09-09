@@ -1,7 +1,8 @@
 (ns y-video-back.db.auth-tokens
   (:require [y-video-back.config :refer [env]]
             [y-video-back.db.core :as db]
-            [taoensso.timbre :as log]))
+            [taoensso.timbre :as log]
+            [tupelo.core :as t]))
 
 (def CREATE (partial db/CREATE :auth-tokens))
 (def READ  (partial db/READ :auth-tokens-undeleted))
@@ -20,8 +21,7 @@
     (let [auth-token (READ auth-token-id)]
       (log/debug "" {:auth-token-id (str auth-token-id)
                      :auth-token (str auth-token)})
-      (if (nil? auth-token)
-        nil
+      (when auth-token        
         (if-not (< (inst-ms (:created auth-token)) (- (System/currentTimeMillis) (-> env :auth :timeout)))
           auth-token
           (do (DELETE auth-token-id)
