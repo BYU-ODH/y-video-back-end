@@ -7,7 +7,6 @@
    [legacy.utils.route-proxy.proxy :as rp]
    [legacy.db.test-util :as tcore]
    [legacy.utils.db-populator :as db-pop]
-   
    [tick.alpha.api :as t])
   )
 
@@ -25,15 +24,11 @@
     (is (= (:user-id (subj/READ-UNEXPIRED auth-token-id))
            (:id user-one))))
   (testing "Expired token"
-    (let [count-tokens-now #(count (subj/READ nil [:id]))
+    (let [count-tokens-now #(count (subj/READ))
           orig-count (count-tokens-now)
           timeout-limit-minutes (-> env :auth :timeout (* 1000))
           _expire-token! (subj/UPDATE auth-token-id
                                       {:created (t/- (:created auth-token)
-                                                     (t/of-minutes timeout-limit-minutes))})]
+                                                     (t/new-duration timeout-limit-minutes :minutes))})]
       (is (nil? (subj/READ-UNEXPIRED auth-token-id)) "deals with an expired token")
-      (is (= (dec orig-count) (count-tokens-now)) "Old token deleted"))
-    #_(let [before-timeout nil
-            expired-token (update auth-token-id :created)]
-        (is (nil? (subj/READ-UNEXPIRED expired-token)))))
-  )
+      (is (= (dec orig-count) (count-tokens-now)) "Old token deleted"))))
