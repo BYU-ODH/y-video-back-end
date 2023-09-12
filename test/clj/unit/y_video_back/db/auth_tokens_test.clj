@@ -7,11 +7,12 @@
    [legacy.utils.route-proxy.proxy :as rp]
    [legacy.db.test-util :as tcore]
    [legacy.utils.db-populator :as db-pop]
-   [tick.alpha.api :as t])
-  )
+   [tick.alpha.api :as t]
+   [y-video-back.db.migratus :as migratus]))
 
 (tcore/basic-transaction-fixtures
  (mount.core/start)
+ (migratus/renew)
  (def user-one (db-pop/add-user "admin"))
  (def res (rp/login-current-user "test"))
  (def auth-token (subj/CREATE {:user-id (:id user-one)}))
