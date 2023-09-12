@@ -29,9 +29,6 @@
                                                   :auth-token auth-token})
         (if-not (expired?)
           auth-token
-          (do (DELETE auth-token-id)
-              nil))))))
+          (let [d! (DELETE auth-token-id)]
+              (log/info "log returns nil" {:deleted d!})))))))
 
-(comment
-  (log/debug "hi there")
-  )
