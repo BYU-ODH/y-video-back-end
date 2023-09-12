@@ -18,14 +18,18 @@
     (let [auth-token (READ auth-token-id)
           timeout (-> env :auth :timeout)
           time-created #(inst-ms (:created auth-token))
+          current-ms (System/currentTimeMillis)
           expired? #(< (time-created)
-                       (- (System/currentTimeMillis) timeout))]
+                       (-  current-ms timeout))]
       (log/debug "" {:auth-token-id (str auth-token-id)
                      :auth-token (str auth-token)})
       (when auth-token
         (log/debug "Are we expired? If so, why?" {:expired? (expired?)
                                                   :time-token-created (time-created)
+                                                  :current-ms current-ms
                                                   :timeout timeout
+                                                  :diff (- (time-created)
+                                                           (-  current-ms timeout))
                                                   :auth-token auth-token})
         (if-not (expired?)
           auth-token
