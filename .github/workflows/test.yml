@@ -26,6 +26,7 @@ jobs:
           --health-retries 5
 
     steps:
+    - run: docker ps -a
 
     - uses: actions/checkout@v2
 
