@@ -4,46 +4,52 @@ on:
   pull_request:
   push:
     branches: [ development ]
-    
+
 env:
   FILE_NAME: "env/test/resources/config.edn"
 
 jobs:
   test:
     runs-on: ubuntu-22.04
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_USER: ${{ secrets.TEST_DB_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.TEST_DB_USER }}
+          POSTGRES_DB: yvideo_test
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     steps:
+
     - uses: actions/checkout@v2
+
     - name: Setup node
       uses: actions/setup-node@v2
       with:
         node-version: 14.x
 
-      id: setup-ffmpeg
-    - uses: Harmon758/postgresql-action@v1.0.0
-      with:
-        postgresql db: yvideo_test
-        # POSTGRES_USER - create the specified user with superuser power
-        postgresql user: ${{ secrets.TEST_DB_USER }}
-        # POSTGRES_PASSWORD - superuser password
-        postgresql password: ${{ secrets.TEST_DB_USER }}
-    
     - run: git clone https://github.com/BYU-ODH/yvideo-client.git
-    
+
     - name: Install ffmpeg / ffmprob
       run: sudo apt-get update && sudo apt-get install ffmpeg
 
     - name: Install node dependencies for front-end
       working-directory: ./yvideo-client
-      run: | 
+      run: |
         git checkout develop
         npm install
-    
+
     - name: Build Front-end
       env:
         CI: ""
       run: ./build-front-end.sh
-    
+
     - name: Create File with content
       run: echo ${{ secrets.TEST_CONFIG }} | base64 -d > ${FILE_NAME}
 
