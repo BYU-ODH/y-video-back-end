@@ -54,7 +54,8 @@ jobs:
       run: ./build-front-end.sh
 
     - name: Create File with content
-      run: echo ${{ secrets.TEST_CONFIG }} | base64 -d | sed "s/ 5000/ 10000/g" > ${FILE_NAME}
+      # TODO remove sed from the following
+      run: echo ${{ secrets.TEST_CONFIG }} | base64 -d | sed "s/ 5000/ 50000/g" > ${FILE_NAME}
 
     - name: Install dependencies
       run: lein deps
