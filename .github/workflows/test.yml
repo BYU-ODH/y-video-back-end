@@ -55,7 +55,7 @@ jobs:
 
     - name: Create File with content
       # TODO remove sed from the following
-      run: echo ${{ secrets.TEST_CONFIG }} | base64 -d | sed "s/ 5000/ 50000/g" > ${FILE_NAME}
+      run: echo ${{ secrets.TEST_CONFIG }} | base64 -d | sed "s/:auth {:timeout 5000}/:auth {:timeout 50000}/g" > ${FILE_NAME}
 
     - name: Install dependencies
       run: lein deps
