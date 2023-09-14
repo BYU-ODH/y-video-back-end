@@ -15,9 +15,9 @@ jobs:
       postgres:
         image: postgres
         env:
+          POSTGRES_DB: yvideo_test
           POSTGRES_USER: ${{ secrets.TEST_DB_USER }}
           POSTGRES_PASSWORD: ${{ secrets.TEST_DB_USER }}
-          POSTGRES_DB: yvideo_test
         # Set health checks to wait until postgres has started
         options: >-
           --health-cmd pg_isready
@@ -66,3 +66,5 @@ jobs:
 
     - name: Run tests
       run: lein with-profile test cloverage
+      env:
+        PGUSER: yvideo_test
