@@ -54,7 +54,7 @@ jobs:
       run: ./build-front-end.sh
 
     - name: Create File with content
-      run: echo ${{ secrets.TEST_CONFIG }} | base64 -d > ${FILE_NAME}
+      run: echo ${{ secrets.TEST_CONFIG }} | base64 -d | sed "s/ 5000/ 10000/g" > ${FILE_NAME}
 
     - name: Install dependencies
       run: lein deps
@@ -65,6 +65,6 @@ jobs:
         mkdir -p testing/{dest,trash,temp,src,log}
 
     - name: Run tests
-      run: lein with-profile test cloverage
+      run: docker ps -a && lein with-profile test cloverage
       env:
-        PGUSER: yvideo_test
+        PGUSER: ${{ secrets.TEST_DB_USER }}
