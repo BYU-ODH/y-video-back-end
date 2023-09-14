@@ -28,8 +28,6 @@ jobs:
           - 5432:5432
 
     steps:
-    - run: docker ps -a
-
     - uses: actions/checkout@v2
 
     - name: Setup node
@@ -66,6 +64,4 @@ jobs:
         mkdir -p testing/{dest,trash,temp,src,log}
 
     - name: Run tests
-      run: docker ps -a && lein with-profile test cloverage
-      env:
-        PGUSER: ${{ secrets.TEST_DB_USER }}
+      run: lein with-profile test cloverage
