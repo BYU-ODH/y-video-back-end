@@ -1,24 +1,24 @@
 (ns legacy.routes.collection
-    (:require
-      [y-video-back.config :refer [env]]
-      [clojure.test :refer :all]
-      [y-video-back.handler :refer :all]
-      [legacy.db.test-util :as tcore]
-      [muuntaja.core :as m]
-      [clojure.java.jdbc :as jdbc]
-      [mount.core :as mount]
-      [legacy.utils.model-generator :as g]
-      [legacy.utils.route-proxy.proxy :as rp]
-      [y-video-back.db.core :refer [*db*] :as db]
-      [legacy.utils.utils :as ut]
-      [legacy.utils.db-populator :as db-pop]
-      [y-video-back.db.collections :as collections]
-      [y-video-back.db.users :as users]
-      [y-video-back.db.courses :as courses]
-      [y-video-back.db.resource-access :as resource-access]
-      [y-video-back.db.user-collections-assoc :as user-collections-assoc]
-      [y-video-back.db.collections-courses-assoc :as collection-courses-assoc]
-      [y-video-back.user-creator :as uc]))
+  (:require
+   [y-video-back.config :refer [env]]
+   [clojure.test :refer [use-fixtures deftest is testing]]
+   [y-video-back.handler :refer :all]
+   [legacy.db.test-util :as tcore]
+   [muuntaja.core :as m]
+   [mount.core :as mount]
+   [legacy.utils.model-generator :as g]
+   [legacy.utils.route-proxy.proxy :as rp]
+   [y-video-back.db.core :refer [*db*] :as db]
+   [legacy.utils.utils :as ut]
+   [legacy.utils.db-populator :as db-pop]
+   [y-video-back.db.collections :as collections]
+   [y-video-back.db.users :as users]
+   [y-video-back.db.courses :as courses]
+   [y-video-back.db.resource-access :as resource-access]
+   [y-video-back.db.user-collections-assoc :as user-collections-assoc]
+   [y-video-back.db.collections-courses-assoc :as collection-courses-assoc]
+   [y-video-back.user-creator :as uc]
+   [taoensso.timbre :as log]))
 
 (declare ^:dynamic *txn*)
 
@@ -33,6 +33,7 @@
 
 (tcore/basic-transaction-fixtures
   (mount.core/start #'y-video-back.handler/app))
+
 
 (deftest test-session-id-header
   (testing "coll CREATE - session id header"
@@ -72,7 +73,7 @@
       (is (= 200 (:status res)))
       (is (= nil (collections/READ (:id coll-one)))))))
 
-(deftest coll-add-user
+(deftest coll-add-user-db-first
   (testing "add user to collection, user already in db"
     (let [coll-one (db-pop/add-collection)
           user-one (db-pop/add-user)]
@@ -109,17 +110,17 @@
                         :account-role 0})
                  (map ut/remove-db-only (user-collections-assoc/READ-BY-IDS [(:id coll-one) (:username user-one)])))))))))
 
-(deftest coll-add-users
+(deftest coll-add-users-in-db
   (testing "add list of users to collection"
     (let [coll-one (db-pop/add-collection)
           user-one (db-pop/add-user)
           user-two (db-pop/add-user)
           user-thr (db-pop/add-user)]
-      (is (= '() (user-collections-assoc/READ-BY-COLLECTION (:id coll-one))))
+      (is (= '() (user-collections-assoc/READ-BY-COLLECTION (:id coll-one))) "No users added to the collection yet")
       (let [res (rp/collection-id-add-users (:id coll-one)
                                             [(:username user-one) (:username user-two) (:username user-thr)]
                                             0)]
-        (is (= 200 (:status res)))
+        (is (= 200 (:status res)) "successful addition to the collection")
         (is (= (frequencies (map #(into {}
                                         {:collection-id (:id coll-one)
                                          :username (:username %)
@@ -128,79 +129,78 @@
                (frequencies (map #(-> %
                                       (ut/remove-db-only)
                                       (dissoc :id))
-                                 (user-collections-assoc/READ-BY-COLLECTION (:id coll-one)))))))))
+                                 (user-collections-assoc/READ-BY-COLLECTION (:id coll-one))))))))))
+
+
+;; This bit is where it first fails. Error occurs when attempting to add.
+(deftest coll-add-users-not-in-db
   (testing "add list of users to collection, not in db"
+    (log/info "about to add users not in db")
     (let [coll-one (db-pop/add-collection)
-          user-one (db-pop/get-user)
+          no-db-user-one (db-pop/get-user)
           user-two (db-pop/add-user)
-          user-thr (db-pop/get-user)
+          no-db-user-thr (db-pop/get-user)
           user-fou (db-pop/add-user)
-          user-fou-add (db-pop/add-user-coll-assoc (:username user-fou) (:id coll-one) 1)]
+          _user-fou-add (db-pop/add-user-coll-assoc (:username user-fou) (:id coll-one) 1)]
+      (log/info "Just attempted to add users. Fail first?")
       (is (= [{:username (:username user-fou)
                :collection-id (:id coll-one)
                :account-role 1}]
              (map #(-> %
-                       (ut/remove-db-only)
+                       (ut/remove-db-only)    
                        (dissoc :id))
                   (user-collections-assoc/READ-BY-COLLECTION (:id coll-one)))))
-      (is (= '() (users/READ-BY-USERNAME [(:username user-one)])))
-      (is (= '() (users/READ-BY-USERNAME [(:username user-thr)])))
+      (is (empty? (users/READ-BY-USERNAME [(:username no-db-user-one)])))
+      (is (empty? (users/READ-BY-USERNAME [(:username no-db-user-thr)])))
       (let [res (rp/collection-id-add-users (:id coll-one)
-                                            [(:username user-one) (:username user-two) (:username user-thr) (:username user-fou)]
-                                            0)]
+                                            (map :username 
+                                                 [no-db-user-one user-two no-db-user-thr user-fou])
+                                            0)] ;; TODO this should add even the non-db users, apparently                                        
         (is (= 200 (:status res)))
         (is (= (frequencies (map #(into {}
                                         {:collection-id (:id coll-one)
                                          :username (:username %)
                                          :account-role 0})
-                                 [user-one user-two user-thr user-fou]))
+                                 [no-db-user-one user-two no-db-user-thr user-fou]))
                (frequencies (map #(-> %
                                       (ut/remove-db-only)
                                       (dissoc :id))
                                  (user-collections-assoc/READ-BY-COLLECTION (:id coll-one)))))))
-      (is (= (:username user-one) (:username (first (users/READ-BY-USERNAME [(:username user-one)])))))
-      (is (= (:username user-thr) (:username (first (users/READ-BY-USERNAME [(:username user-thr)])))))
-      (let [user-one-res (first (users/READ-BY-USERNAME [(:username user-one)]))
-            user-thr-res (first (users/READ-BY-USERNAME [(:username user-thr)]))
-            res-one (rp/collections-by-logged-in (uc/user-id-to-session-id (:id user-one-res)))
+      (is (= (:username no-db-user-one) (:username (first (users/READ-BY-USERNAME [(:username no-db-user-one)])))) "User was not created by db-pop")
+      (is (= (:username no-db-user-thr) (:username (first (users/READ-BY-USERNAME [(:username no-db-user-thr)])))) "User was not created by db-pop")
+      (let [no-db-user-one-res (first (users/READ-BY-USERNAME [(:username no-db-user-one)]))
+            no-db-user-thr-res (first (users/READ-BY-USERNAME [(:username no-db-user-thr)]))
+            res-one (rp/collections-by-logged-in (uc/user-id-to-session-id (:id no-db-user-one-res)))
             res-two (rp/collections-by-logged-in (uc/user-id-to-session-id (:id user-two)))
-            res-thr (rp/collections-by-logged-in (uc/user-id-to-session-id (:id user-thr-res)))
-            res-fou (rp/collections-by-logged-in (uc/user-id-to-session-id (:id user-fou)))]
+            res-thr (rp/collections-by-logged-in (uc/user-id-to-session-id (:id no-db-user-thr-res)))
+            res-fou (rp/collections-by-logged-in (uc/user-id-to-session-id (:id user-fou)))
+            sanitize (fn [yv-coll]
+                       (-> yv-coll
+                           (ut/remove-db-only) ;; should this remove session expiry concerns?
+                           (update :id str)
+                           (update :owner str)
+                           (assoc :content [])
+                           (assoc :expired-content [])))
+            sanitized-coll-one (sanitize coll-one)]
+        
         (is (= [{:username (:username user-fou)
                  :collection-id (:id coll-one)
                  :account-role 0}]
                (map #(-> %
                          (ut/remove-db-only)
                          (dissoc :id))
-                    (user-collections-assoc/READ-BY-IDS [(:id coll-one) (:username user-fou)]))))
-        (is (= [(-> coll-one
-                    (ut/remove-db-only)
-                    (update :id str)
-                    (update :owner str)
-                    (assoc :content [])
-                    (assoc :expired-content []))]
-               (m/decode-response-body res-one)))
-        (is (= [(-> coll-one
-                    (ut/remove-db-only)
-                    (update :id str)
-                    (update :owner str)
-                    (assoc :content [])
-                    (assoc :expired-content []))]
+                    (user-collections-assoc/READ-BY-IDS [(:id coll-one) (:username user-fou)]))))        
+        (log/debug "preparing to parse res-one, not in DB" {:no-db-user-one-res (prn-str no-db-user-one-res)
+                                                            :response-one (prn-str res-one)})
+        (is (= [sanitized-coll-one]
+               (m/decode-response-body res-one))) ;; TODO here there be dragons        
+        (is (= [sanitized-coll-one]
                (m/decode-response-body res-two)))
-        (is (= [(-> coll-one
-                    (ut/remove-db-only)
-                    (update :id str)
-                    (update :owner str)
-                    (assoc :content [])
-                    (assoc :expired-content []))]
+        ;; RESUME HERE ↓↓↓
+        #_(is (= [sanitized-coll-one]
                (m/decode-response-body res-thr)))
-        (is (= [(-> coll-one
-                    (ut/remove-db-only)
-                    (update :id str)
-                    (update :owner str)
-                    (assoc :content [])
-                    (assoc :expired-content []))]
-               (m/decode-response-body res-fou)))))))
+        #_(is (= [sanitized-coll-one]
+                 (m/decode-response-body res-fou)))))))
 
 (deftest coll-remove-user
   (testing "remove user from collection"

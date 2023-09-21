@@ -174,8 +174,6 @@
 
 ; - - - - - - - more generic functions - - - - - - - ;
 
-(def spy #(do (println "DEBUG:" %) %))
-
 (defn update-resource-access-last-verified  ; TODO - generalize this function
   "Sets last verified in resource-access to current timestamp"
   [id]
@@ -185,25 +183,36 @@
 (defn read-where-and
   "Get entry from table by column(s), conditionals joined by AND"
   [table-keyword [& column-keywords] [& column-vals] &[select-field-keys]]
-  (if (= (count column-keywords) (count column-vals))
-    (cond-> {:select (or select-field-keys [:*])
-             :from [table-keyword]}
-      (> (count column-keywords) 0) (assoc :where (into [:and] (map #(vector := %1 %2) column-keywords column-vals)))
-      true sql/format
-      ;true (spy) ; <-- prints sql code just before it's executed
-      true dbr)))
+  (let [run-the-query (fn run-read-where-and-query []
+                        (cond-> {:select (or select-field-keys [:*])
+                                 :from [table-keyword]}
+                          (> (count column-keywords) 0)
+                          (assoc :where (into [:and] (map #(vector := %1 %2) column-keywords column-vals)))
+                        true sql/format
+                        true dbr))]
+    (if (= (count column-keywords) (count column-vals))
+      (run-the-query)
+      (throw (ex-info "wrong arg syntax. Args need to be colls of equal length"
+                      {:cause :checking-for-arg-length-match
+                       :column-keywords column-keywords
+                       :column-vals column-vals})))))
 
 (defn read-where-or
   "Get entry from table by column(s), conditionals joined by OR"
   [table-keyword [& column-keywords] [& column-vals] &[select-field-keys]]
-  (if (= (count column-keywords) (count column-vals))
-    (cond-> {:select (or select-field-keys [:*])
-             :from [table-keyword]}
-      (> (count column-keywords) 0) (assoc :where (into [:or] (map #(vector := %1 %2) column-keywords column-vals)))
-      true sql/format
-      ;;true (spy)
-      true dbr)))
-
+  (let [run-the-query (fn run-read-where-or-query []
+                        (cond-> {:select (or select-field-keys [:*])
+                                 :from [table-keyword]}
+                          (> (count column-keywords) 0)
+                          (assoc :where (into [:or] (map #(vector := %1 %2) column-keywords column-vals)))
+                          true sql/format
+                          true dbr))]
+    (if (= (count column-keywords) (count column-vals))
+      (run-the-query)
+      (throw (ex-info "wrong arg syntax. Args need to be colls"
+                      {:cause :checking-for-arg-length-match
+                       :column-keywords column-keywords
+                       :column-vals column-vals})))))
 
 (defn delete-where-and
   "Update delete status in table by column-keywords"
@@ -217,7 +226,6 @@
                       (assoc :deleted (t/now)))]
       (UPDATE table-keyword id val-map))))
 
-
 (defn read-all-where
   "Get all entries from table by column"
   [table-keyword column-keyword &[id select-field-keys]]
@@ -225,10 +233,8 @@
            :from [table-keyword]}
     id (assoc :where [:= column-keyword id])
     true sql/format
-    ;true (spy)
     true dbr))
-    ;(= 1 (count select-field-keys)) (#((first select-field-keys) %))))
-
+    
 (defn read-all-pattern
   "Get all entries from table by column and pattern"
   [table-keyword column-keywords pattern &[select-field-keys]]
@@ -236,7 +242,6 @@
           true (helpers/from table-keyword)
           (> (count column-keywords) 0) (helpers/where [:!= :id ut/nil-uuid] (into [:or] (map #(vector :ilike %1 pattern) column-keywords)))
           true sql/format
-          ;true (spy)
           true dbr))
 
 (defn increment-field
@@ -246,7 +251,6 @@
           true (helpers/sset {column-keyword (sql/call :+ column-keyword 1)})
           true (helpers/where := :id row-id)
           true sql/format
-          ;true (spy)
           true dbdo!))
 
 (defn read-all
@@ -255,10 +259,9 @@
   (cond-> {:select (or select-field-keys [:*])
            :from [table-keyword]}
     true sql/format
-    ;true (spy)
     true dbr))
 
-; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ;
+; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
 (defn DELETE
   "Generic delete"

@@ -1,7 +1,7 @@
 (ns legacy.routes.permissions.basic-tests
   (:require
     [y-video-back.config :refer [env]]
-    [clojure.test :refer :all]
+    [clojure.test :refer [deftest is testing use-fixtures]]
     [y-video-back.handler :refer :all]
     [legacy.db.test-util :as tcore]
     [muuntaja.core :as m]
@@ -25,7 +25,8 @@
 
 
 (deftest dummy
-  (is (= 0 0)))
+   (testing "testing-message"
+      (is (= 2 (+ 1 1)))))
 
 (deftest no-session-id-for-testing
   (testing "no session id"
