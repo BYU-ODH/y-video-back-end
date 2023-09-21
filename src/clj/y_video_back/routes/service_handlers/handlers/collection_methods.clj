@@ -95,7 +95,7 @@
             (user-collections-assoc/DELETE-BY-IDS [id username]))
           (user-collections-assoc/CREATE {:collection-id id :username username
                                           :account-role (:account-role body)})
-          (if (nil? (users/READ-BY-USERNAME username))
+          (if (empty? (users/READ-BY-USERNAME username))
             (uc/get-session-id username))))
       {:status 200
        :body {:message (str (count (:usernames body)) " users added to collection")}})))
