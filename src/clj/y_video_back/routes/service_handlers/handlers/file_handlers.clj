@@ -8,6 +8,7 @@
    [y-video-back.model-specs :as sp]
    [y-video-back.routes.service-handlers.utils.utils :as utils]
    [reitit.ring.middleware.multipart :as multipart]
+   [clojure.data.json :as json]
    [clojure.java.io :as io]
    [clojure.java.shell :as shell]))
 
@@ -32,10 +33,10 @@
                       (languages/CREATE {:id file-version}))
                     (let
                      [output (:out
-                              (shell/sh "ffprobe" "-v" "error" "-select_streams" "v:0" "-show_entries" "stream=width,height" "-of" "default" (-> (:tempfile file) .getAbsolutePath)))
-                      video-info (clojure.string/split output #"\n")
-                      aspect-ratio (clojure.string/replace (str (get video-info 1) "," (get video-info 2))
-                                                           #"[a-zA-z]+=" "")
+                              (shell/sh "ffprobe" "-v" "error" "-select_streams" "v:0" "-show_entries" "stream=width,height,display_aspect_ratio" "-of" "json=c=1" (-> (:tempfile file) .getAbsolutePath)))
+                      stream (get (get (json/read-str output) "streams") 0)
+                      ;; use display_aspect_ratio if present, else use width:height
+                      aspect-ratio (clojure.string/replace (get stream "display_aspect_ratio" (apply str [(get stream "width") ":" (get stream "height")])) ":" ",")
                       copy-result (io/copy (:tempfile file)
                                            (io/file (str (-> env :FILES :media-url) file-name)))
                       id (if (nil? copy-result)
