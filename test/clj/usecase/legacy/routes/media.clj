@@ -1,7 +1,7 @@
 (ns legacy.routes.media
     (:require
      [y-video-back.config :refer [env]]
-     [clojure.test :refer :all]
+     [clojure.test :refer [deftest is testing use-fixtures]]
      [y-video-back.handler :refer :all]
      [legacy.db.test-util :as tcore]
      [muuntaja.core :as m]
@@ -66,7 +66,13 @@
       (is (nil? (file-keys/READ (ut/to-uuid (:file-key res-body)))))
       (let [file-key (:file-key res-body)
             res (rp/stream-media file-key)]
-        (is (= 404 (:status res)))))))
+        (is (= 404 (:status res)))))
+    (testing "Check if the headers include the Apple-friendly headers"
+       (is false)))
+
+  )
+
+;; TODO 2023284 Make sure streaming is working
 ; TODO Tests to add
 ; get file key, bad session-id
 ; get file key, user doesn't have permission to file

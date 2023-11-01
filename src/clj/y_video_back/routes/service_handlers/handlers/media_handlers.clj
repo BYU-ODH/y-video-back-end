@@ -48,6 +48,9 @@
     (uuid? m-v) m-v
     :else (throw (ex-info "Not recognizing the type for extracting the file-key" {:given-m-v m-v}))))
 
+(defn extension [s]
+  (second (re-find #"\.([a-zA-Z0-9]+)$" s)))
+
 (defn _stream-partial-media
   "backend fn for streaming partial-media"
   [m-v]
@@ -60,7 +63,11 @@
         (if (or (:dev env) (:prod env))
           (log-ut/log-media-access {:file-id (str (:file-id file-key-res))
                                     :username (:username user-res)}))
-        (file-response (utils/file-id-to-path (:file-id file-key-res)))))))
+        (-> (file-response (utils/file-id-to-path (:file-id file-key-res)))
+                        (header "Content-Type"
+                                (case (extension (:filename request))
+                                  :mp4 "video/mp4"
+                                  :mp3 "audio/mp3")))))))
 
 (def stream-partial-media ; TODO - require session-id?
   {:summary "Stream partial media referenced by file-key"
