@@ -7,6 +7,7 @@
    [y-video-back.routes.service-handlers.utils.utils :as utils]
    [y-video-back.routes.service-handlers.utils.role-utils :as ru]
    [ring.util.response :refer [file-response]]
+   [ring.mock.request :as mr]
    [y-video-back.log :as log-ut]))
 
 ; TODO - check if user has permission to stream requested file
@@ -64,8 +65,8 @@
           (log-ut/log-media-access {:file-id (str (:file-id file-key-res))
                                     :username (:username user-res)}))
         (-> (file-response (utils/file-id-to-path (:file-id file-key-res)))
-                        (header "Content-Type"
-                                (case (extension (:filename request))
+                        (mr/header "Content-Type"
+                                (case (extension (:filename m-v))
                                   :mp4 "video/mp4"
                                   :mp3 "audio/mp3")))))))
 

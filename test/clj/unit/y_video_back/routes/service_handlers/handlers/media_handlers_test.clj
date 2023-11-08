@@ -19,11 +19,11 @@
  #_(def res (rp/login-current-user "test")))
 
 (deftest stream-partial-media-route
-  (let [file-key nil
-        url nil
-        filecontent (ut/get-filecontent)
-        file-one (dissoc (db-pop/get-file) :filepath :aspect-ratio)
-        res (rp/file-post file-one filecontent)]
+  (let [file-key nil ;; TODO where do I get the file-key?
+        url (str "/api/partial-media/stream-media/" file-key)
+        file-content (ut/get-filecontent)
+        file-one (db-pop/get-file)
+        resource (rp/file-post file-one file-content)]
     (testing "Stream partial media referenced by file-key"
       (is false))
     (testing "file READ"
