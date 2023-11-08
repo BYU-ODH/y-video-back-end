@@ -19,10 +19,10 @@
  #_(def res (rp/login-current-user "test")))
 
 (deftest stream-partial-media-route
-  (let [file-key nil ;; TODO where do I get the file-key?
+  (let [file-key nil ;; TODO where do I get the file-key? (rp/get-file-key (:id (db-pop/add-file)))
         url (str "/api/partial-media/stream-media/" file-key)
         file-content (ut/get-filecontent)
-        file-one (db-pop/get-file)
+        file-one (db-pop/get-file) ;; what's the difference between dbpop/get- and dbpop/add- file?
         resource (rp/file-post file-one file-content)]
     (testing "Stream partial media referenced by file-key"
       (is false))
