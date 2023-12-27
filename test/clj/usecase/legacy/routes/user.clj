@@ -1,5 +1,5 @@
 (ns legacy.routes.user
-    (:require
+  (:require
       [y-video-back.config :refer [env]]
       [clojure.test :refer [deftest is testing use-fixtures]]
       [y-video-back.handler :refer :all]
