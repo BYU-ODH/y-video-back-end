@@ -1,4 +1,9 @@
 (ns y-video-back.apis.student-schedule
+  "This file uses the api that upplies data about users’ class schedule (which courses they are currently enrolled in).
+
+  This api is queried periodically, checked when the user navigates to the site.
+  The refresh period is defined in the config file by :user-courses-refresh-after"
+
   (:require
     [y-video-back.apis.utils :as ut]
     [clj-http.client :as client]
