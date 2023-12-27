@@ -35,7 +35,7 @@
   "Placeholder for development purposes"
   []
   (if (:test env)
-    "20201"
+    "20241"
     (get-current-sem-real)))
 
 (defn get-oauth-token-new  ; TODO - store token locally, only query new one when needed
