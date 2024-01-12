@@ -41,7 +41,6 @@
                                :metadata "text"}))
   (mount.core/start #'y-video-back.handler/app))
 
-; get file key - all good
 (deftest file-key-and-streaming
   (testing "get file-key with admin user, then stream"
     (let [res (rp/get-file-key (uc/user-id-to-session-id (:id user-one)) (:id file-one))
@@ -66,11 +65,9 @@
       (is (nil? (file-keys/READ (ut/to-uuid (:file-key res-body)))))
       (let [file-key (:file-key res-body)
             res (rp/stream-media file-key)]
-        (is (= 404 (:status res)))))
-    (testing "Check if the headers include the Apple-friendly headers"
-       (is false)))
-
-  )
+        (is (= 404 (:status res))))
+      (testing "Check if the headers include the Apple-friendly headers"
+         (is (false? res))))))
 
 ;; TODO 2023284 Make sure streaming is working
 ; TODO Tests to add
