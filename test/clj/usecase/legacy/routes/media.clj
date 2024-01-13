@@ -43,31 +43,32 @@
 
 (deftest file-key-and-streaming
   (testing "get file-key with admin user, then stream"
-    (let [res (rp/get-file-key (uc/user-id-to-session-id (:id user-one)) (:id file-one))
-          res-body (m/decode-response-body res)]
-      (is (= 200 (:status res)))
-      (is (contains? res-body :file-key))
-      (let [file-key (:file-key res-body)
-            res (rp/stream-media file-key)]
-        (is (= 200 (:status res)))
-        (is (= java.io.File (type (:body res))))
-        (is (= (str (clojure.string/trim-newline (:out (shell/sh "pwd"))) "/" (-> env :FILES :media-url) (:filepath file-one)) (.getAbsolutePath (:body res)))))))
+    (let [response (rp/get-file-key (uc/user-id-to-session-id (:id user-one)) (:id file-one))
+          response-body (m/decode-response-body response)
+          ]
+      (is (= 200 (:status response)))
+      (is (contains? response-body :file-key))
+      (let [file-key (:file-key response-body)
+            response (rp/stream-media file-key)]
+        (is (= 200 (:status response)))
+        (is (= java.io.File (type (:body response))))
+        (is (= (str (clojure.string/trim-newline (:out (shell/sh "pwd"))) "/" (-> env :FILES :media-url) (:filepath file-one)) (.getAbsolutePath (:body response)))))))
   (testing "get file-key with admin user, then let expire"
-    (let [res (rp/get-file-key (uc/user-id-to-session-id (:id user-one)) (:id file-one))
-          res-body (m/decode-response-body res)]
-      (is (= 200 (:status res)))
-      (is (contains? res-body :file-key))
+    (let [response (rp/get-file-key (uc/user-id-to-session-id (:id user-one)) (:id file-one))
+          response-body (m/decode-response-body response)]
+      (is (= 200 (:status response)))
+      (is (contains? response-body :file-key))
       (Thread/sleep (* 3 (-> env :FILES :timeout)))
-      (is (not (nil? (file-keys/READ (ut/to-uuid (:file-key res-body))))))
-      (let [file-key (:file-key res-body)
-            res (rp/stream-media file-key)]
-        (is (= 404 (:status res))))
-      (is (nil? (file-keys/READ (ut/to-uuid (:file-key res-body)))))
-      (let [file-key (:file-key res-body)
-            res (rp/stream-media file-key)]
-        (is (= 404 (:status res))))
+      (is (not (nil? (file-keys/READ (ut/to-uuid (:file-key response-body))))))
+      (let [file-key (:file-key response-body)
+            response (rp/stream-media file-key)]
+        (is (= 404 (:status response))))
+      (is (nil? (file-keys/READ (ut/to-uuid (:file-key response-body)))))
+      (let [file-key (:file-key response-body)
+            response (rp/stream-media file-key)]
+        (is (= 404 (:status response))))
       (testing "Check if the headers include the Apple-friendly headers"
-         (is (false? res))))))
+         (is (false? response))))))
 
 ;; TODO 2023284 Make sure streaming is working
 ; TODO Tests to add
