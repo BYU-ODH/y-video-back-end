@@ -54,7 +54,7 @@
         (is (= 200 status))
         (is (= java.io.File (type body)))
         (is (= (str (clojure.string/trim-newline (:out (shell/sh "pwd"))) "/" (-> env :FILES :media-url) (:filepath file-one)) (.getAbsolutePath (:body stream-response))))
-        (is (= "video/mp4" content-type) "Check if the headers include the right file-type"))))
+        (is (= "video/mp4" stream-response #_content-type) "Check if the headers include the right file-type"))))
   
   (testing "get file-key with admin user, then let expire"
     (let [response (rp/get-file-key (uc/user-id-to-session-id (:id user-one)) (:id file-one))

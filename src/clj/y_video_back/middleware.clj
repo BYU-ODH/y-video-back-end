@@ -247,6 +247,7 @@
 
 (defn wrap-base [handler]
   (-> ((:middleware defaults) handler)
+      ring-content/wrap-content-type
       wrap-flash
       wrap-post-cas
       wrap-cas
