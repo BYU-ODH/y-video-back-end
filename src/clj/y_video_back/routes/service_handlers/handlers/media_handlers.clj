@@ -8,9 +8,13 @@
    [y-video-back.routes.service-handlers.utils.role-utils :as ru]
    [ring.util.response :refer [file-response]]
    [ring.mock.request :as mr]
-   [y-video-back.log :as log-ut]))
+   [y-video-back.log :as log-ut]
+   [taoensso.timbre :as log]))
 
-; TODO - check if user has permission to stream requested file
+                                        ; TODO - check if user has permission to stream requested file
+
+(defn extension [s]
+  (second (re-find #"\.([a-zA-Z0-9]+)$" s)))
 
 (def get-file-key
   {:summary "Gets volatile url for streaming specified media file. If accessing public file as public user, use '00000000-0000-0000-0000-000000000000' as session-id."
@@ -31,7 +35,8 @@
   {:summary "Stream media referenced by file-key"
    :parameters {:path {:file-key uuid?}}
    :handler (fn [{{{:keys [file-key]} :path} :parameters}]
-              (let [file-key-res (file-keys/READ-UNEXPIRED file-key)]
+              (let [file-key-res (file-keys/READ-UNEXPIRED file-key)
+                    _ (log/info "file-key-res is:" file-key-res)]
                 (if (nil? file-key-res)
                   {:status 404
                    :body {:message "file-key not found"}}
@@ -39,7 +44,14 @@
                     (if (or (:dev env) (:prod env))
                       (log-ut/log-media-access {:file-id (str (:file-id file-key-res))
                                                 :username (:username user-res)}))
-                    (file-response (utils/file-id-to-path (:file-id file-key-res)))))))})
+                    (-> (file-response (utils/file-id-to-path (:file-id file-key-res)))
+                        ;; TODO need to apply headers here, but based on the filename
+                        )))))})
+
+;; (comment (mr/header "Content-Type"
+;;                                   (case (extension (:filename file-key-res))
+;;                                     :mp4 "video/mp4"
+;;                                     :mp3 "audio/mp3")))
 
 (defn get-file-key-m-v
   "Get the filekey either from a nested map or recognize if it is just given as a value"
@@ -48,9 +60,6 @@
     (map? m-v) (get-in m-v [:parameters :path :file-key])
     (uuid? m-v) m-v
     :else (throw (ex-info "Not recognizing the type for extracting the file-key" {:given-m-v m-v}))))
-
-(defn extension [s]
-  (second (re-find #"\.([a-zA-Z0-9]+)$" s)))
 
 (defn _stream-partial-media
   "backend fn for streaming partial-media"
@@ -65,10 +74,10 @@
           (log-ut/log-media-access {:file-id (str (:file-id file-key-res))
                                     :username (:username user-res)}))
         (-> (file-response (utils/file-id-to-path (:file-id file-key-res)))
-                        (mr/header "Content-Type"
-                                (case (extension (:filename m-v))
-                                  :mp4 "video/mp4"
-                                  :mp3 "audio/mp3")))))))
+            (mr/header "Content-Type"
+                       (case (extension (:filename m-v))
+                         :mp4 "video/mp4"
+                         :mp3 "audio/mp3")))))))
 
 (def stream-partial-media ; TODO - require session-id?
   {:summary "Stream partial media referenced by file-key"

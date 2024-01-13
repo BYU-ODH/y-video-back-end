@@ -240,15 +240,14 @@
 
 (defn wrap-api-post [handler]
   (-> handler
-      ring-content/wrap-content-type
+      ;;ring-content/wrap-content-type
       log-endpoint-access
       add-id-and-username
       check-permission
       add-session-id))
 
 (defn wrap-base [handler]
-  (-> ((:middleware defaults) handler)
-      ;;ring-content/wrap-content-type ;; only provides a default octet stream type
+  (-> ((:middleware defaults) handler)      
       wrap-flash
       wrap-post-cas
       wrap-cas
