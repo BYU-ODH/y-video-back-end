@@ -49,10 +49,13 @@
       (is (= 200 (:status response)))
       (is (contains? response-body :file-key))
       (let [file-key (:file-key response-body)
-            response (rp/stream-media file-key)]
-        (is (= 200 (:status response)))
-        (is (= java.io.File (type (:body response))))
-        (is (= (str (clojure.string/trim-newline (:out (shell/sh "pwd"))) "/" (-> env :FILES :media-url) (:filepath file-one)) (.getAbsolutePath (:body response)))))))
+            stream-response (rp/stream-media file-key)
+            {:keys [status body content-type]} stream-response]
+        (is (= 200 status))
+        (is (= java.io.File (type body)))
+        (is (= (str (clojure.string/trim-newline (:out (shell/sh "pwd"))) "/" (-> env :FILES :media-url) (:filepath file-one)) (.getAbsolutePath (:body stream-response))))
+        (is (= "video/mp4" content-type) "Check if the headers include the right file-type"))))
+  
   (testing "get file-key with admin user, then let expire"
     (let [response (rp/get-file-key (uc/user-id-to-session-id (:id user-one)) (:id file-one))
           response-body (m/decode-response-body response)]
@@ -66,9 +69,7 @@
       (is (nil? (file-keys/READ (ut/to-uuid (:file-key response-body)))))
       (let [file-key (:file-key response-body)
             response (rp/stream-media file-key)]
-        (is (= 404 (:status response))))
-      (testing "Check if the headers include the Apple-friendly headers"
-         (is (false? response))))))
+        (is (= 404 (:status response)))))))
 
 ;; TODO 2023284 Make sure streaming is working
 ; TODO Tests to add
