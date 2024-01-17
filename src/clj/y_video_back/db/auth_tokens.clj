@@ -24,7 +24,7 @@
       (log/debug "" {:auth-token-id (str auth-token-id)
                      :auth-token (str auth-token)})
       (when auth-token
-        (log/debug "Are we expired? If so, why?" {:expired? (expired?)
+        #_(log/debug "Are we expired? If so, why?" {:expired? (expired?)
                                                   :time-token-created (time-created)
                                                   :current-ms current-ms
                                                   :timeout timeout
