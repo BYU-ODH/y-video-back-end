@@ -31,23 +31,26 @@
                 {:status 200
                  :body {:file-key (:id file-key)}}))})
 
+(defn _stream-media
+  [{{{:keys [file-key]} :path} :parameters}]
+  (let [file-key-res (file-keys/READ-UNEXPIRED file-key)
+                  _ (log/info "file-key-res is:" file-key-res)]
+              (if (nil? file-key-res)
+                {:status 404
+                 :body {:message "file-key not found"}}
+                (let [user-res (users/READ (:user-id file-key-res))]
+                  (if (or (:dev env) (:prod env))
+                    (log-ut/log-media-access {:file-id (str (:file-id file-key-res))
+                                              :username (:username user-res)}))
+                  (-> (file-response (utils/file-id-to-path (:file-id file-key-res)))
+                      (rs/content-type "video/mp4") ;; not always mp4?
+                      ;; TODO need to apply headers here, but based on the filename
+                      )))))
+
 (def stream-media ; TODO - require session-id?
   {:summary "Stream media referenced by file-key"
    :parameters {:path {:file-key uuid?}}
-   :handler (fn [{{{:keys [file-key]} :path} :parameters}]
-              (let [file-key-res (file-keys/READ-UNEXPIRED file-key)
-                    _ (log/info "file-key-res is:" file-key-res)]
-                (if (nil? file-key-res)
-                  {:status 404
-                   :body {:message "file-key not found"}}
-                  (let [user-res (users/READ (:user-id file-key-res))]
-                    (if (or (:dev env) (:prod env))
-                      (log-ut/log-media-access {:file-id (str (:file-id file-key-res))
-                                                :username (:username user-res)}))
-                    (-> (file-response (utils/file-id-to-path (:file-id file-key-res)))
-                        (rs/content-type "video/mp4") ;; not always mp4?
-                        ;; TODO need to apply headers here, but based on the filename
-                        )))))})
+   :handler _stream-media})
 
 ;; (comment (mr/header "Content-Type"
 ;;                                   (case (extension (:filename file-key-res))
