@@ -44,17 +44,16 @@
 (deftest file-key-and-streaming
   (testing "get file-key with admin user, then stream"
     (let [response (rp/get-file-key (uc/user-id-to-session-id (:id user-one)) (:id file-one))
-          response-body (m/decode-response-body response) ;; this fails https:/stackoverflow.com/questions/29337676/why-does-rings-resource-response-respond-with-application-octet-stream-content
-          ]
+          response-body (m/decode-response-body response)]
       (is (= 200 (:status response)))
       (is (contains? response-body :file-key))
       (let [file-key (:file-key response-body)
             stream-response (rp/stream-media file-key)
-            {:keys [status body content-type]} stream-response]
+            {:keys [status body headers]} stream-response]
         (is (= 200 status))
         (is (= java.io.File (type body)))
         (is (= (str (clojure.string/trim-newline (:out (shell/sh "pwd"))) "/" (-> env :FILES :media-url) (:filepath file-one)) (.getAbsolutePath (:body stream-response))))
-        #_(is (= "video/mp4" content-type) "Check if the headers include the right file-type"))))
+        (is (= "video/mp4" (headers "Content-Type")) "Do the headers include the right file-type"))))
   
   (testing "get file-key with admin user, then let expire"
     (let [response (rp/get-file-key (uc/user-id-to-session-id (:id user-one)) (:id file-one))

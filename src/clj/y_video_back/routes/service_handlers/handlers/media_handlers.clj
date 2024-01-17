@@ -6,7 +6,7 @@
    [y-video-back.db.users :as users]
    [y-video-back.routes.service-handlers.utils.utils :as utils]
    [y-video-back.routes.service-handlers.utils.role-utils :as ru]
-   [ring.util.response :refer [file-response]]
+   [ring.util.response :as rs :refer [file-response]]
    [ring.mock.request :as mr]
    [y-video-back.log :as log-ut]
    [taoensso.timbre :as log]))
@@ -45,6 +45,7 @@
                       (log-ut/log-media-access {:file-id (str (:file-id file-key-res))
                                                 :username (:username user-res)}))
                     (-> (file-response (utils/file-id-to-path (:file-id file-key-res)))
+                        (rs/content-type "video/mp4") ;; not always mp4?
                         ;; TODO need to apply headers here, but based on the filename
                         )))))})
 
