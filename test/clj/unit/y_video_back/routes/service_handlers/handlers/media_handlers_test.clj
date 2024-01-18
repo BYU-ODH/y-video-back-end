@@ -23,9 +23,7 @@
         url (str "/api/partial-media/stream-media/" file-key)
         file-content (ut/get-filecontent)
         file-one (db-pop/get-file) ;; what's the difference between dbpop/get- and dbpop/add- file?
-        resource (rp/file-post file-one file-content)]
-    (testing "Stream partial media referenced by file-key"
-      (is false))
+        resource (rp/file-post file-one file-content)]    
     (testing "file READ"
     (let [file-one (ut/under-to-hyphen (files/CREATE (db-pop/get-file)))
           res (rp/file-id-get (:id file-one))]
