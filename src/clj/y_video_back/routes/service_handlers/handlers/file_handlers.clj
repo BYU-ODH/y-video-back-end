@@ -10,21 +10,13 @@
    [reitit.ring.middleware.multipart :as multipart]
    [clojure.data.json :as json]
    [clojure.java.io :as io]
-   [clojure.java.shell :as shell]))
+   [clojure.java.shell :as shell]
+   [kawa.core :as ffmpeg]))
 
-(def file-create
-  {:summary "Creates a new file. MUST INCLUDE FILE AS UPLOAD."
-   :permission-level "lab-assistant"
-   :parameters {:header {:session-id uuid?}
-                :multipart {:file multipart/temp-file-part
-                            :resource-id uuid?
-                            :file-version string?
-                            :metadata string?}}
-   :responses {200 {:body {:message string?
-                           :id string?}}
-               500 {:body {:message string?}}}
-   :handler (fn [{{{:keys [file resource-id file-version metadata]} :multipart} :parameters}]
-              (let [file-name (utils/get-filename (:filename file))]
+(defn _file-create
+  "File Creation, including dimension clipping with ffprobe"
+  [{{{:keys [file resource-id file-version metadata]} :multipart} :parameters}]
+  (let [file-name (utils/get-filename (:filename file))]
                 (if-not (resources/EXISTS? resource-id)
                   {:status 500
                    :body {:message "resource not found"}}
@@ -57,7 +49,20 @@
                         (io/delete-file (:tempfile file)))
                       {:status 200
                        :body {:message "1 file created"
-                              :id id}})))))})
+                              :id id}}))))
+  )
+(def file-create
+  {:summary "Creates a new file. MUST INCLUDE FILE AS UPLOAD."
+   :permission-level "lab-assistant"
+   :parameters {:header {:session-id uuid?}
+                :multipart {:file multipart/temp-file-part
+                            :resource-id uuid?
+                            :file-version string?
+                            :metadata string?}}
+   :responses {200 {:body {:message string?
+                           :id string?}}
+               500 {:body {:message string?}}}
+   :handler _file-create})
 
 (def file-get-by-id
   {:summary "Retrieves specified file"
