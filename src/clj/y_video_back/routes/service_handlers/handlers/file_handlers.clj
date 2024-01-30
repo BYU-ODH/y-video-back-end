@@ -11,7 +11,8 @@
    [clojure.data.json :as json]
    [clojure.java.io :as io]
    [clojure.java.shell :as shell]
-   [kawa.core :as ffmpeg]))
+   [ffclj.core :as ffmpeg]
+   #_[kawa.core :as ffmpeg]))
 
 (defn _file-create
   "File Creation, including dimension clipping with ffprobe"

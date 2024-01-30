@@ -16,8 +16,10 @@
    [clojure.data.json :as json]
    [clojure.java.io :as io]
    [clojure.java.shell :as shell]
-   [kawa.core :as ffm]
-   [kawa.manager :as ffmanager]
+   [ffclj.core :as ffc]
+   [ffclj.task :as ffmanager]
+   ;[kawa.core :as ffm]
+   ;[kawa.manager :as ffmanager]
    [legacy.db.test-util :as tcore]
    [legacy.utils.utils :as ut]
    [taoensso.timbre :as log])
@@ -30,18 +32,22 @@
  (ut/renew-db))
 
 (deftest ffprobe
-  (testing "Change aspect ratio"
+  (testing "check aspect ratio"
     (let [file-path (-> env :FILES :media-url (str "small_test_video.mp4"))
           test-name :ffprobe
-          mp4 (ffmanager/register :mp4 (ffm/ffmpeg! :format "lavfi" :input-url "testsrc" :duration 10
+          #_#_ mp4 (ffmanager/register :mp4 (ffm/ffmpeg! :format "lavfi" :input-url "testsrc" :duration 10
                                                     :pixel-format "yuv420p" "testsrc.mp4"))
-          ffp (ffmanager/register test-name
-                                  (ffm/ffprobe! :input-url file-path :output-format "json"))]
-      #_(shell/sh "ffprobe" "-v" "error" "-select_streams" "v:0" "-show_entries" "stream=width,height,display_aspect_ratio" "-of" "json=c=1" (-> (:tempfile file) .getAbsolutePath))
-      (-> (ffmanager/ls) test-name :cmd)
+          #_#_ffp (ffmanager/register test-name
+                                      (ffm/ffprobe! :input-url file-path :output-format "json"))
+          result (ffc/ffprobe! [:show_format :show_streams file-path])
+          aspect-ratio (-> result :streams first :display_aspect_ratio)
+          ]
+      #_(shell/sh "ffprobe" "-v" "error" "-select_streams" "v:0" "-show_entries" "stream=width,height,display_aspect_ratio" "-of" "json=c=1" (-> (:tempfile file) .getAbsolutePath))      
+      #_(-> (ffmanager/ls) test-name :process #_:out #_#_:err slurp)
+      aspect-ratio
       ;(is false)
       )
-    ;; run let
+    ;; ↑ run let
     ))
 
 

@@ -41,8 +41,11 @@
                  [org.clojure/data.json "1.0.0"]
                  [nilenso/honeysql-postgres "0.2.6"]
                  [com.taoensso/timbre "6.0.3"]
-                 [w33t/kawa "0.1.2"]
-                 [tupelo "23.07.04"]]
+                 [tupelo "23.07.04"]
+                 [ffclj "0.1.2"]
+                 
+                 ;[w33t/kawa "0.1.2"]
+                 ]
 
 
 
