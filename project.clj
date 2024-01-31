@@ -43,11 +43,8 @@
                  [com.taoensso/timbre "6.0.3"]
                  [tupelo "23.07.04"]
                  [ffclj "0.1.2"]
-                 
-                 ;[w33t/kawa "0.1.2"]
+                                        ;[com.phronemophobic/clj-media "2.3"] ;; This is desirable, not merely a wrapper but using the C APIs. But it has system dependencies on libxcb library, which might effect our deployment targets. 
                  ]
-
-
 
 :min-lein-version "2.0.0"
 :eastwood {:linters [:all]
