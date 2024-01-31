@@ -5,23 +5,9 @@
    [mount.core :as mount]
    [y-video-back.config :refer [env]]
    [y-video-back.db.core :refer [*db*] :as db]
-   [y-video-back.db.files :as files]
-   [y-video-back.db.resources :as resources]
-   [y-video-back.db.languages :as languages]
-   [y-video-back.models :as models]
-   [y-video-back.model-specs :as sp]
    [y-video-back.handler :as handle]
-   [y-video-back.routes.service-handlers.utils.utils :as utils]
-   [reitit.ring.middleware.multipart :as multipart]
-   [clojure.data.json :as json]
-   [clojure.java.io :as io]
-   [clojure.java.shell :as shell]
-   [ffclj.core :as ffc]
-                                        ;[ffclj.task :as ffmanager] ;; may be useful if further ffmpeg work is done
    [legacy.db.test-util :as tcore]
-   [legacy.utils.utils :as ut]
-   [taoensso.timbre :as log])
-  )
+   [legacy.utils.utils :as ut]))
 
 (tcore/basic-transaction-fixtures
   (mount/start #'y-video-back.config/env)
@@ -31,18 +17,26 @@
 
 (deftest compute-aspect-ratio
   (let [width "1600"
-        height "900"]
+        height "900"
+        iw 1600
+        ih 900]
     (testing "pretty-print the aspect ratio"
-      (is (= "16:9" (subj/compute-aspect-ratio width height :string))))
+      (is (= "16:9" (and
+                     (subj/compute-aspect-ratio iw ih :string)
+                     (subj/compute-aspect-ratio width height :string)))
+          "Works with both ints and strings"))
     (testing "return value vec of the ratio"
-      (is (= [16 9] (subj/compute-aspect-ratio width height))))))
+      (is (= [16 9] (and
+                     (subj/compute-aspect-ratio iw ih)
+                     (subj/compute-aspect-ratio width height)))
+              "Works with both ints and strings"))))
 
 
 (deftest probe-aspect-ratio
   (testing "check aspect ratio"
     (let [file-path (-> env :FILES :media-url (str "small_test_video.mp4"))
           aspect-ratio (subj/probe-aspect-ratio file-path)
-          computed-ratio (subj/probe-aspect-ratio file-path :compose) 
+          computed-ratio (subj/probe-aspect-ratio file-path :compute) 
           target "16:9"]
       (is (= target aspect-ratio) "Got the ffprobe aspect-ratio")
       (is (= target computed-ratio) "Computed the aspect ratio"))))
