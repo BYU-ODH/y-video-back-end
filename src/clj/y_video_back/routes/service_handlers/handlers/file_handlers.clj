@@ -14,10 +14,13 @@
    [ffclj.core :as ffc]))
 
 (defn probe-aspect-ratio 
-  "Obtain the aspect ratio of the file at `file-path`"
+  "Obtain the aspect ratio of the file at `file-path`, either given or composed"
   [file-path]
   (let [result (ffc/ffprobe! [:show_format :show_streams file-path])
-        aspect-ratio (-> result :streams first :display_aspect_ratio)]
+        {:keys [width height display_aspect_ratio]} (-> result :streams first)
+        aspect-ratio (or display_aspect_ratio
+                         (str width ":" height))]
+     ;; use display_aspect_ratio if present, else use width:height
     aspect-ratio))
 
 (defn _file-create
@@ -31,8 +34,7 @@
                     (if-not (languages/EXISTS? file-version)
                       (languages/CREATE {:id file-version}))
                     (let
-                        [file-path (-> (:tempfile file) .getAbsolutePath)                         
-                         ;; use display_aspect_ratio if present, else use width:height
+                        [file-path (-> (:tempfile file) .getAbsolutePath)                                                 
                       aspect-ratio (probe-aspect-ratio file-path)
                       copy-result (io/copy (:tempfile file)
                                            (io/file (str (-> env :FILES :media-url) file-name)))
