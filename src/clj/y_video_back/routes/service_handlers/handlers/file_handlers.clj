@@ -13,13 +13,28 @@
    [clojure.java.shell :as shell]
    [ffclj.core :as ffc]))
 
+(defn compute-aspect-ratio
+  "given width and height, calculate the aspect ratio of them; return a vector or an 'x:y' string version"
+  [w h &[string?]]
+  (let [calc-gcd (fn [a b]
+              (if (zero? b)
+                a
+                (recur b (mod a b))))
+        [x y :as xy] (map (comp #(Integer/parseInt %) str) [w h])
+        gcd (calc-gcd x y)
+        [rx ry :as xy] (map #(/ % gcd) xy)]
+    (if string?
+      (str rx ":" ry)
+      xy)))
+
 (defn probe-aspect-ratio 
-  "Obtain the aspect ratio of the file at `file-path`, either given or composed"
-  [file-path]
+  "Obtain the aspect ratio of the file at `file-path`, either given or composed from the height and width of the video"
+  [file-path & [compose?]]
   (let [result (ffc/ffprobe! [:show_format :show_streams file-path])
         {:keys [width height display_aspect_ratio]} (-> result :streams first)
-        aspect-ratio (or display_aspect_ratio
-                         (str width ":" height))]
+        aspect-ratio (if (and (not compose?) display_aspect_ratio)
+                       display_aspect_ratio
+                       (compute-aspect-ratio width height :string))]
      ;; use display_aspect_ratio if present, else use width:height
     aspect-ratio))
 
