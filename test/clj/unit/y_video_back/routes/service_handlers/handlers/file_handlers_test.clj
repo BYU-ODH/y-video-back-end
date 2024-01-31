@@ -17,9 +17,7 @@
    [clojure.java.io :as io]
    [clojure.java.shell :as shell]
    [ffclj.core :as ffc]
-   [ffclj.task :as ffmanager]
-   ;[kawa.core :as ffm]
-   ;[kawa.manager :as ffmanager]
+   ;[ffclj.task :as ffmanager] ;; may be useful if further ffmpeg work is done
    [legacy.db.test-util :as tcore]
    [legacy.utils.utils :as ut]
    [taoensso.timbre :as log])
@@ -31,12 +29,10 @@
  (mount/start #'y-video-back.db.core/*db*) 
  (ut/renew-db))
 
-(deftest ffprobe
+(deftest probe-aspect-ratio
   (testing "check aspect ratio"
     (let [file-path (-> env :FILES :media-url (str "small_test_video.mp4"))
-       result (ffc/ffprobe! [:show_format :show_streams file-path])
-          aspect-ratio (-> result :streams first :display_aspect_ratio)
-          ]
+          aspect-ratio (subj/probe-aspect-ratio file-path)]
       (is (= "16:9" aspect-ratio) "Got the ffprobe aspect-ratio"))))
 
 

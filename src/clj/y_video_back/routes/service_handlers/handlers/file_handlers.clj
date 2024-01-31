@@ -11,11 +11,17 @@
    [clojure.data.json :as json]
    [clojure.java.io :as io]
    [clojure.java.shell :as shell]
-   [ffclj.core :as ffmpeg]
-   #_[kawa.core :as ffmpeg]))
+   [ffclj.core :as ffc]))
+
+(defn probe-aspect-ratio 
+  "Obtain the aspect ratio of the file at `file-path`"
+  [file-path]
+  (let [result (ffc/ffprobe! [:show_format :show_streams file-path])
+        aspect-ratio (-> result :streams first :display_aspect_ratio)]
+    aspect-ratio))
 
 (defn _file-create
-  "File Creation, including dimension clipping with ffprobe"
+  "File Creation, including dimension clipping with based on video aspect ratio"
   [{{{:keys [file resource-id file-version metadata]} :multipart} :parameters}]
   (let [file-name (utils/get-filename (:filename file))]
                 (if-not (resources/EXISTS? resource-id)
@@ -25,11 +31,9 @@
                     (if-not (languages/EXISTS? file-version)
                       (languages/CREATE {:id file-version}))
                     (let
-                     [output (:out
-                              (shell/sh "ffprobe" "-v" "error" "-select_streams" "v:0" "-show_entries" "stream=width,height,display_aspect_ratio" "-of" "json=c=1" (-> (:tempfile file) .getAbsolutePath)))
-                      stream (get (get (json/read-str output) "streams") 0)
-                      ;; use display_aspect_ratio if present, else use width:height
-                      aspect-ratio (clojure.string/replace (get stream "display_aspect_ratio" (apply str [(get stream "width") ":" (get stream "height")])) ":" ",")
+                        [file-path (-> (:tempfile file) .getAbsolutePath)                         
+                         ;; use display_aspect_ratio if present, else use width:height
+                      aspect-ratio (probe-aspect-ratio file-path)
                       copy-result (io/copy (:tempfile file)
                                            (io/file (str (-> env :FILES :media-url) file-name)))
                       id (if (nil? copy-result)
