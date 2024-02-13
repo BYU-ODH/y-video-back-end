@@ -72,3 +72,4 @@ __pycache__
 /env/dev/resources/config.edn.2023220
 upload.html
 yvideo-client
+*.clj#
