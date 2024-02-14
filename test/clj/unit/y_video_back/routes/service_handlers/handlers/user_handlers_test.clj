@@ -1,4 +1,4 @@
-v(ns y-video-back.routes.service-handlers.handlers.user-handlers-test
+(ns y-video-back.routes.service-handlers.handlers.user-handlers-test
   (:require [clojure.test :refer [use-fixtures deftest is testing]]
             [mount.core :as mount]
             [y-video-back.config :refer [env]]
