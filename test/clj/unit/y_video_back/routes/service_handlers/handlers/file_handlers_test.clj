@@ -13,6 +13,7 @@
    [y-video-back.db.languages :as languages]
    [y-video-back.db.resources :as resources]
    [y-video-back.handler :as handle]
+   [legacy.utils.route-proxy.routes.rp-file :as test-file]
    [y-video-back.routes.service-handlers.handlers.file-handlers :as subj]
    [y-video-back.routes.service-handlers.utils.utils :as utils]))
 
@@ -48,16 +49,19 @@
       (is (= target aspect-ratio) "Got the ffprobe aspect-ratio")
       (is (= target computed-ratio) "Computed the aspect ratio"))))
 
-
-(deftest _file-create_test
+;; TODO the test below is needed for issue https://github.com/BYU-ODH/y-video-back-end/issues/161
+#_ (deftest _file-create_test
   []
   (testing "File Creation"
       (let [{{{:keys [file resource-id file-version metadata]} :multipart} :parameters} {:test-request "dummy"}
-            file-name (utils/get-filename (:filename file))]
+            file-name (utils/get-filename (:filename file))
+            session-id "What to put here?"
+            file-db "What to put here?"
+            filecontent (java.file test-video)
+            file-absent-response (test-file/file-post "-1" )]
         (testing "Resource doesn't exist"
-           (is 500 (:status response)))
-
-        (if-not (resources/EXISTS? resource-id)
+          (is 500 (:status file-absent-response)))
+(if-not (resources/EXISTS? resource-id)
           {:status 500
            :body {:message "resource not found"}}
           (do
