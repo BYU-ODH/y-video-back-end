@@ -240,7 +240,6 @@
 
 (defn wrap-api-post [handler]
   (-> handler
-      ;;ring-content/wrap-content-type
       log-endpoint-access
       add-id-and-username
       check-permission
