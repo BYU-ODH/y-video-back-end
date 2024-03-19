@@ -39,7 +39,7 @@
     aspect-ratio))
 
 (defn _file-create
-  "File Creation, including dimension clipping with based on video aspect ratio"
+  "File Creation, including dimension clipping based on video aspect ratio"
   [{{{:keys [file resource-id file-version metadata]} :multipart} :parameters}]
   (let [file-name (utils/get-filename (:filename file))]
                 (if-not (resources/EXISTS? resource-id)

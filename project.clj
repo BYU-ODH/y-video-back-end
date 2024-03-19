@@ -29,8 +29,7 @@
                  [ring-middleware-format "0.7.4"]
                  [ring-webjars "0.2.0"]
                  [ring/ring-core "1.8.0"]
-                 [ring-partial-content "2.0.1"]
-                                        ;[clj-commons/clj-yaml "0.7.1"]
+                 [ring-partial-content "2.0.1"]                                        
                  [ring/ring-defaults "0.3.2"]
                  [selmer "1.12.23"]
                  [tick "0.4.20-alpha"]
@@ -42,9 +41,7 @@
                  [nilenso/honeysql-postgres "0.2.6"]
                  [com.taoensso/timbre "6.0.3"]
                  [tupelo "23.07.04"]
-                 [ffclj "0.1.2"]
-                                        ;[com.phronemophobic/clj-media "2.3"] ;; This is desirable, not merely a wrapper but using the C APIs. But it has system dependencies on libxcb library, which might effect our deployment targets. 
-                 ]
+                 [ffclj "0.1.2"]]
 
 :min-lein-version "2.0.0"
 :eastwood {:linters [:all]
