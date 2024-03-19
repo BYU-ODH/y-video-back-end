@@ -8,22 +8,40 @@
    [y-video-back.model-specs :as sp]
    [y-video-back.routes.service-handlers.utils.utils :as utils]
    [reitit.ring.middleware.multipart :as multipart]
+   [clojure.data.json :as json]
    [clojure.java.io :as io]
-   [clojure.java.shell :as shell]))
+   [clojure.java.shell :as shell]
+   [ffclj.core :as ffc]))
 
-(def file-create
-  {:summary "Creates a new file. MUST INCLUDE FILE AS UPLOAD."
-   :permission-level "lab-assistant"
-   :parameters {:header {:session-id uuid?}
-                :multipart {:file multipart/temp-file-part
-                            :resource-id uuid?
-                            :file-version string?
-                            :metadata string?}}
-   :responses {200 {:body {:message string?
-                           :id string?}}
-               500 {:body {:message string?}}}
-   :handler (fn [{{{:keys [file resource-id file-version metadata]} :multipart} :parameters}]
-              (let [file-name (utils/get-filename (:filename file))]
+(defn compute-aspect-ratio
+  "given width and height, calculate the aspect ratio of them; return a vector or an 'x:y' string version"
+  [w h &[string?]]
+  (let [calc-gcd (fn [a b]
+              (if (zero? b)
+                a
+                (recur b (mod a b))))
+        [x y :as xy] (map (comp #(Integer/parseInt %) str) [w h])
+        gcd (calc-gcd x y)
+        [rx ry :as xy] (map #(/ % gcd) xy)]
+    (if string?
+      (str rx ":" ry)
+      xy)))
+
+(defn probe-aspect-ratio 
+  "Obtain the aspect ratio of the file at `file-path`, either given or composed from the height and width of the video"
+  [file-path & [compose?]]
+  (let [result (ffc/ffprobe! [:show_format :show_streams file-path])
+        {:keys [width height display_aspect_ratio]} (-> result :streams first)
+        aspect-ratio (if (and (not compose?) display_aspect_ratio)
+                       display_aspect_ratio
+                       (compute-aspect-ratio width height :string))]
+     ;; use display_aspect_ratio if present, else use width:height
+    aspect-ratio))
+
+(defn _file-create
+  "File Creation, including dimension clipping based on video aspect ratio"
+  [{{{:keys [file resource-id file-version metadata]} :multipart} :parameters}]
+  (let [file-name (utils/get-filename (:filename file))]
                 (if-not (resources/EXISTS? resource-id)
                   {:status 500
                    :body {:message "resource not found"}}
@@ -31,11 +49,8 @@
                     (if-not (languages/EXISTS? file-version)
                       (languages/CREATE {:id file-version}))
                     (let
-                     [output (:out
-                              (shell/sh "ffprobe" "-v" "error" "-select_streams" "v:0" "-show_entries" "stream=width,height" "-of" "default" (-> (:tempfile file) .getAbsolutePath)))
-                      video-info (clojure.string/split output #"\n")
-                      aspect-ratio (clojure.string/replace (str (get video-info 1) "," (get video-info 2))
-                                                           #"[a-zA-z]+=" "")
+                        [file-path (-> (:tempfile file) .getAbsolutePath)                                                 
+                      aspect-ratio (probe-aspect-ratio file-path)
                       copy-result (io/copy (:tempfile file)
                                            (io/file (str (-> env :FILES :media-url) file-name)))
                       id (if (nil? copy-result)
@@ -56,7 +71,20 @@
                         (io/delete-file (:tempfile file)))
                       {:status 200
                        :body {:message "1 file created"
-                              :id id}})))))})
+                              :id id}}))))
+  )
+(def file-create
+  {:summary "Creates a new file. MUST INCLUDE FILE AS UPLOAD."
+   :permission-level "lab-assistant"
+   :parameters {:header {:session-id uuid?}
+                :multipart {:file multipart/temp-file-part
+                            :resource-id uuid?
+                            :file-version string?
+                            :metadata string?}}
+   :responses {200 {:body {:message string?
+                           :id string?}}
+               500 {:body {:message string?}}}
+   :handler _file-create})
 
 (def file-get-by-id
   {:summary "Retrieves specified file"

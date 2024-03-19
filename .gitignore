@@ -74,3 +74,4 @@ upload.html
 yvideo-client
 /test/clj/testing/dest/
 /test/clj/testing/temp/
+*.clj#
