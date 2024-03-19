@@ -43,50 +43,48 @@
                  [tupelo "23.07.04"]
                  [ffclj "0.1.2"]]
 
-:min-lein-version "2.0.0"
-:eastwood {:linters [:all]
-           :exclude-linters [:keyword-typos :unused-locals :redefd-vars]}
-                                        ; :exclude-linters [:unused-private-vars :unused-fn-args :duplicate-params :unused-locals :keyword-typos :unused-namespaces]
-                                        ; :exclude-namespaces [:test-paths]}
-:test-paths ["test/clj/unit" "test/clj/usecase"]
-:jvm-opts ["-server" "-Dconf=.lein-env"]
-:source-paths ["src/clj" "src/cljc" "src/cljs"]
-:resource-paths ["resources"]
-:target-path "target/"
-:main y-video-back.core
-:plugins [[lein-cprop "1.0.3"]
-          [migratus-lein "0.7.2"]
-          [lein-immutant "2.1.0"]
-          [lein-cloverage "1.1.2"]
-          [jonase/eastwood "0.4.0"]]
-:clean-targets ^{:protect false}
-[:target-path [:builds :app :compiler :output-dir] [:builds :app :compiler :output-to]]
+  :min-lein-version "2.0.0"
+  :eastwood {:linters [:all]
+             :exclude-linters [:keyword-typos :unused-locals :redefd-vars]}
+  :test-paths ["test/clj/unit" "test/clj/usecase"]
+  :jvm-opts ["-server" "-Dconf=.lein-env"]
+  :source-paths ["src/clj" "src/cljc" "src/cljs"]
+  :resource-paths ["resources"]
+  :target-path "target/"
+  :main y-video-back.core
+  :plugins [[lein-cprop "1.0.3"]
+            [migratus-lein "0.7.2"]
+            [lein-immutant "2.1.0"]
+            [lein-cloverage "1.1.2"]
+            [jonase/eastwood "0.4.0"]]
+  :clean-targets ^{:protect false}
+  [:target-path [:builds :app :compiler :output-dir] [:builds :app :compiler :output-to]]
 
-:immutant {:war {:context-path "/"
-                 :name "y-video-back%t"}}
-:test-selectors {:integration :integration
-                 :mock-prod :mock-prod}
+  :immutant {:war {:context-path "/"
+                   :name "y-video-back%t"}}
+  :test-selectors {:integration :integration
+                   :mock-prod :mock-prod}
 
-:profiles
-{:uberjar {:omit-source true
-           :aot :all
-           :uberjar-name "y-video-back-end.jar"
-           :source-paths ["env/prod/clj"]
-           :resource-paths ["env/prod/resources"]}
+  :profiles
+  {:uberjar {:omit-source true
+             :aot :all
+             :uberjar-name "y-video-back-end.jar"
+             :source-paths ["env/prod/clj"]
+             :resource-paths ["env/prod/resources"]}
 
- :dev           [:project/dev :profiles/dev]
- :test          [:project/dev :project/test :profiles/test]
+   :dev           [:project/dev :profiles/dev]
+   :test          [:project/dev :project/test :profiles/test]
 
 
- :project/dev  {:dependencies [[pjstadig/humane-test-output "0.10.0"]
-                               [prone "2020-01-17"]
-                               [ring/ring-devel "1.8.0"]
-                               [ring/ring-mock "0.4.0"]]
-                :plugins      [[com.jakemccrary/lein-test-refresh "0.14.0"]]
-                :source-paths ["env/dev/clj" "test/clj/unit" "test/clj/usecase"]
-                :resource-paths ["env/dev/resources"]
-                :injections [(require 'pjstadig.humane-test-output)
-                             (pjstadig.humane-test-output/activate!)]}
- :project/test {:resource-paths ["env/test/resources"]}
- :profiles/dev {:repl-options {:init-ns user}}
- :profiles/test {:cloverage {:ns-exclude-regex [#"y-video-back\.common|y-video-back\.core|y-video-back\.db\.migratus|y-video-back\.env|y-video-back\.figwheel|y-video-back\.handler|y-video-back\.layout|y-video-back\.middleware\.exception|y-video-back\.middleware\.formats|y-video-back\.nrepl|user|y-video-back.config|y-video-back.dev-middleware|.*tests.*|legacy.*|stories.*|y-video-back\.model-specs"]}}})
+   :project/dev  {:dependencies [[pjstadig/humane-test-output "0.10.0"]
+                                 [prone "2020-01-17"]
+                                 [ring/ring-devel "1.8.0"]
+                                 [ring/ring-mock "0.4.0"]]
+                  :plugins      [[com.jakemccrary/lein-test-refresh "0.14.0"]]
+                  :source-paths ["env/dev/clj" "test/clj/unit" "test/clj/usecase"]
+                  :resource-paths ["env/dev/resources"]
+                  :injections [(require 'pjstadig.humane-test-output)
+                               (pjstadig.humane-test-output/activate!)]}
+   :project/test {:resource-paths ["env/test/resources"]}
+   :profiles/dev {:repl-options {:init-ns user}}
+   :profiles/test {:cloverage {:ns-exclude-regex [#"y-video-back\.common|y-video-back\.core|y-video-back\.db\.migratus|y-video-back\.env|y-video-back\.figwheel|y-video-back\.handler|y-video-back\.layout|y-video-back\.middleware\.exception|y-video-back\.middleware\.formats|y-video-back\.nrepl|user|y-video-back.config|y-video-back.dev-middleware|.*tests.*|legacy.*|stories.*|y-video-back\.model-specs"]}}})
