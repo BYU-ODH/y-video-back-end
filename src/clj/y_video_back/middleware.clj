@@ -1,26 +1,28 @@
 (ns y-video-back.middleware
-  (:require [y-video-back.env :refer [defaults]]
-            [clojure.tools.logging :as log]
-            [y-video-back.layout :as layout]
-            [y-video-back.layout :refer [*app-context* error-page]]
-            [ring.middleware.anti-forgery :refer [wrap-anti-forgery]]
-            [ring.middleware.webjars :refer [wrap-webjars]]
-            [ring.middleware.format :refer [wrap-restful-format]]
-            [y-video-back.config :refer [env]]
-            [ring.middleware.flash :refer [wrap-flash]]
-            [immutant.web.middleware :refer [wrap-session]]
-            [ring.middleware.defaults :refer [site-defaults wrap-defaults]]
-            [byu-cas.core :as cas]
-            [y-video-back.middleware.formats :as formats]
-            [ring-ttl-session.core :refer [ttl-memory-store]]
-            [y-video-back.routes.service-handlers.utils.utils :as sh-utils]
-            [ring.middleware.cors :refer [wrap-cors]]
-            [y-video-back.routes.service-handlers.utils.role-utils :as ru]
-            [clojure.data.json :as json]
-            [y-video-back.utils.account-permissions :as ac]
-            [y-video-back.db.users :as users]
-            [y-video-back.log :as ylog]
-            [ring.util.response :refer [redirect]])
+  (:require
+   [byu-cas.core :as cas]
+   [clojure.data.json :as json]
+   [clojure.tools.logging :as log]
+   [immutant.web.middleware :refer [wrap-session]]
+   [ring-ttl-session.core :refer [ttl-memory-store]]
+   [ring.middleware.anti-forgery :refer [wrap-anti-forgery]]
+   [ring.middleware.cors :refer [wrap-cors]]
+   [ring.middleware.defaults :refer [site-defaults wrap-defaults]]
+   [ring.middleware.flash :refer [wrap-flash]]
+   [ring.middleware.format :refer [wrap-restful-format]]
+   [ring.middleware.webjars :refer [wrap-webjars]]
+   [ring.middleware.content-type :as ring-content]
+   [ring.util.response :refer [redirect]]
+   [y-video-back.config :refer [env]]
+   [y-video-back.db.users :as users]
+   [y-video-back.layout :as layout]
+   [y-video-back.layout :refer [*app-context* error-page]]
+   [y-video-back.log :as ylog]
+   [y-video-back.middleware.formats :as formats]
+   [y-video-back.routes.service-handlers.utils.role-utils :as ru]
+   [y-video-back.routes.service-handlers.utils.utils :as sh-utils]
+   [y-video-back.utils.account-permissions :as ac]
+   [y-video-back.env :refer [defaults]])
 
   (:import [javax.servlet ServletContext]))
 
@@ -244,7 +246,7 @@
       add-session-id))
 
 (defn wrap-base [handler]
-  (-> ((:middleware defaults) handler)
+  (-> ((:middleware defaults) handler)      
       wrap-flash
       wrap-post-cas
       wrap-cas
