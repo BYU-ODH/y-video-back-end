@@ -52,11 +52,6 @@
    :parameters {:path {:file-key uuid?}}
    :handler _stream-media})
 
-;; (comment (mr/header "Content-Type"
-;;                                   (case (extension (:filename file-key-res))
-;;                                     :mp4 "video/mp4"
-;;                                     :mp3 "audio/mp3")))
-
 (defn get-file-key-m-v
   "Get the filekey either from a nested map or recognize if it is just given as a value"
   [m-v]
