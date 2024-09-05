@@ -36,7 +36,9 @@
 
 (defn refresh-courses
   "Queries AcademicRegistrationStudentSchedule api, makes db reflect results"
+  ;; [user-id username] ;; we need username instead of person-id for the new API
   [user-id person-id]
+  ;; let [api-courses (schedule-api/get-api-courses-new username) ;; pass netid (username) in for the new API call
   (let [api-courses (schedule-api/get-api-courses person-id)
         db-courses (get-db-courses user-id)
         to-delete (set (filter #(not (lazy-contains? api-courses (remove-course-db-fields %))) db-courses))
@@ -56,6 +58,7 @@
    (let [user-res (first (users/READ-BY-USERNAME [username]))]
      (if (or force-api (check-last-course-api user-res))
        (do
+         ;; (refresh-coruses (:id user-res) (:username user-res)) ;; this passes the netid instead of byu id. I know that :id and :usernaem are the same, but I don't know if this is always the case for all instances of this function - BDR 9/5/2024
          (refresh-courses (:id user-res) (:byu-person-id user-res))
          (users/UPDATE (:id user-res) {:last-course-api (java.sql.Timestamp. (System/currentTimeMillis))})))))
   ([username]
