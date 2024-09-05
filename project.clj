@@ -31,6 +31,7 @@
                  [ring/ring-core "1.8.0"]
                  [ring-partial-content "2.0.1"]                                        
                  [ring/ring-defaults "0.3.2"]
+                 [ring/ring-mock "0.4.0"]
                  [selmer "1.12.23"]
                  [tick "0.4.20-alpha"]
                  [metosin/ring-swagger "0.26.2"]
@@ -78,8 +79,7 @@
 
    :project/dev  {:dependencies [[pjstadig/humane-test-output "0.10.0"]
                                  [prone "2020-01-17"]
-                                 [ring/ring-devel "1.8.0"]
-                                 [ring/ring-mock "0.4.0"]]
+                                 [ring/ring-devel "1.8.0"]]
                   :plugins      [[com.jakemccrary/lein-test-refresh "0.14.0"]]
                   :source-paths ["env/dev/clj" "test/clj/unit" "test/clj/usecase"]
                   :resource-paths ["env/dev/resources"]
