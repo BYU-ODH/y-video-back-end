@@ -9,7 +9,7 @@
      [y-video-back.course-creator :refer [check-courses-with-api]]
      [byu-cas.core :as cas]
      [y-video-back.routes.services :refer [service-routes]]
-    ;;  [y-video-back.apis.utils :refer [control-dates]]
+     [y-video-back.apis.utils :as control-dates] ;; for testing new control-dates api
     )
 )
 
@@ -76,7 +76,7 @@
          ["/ping" {:get (constantly (response/ok {:message "pong"}))}]
          ["/hello" {:get hello-page}]
          ["/who-am-i" {:get (fn [request] {:status 200 :body {:username (:username request)}})}]
-        ;;  ["/control-date-test" {:get control-dates.get-current-sem-real-new}]
+         ["/control-date-test" {:get control-dates/get-current-sem-real-new}]
          ["/ben-test" {:get (constantly (response/ok {:message "can I do it too?"}))}]
          ;["/show-request" {:get (fn [request] {:status 200 :body {:request (str request)}})}]
 
