@@ -62,6 +62,12 @@
 (def ^{:private true} home-paths
   ["/"])
 
+(defn new-ben-test
+  "tyring to test if this endpoint works"
+  []
+  (constantly (response/ok {:message "Hey, it is working..."}))
+)
+
 (defn home-routes
   "The basic routes to be handled by the SPA (as rendered by fn `home-page`)"
   []
@@ -77,7 +83,7 @@
          ["/hello" {:get hello-page}]
          ["/who-am-i" {:get (fn [request] {:status 200 :body {:username (:username request)}})}]
          ["/control-date-test" {:get (fn [req] (control-dates/get-current-sem-real-new ()))}]
-         ["/ben-test" {:get (constantly (response/ok {:message "can I do it too?"}))}]
+         ["/ben-test" {:get (fn [req] (new-ben-test ()))}]
          ;["/show-request" {:get (fn [request] {:status 200 :body {:request (str request)}})}]
 
          ; Direct-to-back-end routes

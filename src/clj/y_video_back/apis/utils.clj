@@ -21,7 +21,7 @@
               (str "0" raw-day)
               (str raw-day))
         date-string (str year month day)]
-    (-> (str "https://api.byu.edu/bdp/student_academics/academic_control_dates/v1/?start_date_time=" date-string)
+    (-> (str "https://api.byu.edu/bdp/student_academics/academic_control_dates/v1?start_date_time=" date-string)
         (client/get) ;; makes the call?
         (:body) ;; gets the body? more like assigns the entire response to the value "body"
         (json/read-str) ;; parses the json?
