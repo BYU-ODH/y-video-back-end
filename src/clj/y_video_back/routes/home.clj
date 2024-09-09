@@ -82,8 +82,8 @@
          ["/ping" {:get (constantly (response/ok {:message "pong"}))}]
          ["/hello" {:get hello-page}]
          ["/who-am-i" {:get (fn [request] {:status 200 :body {:username (:username request)}})}]
-         ["/control-date-test" {:get (fn [req] (control-dates/get-current-sem-real-new ()))}]
-         ["/ben-test" {:get (fn [req] (new-ben-test ()))}]
+         ["/control-date-test" {:get (control-dates/get-current-sem-real-new ())}]
+         ["/ben-test" {:get (new-ben-test ())}]
          ;["/show-request" {:get (fn [request] {:status 200 :body {:request (str request)}})}]
 
          ; Direct-to-back-end routes
