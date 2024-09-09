@@ -9,7 +9,9 @@
 
 (defn create-user
   "Creates user with data from BYU api"
+  ;; [username byu-person-id] will need byu id for new bdp call
   [username]
+  ;; (let [user-data (persons-api/get-user-data-new byu-person-id) will need byu id for new bdp call
   (let [user-data (persons-api/get-user-data username)
         create-res (users/CREATE {:username username
                                   :email (:email user-data)
@@ -23,7 +25,9 @@
 
 (defn update-user
   "Updates user with data from BYU api"
+  ;; [username user-id byu-person-id] will need byu id for new bdp api calls
   [username user-id]
+  ;; (let [user-data (persons-api/get-user-data-new byu-person-id) will use byu id for new bdp call
   (let [user-data (persons-api/get-user-data username)
         current-data (first (db/read-all-where :users-undeleted username))
         role (if (or (= (:account-type current-data) 0) (= (:account-type current-data) 1))

@@ -34,8 +34,11 @@
 
 (defn _user-create-from-byu
   "given `username` netid, when the user is new, query for their BYU data and use it to return a constructed new user"
+  ;; [username byu-person-id]
   [username]
-  (let [yvideo-user-exists? (not-empty (users/READ-BY-USERNAME username)) 
+  (let [yvideo-user-exists? (not-empty (users/READ-BY-USERNAME username))
+        ;; will have to user BYU id (byu-person-id) when calling with the new bdp
+        ;; byu-data (when-not yvideo-user-exists? (persons/get-user-data-new byu-person-id))
         byu-data (when-not yvideo-user-exists? (persons/get-user-data username))
         nominal-user-data  (when-let [d byu-data] {:username username
                                                    :account-name (:full-name d)
