@@ -64,7 +64,7 @@
   []
   (if (:test env)
     "20201"
-    (get-current-sem-real)))
+    (get-current-sem-real-new)))
 
 (defn get-oauth-token-new  ; TODO - store token locally, only query new one when needed
   "Gets oauth token from api"
