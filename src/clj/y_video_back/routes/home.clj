@@ -96,7 +96,7 @@
                             }
                       }
          ]
-         ["/ben-test" {:get { 
+         ["/ben-test" {:get {
                               :handler (fn [req]
                                 {
                                   :status 401
