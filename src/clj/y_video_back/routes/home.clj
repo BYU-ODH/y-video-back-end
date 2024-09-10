@@ -9,7 +9,7 @@
      [y-video-back.course-creator :refer [check-courses-with-api]]
      [byu-cas.core :as cas]
      [y-video-back.routes.services :refer [service-routes]]
-     [y-video-back.apis.utils :as control-dates] ;; for testing new control-dates api
+     [y-video-back.apis.student-schedule :as sc] ;; for testing new control-dates api
     )
 )
 
@@ -62,12 +62,6 @@
 (def ^{:private true} home-paths
   ["/"])
 
-(defn new-ben-test
-  "tyring to test if this endpoint works"
-  []
-  (constantly (response/ok {:message "Hey, it is working..."}))
-)
-
 (defn home-routes
   "The basic routes to be handled by the SPA (as rendered by fn `home-page`)"
   []
@@ -90,21 +84,7 @@
                                 }
                                 {
                                   :status 200
-                                  :body {:result (control-dates/get-current-sem-real-new )}
-                                }
-                              )
-                            }
-                      }
-         ]
-         ["/ben-test" {:get {
-                              :handler (fn [req]
-                                {
-                                  :status 401
-                                  :body {:message "yeah, its not authorized..."}
-                                }
-                                {
-                                  :status 200
-                                  :body {:result (new-ben-test )}
+                                  :body {:result (sc/get-api-courses-new )}
                                 }
                               )
                             }
