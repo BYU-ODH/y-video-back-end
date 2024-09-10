@@ -61,22 +61,6 @@
              {:url "/api/swagger.json"
               :config {:validator-url nil}})}]
 
-    ;; dev routes for testing
-     ["/dev/ben-test"
-      {:get {
-              :summary "This is a test for a new endpoint"
-              :bypass-permission true
-              :responses {200 {:body {:message string?}}}
-              :handler (fn [req]
-                        {
-                          :status 200
-                          :body {:message "successful test!"}
-                        }
-                       )
-            }
-      }    
-     ]
-
      ["/ping"
       {:get {:summary "ping, requires valid session-id"
              :bypass-permission true
