@@ -653,7 +653,7 @@ if __name__ == '__main__':
     TIMESTAMP = datetime.now().isoformat(timespec='seconds')
     print('Sending output to {TIMESTAMP}.log...')
 
-    with open(f'{TIMESTAMP}.log', 'w') as log_file, open(f'{TIMESTAMP}-complete.txt', 'w') as c_file, open(f'{TIMESTAMP}-partial.txt', 'w') as p_file:
+    with open(f'logs/{TIMESTAMP}.log', 'w') as log_file, open(f'logs/{TIMESTAMP}-complete.txt', 'w') as c_file, open(f'logs/{TIMESTAMP}-partial.txt', 'w') as p_file:
         log_file = sys.stdout  # override log_file
         print(args, file=log_file)
         print(BATCH_IDS, file=log_file)
