@@ -75,8 +75,7 @@
          ; dev routes
          ["/ping" {:get (constantly (response/ok {:message "pong"}))}]
          ["/hello" {:get hello-page}]
-	 ["/who-am-i" {:get (fn [request] {:status 200 :body request})}]
-        ;;  ["/who-am-i" {:get (fn [request] {:status 200 :body {:username (:username request)}})}]
+         ["/who-am-i" {:get (fn [request] {:status 200 :body {:username (:cas-info request)}})}]
          ["/control-date-test" {:get { 
                               :handler (fn [req]
                                 {
