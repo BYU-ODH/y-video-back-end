@@ -48,7 +48,7 @@
       {:db-item (users/CREATE nominal-user-data)
        :user-data nominal-user-data})))
 
-;; this appears to be where data is obtained from BYU  - BDR 10/7/2024
+;; this is NOT where the user is set up via CAS. This code generates a user given an netid. The netId is maybe provided by CAS from somewhere else, but most likely it is provided by an admin user.
 (def user-create-from-byu
   {:summary "Creates a new user only if byu data is valid"
    :permission-level "admin"
@@ -60,44 +60,17 @@
    :handler (fn [request]
               (let [body (:body request)
                     username (get-in body [:parameters :username])]
-                    {:status 200
-                     :body body                    
-                    }
-              ))})
-                ;; (if-let [user-data-from-byu (_user-create-from-byu username)]                  
-                ;;   {:status 200
-                ;;    :body (let [response (merge body (:user-data user-data-from-byu))]
-                ;;            (if user-data-from-byu
-                ;;              {:message "1 user created"
-                ;;               :id (utils/get-id (:db-item response))}
-                ;;              {:message "username not created invalid BYU username" 
-                ;;               :id "-"}))}
+                (if-let [user-data-from-byu (_user-create-from-byu username)]                  
+                  {:status 200
+                   :body (let [response (merge body (:user-data user-data-from-byu))]
+                           (if user-data-from-byu
+                             {:message "1 user created"
+                              :id (utils/get-id (:db-item response))}
+                             {:message "username not created invalid BYU username" 
+                              :id "-"}))}
                   
-                ;;   {:status 500
-                ;;    :body {:message "username already taken"}})))})
-
-;; (def user-create-from-byu
-;;   {:summary "Creates a new user only if byu data is valid"
-;;    :permission-level "admin"
-;;    :parameters {:header {:session-id uuid?}
-;;                 :body models/user-without-id}
-;;    :responses {200 {:body {:message string?
-;;                            :id string?}}
-;;                500 {:body {:message string?}}}
-;;    :handler (fn [request]
-;;               (let [body (:body request)
-;;                     username (get-in body [:parameters :username])]
-;;                 (if-let [user-data-from-byu (_user-create-from-byu username)]                  
-;;                   {:status 200
-;;                    :body (let [response (merge body (:user-data user-data-from-byu))]
-;;                            (if user-data-from-byu
-;;                              {:message "1 user created"
-;;                               :id (utils/get-id (:db-item response))}
-;;                              {:message "username not created invalid BYU username" 
-;;                               :id "-"}))}
-                  
-;;                   {:status 500
-;;                    :body {:message "username already taken"}})))})
+                  {:status 500
+                   :body {:message "username already taken"}})))})
 
 (def user-get-by-id
   {:summary "Retrieves specified user"
