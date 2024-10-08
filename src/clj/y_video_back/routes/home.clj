@@ -87,7 +87,7 @@
                                   :body {:result (sc/get-api-courses-new )}
                                 }
                               )
-                            }i
+                            }
                       }
          ]
          ;["/show-request" {:get (fn [request] {:status 200 :body {:request (str request)}})}]
