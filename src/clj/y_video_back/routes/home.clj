@@ -75,8 +75,7 @@
          ; dev routes
          ["/ping" {:get (constantly (response/ok {:message "pong"}))}]
          ["/hello" {:get hello-page}]
-
-         ["/who-am-i" {:get (fn [request] {:status 200 :body {:username (request)}})}]
+         ["/who-am-i" {:get (fn [request] {:status 200 :body {:username (str request)}})}]
          ["/control-date-test" {:get { 
                               :handler (fn [req]
                                 {
@@ -88,7 +87,7 @@
                                   :body {:result (sc/get-api-courses-new )}
                                 }
                               )
-                            }
+                            }i
                       }
          ]
          ;["/show-request" {:get (fn [request] {:status 200 :body {:request (str request)}})}]
