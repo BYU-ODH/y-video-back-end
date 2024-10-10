@@ -131,7 +131,7 @@
                             (assoc :username (.getName (.getPrincipal assertion)))
                                         ;(assoc :cas-info (.getAttributes assertion))
                             (assoc :cas-info (.getAttributes (.getPrincipal assertion)))
-                            ;; (assoc :cas-real-info (.getUserPrincipal assertion))
+                            (assoc :cas-real-info (.getPrincipal assertion))
                  )))
       (handler request))))
 
