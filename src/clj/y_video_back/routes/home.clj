@@ -7,7 +7,7 @@
      [y-video-back.middleware :as middleware]
      [y-video-back.user-creator :as uc]
      [y-video-back.course-creator :refer [check-courses-with-api]]
-     [byu-cas.core :as cas]
+     [y-video-back.cas :as cas]
      [y-video-back.routes.services :refer [service-routes]]
      [y-video-back.apis.student-schedule :as sc] ;; for testing new control-dates api
     )

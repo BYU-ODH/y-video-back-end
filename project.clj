@@ -1,8 +1,7 @@
 (defproject y-video-back "0.1.0-SNAPSHOT"
   :url "https://yvideo.byu.edu"
 
-  :dependencies [[byu-odh/byu-cas "5"]
-                 [camel-snake-kebab "0.4.1"]
+  :dependencies [[camel-snake-kebab "0.4.1"]
                  [cheshire "5.10.0"]
                  [clj-http "3.10.0"]
                  [com.draines/postal "2.0.3"]
@@ -42,7 +41,9 @@
                  [nilenso/honeysql-postgres "0.2.6"]
                  [com.taoensso/timbre "6.0.3"]
                  [tupelo "23.07.04"]
-                 [ffclj "0.1.2"]]
+                 [ffclj "0.1.2"]
+                 [org.jasig.cas.client/cas-client-core "3.6.1"] ;; for cas
+                 [org.clojure/tools.logging "0.5.0"]]
 
   :min-lein-version "2.0.0"
   :eastwood {:linters [:all]
