@@ -131,7 +131,6 @@
                             (assoc :username (.getName (.getPrincipal assertion)))
                             ;; (assoc :cas-info (.getAttributes assertion))
                             (assoc :cas-info (.getAttributes (.getPrincipal assertion)))
-                            (assoc :cas-proxy-ticket (.getProxyTicketFor (.getPrincipal assertion)))
                  )))
       (handler request))))
 
