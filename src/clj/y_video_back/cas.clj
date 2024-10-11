@@ -4,7 +4,7 @@
             [clojure.pprint :as pprint]
             [clojure.string :refer [join] :as s]
             [tick.alpha.api :as t])
-  (:import (org.jasig.cas.client.validation Cas20TicketValidator    
+  (:import (org.jasig.cas.client.validation Cas20ProxyTicketValidator
                                             TicketValidationException)))
 
 ;Cas10TicketValidator: https://github.com/apereo/java-cas-client/tree/master/cas-client-core/src/main/java/org/jasig/cas/client/validation
@@ -34,7 +34,7 @@
 (defprotocol Validator
   (validate [v ticket service]))
 
-(extend-type Cas10TicketValidator
+(extend-type Cas20ProxyTicketValidator
   Validator
   (validate [v ticket service] (.validate v ticket service)))
 
@@ -42,7 +42,7 @@
 ;;   (Cas10TicketValidator. (cas-server-fn)))
 (defn validator-maker
   ([] (validator-maker BYU-CAS-server))
-  ([server] (Cas20TicketValidator. server)))
+  ([server] (Cas20ProxyTicketValidator. server)))
 
 (defn- valid? [request]
   (or (get-in request [:session const-cas-assertion])
