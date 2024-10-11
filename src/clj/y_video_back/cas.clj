@@ -42,7 +42,7 @@
 ;;   (Cas10TicketValidator. (cas-server-fn)))
 (defn validator-maker
   ([] (validator-maker BYU-CAS-server))
-  ([server] (Cas10TicketValidator. server)))
+  ([server] (Cas20TicketValidator. server)))
 
 (defn- valid? [request]
   (or (get-in request [:session const-cas-assertion])
