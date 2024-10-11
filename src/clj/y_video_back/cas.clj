@@ -5,7 +5,6 @@
             [clojure.string :refer [join] :as s]
             [tick.alpha.api :as t]
             [clojure.data.json :as json]
-            [clojure.walk :as walk])
   (:import (org.jasig.cas.client.validation Cas20ProxyTicketValidator
                                             TicketValidationException)))
 
@@ -134,8 +133,7 @@
                             ;; (assoc :cas-info (.getAttributes assertion))
                             (def principal (.getPrincipal assertion))
                             (def attributes (.getAttributes principal))
-                            (def json (json/read-str attributes))
-                            (def cas-info-keywordized (walk/keywordize-keys json))
+                            (def json (json/read-str attributes :key-fn keyword))
                             (assoc :byuid (cas-info-keywordized :byuId))
                             
                  )))
