@@ -133,7 +133,7 @@
                             (assoc :username (.getName (.getPrincipal assertion)))
                             ;; (assoc :cas-info (.getAttributes assertion))
                             (assoc :cas-info (.getAttributes (.getPrincipal assertion)))
-                            (assoc cas-info-keywordized (walk/keywordize-keys (json/read-str (.getAttributes (.getPrincipal assertion)))))
+                            (def cas-info-keywordized (walk/keywordize-keys (json/read-str (.getAttributes (.getPrincipal assertion)))))
                             (assoc :byuid (cas-info-keywordized :byuId))
                             
                  )))
