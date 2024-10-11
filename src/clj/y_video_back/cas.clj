@@ -131,10 +131,7 @@
         (handler (-> request
                             (assoc :username (.getName (.getPrincipal assertion)))
                             ;; (assoc :cas-info (.getAttributes assertion))
-                            (def principal (.getPrincipal assertion))
-                            (def attributes (.getAttributes principal))
-                            (def json (json/read-str attributes :key-fn keyword))
-                            (assoc :byuid (cas-info-keywordized :byuId))
+                            (assoc :byuid (json/read-str (.getAttributes (.getPrincipal assertion)) :key-fn keyword))
                             
                  )))
       (handler request))))
