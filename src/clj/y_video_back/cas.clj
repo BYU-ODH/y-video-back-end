@@ -4,7 +4,7 @@
             [clojure.pprint :as pprint]
             [clojure.string :refer [join] :as s]
             [tick.alpha.api :as t]
-            [clojure.data.json :as json]
+            [clojure.data.json :as json])
   (:import (org.jasig.cas.client.validation Cas20ProxyTicketValidator
                                             TicketValidationException)))
 
