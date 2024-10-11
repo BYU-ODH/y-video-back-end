@@ -4,7 +4,7 @@
             [clojure.pprint :as pprint]
             [clojure.string :refer [join] :as s]
             [tick.alpha.api :as t])
-  (:import (org.jasig.cas.client.validation Cas10TicketValidator    
+  (:import (org.jasig.cas.client.validation Cas20TicketValidator    
                                             TicketValidationException)))
 
 ;Cas10TicketValidator: https://github.com/apereo/java-cas-client/tree/master/cas-client-core/src/main/java/org/jasig/cas/client/validation
