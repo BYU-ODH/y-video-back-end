@@ -3,7 +3,9 @@
             [ring.util.response :refer [redirect]]
             [clojure.pprint :as pprint]
             [clojure.string :refer [join] :as s]
-            [tick.alpha.api :as t])
+            [tick.alpha.api :as t]
+            [clojure.data.json : as json]
+            [clojure.walk :as walk])
   (:import (org.jasig.cas.client.validation Cas20ProxyTicketValidator
                                             TicketValidationException)))
 
@@ -131,6 +133,10 @@
                             (assoc :username (.getName (.getPrincipal assertion)))
                             ;; (assoc :cas-info (.getAttributes assertion))
                             (assoc :cas-info (.getAttributes (.getPrincipal assertion)))
+                            (def cas-info-json (json/read-str (.getAttributes (.getPrincipal assertion))))
+                            (def cas-info-keywordized (walk/keywordize-keys cas-info-json))
+                            (assoc :byuid (cas-info-keywordized :byuId))
+                            
                  )))
       (handler request))))
 
