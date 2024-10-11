@@ -131,7 +131,10 @@
         (handler (-> request
                             (assoc :username (.getName (.getPrincipal assertion)))
                             (assoc :cas-info (.getAttributes (.getPrincipal assertion)))
-                            (let [json (json/read-str (.getAttributes (.getPrincipal assertion)) :key-fn keyword)]
+                            (let [json (try
+                                        (json/read-str (.getAttributes (.getPrincipal assertion)) :key-fn keyword)
+                                        (catch Exception e
+                                          (throw (IllegalArgumentException (str "Error parsing JSON")))))]
                             {cas-json json})
                             
                  )))
