@@ -130,8 +130,9 @@
       (do
         (handler (-> request
                             (assoc :username (.getName (.getPrincipal assertion)))
-                            ;; (assoc :cas-info (.getAttributes assertion))
-                            (assoc :byuid (json/read-str (.getAttributes (.getPrincipal assertion)) :key-fn keyword))
+                            (assoc :cas-info (.getAttributes (.getPrincipal assertion)))
+                            (let [json (json/read-str (.getAttributes (.getPrincipal assertion)) :key-fn keyword)]
+                            {cas-json json})
                             
                  )))
       (handler request))))
