@@ -54,6 +54,7 @@
   (if (= "000000000" person-id)
     []
     (try
+    ;; this api isn't going away, and we need to keep it for the time being. BDR 10/14/2024
       (let [url (str "https://api.byu.edu:443/domains/legacy/academic/registration/studentschedule/v1/" person-id "/" (ut/get-current-sem))
             res (try (client/get url {:oauth-token ut/oauth-token})
                      (catch Exception e
