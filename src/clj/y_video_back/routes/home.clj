@@ -84,7 +84,7 @@
                                 }
                                 {
                                   :status 200
-                                  :body {:result (sc/get-api-courses (get-in req [:username :personId]))}
+                                  :body {:result (sc/get-api-courses (get-in req [:username :byuId]))}
                                 }
                               )
                             }
