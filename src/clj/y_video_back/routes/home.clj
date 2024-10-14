@@ -84,7 +84,7 @@
                                 }
                                 {
                                   :status 200
-                                  :body {:result (sc/get-api-courses "560008327")};;(get-in req [:username :byuId]))}
+                                  :body {:result (sc/get-api-courses "951246522")};;(get-in req [:username :byuId]))}
                                 }
                               )
                             }
