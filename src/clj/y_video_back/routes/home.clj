@@ -81,6 +81,7 @@
                                                               :personid (get (get request :cas-info) :personId)
                                                               :sessionId (get (get request :parameters) :header)
                                                               :parameters (get request :parameters)
+                                                              :request request
                                                               ;; :byuid (get (get request :cas-info) :byuId) ;; get's byuid as expected. This pattern can be used to get any data in cas-info
                                                             }})}]
         ;;  ["/control-date-test" {:get (fn [request]
