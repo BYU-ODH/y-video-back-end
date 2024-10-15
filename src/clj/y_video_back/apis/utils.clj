@@ -6,6 +6,20 @@
     [clojure.data.json :as json]
     [clojure.walk :as walk]))
 
+(defn get-oauth-token-new
+  "Gets oauth token from api"
+  []
+  (let [url "https://api.byu.edu/token"
+        auth (str (:CONSUMER_KEY env) ":" (:CONSUMER_SECRET env))
+        tokenRes (client/post url {:body "grant_type=client_credentials"
+                                   :basic-auth auth
+                                   :content-type "application/x-www-form-urlencoded"})
+        new-token (get (json/read-str (:body tokenRes)) "access_token")]
+    (def oauth-token new-token)
+    new-token))
+
+(def oauth-token "")
+
 (defn get-today-date-time
   "Gets today's date as a datetime (YYYYMMDDThh:mm:ss)"
   []
@@ -48,20 +62,6 @@
     )
   )
 )
-
-(defn get-oauth-token-new
-  "Gets oauth token from api"
-  []
-  (let [url "https://api.byu.edu/token"
-        auth (str (:CONSUMER_KEY env) ":" (:CONSUMER_SECRET env))
-        tokenRes (client/post url {:body "grant_type=client_credentials"
-                                   :basic-auth auth
-                                   :content-type "application/x-www-form-urlencoded"})
-        new-token (get (json/read-str (:body tokenRes)) "access_token")]
-    (def oauth-token new-token)
-    new-token))
-
-(def oauth-token "")
 
 ;; Old function useing out of date controldatesws endpoint. Keeping htis here for reference for the time being - BDR 10/15/2024
 ;; (defn get-current-sem-real
