@@ -75,7 +75,10 @@
          ; dev routes
          ["/ping" {:get (constantly (response/ok {:message "pong"}))}]
          ["/hello" {:get hello-page}]
-         ["/who-am-i" {:get (fn [request] {:status 200 :body {:byuid (get (:cas-info request) "byuId")}})}]
+         ["/who-am-i" {:get (fn [request] {:status 200 :body {
+                                                              :byuid (:byuid (:cas-info request))
+                                                              :cas-info (str request)
+                                                            }})}]
          ["/control-date-test" {:get { 
                               :handler (fn [req]
                                 {
