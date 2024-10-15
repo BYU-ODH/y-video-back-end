@@ -79,19 +79,13 @@
                                                               :username (get (get request :cas-info) :netId)
                                                               ;; :byuid (get (get request :cas-info) :byuId) ;; get's byuid as expected. This pattern can be used to get any data in cas-info
                                                             }})}]
-         ["/control-date-test" {:get { 
-                              :handler (fn [request]
-                                {
-                                  :status 401
-                                  :body {:message "yeah, its not authorized..."}
+         ["/control-date-test" {:get (fn [request]
+                                    {
+                                      :status 200
+                                      :body {:result (sc/get-api-courses-new (get (get request :cas-info) :netId))}
+                                    }
+                                  )
                                 }
-                                {
-                                  :status 200
-                                  :body {:result (sc/get-api-courses-new (get (get request :cas-info) :netId))}
-                                }
-                              )
-                            }
-                      }
          ]
          ;["/show-request" {:get (fn [request] {:status 200 :body {:request (str request)}})}]
 
