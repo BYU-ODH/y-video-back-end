@@ -76,8 +76,8 @@
          ["/ping" {:get (constantly (response/ok {:message "pong"}))}]
          ["/hello" {:get hello-page}]
          ["/who-am-i" {:get (fn [request] {:status 200 :body {
-                                                              :cas-info (get request :cas-info)
-                                                              :byuid (get (get request :cas-info) :byuId)
+                                                              :username (get (get request :cas-info) :netId)
+                                                              ;; :byuid (get (get request :cas-info) :byuId) ;; get's byuid as expected. This pattern can be used to get any data in cas-info
                                                             }})}]
          ["/control-date-test" {:get { 
                               :handler (fn [req]
@@ -87,7 +87,7 @@
                                 }
                                 {
                                   :status 200
-                                  :body {:result (str req)};;(sc/get-api-courses-new)}
+                                  :body {:result (sc/get-api-courses-new (get (get request :cas-info) :netId))}
                                 }
                               )
                             }
