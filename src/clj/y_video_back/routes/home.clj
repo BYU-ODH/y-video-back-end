@@ -80,7 +80,7 @@
                                                               ;; :byuid (get (get request :cas-info) :byuId) ;; get's byuid as expected. This pattern can be used to get any data in cas-info
                                                             }})}]
          ["/control-date-test" {:get { 
-                              :handler (fn [req]
+                              :handler (fn [request]
                                 {
                                   :status 401
                                   :body {:message "yeah, its not authorized..."}
