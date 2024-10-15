@@ -6,6 +6,24 @@
     [clojure.data.json :as json]
     [clojure.walk :as walk]))
 
+(defn get-today-date-time
+  "Gets today's date as a datetime (YYYYMMDDThh:mm:ss)"
+  []
+  (def time-map (vec (t/as (t/zoned-date-time) :year :month-of-year :day-of-month)))
+  (def year (str (get time-map 0)))
+  (def raw-month (int (get time-map 1)))
+  (def raw-day (int (get time-map 2)))
+  (def month (if (< raw-month 10)
+                (str "0" raw-month)
+                (str raw-month))
+  )
+  (def day (if (< raw-day 10)
+              (str "0" raw-day)
+              (str raw-day))
+  )
+  (str year "-" month "-" day "T00:00:00");; couldn't figure out how to parse zoned-date-time hours, min, and seconds. Putting 00:00:00 for the time should be fine for now -BDR 9/11/2024
+)
+
 ;; new function that uses BDP - Ben Rencher 9/5/2024
 (defn get-current-sem-real ;; confirmed that this results in the same data as the previous api call - BDR 10/15/2024
   "Returns current semester in format YYYYT (Y=year, T=term)"
