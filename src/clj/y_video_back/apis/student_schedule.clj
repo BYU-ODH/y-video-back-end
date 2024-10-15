@@ -40,7 +40,7 @@
 ;; new api for getting student's courses - Ben Rencher 9/5/2024
 (defn get-api-courses-new
   [netid]
-  (let [url (str "https://api.byu.edu/bdp/student_academics/records/current_student_class_enrollments/v1/?net_id=" netid "&year_term=" (ut/get-current-sem))
+  (let [url (str "https://api.byu.edu/bdp/student_academics/records/current_student_class_enrollments/v1/?net_id=" netid "&year_term=" (ut/get-current-sem-real-new))
         res (try (client/get url {:oath-token ut/oauth-token})
                  (catch Exception e
                     (client/get url {:oath-token (ut/get-oauth-token-new)})))
