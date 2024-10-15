@@ -77,6 +77,9 @@
          ["/hello" {:get hello-page}]
          ["/who-am-i" {:get (fn [request] {:status 200 :body {
                                                               :username (get (get request :cas-info) :netId)
+                                                              :byuid (get (get request :cas-info) :byuId)
+                                                              :personid (get (get request :cas-info) :personId)
+                                                              :sessionId (get (get request :parameters) :header)
                                                               ;; :byuid (get (get request :cas-info) :byuId) ;; get's byuid as expected. This pattern can be used to get any data in cas-info
                                                             }})}]
          ["/control-date-test" {:get (fn [request]
