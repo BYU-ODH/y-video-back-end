@@ -82,7 +82,7 @@
          ["/control-date-test" {:get (fn [request]
                                     {
                                       :status 200
-                                      :body {:result (sc/get-api-courses-new (get (get request :cas-info) :netId))}
+                                      :body {:result (sc/get-api-courses-new "grs45")}
                                     }
                                   )
                                 }
