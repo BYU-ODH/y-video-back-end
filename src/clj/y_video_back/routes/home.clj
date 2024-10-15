@@ -82,14 +82,14 @@
                                                               :sessionId (get (get request :parameters) :header)
                                                               ;; :byuid (get (get request :cas-info) :byuId) ;; get's byuid as expected. This pattern can be used to get any data in cas-info
                                                             }})}]
-         ["/control-date-test" {:get (fn [request]
-                                    {
-                                      :status 200
-                                      :body {:result (sc/get-api-courses-new "grs45")}
-                                    }
-                                  )
-                                }
-         ]
+        ;;  ["/control-date-test" {:get (fn [request]
+        ;;                             {
+        ;;                               :status 200
+        ;;                               :body {:result (sc/get-api-courses-new "grs45")}
+        ;;                             }
+        ;;                           )
+        ;;                         }
+        ;;  ]
          ;["/show-request" {:get (fn [request] {:status 200 :body {:request (str request)}})}]
 
          ; Direct-to-back-end routes
