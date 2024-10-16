@@ -132,7 +132,8 @@
                             (assoc :username (.getName (.getPrincipal assertion)))
                             ;; (assoc :cas-info (.getAttributes (.getPrincipal assertion)))
                             (assoc :cas-info (json/read-str (json/write-str (.getAttributes (.getPrincipal assertion))) :key-fn keyword))
-                            
+                            (assoc :byuid (get ((json/read-str (json/write-str (.getAttributes (.getPrincipal assertion))) :key-fn keyword)) :byuId))
+                            (assoc :personid (get ((json/read-str (json/write-str (.getAttributes (.getPrincipal assertion))) :key-fn keyword)) :personId))
                  )))
       (handler request))))
 

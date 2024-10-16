@@ -76,6 +76,9 @@
          ["/ping" {:get (constantly (response/ok {:message "pong"}))}]
          ["/hello" {:get hello-page}]
          ["/who-am-i" {:get (fn [request] {:status 200 :body {
+                                                              :netid (get request :username)
+                                                              :byuid-direct (get request :byuid)
+                                                              :personid-direct (get request :personid)
                                                               :username (get (get request :cas-info) :netId)
                                                               :byuid (get (get request :cas-info) :byuId)
                                                               :personid (get (get request :cas-info) :personId)
