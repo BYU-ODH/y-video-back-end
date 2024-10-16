@@ -86,23 +86,25 @@
              :permission-level "master"
              :handler (fn [] "doesn't matter")}}]]
 
-    ["/get-session-id/{username}/{password}"
-     {:swagger {:tags ["auth"]}}
+    ;; now defunct, would have to add {byuid} and {personid} as parameters in the path and provide those to
+    ;; uc/get-session-id to get this to work. As far as I can tell, it was only ever used for testing. BDR 10/16/2024
+    ;; ["/get-session-id/{username}/{password}"
+    ;;  {:swagger {:tags ["auth"]}}
 
-     [""
-      {:get {:summary "gets session id for username"
-             :parameters {:path {:username string?
-                                 :password string?}}
-             :responses {200 {:body {:session-id string?}}
-                         403 {:body {:message string?}}}
-             :handler (fn [{{{:keys [username password]} :path} :parameters}]
-                        (if (nil? (:NEW-USER-PASSWORD env))
-                          {:status 401 :message "unauthorized"}
-                          (if-not (= (:NEW-USER-PASSWORD env) password)
-                            {:status 403
-                             :body {:message "incorrect password"}}
-                            {:status 200
-                             :body {:session-id (str (uc/get-session-id username))}})))}}]]
+    ;;  [""
+    ;;   {:get {:summary "gets session id for username"
+    ;;          :parameters {:path {:username string?
+    ;;                              :password string?}}
+    ;;          :responses {200 {:body {:session-id string?}}
+    ;;                      403 {:body {:message string?}}}
+    ;;          :handler (fn [{{{:keys [username password]} :path} :parameters}]
+    ;;                     (if (nil? (:NEW-USER-PASSWORD env))
+    ;;                       {:status 401 :message "unauthorized"}
+    ;;                       (if-not (= (:NEW-USER-PASSWORD env) password)
+    ;;                         {:status 403
+    ;;                          :body {:message "incorrect password"}}
+    ;;                         {:status 200
+    ;;                          :body {:session-id (str (uc/get-session-id username))}})))}}]]
 
     ["/echo"
      {:swagger {:tags ["echo"]}}
