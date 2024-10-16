@@ -129,11 +129,12 @@
                         (get-in request [:session (keyword const-cas-assertion)]))]
       (do
         (handler (-> request
+                            ;; I know I am repeating code below, but Clojure syntax makes it difficult for me to figure out how to stuff the repeat code into a variable. It should be fine to do it this way - BDR 10/16/2024
                             (assoc :username (.getName (.getPrincipal assertion)))
                             ;; (assoc :cas-info (.getAttributes (.getPrincipal assertion)))
                             (assoc :cas-info (json/read-str (json/write-str (.getAttributes (.getPrincipal assertion))) :key-fn keyword))
-                            (assoc :byuid (get ((json/read-str (json/write-str (.getAttributes (.getPrincipal assertion))) :key-fn keyword)) :byuId))
-                            (assoc :personid (get ((json/read-str (json/write-str (.getAttributes (.getPrincipal assertion))) :key-fn keyword)) :personId))
+                            (assoc :byuid (get (json/read-str (json/write-str (.getAttributes (.getPrincipal assertion))) :key-fn keyword) :byuId))
+                            (assoc :personid (get (json/read-str (json/write-str (.getAttributes (.getPrincipal assertion))) :key-fn keyword) :personId))
                  )))
       (handler request))))
 
