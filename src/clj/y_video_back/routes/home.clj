@@ -80,7 +80,7 @@
                                                               :netid (get request :username)
                                                               :byuid (get request :byuid)
                                                               :personid (get request :personid)
-                                                              :cas-info (get request :cas-info)
+                                                              ;; :cas-info (get request :cas-info)
                                                               ;; :byuid (get (get request :cas-info) :byuId) ;; get's byuid as expected. This pattern can be used to get any data in cas-info
                                                             }})}]
         ;;  ["/control-date-test" {:get (fn [request]
