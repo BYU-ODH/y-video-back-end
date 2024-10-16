@@ -25,13 +25,12 @@
   (if-not username
       (layout/render request "index.html" {:logged-in false})
     (
-      {:get (constantly (response/ok {:username username :byuid byuid :personid personid}))}
-      ;; let [session-id (uc/get-session-id username)]
-      ;; ;(println "checking user courses")
-      ;; (check-courses-with-api username)
-      ;; ;(println (str "user from CAS: " username))
-      ;; ;(println (str "serving session-id from home.clj: " session-id))
-      ;; (layout/render (assoc request :session-id session-id) "index.html" {:logged-in true})
+      let [session-id (uc/get-session-id username byuid personid)]
+      ;(println "checking user courses")
+      (check-courses-with-api username)
+      ;(println (str "user from CAS: " username))
+      ;(println (str "serving session-id from home.clj: " session-id))
+      (layout/render (assoc request :session-id session-id) "index.html" {:logged-in true})
     )))
 
 (defn get-routes-r

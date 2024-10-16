@@ -10,9 +10,9 @@
 (defn create-user
   "Creates user with data from BYU api"
   ;; [username byu-person-id] will need byu id for new bdp call
-  [username]
+  [username byuid personid]
   ;; (let [user-data (persons-api/get-user-data-new byu-person-id) will need byu id for new bdp call
-  (let [user-data (persons-api/get-user-data username)
+  (let [user-data (persons-api/get-user-data-new username byuid personid)
         create-res (users/CREATE {:username username
                                   :email (:email user-data)
                                   :last-login "na"
@@ -26,9 +26,9 @@
 (defn update-user
   "Updates user with data from BYU api"
   ;; [username user-id byu-person-id] will need byu id for new bdp api calls
-  [username user-id]
+  [username user-id byuid personid]
   ;; (let [user-data (persons-api/get-user-data-new byu-person-id) will use byu id for new bdp call
-  (let [user-data (persons-api/get-user-data username)
+  (let [user-data (persons-api/get-user-data-new username byuid personid)
         current-data (first (db/read-all-where :users-undeleted username))
         role (if (or (= (:account-type current-data) 0) (= (:account-type current-data) 1))
                (:account-type current-data)
@@ -48,16 +48,16 @@
 
 (defn get-session-id
   "Generates session id for user with given username. If user does not exist, first creates user."
-  [username]
+  [username byuid personid]
   (let [user-res (users/READ-BY-USERNAME [username])]
     (if-not (= 0 (count user-res))
       (do
         (if (< (inst-ms (:last-person-api (first user-res)))
                (- (System/currentTimeMillis) (* 3600000 (-> env :user-data-refresh-after))))
-          (update-user username (:id (first user-res))))
+          (update-user username (:id (first user-res)) byuid personid))
         (cc/check-courses-with-api username)
         (get-auth-token (:id (first user-res))))
-      (let [user-create-res (create-user username)]
+      (let [user-create-res (create-user username byuid personid)]
         (cc/check-courses-with-api username)
         (get-auth-token (:id user-create-res))))))
 

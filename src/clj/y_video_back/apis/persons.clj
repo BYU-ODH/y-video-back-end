@@ -163,7 +163,7 @@
 
 (defn get-user-data-new
   "Gets data from AcademicRecordsStudentStatusInfo"
-  [byuid netid personid] ;; (def netid "nbown16") (def netid "rjr45")
+  [netid byuid personid] ;; (def netid "nbown16") (def netid "rjr45")
   (if (= (:front-end-netid env) netid)
     {:full-name netid
      :byu-id nil
