@@ -219,6 +219,7 @@ see ring.middleware.session/bare-session-response if curious how ring sessions w
       (wrap-session)
       (wrap-params))
   The users's username is added to the request map under the :username key.
+  In addition, full cas attributes (:cas-info), personid (:personid), and byuid (:byuid) are provided
   Accepts the following options:
     :enabled      - when false, the middleware does nothing
     :no-redirect? - if this predicate function returns true for a request, a
