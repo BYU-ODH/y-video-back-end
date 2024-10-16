@@ -2,7 +2,8 @@
   (:require
     [y-video-back.apis.utils :as ut]
     [clj-http.client :as client]
-    [clojure.data.json :as json]))
+    [clojure.data.json :as json]
+    [clojure.walk :as walk]))
 
 ;; new data extractor to use with new api call - BDR 9/5/2024
 (defn extract-course-data-new
