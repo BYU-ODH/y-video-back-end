@@ -52,14 +52,41 @@
   (let [user-res (users/READ-BY-USERNAME [username])]
     (if-not (= 0 (count user-res))
       (do
-        (if (< (inst-ms (:last-person-api (first user-res)))
+        (if (or
+              ;; If account hasn't been updated within the last hour,
+              ;; or account-name, email, person-id, or account-type is unknown or invalid value (5),
+              ;; update the user data by calling update-user function
+               (< (inst-ms (:last-person-api (first user-res)))
                (- (System/currentTimeMillis) (* 3600000 (-> env :user-data-refresh-after))))
+               (= (:account-name (first user-res)) "unknown")
+               (= (:email (first user-res)) "unknown")
+               (= (:byu-person-id (first user-res)) "unknown")
+               (= (:account-type (first user-res)) 5)
+            )
           (update-user username (:id (first user-res)) byuid personid))
         (cc/check-courses-with-api username)
         (get-auth-token (:id (first user-res))))
       (let [user-create-res (create-user username byuid personid)]
         (cc/check-courses-with-api username)
         (get-auth-token (:id user-create-res))))))
+
+(defn create-potentially-empty-user
+  "Checks if the user has data via student data api. If not, creates a user devoid of all meaningful
+  data except for username (netid). Intended to be used when associated new users with a collection
+  before that user created an account by logging in"
+  [username]
+  (def student-data (persons-api/get-student-summary username "unknown"))
+  (let [create-res (users/CREATE {:username username
+                                  :email (:email student-data)
+                                  :last-login "na"
+                                  :account-type (:account-type student-data)
+                                  :account-name (:full-name student-data)
+                                  :last-person-api (java.sql.Timestamp. (System/currentTimeMillis))
+                                  :byu-person-id (:person-id student-data)})]
+    (cc/check-courses-with-api username true)
+    create-res
+  )
+)
 
 (defn user-id-to-session-id
   "Generates session id for user with given id. If user does not exist, returns nil."

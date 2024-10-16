@@ -72,7 +72,13 @@
      :body {:message "collection not found"}}
     (let [username (:username body)]
       (if (nil? (users/READ-BY-USERNAME username))
-        (uc/get-session-id username))
+        (uc/create-potentially-empty-user username))
+        ;; {:status 404
+        ;;  :body {:message (str "Unknown user:" username)}
+        ;; }
+        ;; I think this is called if the user doesn't already exist, but we can't make users this way anymore
+        ;; either need to deactivate this, or create an entirely new way to make users, but it means people have to put the user's byuid instead of netid, or include netid, byuid, and personid
+        ;; all of that will require front end changes as well, and it could be sort of extensive depending on how many fields we want to use to define the user
       (if (user-collections-assoc/EXISTS-COLL-USER? id username)
         (user-collections-assoc/DELETE-BY-IDS [id username]))
       (let [result (utils/get-id (user-collections-assoc/CREATE (into (dissoc body :username) {:collection-id id :username username})))]
@@ -96,7 +102,9 @@
           (user-collections-assoc/CREATE {:collection-id id :username username
                                           :account-role (:account-role body)})
           (if (empty? (users/READ-BY-USERNAME username))
-            (uc/get-session-id username))))
+            (uc/create-potentially-empty-user username)
+            ;; (do) this means skip, and this will need to go higher up so the other code isn't executed if this user doesn't exist
+        )))
       {:status 200
        :body {:message (str (count (:usernames body)) " users added to collection")}})))
 
