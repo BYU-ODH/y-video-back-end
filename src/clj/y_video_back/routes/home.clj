@@ -19,7 +19,7 @@
 (defn hello-page [request]
   (layout/render request "hello.html"))
 
-(defn index-page [{:keys [username] :as request}]
+(defn index-page [{:keys [username netid personid] :as request}]
   (println (get-in request [:query-params]))
   (println (get-in request [:query-params]))
   (if-not username
