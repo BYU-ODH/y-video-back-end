@@ -13,7 +13,8 @@
    [y-video-back.routes.service-handlers.utils.utils :as utils]
    [y-video-back.routes.service-handlers.utils.role-utils :as ru]
    [y-video-back.course-creator :as cc]
-   [y-video-back.apis.persons :as persons]))
+   [y-video-back.apis.persons :as persons]
+   [y-video-back.user_creator :as uc]))
 
 (def user-create
   {:summary "Creates a new user - FOR DEVELOPMENT ONLY"
@@ -39,7 +40,7 @@
   (let [yvideo-user-exists? (not-empty (users/READ-BY-USERNAME username))
         ;; will have to user BYU id (byu-person-id) when calling with the new bdp
         ;; byu-data (when-not yvideo-user-exists? (persons/get-user-data-new byu-person-id))
-        byu-data (when-not yvideo-user-exists? (persons/get-user-data username))
+        byu-data (when-not yvideo-user-exists? (uc/create-potentially-empty-user username))
         nominal-user-data  (when-let [d byu-data] {:username username
                                                    :account-name (:full-name d)
                                                    :account-type (int (:account-type d)) ;; magic numbers 🙍
