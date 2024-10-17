@@ -40,7 +40,7 @@
   (let [yvideo-user-exists? (not-empty (users/READ-BY-USERNAME username))
         ;; will have to user BYU id (byu-person-id) when calling with the new bdp
         ;; byu-data (when-not yvideo-user-exists? (persons/get-user-data-new byu-person-id))
-        byu-data (when-not yvideo-user-exists? (uc/create-potentially-empty-user username "unknown"))
+        byu-data (when-not yvideo-user-exists? (uc/create-potentially-empty-user username))
         nominal-user-data  (when-let [d byu-data] {:username username
                                                    :account-name (:full-name d)
                                                    :account-type (int (:account-type d)) ;; magic numbers 🙍
