@@ -68,7 +68,7 @@
                 (if-let [user-was-created (_user-create-from-byu username)]                  
                   {:status 200
                    :body (if user-was-created
-                          {:message "1 user created" :id "-------------------------------"} ;; client is expecting id to have more than 30 characters
+                          {:message "1 user created" :id "--------------Not-the-real-id-----------------"} ;; client is expecting id to have more than 30 characters
                           {:message "username not created invalid BYU username" :id "-"}
                         )
                   }
