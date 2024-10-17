@@ -68,10 +68,8 @@
                 (if-let [user-was-created (_user-create-from-byu username)]                  
                   {:status 200
                    :body (if user-was-created
-                          {:message "1 user created"
-                          :id (utils/get-id (:db-item response))}
-                          {:message "username not created invalid BYU username" 
-                          :id "-"}
+                          {:message "1 user created"}
+                          {:message "username not created invalid BYU username"}
                         )
                   }
                   {:status 500
