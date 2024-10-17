@@ -6,7 +6,7 @@ on:
     branches: [ development ]
 
 env:
-  FILE_NAME: "env/test/resources/config.edn"
+  FILE_NAME: "env/test/resources/config-copy.edn"
 
 jobs:
   test:
