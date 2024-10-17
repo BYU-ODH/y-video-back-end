@@ -38,7 +38,10 @@
   ;; [username byu-person-id]
   [username]
   (let [yvideo-user-exists? (not-empty (users/READ-BY-USERNAME username))]
-        (when-not yvideo-user-exists? (uc/create-potentially-empty-user username)))) ;; handles creating user if doesn't exist already
+    (when-not yvideo-user-exists? (uc/create-potentially-empty-user username))
+    (not-empty (users/READ-BY-USERNAME username))
+  )
+);; handles creating user if doesn't exist already
         ;; will have to user BYU id (byu-person-id) when calling with the new bdp
         ;; byu-data (when-not yvideo-user-exists? (persons/get-user-data-new byu-person-id))
     ;;     byu-data (when-not yvideo-user-exists? (uc/create-potentially-empty-user username))
@@ -62,15 +65,15 @@
    :handler (fn [request]
               (let [body (:body request)
                     username (get-in body [:parameters :username])]
-                (if-let [user-data-from-byu (_user-create-from-byu username)]                  
+                (if-let [user-was-created (_user-create-from-byu username)]                  
                   {:status 200
-                   :body (let [response (merge body (:user-data user-data-from-byu))]
-                           (if user-data-from-byu
-                             {:message "1 user created"
-                              :id (utils/get-id (:db-item response))}
-                             {:message "username not created invalid BYU username" 
-                              :id "-"}))}
-                  
+                   :body (if user-was-created
+                          {:message "1 user created"
+                          :id (utils/get-id (:db-item response))}
+                          {:message "username not created invalid BYU username" 
+                          :id "-"}
+                        )
+                  }
                   {:status 500
                    :body {:message "username already taken"}})))})
 
