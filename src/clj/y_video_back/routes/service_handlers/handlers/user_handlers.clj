@@ -37,17 +37,18 @@
   "given `username` netid, when the user is new, query for their BYU data and use it to return a constructed new user"
   ;; [username byu-person-id]
   [username]
-  (let [yvideo-user-exists? (not-empty (users/READ-BY-USERNAME username))
+  (let [yvideo-user-exists? (not-empty (users/READ-BY-USERNAME username))]
+        (when-not yvideo-user-exists? (uc/create-potentially-empty-user username)))) ;; handles creating user if doesn't exist already
         ;; will have to user BYU id (byu-person-id) when calling with the new bdp
         ;; byu-data (when-not yvideo-user-exists? (persons/get-user-data-new byu-person-id))
-        byu-data (when-not yvideo-user-exists? (uc/create-potentially-empty-user username))
-        nominal-user-data  (when-let [d byu-data] {:username username
-                                                   :account-name (:full-name d)
-                                                   :account-type (int (:account-type d)) ;; magic numbers 🙍
-                                                   :email (:email d)})] 
-    (when-not yvideo-user-exists?
-      {:db-item (users/CREATE nominal-user-data)
-       :user-data nominal-user-data})))
+    ;;     byu-data (when-not yvideo-user-exists? (uc/create-potentially-empty-user username))
+    ;;     nominal-user-data  (when-let [d byu-data] {:username username
+    ;;                                                :account-name (:full-name d)
+    ;;                                                :account-type (int (:account-type d)) ;; magic numbers 🙍
+    ;;                                                :email (:email d)})] 
+    ;; (when-not yvideo-user-exists?
+    ;;   {:db-item (users/CREATE nominal-user-data)
+    ;;    :user-data nominal-user-data})))
 
 ;; this is NOT where the user is set up via CAS. This code generates a user given an netid. The netId is maybe provided by CAS from somewhere else, but most likely it is provided by an admin user.
 (def user-create-from-byu
