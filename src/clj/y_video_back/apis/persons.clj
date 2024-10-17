@@ -152,21 +152,21 @@
   (def walk-result (walk/keywordize-keys json)) ;; remember to include walk library
   (def data_array (walk-result :data))
   (def data (first data_array))
-  (if-not (= nil data)
-    {
-      :full-name (data :preferred_name)
-      :byu-id (data :byu_id)
-      :email (data :student_email_address)
-      :account-type 3
-      :person-id personid
-    }
-    {
+  (if (= nil data)
+    (do {
       :full-name "unknown"
       :byu-id "unknown"
       :email "unknown"
       :account-type 5
       :person-id "unknown"
-    }
+    })
+    (do {
+      :full-name (data :preferred_name)
+      :byu-id (data :byu_id)
+      :email (data :student_email_address)
+      :account-type 3
+      :person-id personid
+    })
   )
 )
 

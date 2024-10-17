@@ -102,9 +102,9 @@
           (user-collections-assoc/CREATE {:collection-id id :username username
                                           :account-role (:account-role body)})
           (if (empty? (users/READ-BY-USERNAME username))
-            (uc/create-potentially-empty-user username)
-            ;; (do) this means skip, and this will need to go higher up so the other code isn't executed if this user doesn't exist
-        )))
+            (uc/create-potentially-empty-user username))
+        )
+      )
       {:status 200
        :body {:message (str (count (:usernames body)) " users added to collection")}})))
 
