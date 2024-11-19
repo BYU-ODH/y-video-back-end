@@ -63,20 +63,21 @@
 (defn _stream-partial-media
   "backend fn for streaming partial-media"
   [m-v]
-  (let [file-key (get-file-key-m-v m-v)
-        file-key-res (when file-key (file-keys/READ-UNEXPIRED file-key))]
-    (if-not file-key-res
-      {:status 404
-       :body {:message "file-key not found"}}
-      (let [user-res (users/READ (:user-id file-key-res))]
-        ;; (if (or (:dev env) (:prod env))
-          ;; (log-ut/log-media-access {:file-id (str (:file-id file-key-res))
-                                    ;; :username (:username user-res)}))
-        (-> (file-response (utils/file-id-to-path (:file-id file-key-res)))
-            (mr/header "Content-Type"
-                       (case (extension (:filename m-v))
-                         :mp4 "video/mp4"
-                         :mp3 "audio/mp3")))))))
+  {:key m-v}
+  ;; (let [file-key (get-file-key-m-v m-v)
+  ;;       file-key-res (when file-key (file-keys/READ-UNEXPIRED file-key))]
+  ;;   (if-not file-key-res
+  ;;     {:status 404
+  ;;      :body {:message "file-key not found"}}
+  ;;     (let [user-res (users/READ (:user-id file-key-res))]
+  ;;       (if (or (:dev env) (:prod env))
+  ;;         (log-ut/log-media-access {:file-id (str (:file-id file-key-res))
+  ;;                                   :username (:username user-res)}))
+  ;;       (-> (file-response (utils/file-id-to-path (:file-id file-key-res)))
+  ;;           (mr/header "Content-Type"
+  ;;                      (case (extension (:filename m-v))
+  ;;                        :mp4 "video/mp4"
+  ;;                        :mp3 "audio/mp3")))))))
 
 (def stream-partial-media ; TODO - require session-id?
   {:summary "Stream partial media referenced by file-key"
