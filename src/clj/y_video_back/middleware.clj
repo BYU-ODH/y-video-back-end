@@ -157,7 +157,7 @@
 
 (def forbidden-page
   (error-page {:status 403, :title "403 - Forbidden",
-              :caption "Sorry, you are not authorized to access this page. Check your credentials and try again."}))
+              :caption "Sorry, you are not authorized to access this page."}))
 
 (def unauthorized-page
   (error-page {:status 401, :title "401 - Unauthorized",
@@ -233,11 +233,10 @@
     (handler request)))
 
 (defn wrap-api [handler]
-  ;; (let [check-csrf  (if (:test env) wrap-csrf identity)]
+  (let [check-csrf  (if (:test env) wrap-csrf identity)]
       (-> ((:middleware defaults) handler)
           (wrap-cors :access-control-allow-origin #"http://localhost:3000" :access-control-allow-methods [:get :put :post :delete :patch]
-                     :access-control-allow-credentials "true" :access-control-expose-headers "session-id")))
-  ;; )
+                     :access-control-allow-credentials "true" :access-control-expose-headers "session-id"))))
 
 (defn wrap-api-post [handler]
   (-> handler
