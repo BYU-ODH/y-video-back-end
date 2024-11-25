@@ -1,6 +1,6 @@
 (ns y-video-back.middleware
   (:require
-   [y-video-back.cas :as cas]
+   [byu-cas.core :as cas]
    [clojure.data.json :as json]
    [clojure.tools.logging :as log]
    [immutant.web.middleware :refer [wrap-session]]
@@ -233,8 +233,7 @@
     (handler request)))
 
 (defn wrap-api [handler]
-  ;;(let [check-csrf  (if-not (:test env) wrap-csrf identity)] ;; I had to bypass csrf to be able to use new APIs. I'm not sure why csrf isn't working, but this is blocking everyone from using the site.
-  (let [check-csrf identity]
+  (let [check-csrf  (if-not (:test env) wrap-csrf identity)]
       (-> ((:middleware defaults) handler)
           (wrap-cors :access-control-allow-origin #"http://localhost:3000" :access-control-allow-methods [:get :put :post :delete :patch]
                      :access-control-allow-credentials "true" :access-control-expose-headers "session-id"))))
