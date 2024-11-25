@@ -233,10 +233,11 @@
     (handler request)))
 
 (defn wrap-api [handler]
-  (let [check-csrf  (if (:test env) wrap-csrf identity)]
+  ;; (let [check-csrf  (if (:test env) wrap-csrf identity)]
       (-> ((:middleware defaults) handler)
           (wrap-cors :access-control-allow-origin #"http://localhost:3000" :access-control-allow-methods [:get :put :post :delete :patch]
-                     :access-control-allow-credentials "true" :access-control-expose-headers "session-id"))))
+                     :access-control-allow-credentials "true" :access-control-expose-headers "session-id")))
+  ;; )
 
 (defn wrap-api-post [handler]
   (-> handler
