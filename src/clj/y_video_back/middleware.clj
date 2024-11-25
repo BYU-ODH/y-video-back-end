@@ -157,7 +157,7 @@
 
 (def forbidden-page
   (error-page {:status 403, :title "403 - Forbidden",
-              :caption "Sorry, you are not authorized to access this page."}))
+              :caption "Sorry, you are not authorized to access this page. If you believe this is an error, check your credentials with the administrator."}))
 
 (def unauthorized-page
   (error-page {:status 401, :title "401 - Unauthorized",
