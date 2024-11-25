@@ -1,6 +1,6 @@
 (ns y-video-back.middleware
   (:require
-   [byu-cas.core :as cas]
+   [y-video-back.cas :as cas]
    [clojure.data.json :as json]
    [clojure.tools.logging :as log]
    [immutant.web.middleware :refer [wrap-session]]
