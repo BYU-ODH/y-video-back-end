@@ -113,7 +113,7 @@
   "gets information about the employee which can be used for other queries"
   [workerid byuid personid netid]
   (def response (client/get (str "https://api.byu.edu/bdp/human_resources/worker_summary/v1/?worker_id=" workerid)
-                            {:headers {"Authorization" (get-oauth-token-new)}}))
+                            {:headers {"Authorization" (ut/get-oauth-token-new)}}))
   (def body (response :body))
   (def json (json/read-str body))
   (def walk-result (walk/keywordize-keys json)) ;; remember to include walk library
