@@ -42,37 +42,37 @@
   [js]
   (get-in (get-cats-from-json js) ["basic" "person_id" "value"]))
 
-(defn get-user-data
-  "Gets data from AcademicRecordsStudentStatusInfo"
-  [netid] ;; (def netid "nbown16") (def netid "rjr45")
-  (if (= (:front-end-netid env) netid)
-    {:full-name netid
-     :byu-id nil
-     :email (str netid "@yvideobeta.byu.edu")
-     :account-type 0
-     :person-id "000000000"}
-    (try
-      (let [url (str "https://api.byu.edu:443/byuapi/persons/v3/?net_ids=" netid "&field_sets=basic%2Cemployee_summary%2Cstudent_summary%2Cemail_addresses")
-            res (try (client/get url {:oauth-token ut/oauth-token})
-                     (catch Exception e
-                       (client/get url {:oauth-token (ut/get-oauth-token-new)})))
-            json-res (json/read-str (:body res))
-            full-name (get-in (get-cats-from-json json-res) ["basic" "preferred_name" "value"])
-            byu-id (get-in (get-cats-from-json json-res) ["basic" "byu_id" "value"])
-            email (first (filter #(not (nil? %)) [(get-email-from-json json-res), "none"]))
-            account-type (get-account-type netid json-res)
-            person-id (get-person-id-from-json json-res)]
-        {:full-name full-name
-         :byu-id byu-id
-         :email email
-         :account-type account-type
-         :person-id person-id})
-      (catch Exception e
-        {:full-name netid
-         :byu-id nil
-         :email (str netid "@yvideobeta.byu.edu")
-         :account-type (if (:test env) 3 4)
-         :person-id "000000000"}))))
+;; (defn get-user-data
+;;   "Gets data from AcademicRecordsStudentStatusInfo"
+;;   [netid] ;; (def netid "nbown16") (def netid "rjr45")
+;;   (if (= (:front-end-netid env) netid)
+;;     {:full-name netid
+;;      :byu-id nil
+;;      :email (str netid "@yvideobeta.byu.edu")
+;;      :account-type 0
+;;      :person-id "000000000"}
+;;     (try
+;;       (let [url (str "https://api.byu.edu:443/byuapi/persons/v3/?net_ids=" netid "&field_sets=basic%2Cemployee_summary%2Cstudent_summary%2Cemail_addresses")
+;;             res (try (client/get url {:oauth-token ut/oauth-token})
+;;                      (catch Exception e
+;;                        (client/get url {:oauth-token (ut/get-oauth-token-new)})))
+;;             json-res (json/read-str (:body res))
+;;             full-name (get-in (get-cats-from-json json-res) ["basic" "preferred_name" "value"])
+;;             byu-id (get-in (get-cats-from-json json-res) ["basic" "byu_id" "value"])
+;;             email (first (filter #(not (nil? %)) [(get-email-from-json json-res), "none"]))
+;;             account-type (get-account-type netid json-res)
+;;             person-id (get-person-id-from-json json-res)]
+;;         {:full-name full-name
+;;          :byu-id byu-id
+;;          :email email
+;;          :account-type account-type
+;;          :person-id person-id})
+;;       (catch Exception e
+;;         {:full-name netid
+;;          :byu-id nil
+;;          :email (str netid "@yvideobeta.byu.edu")
+;;          :account-type (if (:test env) 3 4)
+;;          :person-id "000000000"}))))
 
 (defn get-worker-id
   "Attempts to get a worker-id, if there is none, the user is not an employee"
@@ -173,6 +173,7 @@
 (defn get-user-data-new
   "Gets data from AcademicRecordsStudentStatusInfo"
   [netid byuid personid] ;; (def netid "nbown16") (def netid "rjr45")
+  (print "| input for get-user-data-new" netid byuid personid " |")
   (if (= (:front-end-netid env) netid)
     {:full-name netid
      :byu-id nil
