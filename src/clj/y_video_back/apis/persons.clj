@@ -102,7 +102,7 @@
   })
   (if (contains? account-type-map employee-type-id)
     (get account-type-map employee-type-id) ;; get id since it is present in the map
-    4 ;; else
+    3 ;; else
   )
 )
 
@@ -170,7 +170,6 @@
 (defn is-worker-id-empty
   "Determines if the worker id is empty"
   [workerid]
-  (print "workerid inside is-worker-id-empty:" workerid "isempty? :" (empty? workerid))
   (empty? workerid)
 )
 
@@ -188,7 +187,6 @@
     ;; otherwise get student summary
     (try
       (def workerid (get-worker-id byuid))
-      (print "after gettinging workerid: " workerid)
       (if (is-worker-id-empty workerid)
         (get-student-summary netid personid)
         (get-employee-summary workerid byuid personid)
