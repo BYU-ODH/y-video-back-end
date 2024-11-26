@@ -62,6 +62,7 @@
                (= (:email (first user-res)) "unknown")
                (= (:byu-person-id (first user-res)) "unknown")
                (= (:account-type (first user-res)) 5)
+               (= (:account-type (first user-res)) 4)
             )
           (update-user username (:id (first user-res)) byuid personid))
         (cc/check-courses-with-api username)
