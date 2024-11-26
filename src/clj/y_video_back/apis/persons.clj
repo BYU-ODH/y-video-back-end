@@ -92,23 +92,29 @@
 
 (defn assign-account-type
   "determines what the appropriate account type is for the user"
-  [employee-type-data]
-  (def employee-type-id (employee-type-data :worker_type_id))
-  (def account-type-map {
-    "STF" 3
-    "STU" 3
-    "FAC" 2
-    "LA" 1 ;; I've no clue what lab assistant will come up as, if it comes up as anything... It may not ever be assigned. BDR
-  })
-  (if (contains? account-type-map employee-type-id)
-    (get account-type-map employee-type-id) ;; get id since it is present in the map
-    3 ;; else
+  [employee-type-data netid]
+  (def exception-result (user-type-exceptions/READ-BY-USERNAME [netid]))
+  (if (empty? exception-result)
+    (
+      (def employee-type-id (employee-type-data :worker_type_id))
+      (def account-type-map {
+        "STF" 3
+        "STU" 3
+        "FAC" 2
+        "LA" 1 ;; I've no clue what lab assistant will come up as, if it comes up as anything... It may not ever be assigned. BDR
+      })
+      (if (contains? account-type-map employee-type-id)
+        (get account-type-map employee-type-id) ;; get id since it is present in the map
+        3 ;; else
+      )
+    )
+    (:account-type (first exception-result))
   )
 )
 
 (defn get-employee-summary
   "gets information about the employee which can be used for other queries"
-  [workerid byuid personid]
+  [workerid byuid personid netid]
   (def response (client/get (str "https://api.byu.edu/bdp/human_resources/worker_summary/v1/?worker_id=" workerid)
                             {:headers {"Authorization" (ut/get-oauth-token-new)}}))
   (def body (response :body))
@@ -121,7 +127,7 @@
     :full-name (str (data :preferred_first_name) " " (data :preferred_last_name))
     :byu-id byuid
     :email (data :work_email_address)
-    :account-type (assign-account-type employee_type_data)
+    :account-type (assign-account-type employee_type_data netid)
     :person-id personid
   }
 )
@@ -189,7 +195,7 @@
       (def workerid (get-worker-id byuid))
       (if (is-worker-id-empty workerid)
         (get-student-summary netid personid)
-        (get-employee-summary workerid byuid personid)
+        (get-employee-summary workerid byuid personid netid)
       )
       (catch Exception e
         {
