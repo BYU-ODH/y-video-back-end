@@ -202,7 +202,7 @@
          :full-name netid
          :byu-id nil
          :email (str netid "@yvideobeta.byu.edu")
-         :account-type (if (:test env) 3 3)
+         :account-type (if (:test env) 3 4)
          :person-id "000000000"
         }
       )
