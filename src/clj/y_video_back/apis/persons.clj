@@ -87,6 +87,7 @@
 (defn is-worker-id-empty
   "Determines if the worker id is empty"
   [workerid]
+  (print "workerid inside is-worker-id-empty:" workerid "isempty? :" (empty? workerid))
   (empty? workerid)
 )
 
@@ -173,7 +174,6 @@
 (defn get-user-data-new
   "Gets data from AcademicRecordsStudentStatusInfo"
   [netid byuid personid] ;; (def netid "nbown16") (def netid "rjr45")
-  (print "| input for get-user-data-new" netid byuid personid " |")
   (if (= (:front-end-netid env) netid)
     {:full-name netid
      :byu-id nil
@@ -185,6 +185,7 @@
     ;; otherwise get student summary
     (try
       (def workerid (get-worker-id byuid))
+      (print "after gettinging workerid: " workerid)
       (if (is-worker-id-empty workerid)
         (get-student-summary netid personid)
         (get-employee-summary workerid byuid personid)
