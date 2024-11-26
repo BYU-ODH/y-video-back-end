@@ -95,17 +95,14 @@
   [employee-type-data netid]
   (def exception-result (user-type-exceptions/READ-BY-USERNAME [netid]))
   (if (empty? exception-result)
-    (
-      (def employee-type-id (employee-type-data :worker_type_id))
-      (def account-type-map {
-        "STF" 3
-        "STU" 3
-        "FAC" 2
-        "LA" 1 ;; I've no clue what lab assistant will come up as, if it comes up as anything... It may not ever be assigned. BDR
-      })
-      (if (contains? account-type-map employee-type-id)
-        (get account-type-map employee-type-id) ;; get id since it is present in the map
-        3 ;; else
+    (let [employee-type-id (get-in employee-type-data ["worker_type_id"])]
+      (cond
+        (= employee-type-id "STF") 3
+        (= employee-type-id "STU") 3
+        (= employee-type-id "STD") 3
+        (= employee-type-id "FAC") 2
+        (= employee-type-id "LA") 1
+        :else 3
       )
     )
     (:account-type (first exception-result))
@@ -116,7 +113,7 @@
   "gets information about the employee which can be used for other queries"
   [workerid byuid personid netid]
   (def response (client/get (str "https://api.byu.edu/bdp/human_resources/worker_summary/v1/?worker_id=" workerid)
-                            {:headers {"Authorization" (ut/get-oauth-token-new)}}))
+                            {:headers {"Authorization" (get-oauth-token-new)}}))
   (def body (response :body))
   (def json (json/read-str body))
   (def walk-result (walk/keywordize-keys json)) ;; remember to include walk library
