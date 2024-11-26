@@ -192,18 +192,19 @@
     ;; if so, get employee summary
     ;; otherwise get student summary
     (try
+      (print "netid:" netid "byuid:" byuid "personid:" personid)
       (def workerid (get-worker-id byuid))
+      (print "netid:" netid "byuid:" byuid "personid:" personid "workerid:" workerid)
       (if (is-worker-id-empty workerid)
         (get-student-summary netid personid)
         (get-employee-summary workerid byuid personid netid)
       )
       (catch Exception e
-        (print e)
         {
          :full-name netid
          :byu-id nil
          :email (str netid "@yvideobeta.byu.edu")
-         :account-type (if (:test env) 3 4)
+         :account-type (if (:test env) 3 3)
          :person-id "000000000"
         }
       )
