@@ -164,7 +164,7 @@
   (def walk-result (walk/keywordize-keys json))
   (def data_array (walk-result :data))
   (def data (first data_array))
-  (get-in data ["worker-id"])
+  (data :worker_id)
 )
 
 (defn is-worker-id-empty
