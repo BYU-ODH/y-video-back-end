@@ -20,8 +20,6 @@
   (layout/render request "hello.html"))
 
 (defn index-page [{:keys [username byuid personid] :as request}]
-  (println (get-in request [:query-params]))
-  (println (get-in request [:query-params]))
   (if-not username
       (layout/render request "index.html" {:logged-in false})
     (
