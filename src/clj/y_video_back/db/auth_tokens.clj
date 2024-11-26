@@ -21,7 +21,7 @@
           current-ms (System/currentTimeMillis)
           expired? #(< (time-created)
                        (-  current-ms timeout))]
-      (log/debug "" {:auth-token-id (str auth-token-id)
+      #_(log/debug "" {:auth-token-id (str auth-token-id)
                      :auth-token (str auth-token)})
       (when auth-token
         #_(log/debug "Are we expired? If so, why?" {:expired? (expired?)
