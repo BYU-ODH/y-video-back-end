@@ -198,6 +198,7 @@
         (get-employee-summary workerid byuid personid netid)
       )
       (catch Exception e
+        (print e)
         {
          :full-name netid
          :byu-id nil
