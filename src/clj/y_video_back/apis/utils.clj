@@ -9,7 +9,6 @@
 (defn get-oauth-token-new
   "Gets oauth token from api"
   []
-  (println (str (:CONSUMER_KEY env) ":" (:CONSUMER_SECRET env)))
   (let [url "https://api.byu.edu/token"
         auth (str (:CONSUMER_KEY env) ":" (:CONSUMER_SECRET env))
         tokenRes (client/post url {:body "grant_type=client_credentials"
