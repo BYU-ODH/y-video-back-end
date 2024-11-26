@@ -192,15 +192,15 @@
     ;; if so, get employee summary
     ;; otherwise get student summary
     (try
-      (print "netid:" netid "byuid:" byuid "personid:" personid)
+      (println "netid:" netid "byuid:" byuid "personid:" personid)
       (def workerid (get-worker-id byuid))
-      (print "netid:" netid "byuid:" byuid "personid:" personid "workerid:" workerid)
+      (println "netid:" netid "byuid:" byuid "personid:" personid "workerid:" workerid)
       (if (is-worker-id-empty workerid)
         (get-student-summary netid personid)
         (get-employee-summary workerid byuid personid netid)
       )
       (catch Exception e
-        (print "Error in get-user-data-new: " e "For netid:" netid "byuid:" byuid)
+        (println "Error in get-user-data-new: " e "For netid:" netid "byuid:" byuid)
         {
          :full-name netid
          :byu-id nil
