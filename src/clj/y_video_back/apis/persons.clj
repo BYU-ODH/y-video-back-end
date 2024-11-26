@@ -200,6 +200,7 @@
         (get-employee-summary workerid byuid personid netid)
       )
       (catch Exception e
+        (print "Error in get-user-data-new: " e "For netid:" netid "byuid:" byuid)
         {
          :full-name netid
          :byu-id nil
