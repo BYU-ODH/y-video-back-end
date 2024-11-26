@@ -74,23 +74,6 @@
 ;;          :account-type (if (:test env) 3 4)
 ;;          :person-id "000000000"}))))
 
-(defn get-worker-id
-  "Attempts to get a worker-id, if there is none, the user is not an employee"
-  [byuid]
-  (def url (str "https://api.byu.edu/bdp/iam/byuid_workerid/v1/?byu_id=" byuid))
-  (def response (client/get url {:headers {"Authorization" (ut/get-oauth-token-new)}}))
-  (def json-res (json/read-str (:body response)))
-  (def data (get-in json-res ["data"]))
-  (get-in data ["worker-id"])
-)
-
-(defn is-worker-id-empty
-  "Determines if the worker id is empty"
-  [workerid]
-  (print "workerid inside is-worker-id-empty:" workerid "isempty? :" (empty? workerid))
-  (empty? workerid)
-)
-
 (defn get-employee-type
   "determines if the employee is faculty or something else"
   [positions]
@@ -169,6 +152,26 @@
       :person-id personid
     })
   )
+)
+
+(defn get-worker-id
+  "Attempts to get a worker-id, if there is none, the user is not an employee"
+  [byuid]
+  (def url (str "https://api.byu.edu/bdp/iam/byuid_workerid/v1/?byu_id=" byuid))
+  (def response (client/get url {:headers {"Authorization" (ut/get-oauth-token-new)}}))
+  (def body (response :body))
+  (def json (json/read-str body))
+  (def walk-result (walk/keywordize-keys json))
+  (def data_array (walk-result :data))
+  (def data (first data_array))
+  (get-in data ["worker-id"])
+)
+
+(defn is-worker-id-empty
+  "Determines if the worker id is empty"
+  [workerid]
+  (print "workerid inside is-worker-id-empty:" workerid "isempty? :" (empty? workerid))
+  (empty? workerid)
 )
 
 (defn get-user-data-new
