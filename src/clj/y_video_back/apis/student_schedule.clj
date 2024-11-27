@@ -10,7 +10,7 @@
   [course]
   {
     :department (course :teaching_area)
-    :catalog-number (course :catalog_number)
+    :catalog-number (str (course :catalog_number) (course :catalog_suffix))
     :section-number (course :section_number)
   }
 )
