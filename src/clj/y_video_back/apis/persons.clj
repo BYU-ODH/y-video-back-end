@@ -74,28 +74,41 @@
 ;;          :account-type (if (:test env) 3 4)
 ;;          :person-id "000000000"}))))
 
+;; (defn get-employee-type
+;;   "determines if the employee is faculty or something else"
+;;   [positions]
+;;   (loop [entries positions]
+;;    (let [entry (first entries)]
+;;     (if (entry :is_active_position)
+;;       {
+;;         :worker_type_id (entry :employee_or_contingent_worker_type_reference_id)
+;;         :worker_type (entry :employee_or_contingent_worker_type)
+;;       } ;; istrue
+;;       (recur (rest entries)) ;; is false
+;;     )
+;;    ) 
+;;   )
+;; )
+
 (defn get-employee-type
-  "determines if the employee is faculty or something else"
+  "Determines if the employee is faculty or something else"
   [positions]
-  (loop [entries positions]
-   (let [entry (first entries)]
-    (if (entry :is_active_position)
-      {
-        :worker_type_id (entry :employee_or_contingent_worker_type_reference_id)
-        :worker_type (entry :employee_or_contingent_worker_type)
-      } ;; istrue
-      (recur (rest entries)) ;; is false
-    )
-   ) 
-  )
-)
+  (when (seq positions)
+    (let [entry (first positions)]
+      (if (entry :is_active_position)
+        {
+          :worker_type_id (entry :employee_or_contingent_worker_type_reference_id)
+          :worker_type (entry :employee_or_contingent_worker_type)
+        }
+        (recur (rest positions))))))
 
 (defn assign-account-type
   "determines what the appropriate account type is for the user"
   [employee-type-data netid]
-  (def exception-result (user-type-exceptions/READ-BY-USERNAME [netid]))
+  ;; (def exception-result (user-type-exceptions/READ-BY-USERNAME [netid]))
+  (def exception-result {})
   (if (empty? exception-result)
-    (let [employee-type-id (get-in employee-type-data ["worker_type_id"])]
+    (let [employee-type-id (employee-type-data :worker_type_id)]
       (cond
         (= employee-type-id "STF") 3
         (= employee-type-id "STU") 3
