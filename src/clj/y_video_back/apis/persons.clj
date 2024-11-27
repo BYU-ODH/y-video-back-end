@@ -107,15 +107,19 @@
   [employee-type-data netid]
   (def exception-result (user-type-exceptions/READ-BY-USERNAME [netid]))
   (if (empty? exception-result)
-    (let [employee-type-id (employee-type-data :worker_type_id)]
-      (cond
-        (= employee-type-id "STF") 3
-        (= employee-type-id "STU") 3
-        (= employee-type-id "STD") 3
-        (= employee-type-id "FAC") 2
-        (= employee-type-id "LA") 1
-        :else 3
+    (if-not (nil? employee-type-data)
+      (let [employee-type-id (employee-type-data :worker_type_id)]
+        (println employee-type-id)
+        (cond
+          (= employee-type-id "STF") 3
+          (= employee-type-id "STU") 3
+          (= employee-type-id "STD") 3
+          (= employee-type-id "FAC") 2
+          (= employee-type-id "LA") 1
+          :else 3
+        )
       )
+      3
     )
     (:account-type (first exception-result))
   )
