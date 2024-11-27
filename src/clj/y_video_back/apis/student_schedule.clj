@@ -9,9 +9,9 @@
 (defn extract-course-data-new
   [course]
   {
-    :department (get-in course ["teaching_area"])
-    :catalog-number (get-in course ["catalog_number"])
-    :section-number (get-in course ["section_number"])
+    :department (course :teaching_area)
+    :catalog-number (course :catalog_number)
+    :section-number (course :section_number)
   }
 )
 
