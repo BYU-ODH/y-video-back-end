@@ -56,7 +56,7 @@
   "If enough time has passed, checks user's course enrollments with api"
   ([username force-api]
    (let [user-res (first (users/READ-BY-USERNAME [username]))]
-     (if (or force-api (check-last-course-api user-res))
+     (if (or true (check-last-course-api user-res))
        (do
          (refresh-courses (:id user-res) username)
          (users/UPDATE (:id user-res) {:last-course-api (java.sql.Timestamp. (System/currentTimeMillis))})))))
