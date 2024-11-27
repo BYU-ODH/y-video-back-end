@@ -105,8 +105,7 @@
 (defn assign-account-type
   "determines what the appropriate account type is for the user"
   [employee-type-data netid]
-  ;; (def exception-result (user-type-exceptions/READ-BY-USERNAME [netid]))
-  (def exception-result {})
+  (def exception-result (user-type-exceptions/READ-BY-USERNAME [netid]))
   (if (empty? exception-result)
     (let [employee-type-id (employee-type-data :worker_type_id)]
       (cond
