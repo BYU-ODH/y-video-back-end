@@ -51,16 +51,14 @@
   (def json (json/read-str body)) ;; decode the json string
   (def walk-result (walk/keywordize-keys json)) ;; assign the json attributes to keywords so clojure can work with it
   (def data (walk-result :data)) ;; get the "data" attribute from the response, which contains what we want
-  (loop [entries data] ;; assinging "entries" to the full value of "data" initially
-    (let [entry (first entries)] ;; getting the first value of "entries" vector and assigning it to "entry"
-        ;; check if this entry has the year_term we want
-        (if (and (<= (compare (entry :start_date_time) date-string) -1) ;; have to use "compare" operator to compare strings
-                (> (compare (entry :end_date_time) date-string) 0))
-            (entry :year_term) ;; return the year_term value if it is what we want
-            (recur (rest entries)) ;; otherwise, start the loop over with the rest of the "entries" vector (everything minus the first entry)
-        )
-    )
-  )
+  (loop [entries data]
+    (let [entry (first entries)]
+        (if (nil? entry)
+            nil
+            (if (and (<= (compare (entry :start_date_time) date-string) 0)
+                    (> (compare (entry :end_date_time) date-string) 0))
+                (entry :year_term)
+                (recur (rest entries))))))
 )
 
 ;; Old function useing out of date controldatesws endpoint. Keeping htis here for reference for the time being - BDR 10/15/2024
