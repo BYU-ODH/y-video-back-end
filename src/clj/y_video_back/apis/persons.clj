@@ -125,26 +125,6 @@
   )
 )
 
-(defn get-employee-summary
-  "gets information about the employee which can be used for other queries"
-  [workerid byuid personid netid]
-  (def response (client/get (str "https://api.byu.edu/bdp/human_resources/worker_summary/v1/?worker_id=" workerid)
-                            {:headers {"Authorization" (ut/get-oauth-token-new)}}))
-  (def body (response :body))
-  (def json (json/read-str body))
-  (def walk-result (walk/keywordize-keys json)) ;; remember to include walk library
-  (def data_array (walk-result :data))
-  (def data (first data_array))
-  (def employee_type_data (get-employee-type (data :positions)))
-  {
-    :full-name (str (data :preferred_first_name) " " (data :preferred_last_name))
-    :byu-id byuid
-    :email (data :work_email_address)
-    :account-type (assign-account-type employee_type_data netid)
-    :person-id personid
-  }
-)
-
 (defn get-student-summary
   "gets information about the student that can be used in other queries"
   [netid personid]
@@ -170,6 +150,31 @@
       :account-type 3
       :person-id personid
     })
+  )
+)
+
+(defn get-employee-summary
+  "gets information about the employee which can be used for other queries"
+  [workerid byuid personid netid]
+  (def response (client/get (str "https://api.byu.edu/bdp/human_resources/worker_summary/v1/?worker_id=" workerid)
+                            {:headers {"Authorization" (ut/get-oauth-token-new)}}))
+  (def body (response :body))
+  (def json (json/read-str body))
+  (def walk-result (walk/keywordize-keys json)) ;; remember to include walk library
+  (def data_array (walk-result :data))
+  (def data (first data_array))
+  (if (= nil data)
+    (do (get-student-summary netid personid))
+    (do 
+      (def employee_type_data (get-employee-type (data :positions)))
+      {
+        :full-name (str (data :preferred_first_name) " " (data :preferred_last_name))
+        :byu-id byuid
+        :email (data :work_email_address)
+        :account-type (assign-account-type employee_type_data netid)
+        :person-id personid
+      }
+    )
   )
 )
 
