@@ -170,7 +170,7 @@
       {
         :full-name (str (data :preferred_first_name) " " (data :preferred_last_name))
         :byu-id byuid
-        :email (data :work_email_address)
+        :email (str netid "@byu.edu")
         :account-type (assign-account-type employee_type_data netid)
         :person-id personid
       }
