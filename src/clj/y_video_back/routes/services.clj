@@ -207,7 +207,10 @@
      ["/{id}/courses"
       {:get service-handlers/collection-get-all-courses}]
      ["/{id}/users"
-      {:get service-handlers/collection-get-all-users}]]
+      {:get service-handlers/collection-get-all-users}]
+     ["/{id}/transfer/{username}"
+      {:get service-handlers/collection-transfer-ownership}]
+      ]
 
     ["/course"
      {:swagger {:tags ["course"]}}
