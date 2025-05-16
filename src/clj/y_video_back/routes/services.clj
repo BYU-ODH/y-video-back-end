@@ -86,25 +86,29 @@
              :permission-level "master"
              :handler (fn [] "doesn't matter")}}]]
 
-    ;; now defunct, would have to add {byuid} and {personid} as parameters in the path and provide those to
-    ;; uc/get-session-id to get this to work. As far as I can tell, it was only ever used for testing. BDR 10/16/2024
-    ;; ["/get-session-id/{username}/{password}"
-    ;;  {:swagger {:tags ["auth"]}}
+    ;; To use this endpoint, the personid can be anything because it isn't really used downstream. The use of personid is an artifact from
+    ;; the old API integration implementation. It remains simply because it wasn't worth the effor to remove every mention of personid in
+    ;; in the old code since we were on a time crunch to deliver a version of Y-video that worked with the new APIs. In the methods that
+    ;; personid is passed to, personid value is set to all zeros. byuid must be populated and correct. BDR 5/16/2025
+     ["/get-session-id/{username}/{password}/{byuid}/{personid}"
+      {:swagger {:tags ["auth"]}}
 
-    ;;  [""
-    ;;   {:get {:summary "gets session id for username"
-    ;;          :parameters {:path {:username string?
-    ;;                              :password string?}}
-    ;;          :responses {200 {:body {:session-id string?}}
-    ;;                      403 {:body {:message string?}}}
-    ;;          :handler (fn [{{{:keys [username password]} :path} :parameters}]
-    ;;                     (if (nil? (:NEW-USER-PASSWORD env))
-    ;;                       {:status 401 :message "unauthorized"}
-    ;;                       (if-not (= (:NEW-USER-PASSWORD env) password)
-    ;;                         {:status 403
-    ;;                          :body {:message "incorrect password"}}
-    ;;                         {:status 200
-    ;;                          :body {:session-id (str (uc/get-session-id username))}})))}}]]
+      [""
+       {:get {:summary "gets session id for username"
+              :parameters {:path {:username string?
+                                  :password string?
+				    :byuid string?
+				    :personid string?}}
+              :responses {200 {:body {:session-id string?}}
+                          403 {:body {:message string?}}}
+              :handler (fn [{{{:keys [username password byuid personid]} :path} :parameters}]
+                         (if (nil? (:NEW-USER-PASSWORD env))
+                           {:status 401 :message "unauthorized"}
+                           (if-not (= (:NEW-USER-PASSWORD env) password)
+                             {:status 403
+                              :body {:message "incorrect password"}}
+                             {:status 200
+                              :body {:session-id (str (uc/get-session-id username byuid personid))}})))}}]]
 
     ["/echo"
      {:swagger {:tags ["echo"]}}
