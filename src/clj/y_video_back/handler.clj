@@ -1,5 +1,6 @@
 (ns y-video-back.handler
   (:require
+            [clojure.tools.logging :as log]
             [y-video-back.layout :refer [error-page]]
             [y-video-back.routes.home :refer [home-routes]]
             [y-video-back.routes.services :refer [service-routes]]
@@ -16,7 +17,7 @@
 (mount/defstate app
   :start
   (do
-    (println "Starting ring-handler")
+    (log/info "Starting ring-handler")
     (ring/ring-handler
      (ring/router
       [(home-routes)

@@ -1,7 +1,6 @@
 (ns y-video-back.cas
   (:require [clojure.tools.logging :as log]
             [ring.util.response :refer [redirect]]
-            [clojure.pprint :as pprint]
             [clojure.string :refer [join] :as s]
             [tick.alpha.api :as t]
             [clojure.data.json :as json])
@@ -10,16 +9,6 @@
 
 ;Cas10TicketValidator: https://github.com/apereo/java-cas-client/tree/master/cas-client-core/src/main/java/org/jasig/cas/client/validation
 ;Cas10TicketValidator < AbstractCasProtocolUrlBasedTicketValidator  < AbstractUrlBasedTicketValidator implements TicketValidator
-
-
-(defn pprints-mw [handler]
-  (fn [req]
-    (println "req:")
-    (pprint/pprint req)
-    (let [resp (handler req)]
-      (println "resp:")
-      (pprint/pprint resp)
-      resp)))
 
 
 (def BYU-CAS-server "https://cas.byu.edu/cas")
@@ -113,7 +102,6 @@
                 (adds-assertion-to-response assertion)
                 ((partial set-timeout (options :timeout 120)))))
           (catch TicketValidationException e
-            (println "failed validation")
             (log/error "Ticket validation exception " e)
             {:status 403}))
         (handler request)))))
@@ -207,8 +195,7 @@ see ring.middleware.session/bare-session-response if curious how ring sessions w
            (authentication-filter options)
            (ticket-validation-filter options)
            (logout-filter)
-           (dependency-filter)
-           #_(pprints-mw))))))
+           (dependency-filter))))))
 
 
 (defn wrap-cas
