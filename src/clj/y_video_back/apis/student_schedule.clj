@@ -3,7 +3,8 @@
     [y-video-back.apis.utils :as ut]
     [clj-http.client :as client]
     [clojure.data.json :as json]
-    [clojure.walk :as walk]))
+    [clojure.walk :as walk]
+    [taoensso.timbre :as log]))
 
 ;; new data extractor to use with new api call - BDR 9/5/2024
 (defn extract-course-data-new
@@ -16,19 +17,32 @@
 )
 
 
-
 ;; new api for getting student's courses - Ben Rencher 9/5/2024. may or may not use this since the other API isn't being retired
 (defn get-api-courses-new
   [netid]
-  (def response (client/get (str "https://api.byu.edu/bdp/student_academics/records/current_student_class_enrollments/v1/?net_id=" netid "&year_term=" (ut/get-current-sem-real))
-                {:headers {"Authorization" (ut/get-oauth-token-new)}}
-  ))
-  (def body (response :body))
-  (def json (json/read-str body))
-  (def walk-result (walk/keywordize-keys json))
-  (def data (walk-result :data))
-  (map extract-course-data-new data)
-)
+  (let [year-term (ut/get-current-sem-real)
+        url (str "https://api.byu.edu/bdp/student_academics/records/current_student_class_enrollments/v1/?net_id=" netid "&year_term=" year-term)]
+    (log/info "get-api-courses-new requesting" {:netid netid :year_term year-term :url url})
+    (try
+      (let [response (client/get url {:headers {"Authorization" (ut/get-oauth-token-new)}})
+            body (response :body)
+            json (json/read-str body)
+            walk-result (walk/keywordize-keys json)
+            data (walk-result :data)
+            courses (map extract-course-data-new data)]
+        (log/info "get-api-courses-new response"
+                  {:netid netid
+                   :year_term year-term
+                   :status (:status response)
+                   :data_count (count data)
+                   :data_nil? (nil? data)
+                   :extracted_count (count courses)
+                   :extracted courses})
+        courses)
+      (catch Exception e
+        (log/error e "get-api-courses-new failed; rethrowing"
+                   {:netid netid :year_term year-term})
+        (throw e)))))
 
 ;; we shouldn't need this anymore because the data returned by the bdp endpoint is arranged differently - BDR 9/5/2024
 ;; (defn course-to-dep-and-cat

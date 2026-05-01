@@ -6,7 +6,8 @@
     [y-video-back.db.user-courses-assoc :as user-courses-assoc]
     [y-video-back.apis.student-schedule :as schedule-api]
     [y-video-back.utils.account-permissions :as ac]
-    [y-video-back.routes.service-handlers.utils.utils :as ut]))
+    [y-video-back.routes.service-handlers.utils.utils :as ut]
+    [taoensso.timbre :as log]))
 
 (defn remove-course-db-fields
   [course]
@@ -43,6 +44,21 @@
         db-courses (get-db-courses user-id)
         to-delete (set (filter #(not (lazy-contains? api-courses (remove-course-db-fields %))) db-courses))
         to-add (set (filter #(not (lazy-contains? (map remove-course-db-fields db-courses) %)) api-courses))]
+    (log/info "refresh-courses reconciliation"
+              {:user-id (str user-id)
+               :username username
+               :api_courses_count (count api-courses)
+               :db_courses_count (count db-courses)
+               :to_delete_count (count to-delete)
+               :to_add_count (count to-add)
+               :api_courses api-courses
+               :to_delete (map #(select-keys % [:id :department :catalog-number :section-number]) to-delete)
+               :to_add to-add})
+    (when (and (empty? api-courses) (seq db-courses))
+      (log/warn "refresh-courses: API returned no courses but user has existing course associations; all will be deleted"
+                {:user-id (str user-id)
+                 :username username
+                 :db_courses_count (count db-courses)}))
     (doall (map #(delete-course-assoc user-id %) to-delete))
     (doall (map #(add-course-assoc user-id %) to-add))))
 
