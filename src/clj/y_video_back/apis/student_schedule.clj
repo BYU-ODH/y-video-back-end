@@ -4,7 +4,7 @@
     [clj-http.client :as client]
     [clojure.data.json :as json]
     [clojure.walk :as walk]
-    [taoensso.timbre :as log]))
+    [clojure.tools.logging :as log]))
 
 ;; new data extractor to use with new api call - BDR 9/5/2024
 (defn extract-course-data-new

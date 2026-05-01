@@ -1,7 +1,7 @@
 (ns y-video-back.db.auth-tokens
   (:require [y-video-back.config :refer [env]]
             [y-video-back.db.core :as db]
-            [taoensso.timbre :as log]))
+            [clojure.tools.logging :as log]))
 
 (def CREATE (partial db/CREATE :auth-tokens))
 (def READ  (partial db/READ :auth-tokens-undeleted))

@@ -5,7 +5,7 @@
     [java-time :as t]
     [clojure.data.json :as json]
     [clojure.walk :as walk]
-    [taoensso.timbre :as log]))
+    [clojure.tools.logging :as log]))
 
 (defn get-oauth-token-new  ; TODO - store token locally, only query new one when needed
   "Gets oauth token from api"

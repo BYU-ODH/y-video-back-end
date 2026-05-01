@@ -9,7 +9,7 @@
    [ring.util.response :as rs :refer [file-response]]
    [ring.mock.request :as mr]
    [y-video-back.log :as log-ut]
-   [taoensso.timbre :as log]))
+   [clojure.tools.logging :as log]))
 
                                         ; TODO - check if user has permission to stream requested file
 

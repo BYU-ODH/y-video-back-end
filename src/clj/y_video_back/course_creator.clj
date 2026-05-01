@@ -7,7 +7,7 @@
     [y-video-back.apis.student-schedule :as schedule-api]
     [y-video-back.utils.account-permissions :as ac]
     [y-video-back.routes.service-handlers.utils.utils :as ut]
-    [taoensso.timbre :as log]))
+    [clojure.tools.logging :as log]))
 
 (defn remove-course-db-fields
   [course]
