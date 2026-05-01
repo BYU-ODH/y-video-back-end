@@ -6,6 +6,7 @@
     [clj-http.client :as client]
     [clojure.data.json :as json]
     [clojure.string :as str]
+    [clojure.tools.logging :as log]
     [clojure.walk :as walk]))
 
 (defn get-cats-from-json
@@ -109,7 +110,6 @@
   (if (empty? exception-result)
     (if-not (nil? employee-type-data)
       (let [employee-type-id (employee-type-data :worker_type_id)]
-        (println employee-type-id)
         (cond
           (= employee-type-id "STF") 3
           (= employee-type-id "STU") 3
@@ -213,15 +213,13 @@
     ;; if so, get employee summary
     ;; otherwise get student summary
     (try
-      (println "netid:" netid "byuid:" byuid "personid:" personid)
       (def workerid (get-worker-id byuid))
-      (println "netid:" netid "byuid:" byuid "personid:" personid "workerid:" workerid)
       (if (is-worker-id-empty workerid)
         (get-student-summary netid personid)
         (get-employee-summary workerid byuid personid netid)
       )
       (catch Exception e
-        (println "Error in get-user-data-new: " e "For netid:" netid "byuid:" byuid)
+        (log/error e "get-user-data-new failed; using fallback record" {:netid netid :byuid byuid})
         {
          :full-name netid
          :byu-id nil

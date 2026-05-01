@@ -91,15 +91,6 @@
                      :title "Something very bad has happened!"
                      :message "We have ecountered an unexpected error. We are working to fix it. Please try again later."})))))
 
-(defn print-handler [handler]
-  (fn [req]
-    (println "\n\n-----Handler is:")
-    (println (str handler))
-    (println "\n\n-----Req is:")
-    (println (str req))
-    (handler req)))
-
-
 
 (defn wrap-csrf [handler]
   (wrap-anti-forgery
